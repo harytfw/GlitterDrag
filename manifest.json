@@ -1,0 +1,31 @@
+{
+  
+  "description": "Adds a browser action icon to the toolbar. Click the button to choose a beast. The active tab's body content is then replaced with a picture of the chosen beast. See https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Examples#beastify",
+  "manifest_version": 2,
+  "name": "FoxDrag",
+  "version": "1.0",
+  "icons": {
+    "48": "Drag.png",
+    "128":"Drag.png",
+    "512":"Drag.png"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
+  "background": {
+    "scripts": [
+      "common.js",
+      "background.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "run_at": "document_start",
+      "matches": ["<all_urls>"],
+      "js": [
+        "content_script.js"
+      ]
+    }
+  ]
+}
