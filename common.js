@@ -1,10 +1,10 @@
 const urlPattern = /^(https?:\/\/)?((\w|-)*\.){0,3}((\w|-)+)\.(com|net|org|gov|edu|mil|biz|cc|info|fm|mobi|tv|ag|am|asia|at|au|be|br|bz|ca|cn|co|de|do|ee|es|eu|fr|gd|gl|gs|im|in|it|jp|la|ly|me|mp|ms|mx|nl|pe|ph|ru|se|so|tk|to|tt|tw|us|uk|ws|xxx)(\/(\w|%|&|-|_|\||\?|\.|=|\/|#|~|!|\+|,|\*|@)*)?$/i
 
-
+const TYPE_UNKNOWN = -1;//未知类型
 const TYPE_TEXT = 0; //文本,包含普通文本、链接
 const TYPE_TEXT_URL = 1;//链接
 const TYPE_ELEM = 2;//元素，主要是没有选中文本，对元素进行了拖拽
-const TYPE_ELEM_A = 3;//超链接
+const TYPE_ELEM_A = 3;//超链接，a元素
 const TYPE_ELEM_IMG = 4;
 
 const DIR_U = "DIR_U";
@@ -12,10 +12,17 @@ const DIR_D = "DIR_D";
 const DIR_L = "DIR_L";
 const DIR_R = "DIR_R";
 
+const sin0 = 0;
+const sin45 = Math.sqrt(2) / 2;
+const sin90 = 1;
+const sin135 = sin45;
+const sin180 = sin0;
+const sin225 = -sin45;
+const sin270 = -sin90;
+const sin315 = -sin45;
+const sin360 = sin0;
 
-
-const NONE = 0;//不做任何事
-
+const ACT_NONE = 0;//不做任何事
 const ACT_OPEN = 1 << 0; //打开
 const ACT_COPY = 1 << 1; //复制
 const ACT_SEARCH = 1 << 2; //搜索
@@ -49,7 +56,7 @@ const TAB_CRIGHT = 1 << 23;//右边
 
 class FlagsClass {
     constructor(...in_flags) {
-        this.f = NONE;
+        this.f = ACT_NONE;
         this.set(...in_flags);
     }
     bitArray() {
@@ -101,9 +108,29 @@ class FlagsClass {
         return false;
     }
 
-    check_comflic(...m){
+    check_comflic(...m) {
         //TODO
     }
+}
+
+
+function checkDragTargetType(selection,target) {
+    if (selection && selection.length !== 0) {
+        if (urlPattern.test(selection)) {
+            return TYPE_TEXT_URL;
+        }
+        return TYPE_TEXT;
+    }
+    else if (target !== null) {
+        if (target instanceof HTMLAnchorElement) {
+            return TYPE_ELEM_A;
+        }
+        else if (target instanceof HTMLImageElement) {
+            return TYPE_ELEM_IMG;
+        }
+        return TYPE_ELEM;
+    }
+    return TYPE_UNKNOWN;
 }
 
 function loadUserOptionFromBrowser() {
@@ -141,7 +168,7 @@ let userOption = {
     },
     linkAction: {
         DIR_U: new FlagsClass(ACT_OPEN, FORE_GROUND),
-        DIR_D: new FlagsClass(ACT_OPEN, FORE_GROUND),
+        DIR_D: new FlagsClass(ACT_OPEN, BACK_GROUND),
     },
     imageAction: {
         DIR_U: new FlagsClass(ACT_OPEN, FORE_GROUND),

@@ -1,17 +1,3 @@
-const DIR_U = "DIR_U";
-const DIR_D = "DIR_D";
-const DIR_L = "DIR_L";
-const DIR_R = "DIR_R";
-
-const sin0 = 0;
-const sin45 = Math.sqrt(2) / 2;
-const sin90 = 1;
-const sin135 = sin45;
-const sin180 = sin0;
-const sin225 = -sin45;
-const sin270 = -sin90;
-const sin315 = -sin45;
-const sin360 = sin0;
 
 
 
@@ -36,14 +22,30 @@ class DragClass {
 
     post(){
         let port = browser.runtime.connect({name:"Drag-Class"});
+
+        let t = checkDragTargetType(this.selection,this.targetElem);
+        let s = "";
+
+        if(t===TYPE_TEXT||t===TYPE_TEXT_URL){
+            s = this.selection;
+        }
+        else if(t===TYPE_ELEM_A){
+            s = this.targetElem.href;
+        }
+        else if(t===TYPE_ELEM_IMG){
+            s = this.targetElem.src;
+        }
+        else if(t===TYPE_ELEM){
+            s = "";
+        }
         if(port!=null){
             port.postMessage(
                 {
                     direction:this.direction,
-                    selection:this.selection,
-                    target:this.targetElem
+                    selection:s,
+                    type:t
                 }
-                );
+            );
         }
         else{
             console.error("错误，没有连接到background");
@@ -71,6 +73,7 @@ class DragClass {
             this.endPos.y = evt.screenY;
             this.selection = document.getSelection().toString();
             this.direction = this.getDirection();
+            this.targetElem = evt.target;
             this.post();
         }
     }

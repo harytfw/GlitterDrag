@@ -36,7 +36,12 @@ class DragActions {
         //console.assert(opt.target instanceof HTMLElement);
         this.data = x;
 
-        this.type = this.checkType();
+        this.type = this.data.type;
+
+        if(this.type===TYPE_UNKNOWN){
+            console.error("未知的拖拽目标类型！~");
+            return;
+        }
 
         let typeAction = EMPTY_OPTION.noAction;
 
@@ -57,27 +62,33 @@ class DragActions {
 
         this.flags = typeAction[this.data.direction];
         this.execute();
-
-        this.data = {
-            direction: DIR_U,
-            selection: "",
-            target: document || null
-        };
+        
+        //清空
+        // this.flags = new FlagsClass();
+        // this.data = {
+        //     direction: DIR_U,
+        //     selection: "",
+        //     target: document || null
+        // };
     }
 
     execute() {
         console.assert(this.flags instanceof FlagsClass);
-        console.assert(this.flags.f != NONE);
+        console.assert(this.flags.f != ACT_NONE);
+        if(this.data.selection.length===0){
+            return;
+        }
         if (this.flags.isset(ACT_OPEN)) {
-            if(this.type === TYPE_TEXT_URL){
-                this.openURL(this.data.selection);
-            }
-            else if(this.type===TYPE_ELEM_A){
-                this.openURL(this.data.target.href);
-            }
-            else if(this.type===TYPE_ELEM_IMG){
-                this.openURL(this.data.target.src);
-            }
+            this.openURL(this.data.selection);
+            // if(this.type === TYPE_TEXT_URL){
+            //     this.openURL(this.data.selection);
+            // }
+            // else if(this.type===TYPE_ELEM_A){
+            //     this.openURL(this.data.target.href);
+            // }
+            // else if(this.type===TYPE_ELEM_IMG){
+            //     this.openURL(this.data.target.src);
+            // }
         }
 
         else if (this.flags.isset(ACT_COPY)) {
@@ -90,7 +101,7 @@ class DragActions {
                 this.searchText(this.data.selection);
             }
             else if(this.type===TYPE_ELEM_IMG){
-                this.searchImage(this.data.target.src);
+                this.searchImage(this.data.selection);
             }
         }
 
@@ -103,24 +114,6 @@ class DragActions {
         }
     }
 
-
-    checkType() {
-        if (this.selection.length !== 0) {
-            if(urlPattern.test(this.selection)){
-                return TYPE_TEXT_URL;
-            }
-            return TYPE_TEXT;
-        }
-        else if (this.target !== null) {
-            if (this.target instanceof HTMLAnchorElement) {
-                return TYPE_ELEM_A;
-            }
-            else if (this.target instanceof HTMLImageElement) {
-                return TYPE_ELEM_IMG;
-            }
-            return TYPE_ELEM;
-        }
-    }
 
 
 
@@ -152,7 +145,7 @@ class DragActions {
                         });
                     }
                 }
-            );
+            ).catch(()=>{});
         }
         else {
             browser.tabs.query({}).then(
@@ -214,5 +207,8 @@ function setUpConnect(func) {
     });
 }
 
+browser.browserAction.onClicked.addListener(()=>{
+    browser.runtime.openOptionsPage();
+});
 
 setUpConnect(onMessage);
