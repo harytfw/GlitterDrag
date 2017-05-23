@@ -8,7 +8,12 @@
         #container form {
             margin-bottom: 15px;
         }
-
+        select{
+            margin-right: 15px;
+        }
+        label{
+            display: inline;
+        }
         .row fieldset {
             display: inline-block;
             width: 600px;
@@ -16,11 +21,17 @@
 
         .row {
             display: inline-block;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 
 <body>
+    <div id="button-area">
+        <button onclick="">备份配置</button>
+        <button onclick="">恢复配置</button>
+        <button onclick="">恢复默认</button>
+    </div>
     <div id="container"></div>
     <script src="common.js"></script>
     <script src="options.js"></script>

@@ -20,37 +20,33 @@ class DragClass {
 
 
 
-    post(){
-        let port = browser.runtime.connect({name:"Drag-Class"});
+    post() {
 
-        let t = checkDragTargetType(this.selection,this.targetElem);
+        let t = checkDragTargetType(this.selection, this.targetElem);
         let s = "";
 
-        if(t===TYPE_TEXT||t===TYPE_TEXT_URL){
+        if (t === TYPE_TEXT || t === TYPE_TEXT_URL) {
             s = this.selection;
         }
-        else if(t===TYPE_ELEM_A){
+        else if (t === TYPE_ELEM_A) {
             s = this.targetElem.href;
         }
-        else if(t===TYPE_ELEM_IMG){
+        else if (t === TYPE_ELEM_IMG) {
             s = this.targetElem.src;
         }
-        else if(t===TYPE_ELEM){
+        else if (t === TYPE_ELEM) {
             s = "";
         }
-        if(port!=null){
-            port.postMessage(
-                {
-                    direction:this.direction,
-                    selection:s,
-                    type:t
-                }
-            );
-        }
-        else{
-            console.error("错误，没有连接到background");
-        }
+
+        //sendMessage只能传递字符串化后（类似json）的数据
+        //不能传递具体对象
+        browser.runtime.sendMessage({
+            direction: this.direction,
+            selection: s,
+            type: t
+        });
     }
+
 
 
     registerEvent() {
@@ -60,7 +56,7 @@ class DragClass {
 
     }
     handler(evt) {
-        console.log(evt);
+        // console.log(evt);
         const type = evt.type;
 
         if (type === "dragstart") {

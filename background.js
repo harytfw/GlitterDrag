@@ -1,3 +1,7 @@
+
+var userOption = DEFAULT_OPTION;
+
+
 class SimulateTabs {
     constructor() {
         this.tabs = [];
@@ -38,7 +42,7 @@ class DragActions {
 
         this.type = this.data.type;
 
-        if(this.type===TYPE_UNKNOWN){
+        if (this.type === TYPE_UNKNOWN) {
             console.error("未知的拖拽目标类型！~");
             return;
         }
@@ -62,7 +66,7 @@ class DragActions {
 
         this.flags = typeAction[this.data.direction];
         this.execute();
-        
+
         //清空
         // this.flags = new FlagsClass();
         // this.data = {
@@ -74,8 +78,7 @@ class DragActions {
 
     execute() {
         console.assert(this.flags instanceof FlagsClass);
-        console.assert(this.flags.f != ACT_NONE);
-        if(this.data.selection.length===0){
+        if (this.data.selection.length === 0) {
             return;
         }
         if (this.flags.isset(ACT_OPEN)) {
@@ -100,7 +103,7 @@ class DragActions {
             if (this.type === TYPE_TEXT) {
                 this.searchText(this.data.selection);
             }
-            else if(this.type===TYPE_ELEM_IMG){
+            else if (this.type === TYPE_ELEM_IMG) {
                 this.searchImage(this.data.selection);
             }
         }
@@ -145,7 +148,7 @@ class DragActions {
                         });
                     }
                 }
-            ).catch(()=>{});
+            ).catch(() => { });
         }
         else {
             browser.tabs.query({}).then(
@@ -195,20 +198,42 @@ class DragActions {
 const actions = new DragActions()
 
 
-function onMessage(m) {
-    actions.DO(m);
+function loadUserOptionFromBrowser(callback) {
+    if (browser.storage) {
+        let promise = browser.storage.sync.get('option');
+        promise.then((d) => {
+            let m = JSON.parse(d.option);
+            if (m.textAction) {
+                for (let act in m) {
+                    for (let dir in m[act]) {
+                        m[act][dir] = new FlagsClass(m[act][dir].f);
+                    }
+                }
+                userOption = m;
+            }
+            callback ? callback() : null;
+        })
+    }
 }
 
 
-function setUpConnect(func) {
-
-    browser.runtime.onConnect.addListener((p) => {
-        p.onMessage.addListener(func)
+function saveUserOption() {
+    IS_I_CHANGE = true;
+    browser.storage.sync.set({
+        option: JSON.stringify(userOption)
     });
 }
 
-browser.browserAction.onClicked.addListener(()=>{
+
+
+
+
+browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
 });
 
-setUpConnect(onMessage);
+browser.runtime.onMessage.addListener((m)=>{
+    actions.DO(m);
+});
+
+loadUserOptionFromBrowser();

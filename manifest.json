@@ -1,5 +1,5 @@
 {
-    "description": "Adds a browser action icon to the toolbar. Click the button to choose a beast. The active tab's body content is then replaced with a picture of the chosen beast. See https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Examples#beastify",
+    "description": "一个拖拽扩展，可以拖拽文字、链接、图像，可以非常方便的在前台或后台打开标签页",
     "manifest_version": 2,
     "name": "FoxDrag",
     "version": "1.0",
@@ -9,11 +9,17 @@
         "128": "Drag.png",
         "512": "Drag.png"
     },
+    "author": "harytfw",
     "browser_action": {
-        "default_title": "Favourite colour option"
+        "default_title": "FoxDrag",
+        "default_icon": {
+            "48": "Drag.png",
+            "512": "Drag.png"
+        }
     },
     "permissions": [
         "activeTab",
+        "storage",
         "tabs"
     ],
     "background": {
@@ -25,8 +31,8 @@
     "content_scripts": [
         {
             "run_at": "document_start",
-            "match_about_blank":true,
-            "all_frames":true,
+            "match_about_blank": true,
+            "all_frames": true,
             "matches": [
                 "<all_urls>"
             ],
@@ -39,5 +45,11 @@
     "options_ui": {
         "page": "options.html",
         "browser_style": true
+    },
+    "applications": {
+        "gecko": {
+            "id": "harytfw@outlook.com",
+            "strict_min_version": "52.0"
+        }
     }
 }

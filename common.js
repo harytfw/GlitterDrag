@@ -22,15 +22,15 @@ const sin270 = -sin90;
 const sin315 = -sin45;
 const sin360 = sin0;
 
-const ACT_NONE = 0;//不做任何事
-const ACT_OPEN = 1 << 0; //打开
-const ACT_COPY = 1 << 1; //复制
-const ACT_SEARCH = 1 << 2; //搜索
-const ACT_TRANS = 1 << 3; //翻译
-const ACT_DL = 1 << 4; //下载
-const ACT_QRCODE = 1 << 5; //二维码
+const ACT_NONE = 1 << 0;//无动作
+const ACT_OPEN = 1 << 1; //打开
+const ACT_COPY = 1 << 2; //复制
+const ACT_SEARCH = 1 << 3; //搜索
+const ACT_TRANS = 1 << 4; //翻译
+const ACT_DL = 1 << 5; //下载
+const ACT_QRCODE = 1 << 6; //二维码
 
-// 6~9
+// 7~9
 
 const KEY_CTRL = 1 << 10;//ctrl键
 const KEY_SHIFT = 1 << 12;//shift键
@@ -56,8 +56,14 @@ const TAB_CRIGHT = 1 << 23;//右边
 
 class FlagsClass {
     constructor(...in_flags) {
-        this.f = ACT_NONE;
-        this.set(...in_flags);
+
+        this.f = 0;
+        if (in_flags.length !== 0) {
+            this.set(...in_flags);
+        }
+        else {
+            this.set(ACT_NONE);
+        }
     }
     bitArray() {
 
@@ -74,6 +80,10 @@ class FlagsClass {
         return this.f;
     }
     //清除
+    clear_self_set(val) {
+        this.clear(this.f);
+        this.set(val);
+    }
     clear(...m) {
         for (let x of m) {
             this.f &= ~m;
@@ -90,6 +100,7 @@ class FlagsClass {
     //检测标志位是否被设置
     //如果是多个参数，则判断this.f是否等于传入的标志位
     isset(...m) {
+
         for (let x of m) {
             //有一个不匹配
             if ((x & this.f) == 0) {
@@ -114,7 +125,7 @@ class FlagsClass {
 }
 
 
-function checkDragTargetType(selection,target) {
+function checkDragTargetType(selection, target) {
     if (selection && selection.length !== 0) {
         if (urlPattern.test(selection)) {
             return TYPE_TEXT_URL;
@@ -133,22 +144,27 @@ function checkDragTargetType(selection,target) {
     return TYPE_UNKNOWN;
 }
 
-function loadUserOptionFromBrowser() {
-    //TODO
-}
 
 const DEFAULT_OPTION = {
     textAction: {
         DIR_U: new FlagsClass(ACT_SEARCH, FORE_GROUND),
         DIR_D: new FlagsClass(ACT_SEARCH, BACK_GROUND),
+        DIR_L: new FlagsClass(),
+        DIR_R: new FlagsClass()
     },
     linkAction: {
         DIR_U: new FlagsClass(ACT_OPEN, FORE_GROUND),
-        DIR_D: new FlagsClass(ACT_OPEN, FORE_GROUND),
+        DIR_D: new FlagsClass(ACT_OPEN, BACK_GROUND),
+        DIR_L: new FlagsClass(),
+        DIR_R: new FlagsClass()
+
     },
     imageAction: {
         DIR_U: new FlagsClass(ACT_OPEN, FORE_GROUND),
         DIR_D: new FlagsClass(ACT_SEARCH, FORE_GROUND),
+        DIR_L: new FlagsClass(),
+        DIR_R: new FlagsClass()
+
     }
 }
 
@@ -159,19 +175,10 @@ const EMPTY_OPTION = {
     }
 }
 
-// let UserOption = loadUserOptionFromBrowser();
 
-let userOption = {
-    textAction: {
-        DIR_U: new FlagsClass(ACT_SEARCH, FORE_GROUND),
-        DIR_D: new FlagsClass(ACT_SEARCH, BACK_GROUND),
-    },
-    linkAction: {
-        DIR_U: new FlagsClass(ACT_OPEN, FORE_GROUND),
-        DIR_D: new FlagsClass(ACT_OPEN, BACK_GROUND),
-    },
-    imageAction: {
-        DIR_U: new FlagsClass(ACT_OPEN, FORE_GROUND),
-        DIR_D: new FlagsClass(ACT_SEARCH, FORE_GROUND),
-    }
-}
+
+// browser.storage.onChanged.addListener((changes) => {
+//     if (!IS_I_CHANGE) {
+//         userOption = constructOption(JSON.parse(changes.newValue.option));
+//     }
+// });
