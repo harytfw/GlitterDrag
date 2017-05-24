@@ -17,14 +17,15 @@ let template_str0 = `
     </select>
     <label>标签页位置：</label>
     <select>
+        
         <option class="TAB_RIGHT" value=${TAB_RIGHT}>最右边</option>
         <option class="TAB_LEFT" value=${TAB_LEFT}>最左边</option>
-        <option  class="TAB_CLEFT" value=${TAB_CLEFT}>当前标签页之前</option>
-        <option  class="TAB_CRIGHT" value=${TAB_CRIGHT}>当前标签页之后</option>
+        <option class="TAB_CLEFT" value=${TAB_CLEFT}>当前标签页之前</option>
+        <option class="TAB_CRIGHT" value=${TAB_CRIGHT}>当前标签页之后</option>
     </select>
   </fieldset>
 `;
-
+//<!-- <option class="TAB_CUR" value=${TAB_CUR}>当前标签页</option> -->
 let template_str1 = `
 <div class="row">
     <input type="hidden" value=0 name=${DIR_U}>
@@ -68,9 +69,9 @@ let template_str2 = `
 
 
 let backgroundPage = null;
-browser.runtime.getBackgroundPage().then((page)=>{
+browser.runtime.getBackgroundPage().then((page) => {
     backgroundPage = page;
-},()=>{});
+}, () => { });
 
 
 function backup() {
@@ -108,8 +109,8 @@ function onChange(event) {
             break;
     }
 
-    backgroundPage.userOption[key][input.name].clear_self_set(parseInt(input.value));
-    backgroundPage.saveUserOption();
+    backgroundPage.userOptions[key][input.name].clear_self_set(parseInt(input.value));
+    backgroundPage.saveUserOptions();
 }
 
 function initForm() {
@@ -133,7 +134,7 @@ function initForm() {
         }
         for (let row of form.querySelectorAll(".row")) {
             let input = row.querySelector("input");
-            let flags = backgroundPage.userOption[key][input.name];
+            let flags = backgroundPage.userOptions[key][input.name];
             input.value = flags.f;
             for (let select of row.querySelectorAll("select")) {
                 for (let opt of select.querySelectorAll("option")) {
@@ -146,8 +147,43 @@ function initForm() {
         }
     }
 }
+
+let fileReader = new FileReader();
+
+fileReader.addEventListener("loadend", () => {
+    try {
+
+        backgroundPage.loadUserOptionsFromBackUp(fileReader.result);
+        backgroundPage.saveUserOptions();
+        initForm();
+    }
+    catch(e){
+        console.error("在恢复用户配置时出现异常！",e);
+        alert("在恢复用户配置时出现异常！");
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
-    backgroundPage.loadUserOptionFromBrowser(()=>{
+    backgroundPage.loadUserOptionsFromBrowser(() => {
         initForm();
     })
 }, false);
+document.querySelector("#backup").addEventListener("click", (event) => {
+    event.target.setAttribute("href", "data:," + JSON.stringify(backgroundPage.userOptions));
+    event.target.setAttribute("download","GlitterDrag"+new Date().getTime()+".json");
+});
+
+document.querySelector("#restore").addEventListener("click", () => {
+    document.querySelector("#fileInput").click();
+});
+
+
+document.querySelector("#default").addEventListener("click", () => {
+    backgroundPage.userOptions = DEFAULT_OPTION;
+    backgroundPage.saveUserOptions();
+    initForm();
+});
+
+document.querySelector("#fileInput").addEventListener("change", (event) => {
+    fileReader.readAsText(event.target.files[0])
+});

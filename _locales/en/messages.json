@@ -1,0 +1,14 @@
+{
+    "extensionDescription":{
+        "message":"A drag extension that supports you drag text, link or image then helps you open or search it",
+        "description":""
+    },
+    "extensionName":{
+        "message":"Glitter Drag",
+        "description":"name of extension"
+    },
+    "browserActionTitle":{
+        "message":"Glitter Drag option",
+        "descript":""
+    }
+}

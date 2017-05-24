@@ -1,5 +1,5 @@
 
-var userOption = DEFAULT_OPTION;
+var userOptions = DEFAULT_OPTION;
 
 
 class SimulateTabs {
@@ -50,15 +50,15 @@ class DragActions {
         let typeAction = EMPTY_OPTION.noAction;
 
         if (this.type === TYPE_TEXT_URL || this.type == TYPE_ELEM_A) {
-            typeAction = userOption.linkAction;
+            typeAction = userOptions.linkAction;
         }
 
         else if (this.type === TYPE_TEXT || this.type === TYPE_ELEM) {
-            typeAction = userOption.textAction;
+            typeAction = userOptions.textAction;
         }
 
         else if (this.type === TYPE_ELEM_IMG) {
-            typeAction = userOption.imageAction;
+            typeAction = userOptions.imageAction;
         }
         else {
 
@@ -128,18 +128,18 @@ class DragActions {
         }
 
         if (this.flags.isset_or(TAB_CUR, TAB_CLEFT, TAB_CRIGHT)) {
-            browser.tabs.getCurrent().then(
+            browser.tabs.query({ active: true }).then(
                 //获取当前tab
-                (tabInfo) => {
+                (tabs) => {
+                    let tabInfo = tabs[0];
 
                     if (this.flags.isset(TAB_CUR)) tabInfo.url = url;
                     else {
 
-                        let m_cl = this.flags.isset(TAB_CLEFT);
                         let m_i = 0;
 
                         if (tabInfo.index !== 0) {
-                            m_i = m_cl ? tabInfo.index - 1 : tabInfo.index + 1;
+                            m_i = this.flags.isset(TAB_CLEFT) ? tabInfo.index : tabInfo.index + 1;
                         }
                         browser.tabs.create({
                             active: this.flags.isset(BACK_GROUND) ? false : true,
@@ -198,7 +198,7 @@ class DragActions {
 const actions = new DragActions()
 
 
-function loadUserOptionFromBrowser(callback) {
+function loadUserOptionsFromBrowser(callback) {
     if (browser.storage) {
         let promise = browser.storage.sync.get('option');
         promise.then((d) => {
@@ -209,18 +209,28 @@ function loadUserOptionFromBrowser(callback) {
                         m[act][dir] = new FlagsClass(m[act][dir].f);
                     }
                 }
-                userOption = m;
+                userOptions = m;
             }
             callback ? callback() : null;
         })
     }
 }
 
+function loadUserOptionsFromBackUp(raw_json) {
+    let m = JSON.parse(raw_json);
+    if (m.textAction) {
+        for (let act in m) {
+            for (let dir in m[act]) {
+                m[act][dir] = new FlagsClass(m[act][dir].f);
+            }
+        }
+        userOptions = m;
+    }
+}
 
-function saveUserOption() {
-    IS_I_CHANGE = true;
+function saveUserOptions() {
     browser.storage.sync.set({
-        option: JSON.stringify(userOption)
+        option: JSON.stringify(userOptions)
     });
 }
 
@@ -232,8 +242,8 @@ browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
 });
 
-browser.runtime.onMessage.addListener((m)=>{
+browser.runtime.onMessage.addListener((m) => {
     actions.DO(m);
 });
 
-loadUserOptionFromBrowser();
+loadUserOptionsFromBrowser();

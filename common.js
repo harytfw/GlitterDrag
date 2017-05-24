@@ -176,9 +176,3 @@ const EMPTY_OPTION = {
 }
 
 
-
-// browser.storage.onChanged.addListener((changes) => {
-//     if (!IS_I_CHANGE) {
-//         userOption = constructOption(JSON.parse(changes.newValue.option));
-//     }
-// });

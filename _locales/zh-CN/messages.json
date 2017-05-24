@@ -1,0 +1,14 @@
+{
+    "extensionDescription":{
+        "message":"一个拖拽扩展，可以拖拽文字、链接、图像，可以非常方便的在前台或后台打开标签页",
+        "description":"扩展的描述"
+    },
+    "extensionName":{
+        "message":"闪耀拖拽",
+        "description":"扩展的名称"
+    },
+    "browserActionTitle":{
+        "message":"闪耀拖拽 选项",
+        "descript":"浏览器工具栏按钮显示的标题"
+    }
+}
