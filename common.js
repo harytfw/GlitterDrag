@@ -179,8 +179,29 @@ const EMPTY_OPTION = {
     }
 }
 
-const DEFAULT_SEARCH_ENGINES = {
+//搜索引擎的名称应该是唯一的
+const DEFAULT_SEARCH_ENGINES_TEMPLATE = {
     "百度":"",
     "Google":"",
     "Bing":""
 }
+
+//仅作为结构参考和说明，不要使用它
+const SAMPLE_CUSTOMIZED_SEARCH = {
+    //若textAction等动作的键值不存在，调用默认搜索
+    textAction:{
+        //DIR_D:这个键值就是一个搜索的地址
+        DIR_D:DEFAULT_SEARCH_ENGINES_TEMPLATE["百度"]
+        //若对应方向不存在，调用默认搜索
+    },
+    linkAction:{
+        DIR_D:DEFAULT_SEARCH_ENGINES_TEMPLATE["Bing"]
+    },
+    imageAction:{
+        DIR_D:DEFAULT_SEARCH_ENGINES_TEMPLATE["Bing"]
+    }
+}
+/**
+ * 要添加自定义搜索引擎，首先要添加一个搜索模板，然后在具体的选项页修改调用的搜索引擎
+ */
+

@@ -109,7 +109,7 @@ function onChange(event) {
             break;
     }
 
-    backgroundPage.updateUserOptions(key,input.name,input.value);
+    backgroundPage.updateUserActionOptions(key,input.name,input.value);
 }
 
 function initForm() {
@@ -133,7 +133,7 @@ function initForm() {
         }
         for (let row of form.querySelectorAll(".row")) {
             let input = row.querySelector("input");
-            let flags = backgroundPage.userOptions[key][input.name];
+            let flags = backgroundPage.userActionOptions[key][input.name];
             input.value = flags.f;
             for (let select of row.querySelectorAll("select")) {
                 for (let opt of select.querySelectorAll("option")) {

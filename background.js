@@ -215,11 +215,18 @@ function tryAssignValue(result) {
 
 }
 
+function collectOptions() {
+    return {
+        actionOptions: userActionOptions,
+        enableSync: enableSync,
+        userCustomizedSearch: userCustomizedSearch,
+    }
+}
 
 
 function loadUserOptions(callback) {
     let storageArea = enableSync ? browser.storage.sync : browser.storage.local;
-    let promise = storageArea.get(['actionOptions', 'enableSync',"userCustomizedSearch"]);
+    let promise = storageArea.get(['actionOptions', 'enableSync', "userCustomizedSearch"]);
     promise.then((result) => {
         tryAssignValue(result);
 
@@ -230,22 +237,14 @@ function loadUserOptions(callback) {
 
 function saveUserOptions(callback) {
     let storageArea = enableSync ? browser.storage.sync : browser.storage.local;
-    storageArea.set({
-        actionOptions: userActionOptions,
-        enableSync: enableSync,
-        userCustomizedSearch: userCustomizedSearch,
-    });
+    storageArea.set(collectOptions());
     callback ? callback() : null;
 }
 
 
 
 function convertOptionsToJson() {
-    return JSON.stringify({
-        actionOptions: userActionOptions,
-        enableSync: enableSync,
-        userCustomizedSearch: userCustomizedSearch,
-    }, null, 2)
+    return JSON.stringify(collectOptions(), null, 2)
 }
 
 
@@ -273,7 +272,7 @@ function loadDefaultOptions() {
     saveUserOptions();
 }
 
-function updateUserOptions(act, dir, value) {
+function updateUserActionOptions(act, dir, value) {
     userActionOptions[act][dir].clear_self_set(parseInt(value));
     saveUserOptions();
 }
