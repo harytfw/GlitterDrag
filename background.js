@@ -1,6 +1,6 @@
 
-var userOptions = {};
-var userSearchEngines = {};
+var userActionOptions = {};
+var userCustomizedSearch = {};
 var enableSync = false;
 
 
@@ -52,15 +52,15 @@ class DragActions {
         let typeAction = EMPTY_OPTION.noAction;
 
         if (this.type === TYPE_TEXT_URL || this.type == TYPE_ELEM_A) {
-            typeAction = userOptions.linkAction;
+            typeAction = userActionOptions.linkAction;
         }
 
         else if (this.type === TYPE_TEXT || this.type === TYPE_ELEM) {
-            typeAction = userOptions.textAction;
+            typeAction = userActionOptions.textAction;
         }
 
         else if (this.type === TYPE_ELEM_IMG) {
-            typeAction = userOptions.imageAction;
+            typeAction = userActionOptions.imageAction;
         }
         else {
 
@@ -199,78 +199,86 @@ class DragActions {
 
 const actions = new DragActions()
 
-function jsonParser(key,value){
-    return v;
+
+function tryAssignValue(result) {
+    if (result.hasOwnProperty("enableSync")) {
+        enableSync = result.enableSync;
+    }
+
+    if (result.hasOwnProperty("userActionOptions")) {
+        userActionOptions = initActionOptions(resutl.userActionOptions);
+    }
+
+    if (result.hasOwnProperty("userCustomizedSearch")) {
+        userCustomizedSearch = result.userCustomizedSearch;
+    }
+
 }
 
 
 
 function loadUserOptions(callback) {
     let storageArea = enableSync ? browser.storage.sync : browser.storage.local;
-    let promise = storageArea.get(['actionOptions', 'enableSync']);
+    let promise = storageArea.get(['actionOptions', 'enableSync',"userCustomizedSearch"]);
     promise.then((result) => {
-        if (!result.hasOwnProperty("enableSync")) {
-            userOptions=DEFAULT_OPTIONS;
-            enableSync = false;
-        }
-        else {
-            userOptions = result.actionOptions;
-            for (let act in userOptions) {
-                for (let dir in userOptions[act]) {
-                    userOptions[act][dir] = new FlagsClass(userOptions[act][dir].f);
-                }
-            }
-            enableSync = result.enableSync;
-        }
-        callback?callback():null;
+        tryAssignValue(result);
+
+        callback ? callback() : null;
     });
 }
 
 
-function loadUserOptionsFromBackUp(raw_json = "", save_after = true) {
-    if (raw_json.length === 0) return;
-    let result = JSON.parse(raw_json,jsonParser);
-    if (result.hasOwnProperty("enableSync")) {
-        userOptions = result.actionOptions;
-        for (let act in userOptions) {
-            for (let dir in userOptions[act]) {
-                userOptions[act][dir] = new FlagsClass(userOptions[act][dir].f);
-            }
-        }
-
-        enableSync = result.enableSync;
-        saveUserOptions();
-    }
-}
-
-function loadDefaultOptions(){
-    userOptions = DEFAULT_OPTIONS;
-    saveUserOptions();
-}
-
 function saveUserOptions(callback) {
-
     let storageArea = enableSync ? browser.storage.sync : browser.storage.local;
     storageArea.set({
-        actionOptions: userOptions,
+        actionOptions: userActionOptions,
         enableSync: enableSync,
+        userCustomizedSearch: userCustomizedSearch,
     });
     callback ? callback() : null;
 }
 
 
-function updateUserOptions(act,dir,value){
-    userOptions[act][dir].clear_self_set(parseInt(value));
+
+function convertOptionsToJson() {
+    return JSON.stringify({
+        actionOptions: userActionOptions,
+        enableSync: enableSync,
+        userCustomizedSearch: userCustomizedSearch,
+    }, null, 2)
+}
+
+
+
+
+
+function initActionOptions(raw_act) {
+    for (let act in raw_act) {
+        for (let dir in raw_act[act]) {
+            raw_act[act][dir] = new FlagsClass(raw_act[act][dir].f);
+        }
+    }
+    return raw_act;
+}
+
+
+function loadUserOptionsFromBackUp(raw_json = "", save_after = true) {
+    if (raw_json.length === 0) return;
+    let result = JSON.parse(raw_json, jsonParser);
+    tryAssignValue(result);
+}
+
+function loadDefaultOptions() {
+    userActionOptions = DEFAULT_OPTIONS;
+    saveUserOptions();
+}
+
+function updateUserOptions(act, dir, value) {
+    userActionOptions[act][dir].clear_self_set(parseInt(value));
     saveUserOptions();
 }
 
 
-function convertOptionsToJson(){
-    return JSON.stringify({
-        actionOptions:userOptions,
-        enableSync:enableSync
-    },null,2)
-}
 
 browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();

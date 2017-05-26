@@ -124,33 +124,10 @@ class FlagsClass {
     }
 }
 
-class SearchClass {
-    constructor(prop = { url="", name="" }) {
-        this.searchURL = prop.url;
-        this.name = prop.name;
-        this.wildCard = "%s";
-    }
-    buildURL(kw) {
-        return this.searchURL.replace(this.wildCard, kw);
-    }
-}
 
-const SEARCH_BAIDU = new SearchClass({
-    url: "https://www.baidu.com/s?wd=$s"
-});
 
-const SEARCH_GOOGLE = new SearchClass({
+function buildSearchSearch(props={url:"",kw:""}){
 
-})
-
-const SEARCH_BING = new SearchClass({
-
-})
-
-var DEFAULT_SEARCH_ENGINES = {
-    "百度":SEARCH_BAIDU,
-    "Google":SEARCH_GOOGLE,
-    "Bing":SEARCH_BING
 }
 
 function checkDragTargetType(selection, target) {
@@ -202,4 +179,8 @@ const EMPTY_OPTION = {
     }
 }
 
-
+const DEFAULT_SEARCH_ENGINES = {
+    "百度":"",
+    "Google":"",
+    "Bing":""
+}
