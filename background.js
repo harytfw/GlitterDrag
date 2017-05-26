@@ -26,16 +26,15 @@ class SimulateTabs {
 }
 
 class DragActions {
-
     constructor() {
         this.data = {
             direction: DIR_U,
             selection: "",
             target: document || null
         };
+        this.searchTemplate = null;
         this.type = TYPE_TEXT;
         this.flags = null;
-
     }
 
     DO(x) {
@@ -67,6 +66,9 @@ class DragActions {
         }
 
         this.flags = typeAction[this.data.direction];
+        if (this.flags.isset(ACT_SEARCH)) {
+            this.searchTemplate = this.getSearchTemplate();
+        }
         this.execute();
 
         //清空
@@ -77,7 +79,20 @@ class DragActions {
         //     target: document || null
         // };
     }
+    getSearchTemplate() {
+        let name = "";
+        if (this.type === TYPE_TEXT_URL || this.type == TYPE_ELEM_A) name = "linkAction";
+        else if (this.type === TYPE_TEXT || this.type === TYPE_ELEM) name = "textAction";
+        else if (this.type === TYPE_ELEM_IMG) name = "imageAction";
 
+        if (userCustomizedSearch.hasOwnProperty(name)) {
+            if (userCustomizedSearch[name].hasOwnProperty(this.data.direction)) {
+                return userCustomizedSearch[name][this.data.direction];
+            }
+        }
+        //默认搜索
+        return DEFAULT_SEARCH_ENGINES_TEMPLATE["百度"];
+    }
     execute() {
         console.assert(this.flags instanceof FlagsClass);
         if (this.data.selection.length === 0) {
@@ -170,16 +185,16 @@ class DragActions {
         this.openTab(url)
     }
 
-    searchImage(url) {
-
-    }
-
     copyText(text) {
 
     }
 
     searchText(text) {
-        this.openURL("https://www.baidu.com/s?wd=" + text);
+        this.openURL(this.searchTemplate.replace("%s",text));
+    }
+
+    searchImage(url) {
+        this.openURL(this.searchTemplate.replace("%s",text));
     }
 
     downloadImage(url) {
