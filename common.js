@@ -46,8 +46,8 @@ const NEW_WINDOW = 1 << 18;//新窗口打开?
 
 
 const TAB_CUR = 1 << 19;//当前标签页
-const TAB_LEFT = 1 << 20;//新建标签页在最左边
-const TAB_RIGHT = 1 << 21;//最右边
+const TAB_FIRST = 1 << 20;//新建标签页在最左边
+const TAB_LAST = 1 << 21;//最右边
 const TAB_CLEFT = 1 << 22;//新建的标签页在当前标签页的左边
 const TAB_CRIGHT = 1 << 23;//右边
 
@@ -124,6 +124,34 @@ class FlagsClass {
     }
 }
 
+class SearchClass {
+    constructor(prop = { url="", name="" }) {
+        this.searchURL = prop.url;
+        this.name = prop.name;
+        this.wildCard = "%s";
+    }
+    buildURL(kw) {
+        return this.searchURL.replace(this.wildCard, kw);
+    }
+}
+
+const SEARCH_BAIDU = new SearchClass({
+    url: "https://www.baidu.com/s?wd=$s"
+});
+
+const SEARCH_GOOGLE = new SearchClass({
+
+})
+
+const SEARCH_BING = new SearchClass({
+
+})
+
+var DEFAULT_SEARCH_ENGINES = {
+    "百度":SEARCH_BAIDU,
+    "Google":SEARCH_GOOGLE,
+    "Bing":SEARCH_BING
+}
 
 function checkDragTargetType(selection, target) {
     if (selection && selection.length !== 0) {
@@ -145,7 +173,7 @@ function checkDragTargetType(selection, target) {
 }
 
 
-const DEFAULT_OPTION = {
+const DEFAULT_OPTIONS = {
     textAction: {
         DIR_U: new FlagsClass(ACT_SEARCH, FORE_GROUND),
         DIR_D: new FlagsClass(ACT_SEARCH, BACK_GROUND),
@@ -164,7 +192,6 @@ const DEFAULT_OPTION = {
         DIR_D: new FlagsClass(ACT_SEARCH, FORE_GROUND),
         DIR_L: new FlagsClass(),
         DIR_R: new FlagsClass()
-
     }
 }
 

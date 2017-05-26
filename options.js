@@ -18,8 +18,8 @@ let template_str0 = `
     <label>标签页位置：</label>
     <select>
         
-        <option class="TAB_RIGHT" value=${TAB_RIGHT}>最右边</option>
-        <option class="TAB_LEFT" value=${TAB_LEFT}>最左边</option>
+        <option class="TAB_RIGHT" value=${TAB_LAST}>尾</option>
+        <option class="TAB_LEFT" value=${TAB_FIRST}>首</option>
         <option class="TAB_CLEFT" value=${TAB_CLEFT}>当前标签页之前</option>
         <option class="TAB_CRIGHT" value=${TAB_CRIGHT}>当前标签页之后</option>
     </select>
@@ -109,8 +109,7 @@ function onChange(event) {
             break;
     }
 
-    backgroundPage.userOptions[key][input.name].clear_self_set(parseInt(input.value));
-    backgroundPage.saveUserOptions();
+    backgroundPage.updateUserOptions(key,input.name,input.value);
 }
 
 function initForm() {
@@ -154,7 +153,6 @@ fileReader.addEventListener("loadend", () => {
     try {
 
         backgroundPage.loadUserOptionsFromBackUp(fileReader.result);
-        backgroundPage.saveUserOptions();
         initForm();
     }
     catch(e){
@@ -164,12 +162,13 @@ fileReader.addEventListener("loadend", () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    backgroundPage.loadUserOptionsFromBrowser(() => {
+    backgroundPage.loadUserOptions(() => {
         initForm();
     })
 }, false);
 document.querySelector("#backup").addEventListener("click", (event) => {
-    event.target.setAttribute("href", "data:," + JSON.stringify(backgroundPage.userOptions));
+    let blob = new Blob([backgroundPage.convertOptionsToJson()],{type : 'application/json'});
+    event.target.setAttribute("href", URL.createObjectURL(blob));
     event.target.setAttribute("download","GlitterDrag"+new Date().getTime()+".json");
 });
 
@@ -179,8 +178,8 @@ document.querySelector("#restore").addEventListener("click", () => {
 
 
 document.querySelector("#default").addEventListener("click", () => {
-    backgroundPage.userOptions = DEFAULT_OPTION;
-    backgroundPage.saveUserOptions();
+
+    backgroundPage.loadDefaultOptions();
     initForm();
 });
 

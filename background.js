@@ -1,5 +1,7 @@
 
-var userOptions = DEFAULT_OPTION;
+var userOptions = {};
+var userSearchEngines = {};
+var enableSync = false;
 
 
 class SimulateTabs {
@@ -155,7 +157,7 @@ class DragActions {
                 (tabs) => {
                     browser.tabs.create({
                         active: this.flags.isset(BACK_GROUND) ? false : true,
-                        index: this.flags.isset(TAB_LEFT) ? 0 : tabs.length,
+                        index: this.flags.isset(TAB_FIRST) ? 0 : tabs.length,
                         url: url
                     })
                 }
@@ -197,46 +199,78 @@ class DragActions {
 
 const actions = new DragActions()
 
-
-function loadUserOptionsFromBrowser(callback) {
-    if (browser.storage) {
-        let promise = browser.storage.sync.get('option');
-        promise.then((d) => {
-            let m = JSON.parse(d.option);
-            if (m.textAction) {
-                for (let act in m) {
-                    for (let dir in m[act]) {
-                        m[act][dir] = new FlagsClass(m[act][dir].f);
-                    }
-                }
-                userOptions = m;
-            }
-            callback ? callback() : null;
-        })
-    }
+function jsonParser(key,value){
+    return v;
 }
 
-function loadUserOptionsFromBackUp(raw_json) {
-    let m = JSON.parse(raw_json);
-    if (m.textAction) {
-        for (let act in m) {
-            for (let dir in m[act]) {
-                m[act][dir] = new FlagsClass(m[act][dir].f);
-            }
+
+
+function loadUserOptions(callback) {
+    let storageArea = enableSync ? browser.storage.sync : browser.storage.local;
+    let promise = storageArea.get(['actionOptions', 'enableSync']);
+    promise.then((result) => {
+        if (!result.hasOwnProperty("enableSync")) {
+            userOptions=DEFAULT_OPTIONS;
+            enableSync = false;
         }
-        userOptions = m;
-    }
-}
-
-function saveUserOptions() {
-    browser.storage.sync.set({
-        option: JSON.stringify(userOptions)
+        else {
+            userOptions = result.actionOptions;
+            for (let act in userOptions) {
+                for (let dir in userOptions[act]) {
+                    userOptions[act][dir] = new FlagsClass(userOptions[act][dir].f);
+                }
+            }
+            enableSync = result.enableSync;
+        }
+        callback?callback():null;
     });
 }
 
 
+function loadUserOptionsFromBackUp(raw_json = "", save_after = true) {
+    if (raw_json.length === 0) return;
+    let result = JSON.parse(raw_json,jsonParser);
+    if (result.hasOwnProperty("enableSync")) {
+        userOptions = result.actionOptions;
+        for (let act in userOptions) {
+            for (let dir in userOptions[act]) {
+                userOptions[act][dir] = new FlagsClass(userOptions[act][dir].f);
+            }
+        }
+
+        enableSync = result.enableSync;
+        saveUserOptions();
+    }
+}
+
+function loadDefaultOptions(){
+    userOptions = DEFAULT_OPTIONS;
+    saveUserOptions();
+}
+
+function saveUserOptions(callback) {
+
+    let storageArea = enableSync ? browser.storage.sync : browser.storage.local;
+    storageArea.set({
+        actionOptions: userOptions,
+        enableSync: enableSync,
+    });
+    callback ? callback() : null;
+}
 
 
+function updateUserOptions(act,dir,value){
+    userOptions[act][dir].clear_self_set(parseInt(value));
+    saveUserOptions();
+}
+
+
+function convertOptionsToJson(){
+    return JSON.stringify({
+        actionOptions:userOptions,
+        enableSync:enableSync
+    },null,2)
+}
 
 browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
@@ -246,4 +280,4 @@ browser.runtime.onMessage.addListener((m) => {
     actions.DO(m);
 });
 
-loadUserOptionsFromBrowser();
+loadUserOptions();
