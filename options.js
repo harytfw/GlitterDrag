@@ -85,33 +85,34 @@ function resetDefault() {
 
 }
 
-function onChange(event) {
-    let form = event.target;
-    while (form.tagName !== "FORM") {
-        form = form.parentElement;
-    }
-    //                select fieldset      div@class=row input
-    let input = event.target.parentElement.parentElement.querySelector("input");
-    let select_list = input.parentElement.querySelectorAll("select");
-    input.value = parseInt(select_list[0].value) | parseInt(select_list[1].value) | parseInt(select_list[2].value);
-
-    let key = "linkAction";
-    switch (form.id) {
-        case "text":
-            key = "textAction";
-            break;
-        case "link":
-            key = "linkAction";
-            break;
-        case "image":
-            key = "imageAction";
-            break;
-    }
-
-    backgroundPage.updateUserActionOptions(key,input.name,input.value);
-}
-
 function initForm() {
+    function onChange(event) {
+        let form = event.target;
+        while (form.tagName !== "FORM") {
+            form = form.parentElement;
+        }
+        //                select fieldset      div@class=row input
+        let input = event.target.parentElement.parentElement.querySelector("input");
+        let select_list = input.parentElement.querySelectorAll("select");
+        input.value = parseInt(select_list[0].value) | parseInt(select_list[1].value) | parseInt(select_list[2].value);
+
+        let key = "linkAction";
+        switch (form.id) {
+            case "text":
+                key = "textAction";
+                break;
+            case "link":
+                key = "linkAction";
+                break;
+            case "image":
+                key = "imageAction";
+                break;
+        }
+
+        backgroundPage.updateUserActionOptions(key, input.name, input.value);
+    }
+
+
     document.querySelector("#content-1").innerHTML = template_str2;
     let list = document.querySelectorAll("select");
 
@@ -150,7 +151,9 @@ function initForm() {
     }
 }
 
-
+function initSearch(){
+    
+}
 
 
 let fileReader = new FileReader();
@@ -161,8 +164,8 @@ fileReader.addEventListener("loadend", () => {
         backgroundPage.loadUserOptionsFromBackUp(fileReader.result);
         initForm();
     }
-    catch(e){
-        console.error("在恢复用户配置时出现异常！",e);
+    catch (e) {
+        console.error("在恢复用户配置时出现异常！", e);
         alert("在恢复用户配置时出现异常！");
     }
 });
@@ -174,9 +177,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 }, false);
 document.querySelector("#backup").addEventListener("click", (event) => {
-    let blob = new Blob([backgroundPage.convertOptionsToJson()],{type : 'application/json'});
+    let blob = new Blob([backgroundPage.convertOptionsToJson()], { type: 'application/json' });
     event.target.setAttribute("href", URL.createObjectURL(blob));
-    event.target.setAttribute("download","GlitterDrag"+new Date().getTime()+".json");
+    event.target.setAttribute("download", "GlitterDrag" + new Date().getTime() + ".json");
 });
 
 document.querySelector("#restore").addEventListener("click", () => {
