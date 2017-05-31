@@ -52,7 +52,13 @@ const TAB_CLEFT = 1 << 22;//新建的标签页在当前标签页的左边
 const TAB_CRIGHT = 1 << 23;//右边
 
 // 24~31
-
+const FLAG_STRING_TABLE = {
+    "ACT_NONE": ACT_NONE, "ACT_OPEN": ACT_OPEN, "ACT_COPY": ACT_COPY,
+    "ACT_SEARCH": ACT_SEARCH, "ACT_TRANS": ACT_TRANS, "ACT_DL": ACT_DL, "ACT_QRCODE": ACT_QRCODE,
+    "KEY_CTRL": KEY_CTRL, "KEY_SHIFT": KEY_SHIFT, "FORE_GROUND": FORE_GROUND, "BACK_GROUND": BACK_GROUND,
+    "NEW_WINDOW": NEW_WINDOW, "TAB_CUR": TAB_CUR, "TAB_FIRST": TAB_FIRST, "TAB_LAST": TAB_LAST,
+    "TAB_CLEFT": TAB_CLEFT, "TAB_CRIGHT": TAB_CRIGHT
+}
 
 class FlagsClass {
     constructor(...in_flags) {
@@ -65,11 +71,15 @@ class FlagsClass {
             this.set(ACT_NONE);
         }
     }
-    bitArray() {
 
-    }
     toString() {
-
+        let w = [];
+        for(let k of Object.keys(FLAG_STRING_TABLE)){
+            if(this.isset(FLAG_STRING_TABLE[k])){
+                w.push(k);
+            }
+        }
+        return w.join("|");
     }
     //设置标志位
 
@@ -126,7 +136,7 @@ class FlagsClass {
 
 
 
-function buildSearchSearch(props={url:"",kw:""}){
+function buildSearchSearch(props = { url: "", kw: "" }) {
 
 }
 
@@ -179,26 +189,26 @@ const EMPTY_OPTION = {
     }
 }
 
-//搜索引擎的名称应该是唯一的
+//搜索引擎的名称应该是唯一的，不过用户定义的模板会覆盖默认模板
 const DEFAULT_SEARCH_TEMPLATE = {
-    "百度":"http://www.baidu.com/s?wd=%s",
-    "Google":"",
-    "Bing":""
+    "百度": "http://www.baidu.com/s?wd=%s",
+    "Google": "",
+    "Bing": ""
 }
 
 //仅作为结构参考和说明，不要使用它
 const SAMPLE_CUSTOMIZED_SEARCH = {
     //若textAction等动作的键值不存在，调用默认搜索
-    textAction:{
+    textAction: {
         //DIR_D:这个键值就是一个搜索的地址
-        DIR_D:DEFAULT_SEARCH_TEMPLATE["百度"]
+        DIR_D: DEFAULT_SEARCH_TEMPLATE["百度"]
         //若对应方向不存在，调用默认搜索
     },
-    linkAction:{
-        DIR_D:DEFAULT_SEARCH_TEMPLATE["Bing"]
+    linkAction: {
+        DIR_D: DEFAULT_SEARCH_TEMPLATE["Bing"]
     },
-    imageAction:{
-        DIR_D:DEFAULT_SEARCH_TEMPLATE["Bing"]
+    imageAction: {
+        DIR_D: DEFAULT_SEARCH_TEMPLATE["Bing"]
     }
 }
 /**

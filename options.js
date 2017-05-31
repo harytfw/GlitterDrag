@@ -152,6 +152,7 @@ function initForm() {
 }
 
 function initSearch(){
+    let contentElem = document.querySelector("#content-2");
     
 }
 
