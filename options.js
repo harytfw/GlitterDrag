@@ -72,7 +72,6 @@ browser.runtime.getBackgroundPage().then((page) => {
     backgroundPage = page;
 }, () => { });
 
-
 function backup() {
 
 }
@@ -153,7 +152,7 @@ function initForm() {
 
 function initSearch(){
     let contentElem = document.querySelector("#content-2");
-    
+
 }
 
 
@@ -199,3 +198,5 @@ document.querySelector("#fileInput").addEventListener("change", (event) => {
 });
 
 initTabsPage();
+
+

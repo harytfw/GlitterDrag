@@ -1,9 +1,12 @@
+body{}
+
 #container form {
     margin-bottom: 15px;
 }
 
 select {
     margin-right: 15px;
+    
 }
 
 label {
@@ -45,6 +48,7 @@ label {
     font-size: 16px;
     margin-right: 4px;
     padding: 4px 4px 0px 4px;
+    transition: background-color 0.5s;
 }
 
 .nav-active{
@@ -67,4 +71,5 @@ label {
     height:0px;
     width: 0px;
     opacity: 0;
+    transition: visibility 0s, opacity 0.5s linear;
 }

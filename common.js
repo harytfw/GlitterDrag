@@ -60,6 +60,8 @@ const FLAG_STRING_TABLE = {
     "TAB_CLEFT": TAB_CLEFT, "TAB_CRIGHT": TAB_CRIGHT
 }
 
+const _DEBUG = true;
+
 class FlagsClass {
     constructor(...in_flags) {
 
