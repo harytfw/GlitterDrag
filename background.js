@@ -1,6 +1,7 @@
 
 var userActionOptions = {};
 var userCustomizedSearch = {};
+var userSearchTemplate = {};
 var enableSync = false;
 
 
@@ -91,7 +92,7 @@ class DragActions {
             }
         }
         //默认搜索
-        return DEFAULT_SEARCH_ENGINES_TEMPLATE["百度"];
+        return DEFAULT_SEARCH_TEMPLATE["百度"];
     }
     execute() {
         console.assert(this.flags instanceof FlagsClass);
@@ -215,36 +216,53 @@ class DragActions {
 const actions = new DragActions()
 
 
+
+function initActionOptions(raw_act) {
+    for (let act in raw_act) {
+        for (let dir in raw_act[act]) {
+            raw_act[act][dir] = new FlagsClass(raw_act[act][dir].f);
+        }
+    }
+    return raw_act;
+}
+
+
 function tryAssignValue(result) {
     if (result.hasOwnProperty("enableSync")) {
         enableSync = result.enableSync;
     }
 
     if (result.hasOwnProperty("userActionOptions")) {
-        userActionOptions = initActionOptions(resutl.userActionOptions);
+        userActionOptions = initActionOptions(result.userActionOptions);
     }
 
     if (result.hasOwnProperty("userCustomizedSearch")) {
         userCustomizedSearch = result.userCustomizedSearch;
     }
 
+    if(result.hasOwnProperty("userSearchTemplate")){
+        //https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+        //第3个对象的属性会覆盖第2个
+        Object.assign(userSearchTemplate,result.userSearchTemplate,DEFAULT_SEARCH_TEMPLATE)
+    }
+
 }
 
 function collectOptions() {
     return {
-        actionOptions: userActionOptions,
+        userActionOptions: userActionOptions,
         enableSync: enableSync,
         userCustomizedSearch: userCustomizedSearch,
+        userSearchTemplate:userSearchTemplate
     }
 }
 
 
 function loadUserOptions(callback) {
     let storageArea = enableSync ? browser.storage.sync : browser.storage.local;
-    let promise = storageArea.get(['actionOptions', 'enableSync', "userCustomizedSearch"]);
+    let promise = storageArea.get();
     promise.then((result) => {
         tryAssignValue(result);
-
         callback ? callback() : null;
     });
 }
@@ -260,19 +278,6 @@ function saveUserOptions(callback) {
 
 function convertOptionsToJson() {
     return JSON.stringify(collectOptions(), null, 2)
-}
-
-
-
-
-
-function initActionOptions(raw_act) {
-    for (let act in raw_act) {
-        for (let dir in raw_act[act]) {
-            raw_act[act][dir] = new FlagsClass(raw_act[act][dir].f);
-        }
-    }
-    return raw_act;
 }
 
 

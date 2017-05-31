@@ -1,0 +1,70 @@
+#container form {
+    margin-bottom: 15px;
+}
+
+select {
+    margin-right: 15px;
+}
+
+label {
+    display: inline;
+}
+
+.row fieldset {
+    display: inline-block;
+}
+
+.row {
+    display: inline-block;
+    margin-bottom: 10px;
+    width: 20%;
+}
+
+
+#backup,#restore,#default {
+    cursor: pointer;
+    appearance: button;
+    -moz-appearance: button;
+    -webkit-appearance: button;
+    text-decoration: none;
+    font: inherit;
+    color: ButtonText;
+    display: inline-block;
+    padding: 2px 8px;
+}
+
+#tabs nav{
+    border-bottom: 1px solid #c1c1c1;
+}
+.nav-a {
+    text-decoration: none;
+    border: 1px solid #c1c1c1;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    color: #2B2B2B;
+    font-size: 16px;
+    margin-right: 4px;
+    padding: 4px 4px 0px 4px;
+}
+
+.nav-active{
+    color: #555;
+    cursor: default;
+    background-color: #fff;
+    border-bottom-color: transparent;
+}
+
+.tab-active{
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: initial !important;
+    width: initial !important;
+}
+
+
+.tab-content{
+    visibility: hidden;
+    height:0px;
+    width: 0px;
+    opacity: 0;
+}

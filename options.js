@@ -17,7 +17,6 @@ let template_str0 = `
     </select>
     <label>标签页位置：</label>
     <select>
-        
         <option class="TAB_RIGHT" value=${TAB_LAST}>尾</option>
         <option class="TAB_LEFT" value=${TAB_FIRST}>首</option>
         <option class="TAB_CLEFT" value=${TAB_CLEFT}>当前标签页之前</option>
@@ -113,11 +112,15 @@ function onChange(event) {
 }
 
 function initForm() {
-    document.getElementById("container").innerHTML = template_str2;
+    document.querySelector("#content-1").innerHTML = template_str2;
     let list = document.querySelectorAll("select");
+
+
+
     for (let elem of list) {
         elem.addEventListener("change", onChange);
     }
+
     for (let form of document.querySelectorAll("form")) {
         let key = "linkAction";
         switch (form.id) {
@@ -147,6 +150,9 @@ function initForm() {
     }
 }
 
+
+
+
 let fileReader = new FileReader();
 
 fileReader.addEventListener("loadend", () => {
@@ -164,7 +170,8 @@ fileReader.addEventListener("loadend", () => {
 document.addEventListener('DOMContentLoaded', () => {
     backgroundPage.loadUserOptions(() => {
         initForm();
-    })
+    });
+
 }, false);
 document.querySelector("#backup").addEventListener("click", (event) => {
     let blob = new Blob([backgroundPage.convertOptionsToJson()],{type : 'application/json'});
@@ -186,3 +193,5 @@ document.querySelector("#default").addEventListener("click", () => {
 document.querySelector("#fileInput").addEventListener("change", (event) => {
     fileReader.readAsText(event.target.files[0])
 });
+
+initTabsPage();
