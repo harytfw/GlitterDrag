@@ -19,8 +19,8 @@ let template_str0 = `
     <select>
         <option class="TAB_RIGHT" value=${TAB_LAST}>尾</option>
         <option class="TAB_LEFT" value=${TAB_FIRST}>首</option>
-        <option class="TAB_CLEFT" value=${TAB_CLEFT}>当前标签页之前</option>
-        <option class="TAB_CRIGHT" value=${TAB_CRIGHT}>当前标签页之后</option>
+        <option class="TAB_CLEFT" value=${TAB_CLEFT}>前</option>
+        <option class="TAB_CRIGHT" value=${TAB_CRIGHT}>后</option>
     </select>
   </fieldset>
 `;
@@ -150,9 +150,39 @@ function initForm() {
     }
 }
 
-function initSearch(){
-    let contentElem = document.querySelector("#content-2");
+function initSearchTemplate(){
+    let container = $E("#container-template");
 
+    function updatePage(){
+        
+    }
+
+    function generateWrapper(name="",template=""){
+        let div = document.createElement("div")
+        div.innerHTML = `<p>${name}</p><p>${template}</p>`;
+        return div;
+    }
+
+
+    function onDoubleClick(event){
+        let elem = event.target;
+        if(elem.tagName=="TD"){
+            
+        }
+    }
+
+    function onBlur(event){
+
+    }
+
+    function onButtonClick(){
+
+    }
+    container.addEventListener("dblclick",onDoubleClick);
+    container.addEventListener("blur",onBlur);
+    $E("#template-add").addEventListener("click",onButtonClick);
+    $E("#template-save").addEventListener("click",onButtonClick);
+    updatePage();
 }
 
 

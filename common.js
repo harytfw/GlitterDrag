@@ -62,6 +62,15 @@ const FLAG_STRING_TABLE = {
 
 const _DEBUG = true;
 
+
+function $E(s=""){
+    let r = document.querySelector(s);
+    if(!r){
+        console.error("document.querySelector:", s)
+    }
+    return r;
+}
+
 class FlagsClass {
     constructor(...in_flags) {
 
@@ -72,6 +81,8 @@ class FlagsClass {
         else {
             this.set(ACT_NONE);
         }
+        this.searchTemplateName = "";
+        //???????
     }
 
     toString() {
@@ -202,7 +213,7 @@ const DEFAULT_SEARCH_TEMPLATE = {
 const SAMPLE_CUSTOMIZED_SEARCH = {
     //若textAction等动作的键值不存在，调用默认搜索
     textAction: {
-        //DIR_D:这个键值就是一个搜索的地址
+        //DIR_D:这个键值就是一个搜索模板
         DIR_D: DEFAULT_SEARCH_TEMPLATE["百度"]
         //若对应方向不存在，调用默认搜索
     },

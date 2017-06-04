@@ -67,9 +67,6 @@ class DragActions {
         }
 
         this.flags = typeAction[this.data.direction];
-        if (this.flags.isset(ACT_SEARCH)) {
-            this.searchTemplate = this.getSearchTemplate();
-        }
         this.execute();
 
         //清空
@@ -118,6 +115,7 @@ class DragActions {
         }
 
         else if (this.flags.isset(ACT_SEARCH)) {
+            this.searchTemplate = this.getSearchTemplate();
             if (this.type === TYPE_TEXT) {
                 this.searchText(this.data.selection);
             }
@@ -135,7 +133,7 @@ class DragActions {
         }
     }
 
-
+    
 
 
     openTab(url) {
