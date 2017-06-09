@@ -3,7 +3,8 @@ var userActionOptions = {};
 var userCustomizedSearch = {};
 var userSearchTemplate = {};
 var enableSync = false;
-
+var allowTopDomains = [];//顶级域名，如cn com org net
+var enableAnimation = false;//启用动画
 
 class SimulateTabs {
     constructor() {
@@ -251,7 +252,9 @@ function collectOptions() {
         userActionOptions: userActionOptions,
         enableSync: enableSync,
         userCustomizedSearch: userCustomizedSearch,
-        userSearchTemplate:userSearchTemplate
+        userSearchTemplate:userSearchTemplate,
+        allowTopDomains:allowTopDomains,
+        enableAnimation:enableAnimation
     }
 }
 

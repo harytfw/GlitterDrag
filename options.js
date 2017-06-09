@@ -1,27 +1,33 @@
 let template_str0 = `
 <fieldset>
-    <label>动作：</label>
-    <select>
-        <option class="ACT_NONE" value=${ACT_NONE}>无动作</option>
-        <option class="ACT_OPEN" value=${ACT_OPEN}>直接打开</option>
-        <option class="ACT_SEARCH" value=${ACT_SEARCH}>搜索</option>
-        <option class="ACT_COPY" value=${ACT_COPY} disabled="disabled">复制</option>
-        <option class="ACT_TRANS" value=${ACT_TRANS} disabled="disabled" >翻译</option>
-        <option class="ACT_DL" value=${ACT_DL} disabled="disabled">下载</option>
-        <option class="ACT_QRCODE" value=${ACT_QRCODE} disabled="disabled">二维码</option>
-    </select>
-    <label>打开标签方式：</label>
-    <select>
-        <option class="FORE_GROUND" value=${FORE_GROUND}>前台</option>
-        <option class="BACK_GROUND" value=${BACK_GROUND}>后台</option>
-    </select>
-    <label>标签页位置：</label>
-    <select>
-        <option class="TAB_RIGHT" value=${TAB_LAST}>尾</option>
-        <option class="TAB_LEFT" value=${TAB_FIRST}>首</option>
-        <option class="TAB_CLEFT" value=${TAB_CLEFT}>前</option>
-        <option class="TAB_CRIGHT" value=${TAB_CRIGHT}>后</option>
-    </select>
+    <div class="tooltip">
+
+        <select title="执行的动作">
+            <option class="ACT_NONE" value=${ACT_NONE}>无动作</option>
+            <option class="ACT_OPEN" value=${ACT_OPEN}>直接打开</option>
+            <option class="ACT_SEARCH" value=${ACT_SEARCH}>搜索</option>
+            <option class="ACT_COPY" value=${ACT_COPY} disabled="disabled">复制</option>
+            <option class="ACT_TRANS" value=${ACT_TRANS} disabled="disabled" >翻译</option>
+            <option class="ACT_DL" value=${ACT_DL} disabled="disabled">下载</option>
+            <option class="ACT_QRCODE" value=${ACT_QRCODE} disabled="disabled">二维码</option>
+        </select>
+    </div>
+    <div class="tooltip">
+        <span class="tooltiptext">打开的方式</span>
+        <select class="tooltip">
+            <option class="FORE_GROUND" value=${FORE_GROUND}>前台</option>
+            <option class="BACK_GROUND" value=${BACK_GROUND}>后台</option>
+        </select>
+    </div>
+    <div class="tooltip">
+        <span class="tooltiptext">标签页位置</span>
+        <select class="tooltip">
+            <option class="TAB_RIGHT" value=${TAB_LAST}>尾</option>
+            <option class="TAB_LEFT" value=${TAB_FIRST}>首</option>
+            <option class="TAB_CLEFT" value=${TAB_CLEFT}>前</option>
+            <option class="TAB_CRIGHT" value=${TAB_CRIGHT}>后</option>
+        </select>
+    </div>
   </fieldset>
 `;
 //<!-- <option class="TAB_CUR" value=${TAB_CUR}>当前标签页</option> -->
@@ -70,6 +76,9 @@ let template_str2 = `
 let backgroundPage = null;
 browser.runtime.getBackgroundPage().then((page) => {
     backgroundPage = page;
+    if (backgroundPage.enableAnimation) {
+
+    }
 }, () => { });
 
 function backup() {
@@ -150,39 +159,46 @@ function initForm() {
     }
 }
 
-function initSearchTemplate(){
-    let container = $E("#container-template");
+function initSearchTemplateTab() {
+    function update() {
+        let templateObj = backgroundPage.userSearchTemplate;
+        for(let name of Object.keys(templateObj)){
+            let box = generateBox(name,templateObj[name]);
 
-    function updatePage(){
-        
+            container.appendChild(box)
+        }
     }
 
-    function generateWrapper(name="",template=""){
+    function generateBox(name = "", template = "") {
         let div = document.createElement("div")
-        div.innerHTML = `<p>${name}</p><p>${template}</p>`;
+        div.innerHTML = `<p class="search-name">${name}</p><input class="edit-name"></input>
+        <p class="search-template">${template}</p><input class="edit-template"></input>`;
         return div;
     }
 
 
-    function onDoubleClick(event){
+    function onDoubleClick(event) {
         let elem = event.target;
-        if(elem.tagName=="TD"){
-            
-        }
+        console.log("dbclcikc")
     }
 
-    function onBlur(event){
-
+    function onBlur(event) {
+        console.log("blur!!!!");
     }
 
-    function onButtonClick(){
-
+    function onButtonClick() {
+        console.log("btn click");
     }
-    container.addEventListener("dblclick",onDoubleClick);
-    container.addEventListener("blur",onBlur);
-    $E("#template-add").addEventListener("click",onButtonClick);
-    $E("#template-save").addEventListener("click",onButtonClick);
-    updatePage();
+    
+    let container = $E("#container-search");
+    for(let removeTarget of container.querySelectorAll("div")){
+        container.removeChild(removeTarget);
+    }
+    container.addEventListener("dblclick", onDoubleClick);
+    container.addEventListener("blur", onBlur);
+    $E("#template-add").addEventListener("click", onButtonClick);
+    $E("#template-save").addEventListener("click", onButtonClick);
+    update();
 }
 
 

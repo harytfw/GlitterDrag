@@ -20,7 +20,7 @@ label {
 .row {
     display: inline-block;
     margin-bottom: 10px;
-    width: 20%;
+    width: 270px;
 }
 
 
@@ -48,7 +48,7 @@ label {
     font-size: 16px;
     margin-right: 4px;
     padding: 4px 4px 0px 4px;
-    transition: background-color 0.5s;
+    /*transition: background-color 0.5s;*/
 }
 
 .nav-active{
@@ -71,5 +71,15 @@ label {
     height:0px;
     width: 0px;
     opacity: 0;
-    transition: visibility 0s, opacity 0.5s linear;
+    /*transition: visibility 0s, opacity 0.5s linear;*/
+}
+
+#container-search > div{
+    border: 1px solid royalblue;
+    width: 20%;
+    margin-left: 10px;
+    display: inline-block;
+}
+#container-search input{
+    display: none;
 }

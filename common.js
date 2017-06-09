@@ -1,4 +1,5 @@
 const urlPattern = /^(https?:\/\/)?((\w|-)*\.){0,3}((\w|-)+)\.(com|net|org|gov|edu|mil|biz|cc|info|fm|mobi|tv|ag|am|asia|at|au|be|br|bz|ca|cn|co|de|do|ee|es|eu|fr|gd|gl|gs|im|in|it|jp|la|ly|me|mp|ms|mx|nl|pe|ph|ru|se|so|tk|to|tt|tw|us|uk|ws|xxx)(\/(\w|%|&|-|_|\||\?|\.|=|\/|#|~|!|\+|,|\*|@)*)?$/i
+//from superdrag   https://addons.mozilla.org/en-US/firefox/addon/super-drag/
 
 const TYPE_UNKNOWN = -1;//未知类型
 const TYPE_TEXT = 0; //文本,包含普通文本、链接
@@ -81,7 +82,7 @@ class FlagsClass {
         else {
             this.set(ACT_NONE);
         }
-        this.searchTemplateName = "";
+        // this.searchTemplateName = "";
         //???????
     }
 

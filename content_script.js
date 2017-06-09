@@ -1,5 +1,58 @@
 
+// function getAngle(point1 = { x: 0, y: 0 }, point2 = { x: 0, y: 0 }) {
+//     const distance = Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
+//     //屏幕的坐标从左上角开始计算
+//     const sin = (point1.y - point2.y) / distance;
+//     const cos = (point2.x - point1.x) / distance;
+//     let rad = Math.abs(Math.asin(sin));
+//     //0~180
+//     if (sin >= 0 && sin <= 1) {
+//         // rad = Math.asin(sin);
+//         // 小于90度
+//         // if (cos >= 0) {
+//         //     rad = Math.asin(sin);
+//         // }
+//         //大于90度
+//         if (cos < 0) {
+//             rad = rad + Math.PI / 2;
+//             // 小于135度
+//             // if (sin >= sin135) {
+//             //     //90~135
+//             //     return DIR_U;
+//             // }
+//             // //135-180
+//             // return DIR_L;
+//         }
+//     }
+//     //180-360
+//     else if (sin < 0 && sin >= -1) {
+//         rad = rad + Math.PI;
+//         //大于270
+//         if (cos >= 0) {
+//             rad = rad + Math.PI / 2;
+//             //大于315度
+//             // if (sin >= sin315) {
+//             //     //315~360
+//             //     return DIR_R;
+//             // }
+//             // //270-315   
+//             // return DIR_D;
+//         }
+//         //小于270
+//         // else if (cos < 0) {
+//         //     //小于225度
+//         //     if (sin >= sin225) {
+//         //         //180~225
+//         //         return DIR_L;
+//         //     }
+//         //     //225~270
+//         //     return DIR_D;
+//         // }
 
+//     }
+//     let ang = rad * 180 / Math.PI;
+//     return ang;
+// }
 
 class DragClass {
 
@@ -73,6 +126,7 @@ class DragClass {
             this.post();
         }
     }
+
     getDirection() {
         const m = Math.sqrt(Math.pow(this.startPos.x - this.endPos.x, 2) + Math.pow(this.startPos.y - this.endPos.y, 2));
         //屏幕的坐标从左上角开始计算
