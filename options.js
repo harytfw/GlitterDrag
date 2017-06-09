@@ -1,6 +1,6 @@
 let template_str0 = `
 <fieldset>
-    <div class="tooltip">
+    <div>
 
         <select title="执行的动作">
             <option class="ACT_NONE" value=${ACT_NONE}>无动作</option>
@@ -12,16 +12,14 @@ let template_str0 = `
             <option class="ACT_QRCODE" value=${ACT_QRCODE} disabled="disabled">二维码</option>
         </select>
     </div>
-    <div class="tooltip">
-        <span class="tooltiptext">打开的方式</span>
-        <select class="tooltip">
+    <div>
+        <select title="打开的方式">
             <option class="FORE_GROUND" value=${FORE_GROUND}>前台</option>
             <option class="BACK_GROUND" value=${BACK_GROUND}>后台</option>
         </select>
     </div>
-    <div class="tooltip">
-        <span class="tooltiptext">标签页位置</span>
-        <select class="tooltip">
+    <div>
+        <select title="标签页位置">
             <option class="TAB_RIGHT" value=${TAB_LAST}>尾</option>
             <option class="TAB_LEFT" value=${TAB_FIRST}>首</option>
             <option class="TAB_CLEFT" value=${TAB_CLEFT}>前</option>
@@ -164,26 +162,50 @@ function initSearchTemplateTab() {
         let templateObj = backgroundPage.userSearchTemplate;
         for(let name of Object.keys(templateObj)){
             let box = generateBox(name,templateObj[name]);
-
+            box.children[0].addEventListener("focus",onInputFocus)
+            box.children[0].addEventListener("blur",onInputBlur)
+            box.children[0].addEventListener("keypress",onKeyPress)
+            box.children[1].addEventListener("focus",onInputFocus)
+            box.children[1].addEventListener("blur",onInputBlur)
+            box.children[1].addEventListener("keypress",onKeyPress)
             container.appendChild(box)
         }
     }
 
     function generateBox(name = "", template = "") {
         let div = document.createElement("div")
-        div.innerHTML = `<p class="search-name">${name}</p><input class="edit-name"></input>
-        <p class="search-template">${template}</p><input class="edit-template"></input>`;
+        div.innerHTML = `<input type="text" class="input-name input-disabled" tooltip="名称" placeholder="${name}"></input>
+            <input type="text" class="input-template input-disabled" tooltip="搜索模板" placeholder="${template}"></input>
+            `;
         return div;
     }
 
+    function onKeyPress(event){
+        if(event.key==="Enter"){
+            event.target.blur();
+        }
+        else if(event.key ==="Escape"){
+            event.target.value = event.target.getAttribute("placeholder");
+            event.target.blur();
+        }
+        console.dir(event)
+    }
+
+    function onInputFocus(event){
+        event.target.value = event.target.getAttribute("placeholder");
+    }
 
     function onDoubleClick(event) {
         let elem = event.target;
+        alert(1);
         console.log("dbclcikc")
     }
 
-    function onBlur(event) {
-        console.log("blur!!!!");
+    function onInputBlur(event) {
+        //save data
+        event.target.setAttribute("placeholder",event.target.value);
+        event.target.value="";
+        // event.target.removeAttribute("value");
     }
 
     function onButtonClick() {
@@ -194,8 +216,8 @@ function initSearchTemplateTab() {
     for(let removeTarget of container.querySelectorAll("div")){
         container.removeChild(removeTarget);
     }
-    container.addEventListener("dblclick", onDoubleClick);
-    container.addEventListener("blur", onBlur);
+    // container.addEventListener("dblclick", onDoubleClick);
+    // container.addEventListener("blur", onBlur);
     $E("#template-add").addEventListener("click", onButtonClick);
     $E("#template-save").addEventListener("click", onButtonClick);
     update();
