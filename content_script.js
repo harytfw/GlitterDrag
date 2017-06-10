@@ -56,9 +56,9 @@
 
 class DragClass {
 
-    constructor(doc) {
+    constructor(elem) {
 
-        this.doc = doc;
+        this.dragged = elem;
         this.selection = "";
         this.targetElem = null;
         this.direction = DIR_U;
@@ -68,7 +68,7 @@ class DragClass {
 
         this.offset = 2;
         this.handler = this.handler.bind(this);
-        this.registerEvent();
+        this.eventRegister();
     }
 
 
@@ -102,16 +102,18 @@ class DragClass {
 
 
 
-    registerEvent() {
-        document.addEventListener("dragstart", this.handler, false);
-        document.addEventListener("dragend", this.handler, false);
-
+    eventRegister() {
+        this.doc.setAttribute("draggable",true);
+        this.doc.addEventListener("dragstart", this.handler, false);
+        this.doc.addEventListener("dragend", this.handler, false);
+        this.doc.addEventListener("dragover",this.handler,false);
+        this.doc.addEventListener("drop",this.handler,false);
 
     }
     handler(evt) {
         // console.log(evt);
         const type = evt.type;
-
+        //TODO:把拖拽的数据放在event里传递
         if (type === "dragstart") {
             this.selection = "";
             this.startPos.x = evt.screenX;
@@ -124,6 +126,14 @@ class DragClass {
             this.direction = this.getDirection();
             this.targetElem = evt.target;
             this.post();
+        }
+        else if(type==="drop"){
+            // console.log(evt);
+        }
+        else if(type==="dragover"){
+            //拖拽时鼠标指针由禁止（一个圆加斜杠）变成正常的指针
+            evt.preventDefault();
+            // console.log(evt);
         }
     }
 
@@ -185,4 +195,4 @@ class DragClass {
 
 }
 
-const drag = new DragClass(document)
+const drag = new DragClass(document.children[0])

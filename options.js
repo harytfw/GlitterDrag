@@ -97,8 +97,11 @@ function initForm() {
         while (form.tagName !== "FORM") {
             form = form.parentElement;
         }
-        //                select fieldset      div@class=row input
-        let input = event.target.parentElement.parentElement.querySelector("input");
+        let div_row = event.target;
+        while (div_row.className !== "row") {
+            div_row = div_row.parentElement;
+        }
+        let input = div_row.querySelector("input");
         let select_list = input.parentElement.querySelectorAll("select");
         input.value = parseInt(select_list[0].value) | parseInt(select_list[1].value) | parseInt(select_list[2].value);
 
@@ -160,60 +163,65 @@ function initForm() {
 function initSearchTemplateTab() {
     function update() {
         let templateObj = backgroundPage.userSearchTemplate;
-        for(let name of Object.keys(templateObj)){
-            let box = generateBox(name,templateObj[name]);
-            box.children[0].addEventListener("focus",onInputFocus)
-            box.children[0].addEventListener("blur",onInputBlur)
-            box.children[0].addEventListener("keypress",onKeyPress)
-            box.children[1].addEventListener("focus",onInputFocus)
-            box.children[1].addEventListener("blur",onInputBlur)
-            box.children[1].addEventListener("keypress",onKeyPress)
+        for (let name of Object.keys(templateObj)) {
+            let box = generateBox(name, templateObj[name]);
+            // box.children[0].addEventListener("focus",onInputFocus)
+            // box.children[0].addEventListener("blur",onInputBlur)
+            // box.children[0].addEventListener("keypress",onKeyPress)
+            // box.children[1].addEventListener("focus",onInputFocus)
+            // box.children[1].addEventListener("blur",onInputBlur)
+            // box.children[1].addEventListener("keypress",onKeyPress)
             container.appendChild(box)
         }
     }
 
     function generateBox(name = "", template = "") {
         let div = document.createElement("div")
-        div.innerHTML = `<input type="text" class="input-name input-disabled" tooltip="名称" placeholder="${name}"></input>
-            <input type="text" class="input-template input-disabled" tooltip="搜索模板" placeholder="${template}"></input>
+        div.innerHTML = `<input type="text" class="input-name input-disabled" tooltip="名称" value="${name}"></input>
+            <input type="text" class="input-template input-disabled" tooltip="搜索模板" value="${template}"></input>
             `;
         return div;
     }
 
-    function onKeyPress(event){
-        if(event.key==="Enter"){
+    function onKeyPress(event) {
+        if (event.key === "Enter") {
             event.target.blur();
         }
-        else if(event.key ==="Escape"){
+        else if (event.key === "Escape") {
             event.target.value = event.target.getAttribute("placeholder");
             event.target.blur();
         }
         console.dir(event)
     }
 
-    function onInputFocus(event){
+    function onInputFocus(event) {
         event.target.value = event.target.getAttribute("placeholder");
     }
 
     function onDoubleClick(event) {
         let elem = event.target;
-        alert(1);
         console.log("dbclcikc")
     }
 
     function onInputBlur(event) {
         //save data
-        event.target.setAttribute("placeholder",event.target.value);
-        event.target.value="";
+        event.target.setAttribute("placeholder", event.target.value);
+        event.target.value = "";
         // event.target.removeAttribute("value");
     }
 
-    function onButtonClick() {
+    function onButtonClick(event) {
+        if (event.target.id = "template-add") {
+
+        }
+        else {
+
+        }
         console.log("btn click");
     }
-    
+
     let container = $E("#container-search");
-    for(let removeTarget of container.querySelectorAll("div")){
+    for (let removeTarget of container.querySelectorAll("div")) {
         container.removeChild(removeTarget);
     }
     // container.addEventListener("dblclick", onDoubleClick);
