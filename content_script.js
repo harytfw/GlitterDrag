@@ -103,11 +103,11 @@ class DragClass {
 
 
     eventRegister() {
-        this.doc.setAttribute("draggable",true);
-        this.doc.addEventListener("dragstart", this.handler, false);
-        this.doc.addEventListener("dragend", this.handler, false);
-        this.doc.addEventListener("dragover",this.handler,false);
-        this.doc.addEventListener("drop",this.handler,false);
+        // this.dragged.setAttribute("draggable",true);
+        this.dragged.addEventListener("dragstart", this.handler, false);
+        this.dragged.addEventListener("dragend", this.handler, false);
+        this.dragged.addEventListener("dragover",this.handler,false);
+        this.dragged.addEventListener("drop",this.handler,false);
 
     }
     handler(evt) {
@@ -129,6 +129,9 @@ class DragClass {
         }
         else if(type==="drop"){
             // console.log(evt);
+            //不加这行代码会产生副作用，在页面打开链接
+            //不知道为什么
+            evt.preventDefault();
         }
         else if(type==="dragover"){
             //加上这行代码，拖拽时鼠标指针由禁止（一个圆加斜杠）变成正常的指针

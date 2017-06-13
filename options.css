@@ -13,8 +13,8 @@ label {
     display: inline;
 }
 
-.row fieldset {
-    display: inline-block;
+fieldset {
+    display: flex;
 }
 
 .row {

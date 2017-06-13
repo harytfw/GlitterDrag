@@ -1,6 +1,6 @@
 //全局变量
 var userActionOptions = {};
-var userCustomizedSearch = {};
+var userCustomizedSearch = [];
 var userSearchTemplate = {};
 var enableSync = false;
 var allowTopDomains = [];//顶级域名，如cn com org net
@@ -299,13 +299,26 @@ function updateUserActionOptions(act, dir, value) {
     saveUserOptions();
 }
 
-function updateUserCustomizedSearch(keyName, templateURL, remove = false) {
-    if (remove) {
-        delete userCustomizedSearch[keyName];
+function updateUserCustomizedSearch(index, name, url, remove = false) {
+    if(index===-1){
+        userCustomizedSearch.push({name:name,url:url});
     }
-    else {
-        userCustomizedSearch[keyName] = templateURL;
+    else if(remove){
+        userCustomizedSearch.splice(index,1);
     }
+    else{
+        userCustomizedSearch[index] = {name:name,url:url};
+    }
+    // if (remove) {
+    //     delete userCustomizedSearch[oldName];
+    // }
+    // else if(oldName!=newName){
+    //     delete userCustomizedSearch[oldName];
+    //     userCustomizedSearch[newName] = templateURL;
+    // }
+    // else {
+    //     userCustomizedSearch[newName] = templateURL;
+    // }
     saveUserOptions();
 }
 

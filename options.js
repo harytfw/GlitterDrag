@@ -70,6 +70,13 @@ let template_str2 = `
 </form>
 `;
 
+//在initForm-updateTemplateStr3中会更新下面的模板字符串，用来实时显示用户自定义的搜索引擎。
+//不过class id等已确定的东西不会受到影响
+let template_str3 = `
+<select>
+    <option> </option>
+</select>
+`
 
 let backgroundPage = null;
 browser.runtime.getBackgroundPage().then((page) => {
@@ -92,13 +99,16 @@ function resetDefault() {
 }
 
 function initForm() {
-    function createSelectOfSearchTemplates() {
-
+    function createSelectElemOfSearchEngines() {
+        let selectElem = document.createElement("select");
+        for(let sobj of backgroundPage.userCustomizedSearch){
+            
+        }
     }
     function onChange(event) {
-        //如果选中的动作是“搜索”，那么插入包含选择菜单
+        //如果选中的执行动作是“搜索”，那么插入选择菜单
 
-        //如果触发事件的元素上面插入的选择菜单，那么更新动作
+        //如果触发事件的元素是上面插入的选择菜单，那么更新动作
 
 
         let form = event.target;
@@ -170,10 +180,15 @@ function initForm() {
 
 function initSearchTemplateTab(isFirst = true) {
     //CS 
-    function update() {
-        let templateObj = backgroundPage.userSearchTemplate;
-        for (let name of Object.keys(templateObj)) {
-            let box = generateBox(name, templateObj[name]);
+    function updateContainer() {
+        for (let removeTarget of container.querySelectorAll("div")) {
+            container.removeChild(removeTarget);
+        }
+        let searchArray = backgroundPage.userCustomizedSearch;
+        let i = 0;
+        for (let item of searchArray) {
+            let box = generateBox(item.name, item.url, i);
+            i++;
             // box.children[0].addEventListener("focus",onInputFocus)
             // box.children[0].addEventListener("blur",onInputBlur)
             // box.children[0].addEventListener("keypress",onKeyPress)
@@ -184,11 +199,11 @@ function initSearchTemplateTab(isFirst = true) {
         }
     }
 
-    function generateBox(name = "", template = "") {
+    function generateBox(name = "", url = "", index = -1) {
         let div = document.createElement("div")
-        div.innerHTML = `<input type="text" class="input-name input-disabled" title="名称" value="${name}"></input>
+        div.innerHTML = `<input type="text" class="input-name input-disabled" index="${index}" title="名称" oldName="${name}" value="${name}"></input>
             <button class="btn-remove">删除</button>
-            <input type="text" class="input-templateURL input-disabled" title="搜索模板" value="${template}"></input>
+            <input type="text" class="input-url input-disabled" title="搜索模板" value="${url}"></input>
             <button class="btn-save">保存</button>
             `;
         for (let btn of div.querySelectorAll("button")) {
@@ -236,7 +251,7 @@ function initSearchTemplateTab(isFirst = true) {
             while (container.firstChild) {
                 container.removeChild(container.firstChild);
             }
-            update();
+            updateContainer();
         }
         else if (T.className === "btn-save") {
             let isEmpty = false;
@@ -252,28 +267,43 @@ function initSearchTemplateTab(isFirst = true) {
                 }
             }
             if (!isEmpty) {
-                backgroundPage.updateUserCustomizedSearch(inputElems[0].value, inputElems[1].value);
+                let name = inputElems[0].value;
+                let url = inputElems[1].value;
+                let index = parseInt(inputElems[0].getAttribute("index"));
+                backgroundPage.updateUserCustomizedSearch(index, name, url);
+                updateContainer();
+                // let oldName = inputElems[0].getAttribute("oldName");
+                //TODO:重复检测，又能保存
+                // if (name in backgroundPage.userCustomizedSearch && oldName in backgroundPage.userCustomizedSearch) {
+                //     alert("名称重复！");
+                // }
+                // else {
+                //     backgroundPage.updateUserCustomizedSearch(oldName, name, url.value);
+                //     updateContainer()
+                // }
             }
         }
         else if (T.className === "btn-remove") {
             if (confirm("确定删除？")) {
                 let inputElems = T.parentElement.querySelectorAll("input");
-                backgroundPage.updateUserCustomizedSearch(inputElems[0].value, inputElems[1].value, true);
+                let name = inputElems[0].value;
+                let url = inputElems[1].value;
+                let index = parseInt(inputElems[0].getAttribute("index"));
+                backgroundPage.updateUserCustomizedSearch(index, name, url, true);
                 T.parentElement.parentElement.removeChild(T.parentElement);
+                updateContainer();
             }
         }
     }
 
     let container = $E("#container-search");
 
-    for (let removeTarget of container.querySelectorAll("div")) {
-        container.removeChild(removeTarget);
-    }
+
     if (isFirst) {
         container.parentElement.querySelector("#btn-add").addEventListener("click", onButtonClick);
         container.parentElement.querySelector("#btn-refresh").addEventListener("click", onButtonClick);
     }
-    update();
+    updateContainer();
 }
 
 
