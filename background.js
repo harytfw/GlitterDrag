@@ -1,10 +1,10 @@
-
+//全局变量
 var userActionOptions = {};
 var userCustomizedSearch = {};
 var userSearchTemplate = {};
 var enableSync = false;
 var allowTopDomains = [];//顶级域名，如cn com org net
-var enableAnimation = false;//启用动画
+var enableAnimation = false;//启用过渡动画
 
 class SimulateTabs {
     constructor() {
@@ -134,7 +134,7 @@ class DragActions {
         }
     }
 
-    
+
 
 
     openTab(url) {
@@ -190,11 +190,11 @@ class DragActions {
     }
 
     searchText(text) {
-        this.openURL(this.searchTemplate.replace("%s",text));
+        this.openURL(this.searchTemplate.replace("%s", text));
     }
 
     searchImage(url) {
-        this.openURL(this.searchTemplate.replace("%s",text));
+        this.openURL(this.searchTemplate.replace("%s", text));
     }
 
     downloadImage(url) {
@@ -239,10 +239,11 @@ function tryAssignValue(result) {
         userCustomizedSearch = result.userCustomizedSearch;
     }
 
-    if(result.hasOwnProperty("userSearchTemplate")){
+    if (result.hasOwnProperty("userSearchTemplate")) {
         //https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
         //第3个对象的属性会覆盖第2个
-        Object.assign(userSearchTemplate,result.userSearchTemplate,DEFAULT_SEARCH_TEMPLATE)
+        //目标是让用户自定义的搜索覆盖扩展自带的搜索
+        Object.assign(userSearchTemplate, result.userSearchTemplate, DEFAULT_SEARCH_TEMPLATE)
     }
 
 }
@@ -252,9 +253,9 @@ function collectOptions() {
         userActionOptions: userActionOptions,
         enableSync: enableSync,
         userCustomizedSearch: userCustomizedSearch,
-        userSearchTemplate:userSearchTemplate,
-        allowTopDomains:allowTopDomains,
-        enableAnimation:enableAnimation
+        userSearchTemplate: userSearchTemplate,
+        allowTopDomains: allowTopDomains,
+        enableAnimation: enableAnimation
     }
 }
 
@@ -298,6 +299,15 @@ function updateUserActionOptions(act, dir, value) {
     saveUserOptions();
 }
 
+function updateUserCustomizedSearch(keyName, templateURL, remove = false) {
+    if (remove) {
+        delete userCustomizedSearch[keyName];
+    }
+    else {
+        userCustomizedSearch[keyName] = templateURL;
+    }
+    saveUserOptions();
+}
 
 
 browser.browserAction.onClicked.addListener(() => {

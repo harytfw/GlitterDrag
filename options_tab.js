@@ -1,3 +1,4 @@
+let content2IsFirst = true;
 function tabsSwitch(event) {
     if(event.target.classList.contains("nav-active")){
         return;
@@ -12,8 +13,12 @@ function tabsSwitch(event) {
     }
     document.querySelector("#"+bindAttr).classList.add("tab-active")
 
+    if(bindAttr==="content-1"){
+        initForm();
+    }
     if(bindAttr==="content-2"){
-        initSearchTemplateTab();
+        initSearchTemplateTab(content2IsFirst);
+        content2IsFirst = false;
     }
 }
 

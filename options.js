@@ -92,7 +92,15 @@ function resetDefault() {
 }
 
 function initForm() {
+    function createSelectOfSearchTemplates() {
+
+    }
     function onChange(event) {
+        //如果选中的动作是“搜索”，那么插入包含选择菜单
+
+        //如果触发事件的元素上面插入的选择菜单，那么更新动作
+
+
         let form = event.target;
         while (form.tagName !== "FORM") {
             form = form.parentElement;
@@ -160,7 +168,8 @@ function initForm() {
     }
 }
 
-function initSearchTemplateTab() {
+function initSearchTemplateTab(isFirst = true) {
+    //CS 
     function update() {
         let templateObj = backgroundPage.userSearchTemplate;
         for (let name of Object.keys(templateObj)) {
@@ -177,9 +186,14 @@ function initSearchTemplateTab() {
 
     function generateBox(name = "", template = "") {
         let div = document.createElement("div")
-        div.innerHTML = `<input type="text" class="input-name input-disabled" tooltip="名称" value="${name}"></input>
-            <input type="text" class="input-template input-disabled" tooltip="搜索模板" value="${template}"></input>
+        div.innerHTML = `<input type="text" class="input-name input-disabled" title="名称" value="${name}"></input>
+            <button class="btn-remove">删除</button>
+            <input type="text" class="input-templateURL input-disabled" title="搜索模板" value="${template}"></input>
+            <button class="btn-save">保存</button>
             `;
+        for (let btn of div.querySelectorAll("button")) {
+            btn.addEventListener("click", onButtonClick);
+        }
         return div;
     }
 
@@ -209,25 +223,56 @@ function initSearchTemplateTab() {
         event.target.value = "";
         // event.target.removeAttribute("value");
     }
-
+    //按钮点击事件都放在这里
+    //代码尽量简洁明了，复杂的代码应该放在其它函数里面
     function onButtonClick(event) {
-        if (event.target.id = "template-add") {
-
+        let T = event.target;
+        if (T.id === "btn-add") {
+            let box = generateBox("", "");
+            container.appendChild(box);
+            box.firstChild.focus();
         }
-        else {
-
+        else if (T.id === "btn-refresh") {
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            update();
         }
-        console.log("btn click");
+        else if (T.className === "btn-save") {
+            let isEmpty = false;
+            let inputElems = T.parentElement.querySelectorAll("input");
+            for (let input of inputElems) {
+                if (input.value.length === 0) {
+                    input.style.border = "1px red solid";
+                    setTimeout(() => {
+                        input.style.border = "";
+                    }, 1000);
+                    isEmpty = true;
+                    break;
+                }
+            }
+            if (!isEmpty) {
+                backgroundPage.updateUserCustomizedSearch(inputElems[0].value, inputElems[1].value);
+            }
+        }
+        else if (T.className === "btn-remove") {
+            if (confirm("确定删除？")) {
+                let inputElems = T.parentElement.querySelectorAll("input");
+                backgroundPage.updateUserCustomizedSearch(inputElems[0].value, inputElems[1].value, true);
+                T.parentElement.parentElement.removeChild(T.parentElement);
+            }
+        }
     }
 
     let container = $E("#container-search");
+
     for (let removeTarget of container.querySelectorAll("div")) {
         container.removeChild(removeTarget);
     }
-    // container.addEventListener("dblclick", onDoubleClick);
-    // container.addEventListener("blur", onBlur);
-    $E("#template-add").addEventListener("click", onButtonClick);
-    $E("#template-save").addEventListener("click", onButtonClick);
+    if (isFirst) {
+        container.parentElement.querySelector("#btn-add").addEventListener("click", onButtonClick);
+        container.parentElement.querySelector("#btn-refresh").addEventListener("click", onButtonClick);
+    }
     update();
 }
 
@@ -273,6 +318,6 @@ document.querySelector("#fileInput").addEventListener("change", (event) => {
     fileReader.readAsText(event.target.files[0])
 });
 
-initTabsPage();
+initTabsPage();//代码：options_tab.js
 
 

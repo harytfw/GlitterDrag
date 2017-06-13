@@ -67,7 +67,7 @@ const _DEBUG = true;
 function $E(s=""){
     let r = document.querySelector(s);
     if(!r){
-        console.error("document.querySelector:", s)
+        console.trace("No Result: document.querySelector", s)
     }
     return r;
 }

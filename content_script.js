@@ -131,7 +131,7 @@ class DragClass {
             // console.log(evt);
         }
         else if(type==="dragover"){
-            //拖拽时鼠标指针由禁止（一个圆加斜杠）变成正常的指针
+            //加上这行代码，拖拽时鼠标指针由禁止（一个圆加斜杠）变成正常的指针
             evt.preventDefault();
             // console.log(evt);
         }
