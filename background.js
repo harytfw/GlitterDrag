@@ -2,10 +2,11 @@
 var userActionOptions = {};
 var userCustomizedSearch = [];
 var userSearchTemplate = {};
-var enableSync = false;
-var allowTopDomains = [];//顶级域名，如cn com org net
+var enableSync = false;//启动数据同步
+// var allowedTopLevelDomains = [];//顶级域名，如cn com org net
 var enableAnimation = false;//启用过渡动画
-
+//var enableInterruption = false; //在拖拽过程按下鼠标右键强制打断拖拽
+// var urlMatchPattern = /[A-z]/
 class SimulateTabs {
     constructor() {
         this.tabs = [];
