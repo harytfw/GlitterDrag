@@ -80,7 +80,7 @@ class ExecutorClass {
     //     //默认搜索
     //     return DEFAULT_SEARCH_TEMPLATE["百度"];
     // }
-    getSearchByName() {
+    getEngineByName() {
 
     }
     execute(act_obj) {
@@ -96,9 +96,9 @@ class ExecutorClass {
             alert("复制");
         }
         else if (this.flags.isset(ACT_SEARCH)) {
-            this.searchText(this.getSearchByName(this.flags.searchName), this.data.selection);
+            this.searchText(this.getEngineByName(this.flags.engineName), this.data.selection);
             // if (this.data.type === TYPE_TEXT) {
-            //     this.searchText(this.getSearchByName(this.flags.searchName),this.data.selection,);
+            //     this.searchText(this.getEngineByName(this.flags.engineName),this.data.selection,);
             // }
             // else if (this.data.type === TYPE_ELEM_IMG) {
             //     this.searchText(userCustomizedSearchs,this.data.selection,);
@@ -189,14 +189,10 @@ class ConfigClass {
         this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
     }
     clear(callback) {
-        this.storageArea.clear(()=>{},()=>{}).then(callback, () => { });
+        this.storageArea.clear().then(callback, () => { });
     }
     save() {
-        this.storageArea.set(this).then(()=>{
-
-        },()=>{
-
-        });
+        this.storageArea.set(this);
     }
     load(callback) {
         let promise = this.storageArea.get();
@@ -234,7 +230,7 @@ class ConfigClass {
         this.userActionOptions[type][dir] = act;
     }
     setSearchName(type, dir, sname) {
-        this.userActionOptions[type][dir].searchName = sname;
+        this.userActionOptions[type][dir].engineName = sname;
     }
     backup() {
         return JSON.stringify(this, null, 2);

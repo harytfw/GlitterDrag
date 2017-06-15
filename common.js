@@ -82,7 +82,7 @@ class ActClass {
         else {
             this.set(ACT_NONE);
         }
-        this.searchName = "";
+        this.engineName = "";
         //???????
     }
 
@@ -148,12 +148,6 @@ class ActClass {
     }
 }
 
-
-
-function buildSearchSearch(props = { url: "", kw: "" }) {
-
-}
-
 function checkDragTargetType(selection, target) {
     if (selection && selection.length !== 0) {
         if (urlPattern.test(selection)) {
@@ -174,57 +168,57 @@ function checkDragTargetType(selection, target) {
 }
 
 
-const DEFAULT_OPTIONS = {
-    textAction: {
-        DIR_U: new ActClass(ACT_SEARCH, FORE_GROUND),
-        DIR_D: new ActClass(ACT_SEARCH, BACK_GROUND),
-        DIR_L: new ActClass(),
-        DIR_R: new ActClass()
-    },
-    linkAction: {
-        DIR_U: new ActClass(ACT_OPEN, FORE_GROUND),
-        DIR_D: new ActClass(ACT_OPEN, BACK_GROUND),
-        DIR_L: new ActClass(),
-        DIR_R: new ActClass()
+// const DEFAULT_OPTIONS = {
+//     textAction: {
+//         DIR_U: new ActClass(ACT_SEARCH, FORE_GROUND),
+//         DIR_D: new ActClass(ACT_SEARCH, BACK_GROUND),
+//         DIR_L: new ActClass(),
+//         DIR_R: new ActClass()
+//     },
+//     linkAction: {
+//         DIR_U: new ActClass(ACT_OPEN, FORE_GROUND),
+//         DIR_D: new ActClass(ACT_OPEN, BACK_GROUND),
+//         DIR_L: new ActClass(),
+//         DIR_R: new ActClass()
 
-    },
-    imageAction: {
-        DIR_U: new ActClass(ACT_OPEN, FORE_GROUND),
-        DIR_D: new ActClass(ACT_SEARCH, FORE_GROUND),
-        DIR_L: new ActClass(),
-        DIR_R: new ActClass()
-    }
-}
+//     },
+//     imageAction: {
+//         DIR_U: new ActClass(ACT_OPEN, FORE_GROUND),
+//         DIR_D: new ActClass(ACT_SEARCH, FORE_GROUND),
+//         DIR_L: new ActClass(),
+//         DIR_R: new ActClass()
+//     }
+// }
 
-const EMPTY_OPTION = {
-    noAction: {
-        DIR_D: new ActClass(),
-        DIR_L: new ActClass(),
-    }
-}
+// const EMPTY_OPTION = {
+//     noAction: {
+//         DIR_D: new ActClass(),
+//         DIR_L: new ActClass(),
+//     }
+// }
 
 //搜索引擎的名称应该是唯一的，不过用户定义的模板会覆盖默认模板
-const DEFAULT_SEARCH_TEMPLATE = {
-    "百度": "http://www.baidu.com/s?wd=%s",
-    "Google": "",
-    "Bing": ""
-}
+// const DEFAULT_SEARCH_TEMPLATE = {
+//     "百度": "http://www.baidu.com/s?wd=%s",
+//     "Google": "",
+//     "Bing": ""
+// }
 
 //仅作为结构参考和说明，不要使用它
-const SAMPLE_CUSTOMIZED_SEARCH = {
-    //若textAction等动作的键值不存在，调用默认搜索
-    textAction: {
-        //DIR_D:这个键值就是一个搜索模板
-        DIR_D: DEFAULT_SEARCH_TEMPLATE["百度"]
-        //若对应方向不存在，调用默认搜索
-    },
-    linkAction: {
-        DIR_D: DEFAULT_SEARCH_TEMPLATE["Bing"]
-    },
-    imageAction: {
-        DIR_D: DEFAULT_SEARCH_TEMPLATE["Bing"]
-    }
-}
+// const SAMPLE_CUSTOMIZED_SEARCH = {
+//     //若textAction等动作的键值不存在，调用默认搜索
+//     textAction: {
+//         //DIR_D:这个键值就是一个搜索模板
+//         DIR_D: DEFAULT_SEARCH_TEMPLATE["百度"]
+//         //若对应方向不存在，调用默认搜索
+//     },
+//     linkAction: {
+//         DIR_D: DEFAULT_SEARCH_TEMPLATE["Bing"]
+//     },
+//     imageAction: {
+//         DIR_D: DEFAULT_SEARCH_TEMPLATE["Bing"]
+//     }
+// }
 /**
  * 要添加自定义搜索引擎，首先要添加一个搜索模板，然后在具体的选项页修改调用的搜索引擎
  */
