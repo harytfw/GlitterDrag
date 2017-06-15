@@ -72,7 +72,7 @@ function $E(s=""){
     return r;
 }
 
-class FlagsClass {
+class ActClass {
     constructor(...in_flags) {
 
         this.f = 0;
@@ -82,7 +82,7 @@ class FlagsClass {
         else {
             this.set(ACT_NONE);
         }
-        // this.searchTemplateName = "";
+        this.searchName = "";
         //???????
     }
 
@@ -176,30 +176,30 @@ function checkDragTargetType(selection, target) {
 
 const DEFAULT_OPTIONS = {
     textAction: {
-        DIR_U: new FlagsClass(ACT_SEARCH, FORE_GROUND),
-        DIR_D: new FlagsClass(ACT_SEARCH, BACK_GROUND),
-        DIR_L: new FlagsClass(),
-        DIR_R: new FlagsClass()
+        DIR_U: new ActClass(ACT_SEARCH, FORE_GROUND),
+        DIR_D: new ActClass(ACT_SEARCH, BACK_GROUND),
+        DIR_L: new ActClass(),
+        DIR_R: new ActClass()
     },
     linkAction: {
-        DIR_U: new FlagsClass(ACT_OPEN, FORE_GROUND),
-        DIR_D: new FlagsClass(ACT_OPEN, BACK_GROUND),
-        DIR_L: new FlagsClass(),
-        DIR_R: new FlagsClass()
+        DIR_U: new ActClass(ACT_OPEN, FORE_GROUND),
+        DIR_D: new ActClass(ACT_OPEN, BACK_GROUND),
+        DIR_L: new ActClass(),
+        DIR_R: new ActClass()
 
     },
     imageAction: {
-        DIR_U: new FlagsClass(ACT_OPEN, FORE_GROUND),
-        DIR_D: new FlagsClass(ACT_SEARCH, FORE_GROUND),
-        DIR_L: new FlagsClass(),
-        DIR_R: new FlagsClass()
+        DIR_U: new ActClass(ACT_OPEN, FORE_GROUND),
+        DIR_D: new ActClass(ACT_SEARCH, FORE_GROUND),
+        DIR_L: new ActClass(),
+        DIR_R: new ActClass()
     }
 }
 
 const EMPTY_OPTION = {
     noAction: {
-        DIR_D: new FlagsClass(),
-        DIR_L: new FlagsClass(),
+        DIR_D: new ActClass(),
+        DIR_L: new ActClass(),
     }
 }
 

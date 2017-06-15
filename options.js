@@ -79,11 +79,47 @@ let template_str3 = `
 `
 
 let backgroundPage = null;
+let config = null
 browser.runtime.getBackgroundPage().then((page) => {
     backgroundPage = page;
-    if (backgroundPage.enableAnimation) {
+    config = backgroundPage.config;
 
-    }
+    let fileReader = new FileReader();
+    fileReader.addEventListener("loadend", () => {
+        try {
+
+            backgroundPage.loadUserOptionsFromBackUp(fileReader.result);
+            initForm();
+        }
+        catch (e) {
+            console.error("在恢复用户配置时出现异常！", e);
+            alert("在恢复用户配置时出现异常！");
+        }
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+        backgroundPage.loadUserOptions(() => {
+            initForm();
+        });
+    }, false);
+    document.querySelector("#backup").addEventListener("click", (event) => {
+        let blob = new Blob([backgroundPage.convertOptionsToJson()], { type: 'application/json' });
+        event.target.setAttribute("href", URL.createObjectURL(blob));
+        event.target.setAttribute("download", "GlitterDrag" + new Date().getTime() + ".json");
+    });
+
+    document.querySelector("#restore").addEventListener("click", () => {
+        document.querySelector("#fileInput").click();
+    });
+
+    document.querySelector("#default").addEventListener("click", () => {
+
+        backgroundPage.loadDefaultOptions();
+        initForm();
+    });
+    document.querySelector("#fileInput").addEventListener("change", (event) => {
+        fileReader.readAsText(event.target.files[0])
+    });
+    initTabsPage();//代码：options_tab.js
 }, () => { });
 
 function backup() {
@@ -101,8 +137,8 @@ function resetDefault() {
 function initForm() {
     function createSelectElemOfSearchEngines() {
         let selectElem = document.createElement("select");
-        for(let sobj of backgroundPage.userCustomizedSearch){
-            
+        for (let sobj of config.userCustomizedSearchs) {
+
         }
     }
     function onChange(event) {
@@ -164,7 +200,7 @@ function initForm() {
         }
         for (let row of form.querySelectorAll(".row")) {
             let input = row.querySelector("input");
-            let flags = backgroundPage.userActionOptions[key][input.name];
+            let flags = config.userActionOptions[key][input.name];
             input.value = flags.f;
             for (let select of row.querySelectorAll("select")) {
                 for (let opt of select.querySelectorAll("option")) {
@@ -184,9 +220,9 @@ function initSearchTemplateTab(isFirst = true) {
         for (let removeTarget of container.querySelectorAll("div")) {
             container.removeChild(removeTarget);
         }
-        let searchArray = backgroundPage.userCustomizedSearch;
+        let searchList = backgroundPage.config.userCustomizedSearchs;
         let i = 0;
-        for (let item of searchArray) {
+        for (let item of searchList) {
             let box = generateBox(item.name, item.url, i);
             i++;
             // box.children[0].addEventListener("focus",onInputFocus)
@@ -274,7 +310,7 @@ function initSearchTemplateTab(isFirst = true) {
                 updateContainer();
                 // let oldName = inputElems[0].getAttribute("oldName");
                 //TODO:重复检测，又能保存
-                // if (name in backgroundPage.userCustomizedSearch && oldName in backgroundPage.userCustomizedSearch) {
+                // if (name in backgroundPage.userCustomizedSearchs && oldName in backgroundPage.userCustomizedSearchs) {
                 //     alert("名称重复！");
                 // }
                 // else {
@@ -307,47 +343,5 @@ function initSearchTemplateTab(isFirst = true) {
 }
 
 
-let fileReader = new FileReader();
-
-fileReader.addEventListener("loadend", () => {
-    try {
-
-        backgroundPage.loadUserOptionsFromBackUp(fileReader.result);
-        initForm();
-    }
-    catch (e) {
-        console.error("在恢复用户配置时出现异常！", e);
-        alert("在恢复用户配置时出现异常！");
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    backgroundPage.loadUserOptions(() => {
-        initForm();
-    });
-
-}, false);
-document.querySelector("#backup").addEventListener("click", (event) => {
-    let blob = new Blob([backgroundPage.convertOptionsToJson()], { type: 'application/json' });
-    event.target.setAttribute("href", URL.createObjectURL(blob));
-    event.target.setAttribute("download", "GlitterDrag" + new Date().getTime() + ".json");
-});
-
-document.querySelector("#restore").addEventListener("click", () => {
-    document.querySelector("#fileInput").click();
-});
-
-
-document.querySelector("#default").addEventListener("click", () => {
-
-    backgroundPage.loadDefaultOptions();
-    initForm();
-});
-
-document.querySelector("#fileInput").addEventListener("change", (event) => {
-    fileReader.readAsText(event.target.files[0])
-});
-
-initTabsPage();//代码：options_tab.js
 
 
