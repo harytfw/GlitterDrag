@@ -23,43 +23,32 @@ const sin270 = -sin90;
 const sin315 = -sin45;
 const sin360 = sin0;
 
-const ACT_NONE = 1 << 0;//无动作
-const ACT_OPEN = 1 << 1; //打开
-const ACT_COPY = 1 << 2; //复制
-const ACT_SEARCH = 1 << 3; //搜索
-const ACT_TRANS = 1 << 4; //翻译
-const ACT_DL = 1 << 5; //下载
-const ACT_QRCODE = 1 << 6; //二维码
 
-// 7~9
+const ACT_NONE = "ACT_NONE";//无动作
+const ACT_OPEN = "ACT_OPEN"; //打开
+const ACT_COPY = "ACT_COPY" //复制
+const ACT_SEARCH = "ACT_SEARCH" //搜索
+const ACT_TRANS = "ACT_TRANS" //翻译
+const ACT_DL = "ACT_DL" //下载
+const ACT_QRCODE = "ACT_QRCODE" //二维码
 
-const KEY_CTRL = 1 << 10;//ctrl键
-const KEY_SHIFT = 1 << 12;//shift键
-
-// 13~14
-
-const FORE_GROUND = 1 << 15;//前台打开
-const BACK_GROUND = 1 << 16;//后台打开
-
-// 17
-
-const NEW_WINDOW = 1 << 18;//新窗口打开?
+// const KEY_CTRL = 0;//ctrl键
+// const KEY_SHIFT = 1;//shift键
 
 
-const TAB_CUR = 1 << 19;//当前标签页
-const TAB_FIRST = 1 << 20;//新建标签页在最左边
-const TAB_LAST = 1 << 21;//最右边
-const TAB_CLEFT = 1 << 22;//新建的标签页在当前标签页的左边
-const TAB_CRIGHT = 1 << 23;//右边
 
-// 24~31
-const FLAG_STRING_TABLE = {
-    "ACT_NONE": ACT_NONE, "ACT_OPEN": ACT_OPEN, "ACT_COPY": ACT_COPY,
-    "ACT_SEARCH": ACT_SEARCH, "ACT_TRANS": ACT_TRANS, "ACT_DL": ACT_DL, "ACT_QRCODE": ACT_QRCODE,
-    "KEY_CTRL": KEY_CTRL, "KEY_SHIFT": KEY_SHIFT, "FORE_GROUND": FORE_GROUND, "BACK_GROUND": BACK_GROUND,
-    "NEW_WINDOW": NEW_WINDOW, "TAB_CUR": TAB_CUR, "TAB_FIRST": TAB_FIRST, "TAB_LAST": TAB_LAST,
-    "TAB_CLEFT": TAB_CLEFT, "TAB_CRIGHT": TAB_CRIGHT
-}
+const NEW_WINDOW = "NEW_WINDOW";//新窗口打开?
+const TAB_CUR = "TAB_CUR";//当前标签页
+const TAB_FIRST = "TAB_FIRST";//新建标签页在最左边
+const TAB_LAST = "TAB_LAST";//最右边
+const TAB_CLEFT = "TAB_CLEFT";//新建的标签页在当前标签页的左边
+const TAB_CRIGHT = "TAB_CRIGHT";//右边
+
+
+
+const FORE_GROUND = true;//前台打开
+const BACK_GROUND = false;//后台打开
+
 
 const _DEBUG = true;
 
@@ -72,79 +61,93 @@ function $E(s=""){
     return r;
 }
 
-class ActClass {
-    constructor(...in_flags) {
+// class ActClass {
+//     constructor(val,engine_name) {
 
-        this.f = 0;
-        if (in_flags.length !== 0) {
-            this.set(...in_flags);
-        }
-        else {
-            this.set(ACT_NONE);
-        }
-        this.engineName = "";
-        //???????
-    }
+//         this.act_val = val;
+//         this.engine_name = engine_name;
+//         //???????
+//     }
 
-    toString() {
-        let w = [];
-        for(let k of Object.keys(FLAG_STRING_TABLE)){
-            if(this.isset(FLAG_STRING_TABLE[k])){
-                w.push(k);
-            }
-        }
-        return w.join("|");
-    }
-    //设置标志位
+//     toString() {
+//         let w = [];
+//         for(let k of Object.keys(FLAG_STRING_TABLE)){
+//             if(this.isset(FLAG_STRING_TABLE[k])){
+//                 w.push(k);
+//             }
+//         }
+//         return w.join("|");
+//     }
+//     //设置标志位
 
-    set(...m) {
-        for (let x of m) {
-            this.f |= x;
-        }
-        return this.f;
-    }
-    //清除
-    clear_self_set(val) {
-        this.clear(this.f);
-        this.set(val);
-    }
-    clear(...m) {
-        for (let x of m) {
-            this.f &= ~m;
-        }
-        return this.f;
-    }
-    //切换
-    toggle(...m) {
-        for (let x of m) {
-            this.f ^= m;
-        }
-        return this.f;
-    }
-    //检测标志位是否被设置
-    //如果是多个参数，则判断this.f是否等于传入的标志位
-    isset(...m) {
+//     set(...m) {
+//         for (let x of m) {
+//             this.act_val |= x;
+//         }
+//         return this.act_val;
+//     }
+//     //清除
+//     clear_self_set(val) {
+//         this.clear(this.act_val);
+//         this.set(val);
+//     }
+//     clear(...m) {
+//         for (let x of m) {
+//             this.act_val &= ~m;
+//         }
+//         return this.act_val;
+//     }
+//     //切换
+//     toggle(...m) {
+//         for (let x of m) {
+//             this.act_val ^= m;
+//         }
+//         return this.act_val;
+//     }
+//     //检测标志位是否被设置
+//     //如果是多个参数，则判断this.f是否等于传入的标志位
+//     isset(...m) {
 
-        for (let x of m) {
-            //有一个不匹配
-            if ((x & this.f) == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-    isset_or(...m) {
-        for (let x of m) {
-            //有一个匹配
-            if ((x & this.f) != 0) {
-                return true;
-            }
-        }
-        return false;
-    }
+//         for (let x of m) {
+//             //有一个不匹配
+//             if ((x & this.act_val) == 0) {
+//                 return false;
+//             }
+//         }
+//         return true;
+//     }
+//     isset_or(...m) {
+//         for (let x of m) {
+//             //有一个匹配
+//             if ((x & this.act_val) != 0) {
+//                 return true;
+//             }
+//         }
+//         return false;
+//     }
 
-    check_comflic(...m) {
-        //TODO
+//     check_comflic(...m) {
+//         //TODO
+//     }
+// }
+
+class ActClass{
+    constructor(act=ACT_NONE,active=BACK_GROUND,pos=TAB_LAST,en=""){
+        this.act_name = act;
+        this.tab_active = active;
+        this.tab_pos = pos;
+        this.engine_name = en;
+    }
+    isAct(any){
+        if(act_name===any){
+            return true;
+        }
+    }
+    update(act=ACT_NONE,active=BACK_GROUND,pos=TAB_LAST,en=""){
+        this.act_name = act;
+        this.tab_active = active;
+        this.tab_pos = pos;
+        this.engine_name = en;
     }
 }
 

@@ -1,29 +1,45 @@
-let content2IsFirst = true;
-function tabsSwitch(event) {
-    if(event.target.classList.contains("nav-active")){
-        return;
+class Tab {
+    constructor(elem, id,func) {
+        this.elem = elem;
+        this.id = id;
+        this.initFunc = func;
     }
-    for(let elem of document.querySelectorAll(".nav-a")){
-        elem.classList.remove("nav-active");
+    reloadTab(){
+        this.initFunc();
     }
-    event.target.classList.add("nav-active");
-    let bindAttr = event.target.getAttribute("bind")
-    for (let elem of document.querySelectorAll(".tab-active")) {
-        elem.classList.remove("tab-active")
+    show() {
+        this.elem.classList.add("tab-active");
     }
-    document.querySelector("#"+bindAttr).classList.add("tab-active")
-
-    if(bindAttr==="content-1"){
-        initForm();
-    }
-    if(bindAttr==="content-2"){
-        initSearchTemplateTab(content2IsFirst);
-        content2IsFirst = false;
+    hide() {
+        this.elem.classList.remove("tab-active");
     }
 }
+class TabContainer {
+    constructor(selector) {
+        this.onclick = this.onclick.bind(this);
+        this.elem = document.querySelector(selector);
+        this.nav = this.elem.querySelector("nav");
 
-function initTabsPage() {
-    for (let elem of document.querySelectorAll(".nav-a")) {
-        elem.addEventListener("click", tabsSwitch);
+        Array.from(this.elem.querySelectorAll("nav a"), (e, i) => {
+            e.onclick = this.onclick;
+            e.setAttribute("nav-id", i);
+        });
+        this.tabs = Array.from(this.elem.querySelectorAll(".tab-content"), (v, i) => new Tab(v, i));
+    }
+    onclick(event) {
+        Array.from(this.nav.children, a => a.classList.remove("nav-active"));
+        event.target.classList.add("nav-active");
+        this.activeById(parseInt(event.target.getAttribute("nav-id")));
+    }
+    // newTab(tabName,tabSelector){
+    //     let a = document.createElement("a");
+    //     a.onclick = this.onclick;
+    //     a.setAttribute("tab-id",this.tabs.length);
+    //     let tab = new Tab(document.querySelector(tabSelector),a.getAttribute("tab-id"));
+
+    // }
+    activeById(id) {
+        this.tabs.forEach(tab => tab.id === id ? tab.show() : tab.hide());
     }
 }
+let tabContainer = new  TabContainer("#tabs");

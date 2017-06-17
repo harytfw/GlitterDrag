@@ -1,93 +1,155 @@
-let template_str0 = `
-<fieldset>
-    <div>
 
-        <select title="执行的动作">
-            <option class="ACT_NONE" value=${ACT_NONE}>无动作</option>
-            <option class="ACT_OPEN" value=${ACT_OPEN}>直接打开</option>
-            <option class="ACT_SEARCH" value=${ACT_SEARCH}>搜索</option>
-            <option class="ACT_COPY" value=${ACT_COPY} disabled="disabled">复制</option>
-            <option class="ACT_TRANS" value=${ACT_TRANS} disabled="disabled" >翻译</option>
-            <option class="ACT_DL" value=${ACT_DL} disabled="disabled">下载</option>
-            <option class="ACT_QRCODE" value=${ACT_QRCODE} disabled="disabled">二维码</option>
-        </select>
-    </div>
-    <div>
-        <select title="打开的方式">
-            <option class="FORE_GROUND" value=${FORE_GROUND}>前台</option>
-            <option class="BACK_GROUND" value=${BACK_GROUND}>后台</option>
-        </select>
-    </div>
-    <div>
-        <select title="标签页位置">
-            <option class="TAB_RIGHT" value=${TAB_LAST}>尾</option>
-            <option class="TAB_LEFT" value=${TAB_FIRST}>首</option>
-            <option class="TAB_CLEFT" value=${TAB_CLEFT}>前</option>
-            <option class="TAB_CRIGHT" value=${TAB_CRIGHT}>后</option>
-        </select>
-    </div>
-  </fieldset>
-`;
-//<!-- <option class="TAB_CUR" value=${TAB_CUR}>当前标签页</option> -->
-let template_str1 = `
-<div class="row">
-    <input type="hidden" value=0 name=${DIR_U}>
-    <label>上：</label>${template_str0}
-</div>
-<div class="row">
-    <input type="hidden" value=0 name=${DIR_D}>
-    <label>下：</label>${template_str0}
-</div>
-<div class="row">
-    <input type="hidden" value=0 name=${DIR_L}>
-    <label>左：</label>${template_str0}
-</div>
-<div class="row">
-    <input type="hidden" value=0 name=${DIR_R}>
-    <label>右：</label>${template_str0}
-</div>
-`;
+let OptionTextTable = {
+    act: [{ text: "无动作", value: ACT_NONE },
+    { text: "直接打开", value: ACT_OPEN },
+    { text: "搜索", value: ACT_SEARCH },
 
-let template_str2 = `
-<form id="text">
+    { text: "复制", value: ACT_COPY },
+    { text: "翻译", value: ACT_TRANS },
+    { text: "下载", value: ACT_DL },
+    { text: "二维码", value: ACT_QRCODE },
+    ],
+    status: [{ text: "前台", value: FORE_GROUND },
+    { text: "后台", value: BACK_GROUND },
+    ],
+    pos: [{ text: "尾", value: TAB_LAST },
+    { text: "首", value: TAB_FIRST },
+    { text: "前", value: TAB_CLEFT },
+    { text: "后", value: TAB_CRIGHT },
+    ]
+}
+let DirTextTable = {
+    DIR_U: { text: "上", value: DIR_U },
+    DIR_D: { text: "下", value: DIR_D },
+    DIR_L: { text: "左", value: DIR_L },
+    DIR_R: { text: "右", value: DIR_R },
+}
+let typeNameTable = {
+    text: { text: "文本" },
+    link: { text: "链接" },
+    image: { text: "图像" }
+}
 
-    <fieldset>
-    <legend>文本</legend>
-    ${template_str1}
-    </fieldset>
-</form>
-<form id="link">
-    <fieldset>
-    <legend>链接</legend>
-    ${template_str1}
-    </fieldset>
-</form>
-<form id="image">
-    <fieldset>
-    <legend>图像</legend>
-    ${template_str1}
-    </fieldset>
-</form>
-`;
+class SelectWrapper {
+    constructor(optList = [], value, cb) {
+        this.elem = document.createElement("select");
+        optList.every(opt => {
+            let option = document.createElement("option");
+            option.setAttribute("value", opt.value);
+            option.textContent = opt.text;
+            this.elem.appendChild(option);
+            return 1;
+        });
+        this.onchange = this.onchange.bind(this);
+        this.elem.onchange = this.onchange;
+        this.callback = cb;
+        this.value = value;
+    }
+    get value() {
+        if (this.elem.value === "false") return false;
+        else if (this.elem.value === "true") return true;
+        return this.elem.value;
+    }
+    set value(v) {
+        this.elem.value = v;
+    }
+    onchange(event) {
+        this.callback();
+    }
+}
+class DirWrapper {
+    constructor(dir, conf, cb) {
+        let _cb = cb;
+        cb = () => {
+            this.onchange_callback();
+            _cb();
+        }
+        this.elem = document.createElement("div");
+        this.label = document.createElement("label");
+        this.label.textContent = dir.text;
+        this.elem.appendChild(this.label);
+        this.direction = dir.value;
+        this.act = { act_name: conf.act_name, tab_active: conf.tab_active, tab_pos: conf.tab_pos, engine_name: conf.engine_name };
+        this.actSelect = new SelectWrapper(OptionTextTable.act, this.act.act_name, cb);
+        this.activeSelect = new SelectWrapper(OptionTextTable.status, this.act.tab_active, cb);
+        this.posSelect = new SelectWrapper(OptionTextTable.pos, this.act.tab_pos, cb);
+        this.engineSelect = new SelectWrapper([{ text: "bd", value: "1" }, { text: "gg", value: "2" }], "1", cb);
+        this.engineSelect.elem.style.display = "none";
+        [this.actSelect, this.activeSelect, this.posSelect, this.engineSelect].forEach(s => {
+            this.elem.appendChild(s.elem);
+        })
+        this.onchange_callback();
+    }
+    onchange_callback() {
+        Object.assign(this.act, {
+            act_name: this.actSelect.value,
+            tab_active: this.activeSelect.value, tab_pos: this.posSelect.value, engine_name: this.engineSelect.value
+        });
+        if (this.act.act_name === ACT_SEARCH) {
+            this.engineSelect.elem.style.display = "";
+        }
+        else {
+            this.engineSelect.elem.style.display = "none";
 
-//在initForm-updateTemplateStr3中会更新下面的模板字符串，用来实时显示用户自定义的搜索引擎。
-//不过class id等已确定的东西不会受到影响
-let template_str3 = `
-<select>
-    <option> </option>
-</select>
-`
+        }
+    }
+}
+class ChildWrapper {
+    constructor(typeName, conf, cb) {
+        this.elem = document.createElement("div");
+        this.typeName = typeName;
+        this.label = document.createElement("label");
+        this.label.textContent = typeName;
+        this.elem.appendChild(this.label);
+        this.WrapperU = new DirWrapper(DirTextTable.DIR_U, conf.DIR_U, cb);
+        this.WrapperD = new DirWrapper(DirTextTable.DIR_D, conf.DIR_D, cb);
+        this.WrapperL = new DirWrapper(DirTextTable.DIR_L, conf.DIR_L, cb);
+        this.WrapperR = new DirWrapper(DirTextTable.DIR_R, conf.DIR_R, cb);
+        [this.WrapperD, this.WrapperL, this.WrapperR, this.WrapperU].forEach(w => this.elem.appendChild(w.elem));
+    }
+    collect() {
+        return {
+            DIR_U: this.WrapperU.act,
+            DIR_D: this.WrapperD.act,
+            DIR_L: this.WrapperL.act,
+            DIR_R: this.WrapperR.act
+        }
+    }
+}
+class Wrapper {
+    constructor(conf) {
+        this.callback = this.callback.bind(this);
+        this.elem = document.createElement("div");
+        this.child_text = new ChildWrapper(typeNameTable.text.text, conf.textAction, this.callback);
+        this.child_image = new ChildWrapper(typeNameTable.image.text, conf.imageAction, this.callback);
+        this.child_link = new ChildWrapper(typeNameTable.link.text, conf.linkAction, this.callback);
+        [this.child_text, this.child_link, this.child_image].every(c => this.elem.appendChild(c.elem));
+    }
+    callback() {
+        this.save();
+    }
+    collect() {
+        return {
+            textAction: this.child_text.collect(),
+            imageAction: this.child_image.collect(),
+            linkAction: this.child_link.collect()
+        }
+    }
+    save() {
+        backgroundPage.config.set("Actions", this.collect());
+        backgroundPage.config.save();
+    }
+    appendTo(parent) {
+        parent.appendChild(this.elem);
+    }
+}
 
 let backgroundPage = null;
-let config = null
 browser.runtime.getBackgroundPage().then((page) => {
     backgroundPage = page;
-    config = backgroundPage.config;
-
     let fileReader = new FileReader();
     fileReader.addEventListener("loadend", () => {
         try {
-
             backgroundPage.loadUserOptionsFromBackUp(fileReader.result);
             initForm();
         }
@@ -96,121 +158,29 @@ browser.runtime.getBackgroundPage().then((page) => {
             alert("在恢复用户配置时出现异常！");
         }
     });
-    document.addEventListener('DOMContentLoaded', () => {
-        backgroundPage.loadUserOptions(() => {
-            initForm();
-        });
-    }, false);
     document.querySelector("#backup").addEventListener("click", (event) => {
         let blob = new Blob([backgroundPage.convertOptionsToJson()], { type: 'application/json' });
         event.target.setAttribute("href", URL.createObjectURL(blob));
         event.target.setAttribute("download", "GlitterDrag" + new Date().getTime() + ".json");
     });
-
     document.querySelector("#restore").addEventListener("click", () => {
         document.querySelector("#fileInput").click();
     });
-
     document.querySelector("#default").addEventListener("click", () => {
 
-        backgroundPage.loadDefaultOptions();
+        backgroundPage.config.loadDefault();
         initForm();
     });
     document.querySelector("#fileInput").addEventListener("change", (event) => {
         fileReader.readAsText(event.target.files[0])
     });
-    initTabsPage();//代码：options_tab.js
+    initForm();
 }, () => { });
-
-function backup() {
-
-}
-
-function restore() {
-
-}
-
-function resetDefault() {
-
-}
-
 function initForm() {
-    function createSelectElemOfSearchEngines() {
-        let selectElem = document.createElement("select");
-        for (let sobj of config.userCustomizedSearchs) {
-
-        }
-    }
-    function onChange(event) {
-        //如果选中的执行动作是“搜索”，那么插入选择菜单
-
-        //如果触发事件的元素是上面插入的选择菜单，那么更新动作
-
-
-        let form = event.target;
-        while (form.tagName !== "FORM") {
-            form = form.parentElement;
-        }
-        let div_row = event.target;
-        while (div_row.className !== "row") {
-            div_row = div_row.parentElement;
-        }
-        let input = div_row.querySelector("input");
-        let select_list = input.parentElement.querySelectorAll("select");
-        input.value = parseInt(select_list[0].value) | parseInt(select_list[1].value) | parseInt(select_list[2].value);
-
-        let key = "linkAction";
-        switch (form.id) {
-            case "text":
-                key = "textAction";
-                break;
-            case "link":
-                key = "linkAction";
-                break;
-            case "image":
-                key = "imageAction";
-                break;
-        }
-
-        backgroundPage.updateUserActionOptions(key, input.name, input.value);
-    }
-
-
-    document.querySelector("#content-1").innerHTML = template_str2;
-    let list = document.querySelectorAll("select");
-
-
-
-    for (let elem of list) {
-        elem.addEventListener("change", onChange);
-    }
-
-    for (let form of document.querySelectorAll("form")) {
-        let key = "linkAction";
-        switch (form.id) {
-            case "text":
-                key = "textAction";
-                break;
-            case "link":
-                key = "linkAction";
-                break;
-            case "image":
-                key = "imageAction";
-                break;
-        }
-        for (let row of form.querySelectorAll(".row")) {
-            let input = row.querySelector("input");
-            let flags = config.userActionOptions[key][input.name];
-            input.value = flags.f;
-            for (let select of row.querySelectorAll("select")) {
-                for (let opt of select.querySelectorAll("option")) {
-                    if (flags.isset(opt.value)) {
-                        opt.selected = "selected";
-                        break;
-                    }
-                }
-            }
-        }
+    let content1 = document.querySelector("#content-1");
+    if (content1.children.length === 0) {
+        let wrapper = new Wrapper(backgroundPage.config.Actions);
+        wrapper.appendTo(content1);
     }
 }
 
@@ -239,7 +209,7 @@ function initSearchTemplateTab(isFirst = true) {
         let div = document.createElement("div")
         div.innerHTML = `<input type="text" class="input-name input-disabled" index="${index}" title="名称" oldName="${name}" value="${name}"></input>
             <button class="btn-remove">删除</button>
-            <input type="text" class="input-url input-disabled" title="搜索模板" value="${url}"></input>
+            <input type="text" class="input-url input-disabled" title="链接" value="${url}"></input>
             <button class="btn-save">保存</button>
             `;
         for (let btn of div.querySelectorAll("button")) {
@@ -308,15 +278,6 @@ function initSearchTemplateTab(isFirst = true) {
                 let index = parseInt(inputElems[0].getAttribute("index"));
                 backgroundPage.updateUserCustomizedSearch(index, name, url);
                 updateContainer();
-                // let oldName = inputElems[0].getAttribute("oldName");
-                //TODO:重复检测，又能保存
-                // if (name in backgroundPage.userCustomizedSearchs && oldName in backgroundPage.userCustomizedSearchs) {
-                //     alert("名称重复！");
-                // }
-                // else {
-                //     backgroundPage.updateUserCustomizedSearch(oldName, name, url.value);
-                //     updateContainer()
-                // }
             }
         }
         else if (T.className === "btn-remove") {
