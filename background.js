@@ -1,32 +1,13 @@
 //全局变量
 // var Actions = {};
-// var userCustomizedSearchs = [];
+// var Engines = [];
 // var userSearchTemplate = {};
 // var enableSync = false;//启动数据同步
 // var allowedTopLevelDomains = [];//顶级域名，如cn com org net
 // var enableAnimation = false;//启用过渡动画
 //var enableInterruption = false; //在拖拽过程按下鼠标右键强制打断拖拽
 // var urlMatchPattern = /[A-z]/
-class SimulateTabs {
-    constructor() {
-        this.tabs = [];
-        this.currentIndex = -1;
-    }
-    createSomeTabs(count) {
-        for (let i = 0; i < count; i++) {
-            this.tabs.push(i);
-        }
-    }
 
-    selectTab(index) {
-        this.currentIndex = index;
-    }
-
-    openNewTab(value, pos) {
-        this.tabs.splice(pos, 0, value);
-    }
-
-}
 
 class ExecutorClass {
     constructor() {
@@ -38,23 +19,21 @@ class ExecutorClass {
         this.action = null;
     }
     DO(m) {
-        //console.assert(opt.target instanceof HTMLElement);
         this.data = m;
 
         if (this.data.type === TYPE_UNKNOWN) {
             console.error("未知的拖拽目标类型！~");
             return;
         }
-        // let typeAction = EMPTY_OPTION.noAction;
 
         if (this.data.type === TYPE_TEXT_URL || this.data.type == TYPE_ELEM_A) {
-            this.execute(config.getAct("linkAction",this.data.direction))
+            this.execute(config.getAct("linkAction", this.data.direction))
         }
         else if (this.data.type === TYPE_TEXT || this.data.type === TYPE_ELEM) {
-            this.execute(config.getAct("linkAction",this.data.direction));
+            this.execute(config.getAct("textAction", this.data.direction));
         }
         else if (this.data.type === TYPE_ELEM_IMG) {
-            this.execute(config.getAct("imageAction",this.data.direction));
+            this.execute(config.getAct("imageAction", this.data.direction));
         }
         else {
 
@@ -65,34 +44,16 @@ class ExecutorClass {
         if (this.data.selection.length === 0) {
             return;
         }
-        switch(this.action.act_name){
-            case ACT_OPEN:this.openURL(this.data.selection);break;
-            case ACT_COPY:this.copyText(); break;
-            case ACT_SEARCH:this.searchText();break;
-            case ACT_DL:break;
-            case ACT_TRANS:break;
+        switch (this.action.act_name) {
+            case ACT_OPEN: this.openURL(this.data.selection); break;
+            case ACT_COPY: this.copy(); break;
+            case ACT_SEARCH:
+                if (this.action.search_type === SEARCH_LINK) this.searchText(this.data.selection);
+                else this.searchText(this.data.textSelection);
+                break;
+            case ACT_DL: break;
+            case ACT_TRANS: break;
         }
-        // if (this.action.isAct(ACT_OPEN)) {
-        //     this.openURL(this.data.selection);
-        // }
-        // else if (this.action.isAct(ACT_COPY)) {
-        //     alert("复制");
-        // }
-        // else if (this.action.isAct(ACT_SEARCH)) {
-        //     this.searchText(this.getEngineByName(this.flags.engine_name), this.data.selection);
-        //     // if (this.data.type === TYPE_TEXT) {
-        //     //     this.searchText(this.getEngineByName(this.flags.engine_name),this.data.selection,);
-        //     // }
-        //     // else if (this.data.type === TYPE_ELEM_IMG) {
-        //     //     this.searchText(userCustomizedSearchs,this.data.selection,);
-        //     // }
-        // }
-        // else if (this.action.isAct(ACT_DL)) {
-        //     this.downloadImage();
-        // }
-        // else if (this.action.isAct(ACT_TRANS)) {
-        //     this.translateText();
-        // }
     }
     openTab(url) {
         browser.tabs.query({}).then(tabs => {
@@ -126,13 +87,13 @@ class ExecutorClass {
     openURL(url) {
         this.openTab(url);
     }
-
-    copyText(text) {
-
+    copy() {
+        browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+            browser.tabs.sendMessage(tabs[0].id, { command: "copy", copy_type: this.action.copy_type });
+        })
     }
-
-    searchText(url, keyword) {
-        this.openURL(this.searchTemplate.replace("%s", text));
+    searchText(keyword) {
+        this.openURL(config.getSearchURL(this.action.engine_name).replace("%s", keyword));
     }
 
     searchImage(url, keyword) {
@@ -198,9 +159,13 @@ class ConfigClass {
                 val[t] = {};
                 for (let d of Object.keys(oldval[t])) {
                     let a = oldval[t][d];
-                    val[t][d] = new ActClass(a.act_name,a.tab_active,a.tab_pos,a.engine_name)
+                    //NEW OPT
+                    val[t][d] = new ActClass(a.act_name, a.tab_active, a.tab_pos, a.engine_name, a.search_type, a.copy_type)
                 }
             }
+        }
+        else if (key === "Engines") {
+            val = Array.from(val, v => ({ name: v.name, url: v.url }))
         }
         this[key] = val;
     }
@@ -208,7 +173,14 @@ class ConfigClass {
         return this.Actions[type][dir]
     }
     setAct(type, dir, act) {
-        this.Actions[type][dir] = act;
+        if (act instanceof ActClass) {
+            this.Actions[type][dir] = act;
+        }
+    }
+    getSearchURL(name) {
+        let url = "http://www.baidu.com/s?wd=%s";
+        this.get("Engines").every(engine => engine.name === name ? (url = engine.url, false) : true);
+        return url;
     }
     backup() {
         return JSON.stringify(this, null, 2);
@@ -240,7 +212,7 @@ class ConfigClass {
                         DIR_R: new ActClass(),
                     },
                 },
-                userCustomizedSearchs: [],
+                Engines: [],
                 enableSync: false
             }
             for (let k of Object.keys(_default)) {
@@ -257,66 +229,13 @@ class ConfigClass {
 var executor = new ExecutorClass();
 var config = new ConfigClass();
 
-
-// function initActionOptions(raw_act) {
-//     for (let act in raw_act) {
-//         for (let dir in raw_act[act]) {
-//             raw_act[act][dir] = new ActClass(raw_act[act][dir].act_val);
-//         }
-//     }
-//     return raw_act;
-// }
-
-
-// function tryAssignValue(result) {
-//     if (result.hasOwnProperty("enableSync")) {
-//         enableSync = result.enableSync;
-//     }
-
-//     if (result.hasOwnProperty("Actions")) {
-//         Actions = initActionOptions(result.Actions);
-//     }
-
-//     if (result.hasOwnProperty("userCustomizedSearchs")) {
-//         userCustomizedSearchs = result.userCustomizedSearchs;
-//     }
-
-//     if (result.hasOwnProperty("userSearchTemplate")) {
-//         //https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
-//         //第3个对象的属性会覆盖第2个
-//         //目标是让用户自定义的搜索覆盖扩展自带的搜索
-//         Object.assign(userSearchTemplate, result.userSearchTemplate, DEFAULT_SEARCH_TEMPLATE)
-//     }
-// }
-
-// function collectOptions() {
-//     return {
-//         Actions: Actions,
-//         enableSync: enableSync,
-//         userCustomizedSearchs: userCustomizedSearchs,
-//         userSearchTemplate: userSearchTemplate,
-//         allowTopDomains: allowTopDomains,
-//         enableAnimation: enableAnimation
-//     }
-// }
-
-
 function loadUserOptions(callback) {
     config.load(callback);
-    // let storageArea = enableSync ? browser.storage.sync : browser.storage.local;
-    // let promise = storageArea.get();
-    // promise.then((result) => {
-    //     tryAssignValue(result);
-    //     callback ? callback() : null;
-    // });
 }
 
 
 function saveUserOptions(callback) {
     config.save(callback);
-    // let storageArea = enableSync ? browser.storage.sync : browser.storage.local;
-    // storageArea.set(collectOptions());
-    // callback ? callback() : null;
 }
 
 
@@ -329,26 +248,19 @@ function convertOptionsToJson() {
 function loadUserOptionsFromBackUp(raw_json = "", save_after = true) {
     config.recover(raw_json);
     config.save();
-    // if (raw_json.length === 0) return;
-    // let result = JSON.parse(raw_json, jsonParser);
-    // tryAssignValue(result);
 }
 
 function loadDefaultOptions() {
     config.save();
-    // Actions = DEFAULT_OPTIONS;
-    // saveUserOptions();
 }
 
 function updateUserActionOptions(type, dir, act_value) {
     config.setAct(type, dir, new ActClass(act_value));
     config.save();
-    // Actions[act][dir].clear_self_set(parseInt(value));
-    // saveUserOptions();
 }
 
 function updateUserCustomizedSearch(index, name, url, remove = false) {
-    let searchList = config.userCustomizedSearchs;
+    let searchList = config.Engines;
     if (index === -1) {
         searchList.push({ name: name, url: url });
     }
@@ -358,17 +270,7 @@ function updateUserCustomizedSearch(index, name, url, remove = false) {
     else {
         searchsList[index] = { name: name, url: url };
     }
-    // if (remove) {
-    //     delete searchList[oldName];
-    // }
-    // else if (oldName != newName) {
-    //     delete searchList[oldName];
-    //     searchList[newName] = templateURL;
-    // }
-    // else {
-    //     searchList[newName] = templateURL;
-    // }
-    config.set("userCustomizedSearchs", searchList);
+    config.set("Engines", searchList);
     config.save();
 }
 

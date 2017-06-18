@@ -21,7 +21,8 @@
         "activeTab",
         "storage",
         "tabs",
-        "<all_urls>"
+        "<all_urls>",
+        "clipboardWrite"
     ],
     "background": {
         "scripts": [

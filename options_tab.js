@@ -1,11 +1,8 @@
 class Tab {
-    constructor(elem, id,func) {
+    constructor(elem, id, func) {
         this.elem = elem;
         this.id = id;
         this.initFunc = func;
-    }
-    reloadTab(){
-        this.initFunc();
     }
     show() {
         this.elem.classList.add("tab-active");
@@ -15,7 +12,7 @@ class Tab {
     }
 }
 class TabContainer {
-    constructor(selector) {
+    constructor(selector, tabsData) {
         this.onclick = this.onclick.bind(this);
         this.elem = document.querySelector(selector);
         this.nav = this.elem.querySelector("nav");
@@ -24,7 +21,7 @@ class TabContainer {
             e.onclick = this.onclick;
             e.setAttribute("nav-id", i);
         });
-        this.tabs = Array.from(this.elem.querySelectorAll(".tab-content"), (v, i) => new Tab(v, i));
+        this.tabs = Array.from(tabsData, (data, idx) => new Tab(document.querySelector(data.selector), idx, data.func));
     }
     onclick(event) {
         Array.from(this.nav.children, a => a.classList.remove("nav-active"));
@@ -39,7 +36,15 @@ class TabContainer {
 
     // }
     activeById(id) {
-        this.tabs.forEach(tab => tab.id === id ? tab.show() : tab.hide());
+        this.tabs.forEach(tab => {
+            if (tab.id === id) tab.show(), tab.initFunc()
+            else tab.hide()
+        });
     }
 }
-let tabContainer = new  TabContainer("#tabs");
+let tabContainer = new TabContainer("#tabs", [
+    { selector: "#content-0", func: () => { } },
+    { selector: "#content-1", func: initForm },
+    { selector: "#content-2", func: initSearcheTab },
+    { selector: "#content-3", func: () => { } }
+]);
