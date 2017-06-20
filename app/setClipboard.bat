@@ -1,3 +1,3 @@
 @echo off
 
-call ping_pong.ps1
+call setClipboard.ps1

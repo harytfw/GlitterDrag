@@ -26,17 +26,16 @@ Function sendMessage($content)
 {
     $jsonContent = ConvertTo-Json -InputObject $content
     $bytes = [BitConverter]::GetBytes([Convert]::ToUInt32($jsonContent.Length))
-    #´ó¶Ë Ğ¡¶Ë£¿£¿£¿£¿£¿£¿
+    #å¤§ç«¯ å°ç«¯ï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿ
     #[Array]::Reverse($bytes) 
-    #ÎªÁËÏòÍâÊä³ö×Ö½Ú£¬Ê¹ÓÃ$stdout
+    #ä¸ºäº†å‘å¤–è¾“å‡ºå­—èŠ‚ï¼Œä½¿ç”¨$stdout
     $stdout.Write($bytes,0,$bytes.Length)
-    #¾­¹ıjsonµÄ×Ö·û´®£¬Ö±½ÓÊä³ö
+    #ç»è¿‡jsonçš„å­—ç¬¦ä¸²ï¼Œç›´æ¥è¾“å‡º
     [Console]::Out.Write($jsonContent)
     [Console]::Out.Flush()
 }
 Function setImageToClipboard($base64String)
 {
-    #$base64String = "iVBORw0KGgoAAAANSUhEUgAAAJwAAACGCAIAAACnl3TnAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQBSURBVHhe7dFbcuMwDETR7H/TGVd8UZEKlC1P9ACafb4SADJB9te3yXGoghyqIIcqyKEKcqiCHKoghyrIoQpyqIIcqiCHKsihCnKoghyqIIcqyKEKcqiCHKoghyrIoQpyqIIcqiCHKsihCnKoghyqILVQvwL/T0nq8uQZqM7HoQpyqIJ0bk6Sa/Qm41AFOVRBItcmwxEmZuJQBSncmfQ2MDQT/VAfmJuGYKjDylTaX5jcFnLxOTkPtVCHxYdnfRKaoT7wf6A6h963JbEFGg61LxILVH9QClTnIBvqA9VAdQKNr0pWCzQC1UB1AjqhUl2gEahOYKJQH2io63pPUlqgsUYvUFUnEirVhHagqm6uUB9oSGt5SfJZoDHCRKAqTSFUqhsYClSlTRfqAw1d/W5IMgs0tjEXqOpqHyrVlxgNVHUVuiFP/iE+fonRD/FxQyeuztucjMPeYfpMnFTAWatw0ZNx2A58cDIOu5tDPRKH3a1xqJy0G5+diZPuduIeXHQ3PiuDtXbjswLOXYXrJrQb4gIJ7Rqu2IZ7J7SbYOkRJsq4aCFun9Auj3UT2sVctxbPkNAujEUT2vVcuhmPkdAuiRUT2iXdsByvktAug7US2oXdsyLPk9AugIUS2rXdtiWPlNC+FasktMu7c1GeaoSJy3H8CBMd3L8rb5bQvhAHJ7T7KLExj5fQvgRHJrRbqbI0T5jQPhmHJbS7qbU3b5nQPgEHJLR7Krc9j5rQPhQ/ndBuq+IFeNqE9kH40YR2Z0XvwAOv0TsIP7pGr7nS1+ClA9WD8KOBqoS6l+GxF2gchB9doNFfm1CpHoqfDlT7c6i/qPbnUH9R7a/oTXjmQPUEHBCoNudQV6g251BXqDZX8Ro88AKNE3DAAo3OGoRKdR+++eQrPghUO5MKlQ8C1XeYDlQ7EwmV0REmtjEXqHZW7g487QKNbcxtY24bc4FqW9VDpbqBoR34YANDgWpbjUNl4hN8mdAOVNvqGirthPaOgSV6CzR6qrU9LxqortEbYSJQTWiv0QtUe2oWKo2EdkJ7hIlANVDtqU2olEaY2MZcQvsHpUC1p0Lb85wLNP6W6BPTI1sDz3pHdUOlup0H7d34bGQ48Cx2VDpU/hp5fvIf+D7Jred8R3VD3cL0H/BD7zDdUJXVech3mD4Cv/gSo910CpXR4/C725jrpkeoDJ2AAzYw1E2DUJk4EyeNMNFKiaV5v4T2JTgyod1K3VDpXYiD1+i1UjFUqjdhiUC1lSpL84Q1HpFVeib60HVve8GhCnKoghyqIIcqyKEKcqiCHKoghyrIoQpyqIIcqiCHKsihCnKoghyqIIcqyKEKcqiCHKoghyrIoQpyqIIcqiCHKuf7+x/81WsMFuCLiQAAAABJRU5ErkJggg=="
     $imageBytes = [System.Convert]::FromBase64String($base64String)
     $ms = [IO.MemoryStream]::new($imageBytes,0,$imageBytes.Length)
     $ms.Seek(0,[System.IO.SeekOrigin]::Begin)
@@ -45,24 +44,23 @@ Function setImageToClipboard($base64String)
     $null = [System.Windows.Forms.Clipboard]::SetImage($img)
     return "END"
 }
-#Êä³ö»º´æÇø²»¿ÉÒÔ³öÏÖÈÎºÎÆäËüÏµÍ³´íÎó¡¢ÌáÊ¾µÈµÈ....×Ö·û´®
-#·ñÔò»áÓ°Ïìä¯ÀÀÆ÷¶Ô³¤¶ÈµÄ¶ÁÈ¡£¬µ¼ÖÂÎŞ·¨ÊµÏÖÕı³£Í¨ĞÅ
-#»òĞí¿ÉÒÔÖØ¶¨ÏòpowersdhellÊä³ö£¬ÈÃËüÕı³£Êä³öµ½ä¯ÀÀÆ÷
+#è¾“å‡ºç¼“å­˜åŒºä¸å¯ä»¥å‡ºç°ä»»ä½•å…¶å®ƒç³»ç»Ÿé”™è¯¯ã€æç¤ºç­‰ç­‰....å­—ç¬¦ä¸²
+#å¦åˆ™ä¼šå½±å“æµè§ˆå™¨å¯¹é•¿åº¦çš„è¯»å–ï¼Œå¯¼è‡´æ— æ³•å®ç°æ­£å¸¸é€šä¿¡
+#æˆ–è®¸å¯ä»¥é‡å®šå‘powersdhellè¾“å‡ºï¼Œè®©å®ƒæ­£å¸¸è¾“å‡ºåˆ°æµè§ˆå™¨
 while($true)
 {
     $res = getMessage
-    if($res -eq "testsignal")
+    $res = ConvertFrom-Json -InputObject $res
+    if($res -eq "test")
     {
-      sendMessage("testsignal from powershell")
+      sendMessage("reply from powershell")
     }
     else
     {
-      $report = "NOT"
       if($res.length -ne 0){
-        $res = ConvertFrom-Json -InputObject $res
-        setImageToClipboard($res) > $report
+        $null = setImageToClipboard($res)
       }
-      sendMessage($res)
+      sendMessage("Finished")
     }
 
 }
