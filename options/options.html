@@ -10,9 +10,9 @@
 <body>
 
     <div id="control">
-        <a id="backup" href="#" download="GlitterDrag-time.json">备份配置</a>
-        <a id="restore">恢复配置 </a>
-        <a id="default">恢复默认 </a>
+        <a class="default" id="backup" href="http://baidu.com" target="window" download="GlitterDrag-time.json">备份配置</a>
+        <a class="default" id="restore">恢复配置 </a>
+        <a class="default" id="default">恢复默认 </a>
         <input type="file" id="fileInput" accept=".json" style="display:none">
     </div>
     <br>
@@ -27,7 +27,7 @@
             </nav>
             <ul style="list-style:none">
                 <li class="tab-content" id="content-0">
-                    <div style="background:#EED5B7">
+                    <div>
                         <br>
                         <a href="https://baidu.com/">百度</a>
                         <a href="https://bing.com/">Bing</a>
@@ -47,12 +47,12 @@
 
         </section>
     </div>
-    <script src="common.js"></script>
+    <script src="./../common.js"></script>
     <script src="options.js"></script>
 
     <script src="options_tab.js"></script>
     <script src="options_debug.js"></script>
-    <script src="content_script.js"></script>
+    <script src="./../content_script.js"></script>
 </body>
 
 </html>

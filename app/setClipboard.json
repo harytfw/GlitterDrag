@@ -1,0 +1,7 @@
+{
+  "name": "ping_pong",
+  "description": "Example host for native messaging",
+  "path": "D:\\workspace\\webextensions-examples-master\\native-messaging\\app\\ping_pong_win.bat",
+  "type": "stdio",
+  "allowed_extensions": [ "ping_pong@example.org" ,"glitterdrag@harytfw"]
+}

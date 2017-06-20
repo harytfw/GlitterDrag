@@ -33,8 +33,10 @@ const ACT_DL = "ACT_DL" //下载
 const ACT_QRCODE = "ACT_QRCODE" //二维码
 const COPY_LINK = "COPY_LINK"
 const COPY_TEXT = "COPY_TEXT"
+const COPY_IMAGE = "COPY_IMAGE"
 const SEARCH_TEXT = "SEARCH_TEXT"
 const SEARCH_LINK = "SEARCH_LINK"
+const SEARCH_IMAGE = "SEARCH_IMAGE"
 // const KEY_CTRL = 0;//ctrl键
 // const KEY_SHIFT = 1;//shift键
 
@@ -67,27 +69,27 @@ function $E(s = "") {
 
 class ActClass {
     //NEW OPT
-    constructor(act = ACT_NONE, active = BACK_GROUND, pos = TAB_LAST, en = "",search_type=SEARCH_TEXT,copy_type=COPY_LINK) {
+    constructor(act = ACT_NONE, active = BACK_GROUND, pos = TAB_LAST, en = "", search_type = SEARCH_TEXT, copy_type = COPY_LINK) {
         this.act_name = act;
         this.tab_active = active;
         this.tab_pos = pos;
         this.engine_name = en;
         this.copy_type = copy_type;
-        
-        this.search_type=search_type;
+
+        this.search_type = search_type;
     }
     isAct(any) {
         if (act_name === any) {
             return true;
         }
     }
-    update(opt = { act: ACT_NONE, active: BACK_GROUND, pos: TAB_LAST, en: "",search_type:SEARCH_TEXT, copy_type: COPY_LINK }) {
+    update(opt = { act: ACT_NONE, active: BACK_GROUND, pos: TAB_LAST, en: "", search_type: SEARCH_TEXT, copy_type: COPY_LINK }) {
         this.act_name = opt.act;
         this.tab_active = opt.active;
         this.tab_pos = opt.pos;
         this.engine_name = opt.en;
         this.copy_type = opt.copy_type;
-        this.search_type=search_type;
+        this.search_type = search_type;
     }
 }
 

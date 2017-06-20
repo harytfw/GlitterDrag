@@ -15,14 +15,16 @@
         "default_icon": {
             "48": "Drag.png",
             "512": "Drag.png"
-        }
+        },
+        "browser_style":true
     },
     "permissions": [
         "activeTab",
         "storage",
         "tabs",
         "<all_urls>",
-        "clipboardWrite"
+        "clipboardWrite",
+        "nativeMessaging"
     ],
     "background": {
         "scripts": [
@@ -45,8 +47,9 @@
         }
     ],
     "options_ui": {
-        "page": "options.html",
-        "browser_style": true
+        "page": "options/options.html",
+        "browser_style": true,
+        "open_in_tab":false
     },
     "default_locale": "en",
     "applications": {

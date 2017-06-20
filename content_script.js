@@ -1,7 +1,5 @@
 class DragClass {
-
     constructor(elem) {
-
         this.dragged = elem;
         this.selection = "";
         this.targetElem = null;
@@ -14,11 +12,7 @@ class DragClass {
         this.handler = this.handler.bind(this);
         this.eventRegister();
     }
-
-
-
     post() {
-
         let t = checkDragTargetType(this.selection, this.targetElem);
         let s = "";
         let x = ""
@@ -41,7 +35,7 @@ class DragClass {
         browser.runtime.sendMessage({
             direction: this.direction,
             selection: s,
-            textSelection:x,
+            textSelection: x,
             type: t
         });
     }
@@ -143,26 +137,104 @@ class DragClass {
     }
 
 }
+const MIME_TYPE = {
+    ".gif": "image/gif",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".bmp": "image/bmp",
+    ".txt": "text/plain",
+}
 
+let copyMessage = null;
+function onCopy(event) {
+    let elem = drag.targetElem;
+    let clipboard = event.clipboardData
+    if (copyMessage.copy_type === COPY_LINK) {
+        if (elem instanceof HTMLAnchorElement) clipboard.setData(MIME_TYPE[".txt"], elem.href)
+        else if (elem instanceof HTMLImageElement) clipboard.setData(MIME_TYPE[".txt"], elem.src)
+    }
+    else if (elem instanceof HTMLImageElement) {
+        //获取路径名
+        let pathname = new URL(elem.src).pathname;
+        //获得图像的扩展名
+        let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
+        //下面尝试得到图像的二进制数据
+        let canvas = document.createElement("canvas");
+        canvas.height = elem.height;
+        canvas.width = elem.width;
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(elem, 0, 0);
+        //得到没有data:image ...头的base64字符串
+        let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
+        //转换为二进制字符串
+        // let binString = atob(bareBase64);
+        browser.runtime.sendMessage({
+            imageBase64: base64
+        });
+        // port.postMessage(base64);
+        // clipboard.setData(MIME_TYPE[ext],binString);
+        // delete canvas;
+        // delete bareBase64
+    }
+    event.preventDefault();
+}
 function listener(msg) {
+    let dontExecute = false;
+    let elem = drag.targetElem;
     let input = document.createElement("input");
     input.style.width = "0px";
     input.style.height = "0px";
-    drag.targetElem.appendChild(input);
-    if (msg.copy_type === COPY_LINK) {
-        if (drag.targetElem instanceof HTMLAnchorElement) input.value = drag.targetElem.href;
-        else if (drag.targetElem instanceof HTMLImageElement) input.value = drag.targetElem.src;
+    if (elem instanceof HTMLAnchorElement) {
+        if (msg.copy_type === COPY_LINK) input.value = elem.href;
+        else if (msg.copy_type === COPY_TEXT) input.value = elem.textContent;
+        else if(msg.copy_type ===COPY_IMAGE) {
+            //如果复制链接里的图像
+            drag.targetElem = elem.querySelector("img");
+            listener(msg);
+            return;
+        }
+    }
+    else if (elem instanceof HTMLImageElement) {
+        if (msg.copy_type === COPY_LINK) input.value = elem.src;
+        else if (msg.copy_type === COPY_IMAGE) {
+            dontExecute = true;
+            //获得图像的扩展
+            let pathname = new URL(elem.src).pathname;
+            let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
+            let img = new Image();
+            img.src = elem.src;
+            img.onload = () => {
+                //下面尝试得到图像的二进制数据
+                let canvas = document.createElement("canvas");
+                canvas.height = img.height;
+                canvas.width = img.width;
+                let ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                //得到没有data:image ...头的base64字符串
+                let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
+                //发送给background，让background发送字符串到powershell脚本
+                browser.runtime.sendMessage({
+                    imageBase64: base64
+                });
+                img = null;
+                canvas = null;
+                base64 = null;
+            }
+        }
     }
     else {
-        if (drag.targetElem instanceof HTMLAnchorElement) input.value = drag.targetElem.textContent;
-        // else if (drag.targetElem instanceof HTMLImageElement) //TODO;
-    };
-    input.focus();
-    input.setSelectionRange(0, input.value.length);
-    document.execCommand(msg.command);
-    drag.targetElem.removeChild(input);
+        input.value = drag.selection;
+    }
+    if(!dontExecute){
+        elem.parentElement.appendChild(input);
+        input.focus()
+        input.setSelectionRange(0,input.value.length);
+        document.execCommand("copy");
+    }
+
 }
 
 const drag = new DragClass(document.children[0])
-
+// document.addEventListener("copy", onCopy);
 browser.runtime.onMessage.addListener(listener);

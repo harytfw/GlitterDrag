@@ -1,0 +1,93 @@
+:root{
+    --font-size:16px;
+}
+
+body{
+    padding: 2%;
+    -moz-user-select: text;
+    user-select: text;
+    font-size: var(--font-size);
+}
+select{
+  margin-right: 10px;
+  font-size: var(--font-size);
+  background-color: whitesmoke;
+}
+select:hover{
+  box-shadow: 0px 0px 2px #005189;
+}
+
+a{
+    text-decoration: none;
+}
+a:visited{
+    color: #001ba0;
+
+}
+
+#tabs nav{
+    border-bottom: 1px solid #c1c1c1;
+    padding-left: 24px;
+}
+#tabs ul{
+    display: inline;
+}
+.nav-a {
+    text-decoration: none;
+    border: 1px solid #c1c1c1;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    color: #2B2B2B;
+    font-size: 16px;
+    padding: 4px 8px 0px 5px;
+    transition: background-color 0.5s;
+    margin-right: 4px;
+}
+.nav-a:visited{
+    color:#2B2B2B;
+}
+.nav-active{
+    color: #555;
+    cursor: default;
+    background-color: #fff;
+    border-bottom-color: transparent;
+}
+
+.tab-active{
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: initial !important;
+    width: initial !important;
+}
+#container{
+    margin-top: 30px;
+}
+
+.tab-content{
+    visibility: hidden;
+    height:0px;
+    width: 0px;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.5s linear;
+}
+#content-0{
+    background: #6eadbd;
+    width: 30%;
+}
+#actions>div{
+    border: 1px #0c99d5 solid;
+    box-shadow: 0px 0px 2px #0c99d5;
+    background-color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+#actions>div>div>label{
+    font-size: var(--font-size);
+    margin-right: 5px;
+}
+#actions>div>div>label:after{
+    content: ": ";
+}
+#actions>div>div{
+    margin-bottom: 10px;
+}

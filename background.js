@@ -7,7 +7,12 @@
 // var enableAnimation = false;//启用过渡动画
 //var enableInterruption = false; //在拖拽过程按下鼠标右键强制打断拖拽
 // var urlMatchPattern = /[A-z]/
-
+var supportCopyImage = false;
+var appName = "ping_pong";
+// let port = browser.runtime.connectNative("ping_pong");
+// port.onMessage.addListener((response) => {
+//     console.log("Received: " + response);
+// });
 
 class ExecutorClass {
     constructor() {
@@ -159,7 +164,7 @@ class ConfigClass {
                 val[t] = {};
                 for (let d of Object.keys(oldval[t])) {
                     let a = oldval[t][d];
-                    //NEW OPT
+                    //NEW SELECT
                     val[t][d] = new ActClass(a.act_name, a.tab_active, a.tab_pos, a.engine_name, a.search_type, a.copy_type)
                 }
             }
@@ -181,9 +186,6 @@ class ConfigClass {
         let url = "http://www.baidu.com/s?wd=%s";
         this.get("Engines").every(engine => engine.name === name ? (url = engine.url, false) : true);
         return url;
-    }
-    backup() {
-        return JSON.stringify(this, null, 2);
     }
     recover(json) {
         let parsed = JSON.parse(json);
@@ -279,8 +281,28 @@ browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
 });
 
+browser.runtime.sendNativeMessage(appName, "testsignal").then(
+    response => {
+        console.log("From native app:" + response);
+        supportCopyImage = true;
+    },
+    error => supportCopyImage = false
+);
+
 browser.runtime.onMessage.addListener((m) => {
-    executor.DO(m);
+    if (m.imageBase64) {
+        console.log("Send: ")
+        let sending = browser.runtime.sendNativeMessage(appName, m.imageBase64);
+        sending.then((response) => {
+            console.log("Receive:" + response);
+        }, (error) => {
+            console.log("Error:" + error);
+        })
+
+    }
+    else {
+        executor.DO(m);
+    }
 });
 
 config.load();

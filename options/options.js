@@ -5,18 +5,20 @@ let OptionTextTable = {
     { text: "搜索", value: ACT_SEARCH },
 
     { text: "复制", value: ACT_COPY },
-    { text: "翻译", value: ACT_TRANS },
     { text: "下载", value: ACT_DL },
+    { text: "翻译", value: ACT_TRANS },
     { text: "二维码", value: ACT_QRCODE },
     ],
-    status: [{ text: "前台", value: FORE_GROUND },
+    active: [{ text: "前台", value: FORE_GROUND },
     { text: "后台", value: BACK_GROUND },
     ],
     pos: [{ text: "尾", value: TAB_LAST },
     { text: "首", value: TAB_FIRST },
     { text: "前", value: TAB_CLEFT },
     { text: "后", value: TAB_CRIGHT },
-    ]
+    ],
+    search: [{ text: "链接", value: SEARCH_LINK }, { text: "文本", value: SEARCH_TEXT }, { text: "图像", value: SEARCH_IMAGE }],
+    copy: [{ text: "文本", value: COPY_TEXT }, { text: "链接", value: COPY_LINK }, { text: "图像", value: COPY_IMAGE }]
 }
 let DirTextTable = {
     DIR_U: { text: "上", value: DIR_U },
@@ -30,9 +32,18 @@ let typeNameTable = {
     image: { text: "图像" }
 }
 
+let tooltipTable = {
+    act: "要执行的动作",
+    active: "新建标签页的激活状态",
+    pos: "标签页的位置",
+    search: "调用的搜索引擎，默认调用百度",
+    search_type: "需要搜索的东西，文本、链接",
+    copy: "指定需要复制的东西，文本、链接或图像.复制图像可能会有很多问题，谨慎使用"
+}
 class SelectWrapper {
-    constructor(optList = [], value, cb) {
+    constructor(optList = [], value, tooltip, cb) {
         this.elem = document.createElement("select");
+        this.elem.setAttribute("title", tooltip);
         optList.every(opt => {
             let option = document.createElement("option");
             option.setAttribute("value", opt.value);
@@ -62,6 +73,15 @@ class SelectWrapper {
     onchange(event) {
         this.callback();
     }
+    disableOpt(...opts) {
+        opts.forEach(opt => {
+            Array.from(this.elem.children, child => {
+                if (opt === child.value) {
+                    child.setAttribute("disabled", "disabled");
+                }
+            })
+        })
+    }
 }
 class DirWrapper {
     constructor(dir, conf, cb) {
@@ -71,6 +91,7 @@ class DirWrapper {
             _cb();
         }
         this.elem = document.createElement("div");
+        this.elem.className = "direction"
         this.label = document.createElement("label");
         this.label.textContent = dir.text;
         this.elem.appendChild(this.label);
@@ -80,18 +101,16 @@ class DirWrapper {
             tab_pos: conf.tab_pos, engine_name: conf.engine_name, copy_type: conf.copy_type,
             search_type: conf.search_type
         };
-        this.actSelect = new SelectWrapper(OptionTextTable.act, this.act.act_name, cb);
-        this.activeSelect = new SelectWrapper(OptionTextTable.status, this.act.tab_active, cb);
-        this.posSelect = new SelectWrapper(OptionTextTable.pos, this.act.tab_pos, cb);
+        this.actSelect = new SelectWrapper(OptionTextTable.act, this.act.act_name, tooltipTable.act, cb);
+        this.activeSelect = new SelectWrapper(OptionTextTable.active, this.act.tab_active, tooltipTable.active, cb);
+        this.posSelect = new SelectWrapper(OptionTextTable.pos, this.act.tab_pos, tooltipTable.pos, cb);
 
         let engines = backgroundPage.config.get("Engines");
         let optList = engines.length !== 0 ? Array.from(engines, v => ({ text: v.name, value: v.name })) : [{ text: "默认", value: "" }];
-        //NEW OPT
-        //TODO 把选项聚集起来，放到外面
-        this.engineSelect = new SelectWrapper(optList, this.act.engine_name, cb);
-        this.searchTypeSelect = new SelectWrapper([{ text: "链接", value: SEARCH_LINK }, { text: "文本", value: SEARCH_TEXT }],
-            this.act.search_type, cb);
-        this.copySelect = new SelectWrapper([{ text: "文本", value: COPY_TEXT }, { text: "链接", value: COPY_LINK }], this.act.copy_type, cb);
+        //NEW SELECT
+        this.engineSelect = new SelectWrapper(optList, this.act.engine_name, tooltipTable.search, cb);
+        this.searchTypeSelect = new SelectWrapper(OptionTextTable.search, this.act.search_type, tooltipTable.search_type, cb);
+        this.copySelect = new SelectWrapper(OptionTextTable.copy, this.act.copy_type, tooltipTable.copy, cb);
 
         [this.actSelect, this.activeSelect, this.posSelect, this.engineSelect, this.copySelect, this.searchTypeSelect].forEach(s => {
             this.elem.appendChild(s.elem);
@@ -99,7 +118,7 @@ class DirWrapper {
         this.onchange_callback();
     }
     onchange_callback() {
-        //NEW OPT
+        //NEW SELECT
         Object.assign(this.act, {
             act_name: this.actSelect.value,
             tab_active: this.activeSelect.value, tab_pos: this.posSelect.value, engine_name: this.engineSelect.value,
@@ -108,7 +127,7 @@ class DirWrapper {
         [this.activeSelect, this.posSelect, this.engineSelect, this.copySelect, this.searchTypeSelect].forEach(s => {
             s.hide();
         })
-        //NEW OPT
+        //NEW SELECT
         switch (this.act.act_name) {
             case ACT_COPY: this.copySelect.show(); break;
             case ACT_SEARCH: this.activeSelect.show();
@@ -121,12 +140,17 @@ class DirWrapper {
             default: break;
         }
     }
+    disableOpt(...opts) {
+        [this.actSelect, this.activeSelect, this.posSelect, this.engineSelect, this.copySelect, this.searchTypeSelect].forEach(s => {
+            s.disableOpt(...opts);
+        })
+    }
 }
 class ChildWrapper {
     constructor(typeName, conf, cb) {
         this.elem = document.createElement("div");
         this.typeName = typeName;
-        this.label = document.createElement("label");
+        this.label = document.createElement("h3");
         this.label.textContent = typeName;
         this.elem.appendChild(this.label);
         this.WrapperU = new DirWrapper(DirTextTable.DIR_U, conf.DIR_U, cb);
@@ -135,6 +159,10 @@ class ChildWrapper {
         this.WrapperR = new DirWrapper(DirTextTable.DIR_R, conf.DIR_R, cb);
         [this.WrapperD, this.WrapperL, this.WrapperR, this.WrapperU].forEach(w => this.elem.appendChild(w.elem));
     }
+    disableOpt(...opts) {
+        [this.WrapperD, this.WrapperL, this.WrapperR, this.WrapperU].forEach(w => w.disableOpt(...opts))
+    }
+
     collect() {
         return {
             DIR_U: this.WrapperU.act,
@@ -148,9 +176,28 @@ class Wrapper {
     constructor(conf) {
         this.callback = this.callback.bind(this);
         this.elem = document.createElement("div");
+        this.elem.id = "actions";
+
         this.child_text = new ChildWrapper(typeNameTable.text.text, conf.textAction, this.callback);
+        this.child_text.disableOpt(
+            ACT_DL, ACT_TRANS, ACT_QRCODE,
+            SEARCH_IMAGE, SEARCH_LINK,
+            COPY_LINK, COPY_IMAGE
+        );
+
         this.child_image = new ChildWrapper(typeNameTable.image.text, conf.imageAction, this.callback);
+        this.child_image.disableOpt(
+            ACT_TRANS, ACT_QRCODE,
+            SEARCH_IMAGE, SEARCH_TEXT,
+            COPY_TEXT,
+        )
+
         this.child_link = new ChildWrapper(typeNameTable.link.text, conf.linkAction, this.callback);
+        this.child_link.disableOpt(
+            ACT_DL, ACT_TRANS, ACT_QRCODE,
+            SEARCH_IMAGE
+        );
+
         [this.child_text, this.child_link, this.child_image].every(c => this.elem.appendChild(c.elem));
     }
     callback() {
@@ -300,9 +347,8 @@ browser.runtime.getBackgroundPage().then((page) => {
         }
     });
     document.querySelector("#backup").addEventListener("click", (event) => {
-        let blob = new Blob([backgroundPage.convertOptionsToJson()], { type: 'application/json' });
-        event.target.setAttribute("href", URL.createObjectURL(blob));
-        event.target.setAttribute("download", "GlitterDrag" + new Date().getTime() + ".json");
+        event.target.setAttribute("href", "data:," + escape(JSON.stringify(backgroundPage.config, null, 2)));
+        event.target.setAttribute("download", `GlitterDrag-${new Date().getTime()}.json`);
     });
     document.querySelector("#restore").addEventListener("click", () => {
         document.querySelector("#fileInput").click();
@@ -333,122 +379,6 @@ function initSearcheTab() {
         let wrapper = new EngineWrapper(backgroundPage.config.get("Engines"))
         wrapper.appendTo(content2)
     }
-    // //CS 
-    // function updateContainer() {
-    //     for (let removeTarget of container.querySelectorAll("div")) {
-    //         container.removeChild(removeTarget);
-    //     }
-    //     let searchList = backgroundPage.config.Engines;
-    //     let i = 0;
-    //     for (let item of searchList) {
-    //         let box = generateBox(item.name, item.url, i);
-    //         i++;
-    //         // box.children[0].addEventListener("focus",onInputFocus)
-    //         // box.children[0].addEventListener("blur",onInputBlur)
-    //         // box.children[0].addEventListener("keypress",onKeyPress)
-    //         // box.children[1].addEventListener("focus",onInputFocus)
-    //         // box.children[1].addEventListener("blur",onInputBlur)
-    //         // box.children[1].addEventListener("keypress",onKeyPress)
-    //         container.appendChild(box)
-    //     }
-    // }
-
-    // function generateBox(name = "", url = "", index = -1) {
-    //     let div = document.createElement("div")
-    //     div.innerHTML = `<input type="text" class="input-name input-disabled" index="${index}" title="名称" oldName="${name}" value="${name}"></input>
-    //         <button class="btn-remove">删除</button>
-    //         <input type="text" class="input-url input-disabled" title="链接" value="${url}"></input>
-    //         <button class="btn-save">保存</button>
-    //         `;
-    //     for (let btn of div.querySelectorAll("button")) {
-    //         btn.addEventListener("click", onButtonClick);
-    //     }
-    //     return div;
-    // }
-
-    // function onKeyPress(event) {
-    //     if (event.key === "Enter") {
-    //         event.target.blur();
-    //     }
-    //     else if (event.key === "Escape") {
-    //         event.target.value = event.target.getAttribute("placeholder");
-    //         event.target.blur();
-    //     }
-    //     console.dir(event)
-    // }
-
-    // function onInputFocus(event) {
-    //     event.target.value = event.target.getAttribute("placeholder");
-    // }
-
-    // function onDoubleClick(event) {
-    //     let elem = event.target;
-    //     console.log("dbclcikc")
-    // }
-
-    // function onInputBlur(event) {
-    //     //save data
-    //     event.target.setAttribute("placeholder", event.target.value);
-    //     event.target.value = "";
-    //     // event.target.removeAttribute("value");
-    // }
-    // //按钮点击事件都放在这里
-    // //代码尽量简洁明了，复杂的代码应该放在其它函数里面
-    // function onButtonClick(event) {
-    //     let T = event.target;
-    //     if (T.id === "btn-add") {
-    //         let box = generateBox("", "");
-    //         container.appendChild(box);
-    //         box.firstChild.focus();
-    //     }
-    //     else if (T.id === "btn-refresh") {
-    //         while (container.firstChild) {
-    //             container.removeChild(container.firstChild);
-    //         }
-    //         updateContainer();
-    //     }
-    //     else if (T.className === "btn-save") {
-    //         let isEmpty = false;
-    //         let inputElems = T.parentElement.querySelectorAll("input");
-    //         for (let input of inputElems) {
-    //             if (input.value.length === 0) {
-    //                 input.style.border = "1px red solid";
-    //                 setTimeout(() => {
-    //                     input.style.border = "";
-    //                 }, 1000);
-    //                 isEmpty = true;
-    //                 break;
-    //             }
-    //         }
-    //         if (!isEmpty) {
-    //             let name = inputElems[0].value;
-    //             let url = inputElems[1].value;
-    //             let index = parseInt(inputElems[0].getAttribute("index"));
-    //             backgroundPage.updateUserCustomizedSearch(index, name, url);
-    //             updateContainer();
-    //         }
-    //     }
-    //     else if (T.className === "btn-remove") {
-    //         if (confirm("确定删除？")) {
-    //             let inputElems = T.parentElement.querySelectorAll("input");
-    //             let name = inputElems[0].value;
-    //             let url = inputElems[1].value;
-    //             let index = parseInt(inputElems[0].getAttribute("index"));
-    //             backgroundPage.updateUserCustomizedSearch(index, name, url, true);
-    //             T.parentElement.parentElement.removeChild(T.parentElement);
-    //             updateContainer();
-    //         }
-    //     }
-    // }
-
-    // let container = $E("#container-search");
-
-
-    // if (isFirst) {
-    //     container.parentElement.querySelector("#btn-add").addEventListener("click", onButtonClick);
-    //     container.parentElement.querySelector("#btn-refresh").addEventListener("click", onButtonClick);
-    // }
-    // updateContainer();
 }
 
 
