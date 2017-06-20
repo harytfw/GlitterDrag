@@ -1,9 +1,11 @@
 const urlPattern = /^(https?:\/\/)?((\w|-)*\.){0,3}((\w|-)+)\.(com|net|org|gov|edu|mil|biz|cc|info|fm|mobi|tv|ag|am|asia|at|au|be|br|bz|ca|cn|co|de|do|ee|es|eu|fr|gd|gl|gs|im|in|it|jp|la|ly|me|mp|ms|mx|nl|pe|ph|ru|se|so|tk|to|tt|tw|us|uk|ws|xxx)(\/(\w|%|&|-|_|\||\?|\.|=|\/|#|~|!|\+|,|\*|@)*)?$/i
 //from superdrag   https://addons.mozilla.org/en-US/firefox/addon/super-drag/
+var appName = "setClipboard";
 
 const TYPE_UNKNOWN = -1;//未知类型
 const TYPE_TEXT = 0; //文本,包含普通文本、链接
 const TYPE_TEXT_URL = 1;//链接
+const TYPE_TEXT_AREA = 5
 const TYPE_ELEM = 2;//元素，主要是没有选中文本，对元素进行了拖拽
 const TYPE_ELEM_A = 3;//超链接，a元素
 const TYPE_ELEM_IMG = 4;
@@ -106,6 +108,9 @@ function checkDragTargetType(selection, target) {
         }
         else if (target instanceof HTMLImageElement) {
             return TYPE_ELEM_IMG;
+        }
+        else if(target instanceof HTMLTextAreaElement){
+            return TYPE_TEXT_AREA;
         }
         return TYPE_ELEM;
     }

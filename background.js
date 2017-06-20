@@ -8,7 +8,6 @@
 //var enableInterruption = false; //在拖拽过程按下鼠标右键强制打断拖拽
 // var urlMatchPattern = /[A-z]/
 var supportCopyImage = false;
-var appName = "ping_pong";
 // let port = browser.runtime.connectNative("ping_pong");
 // port.onMessage.addListener((response) => {
 //     console.log("Received: " + response);
@@ -34,7 +33,7 @@ class ExecutorClass {
         if (this.data.type === TYPE_TEXT_URL || this.data.type == TYPE_ELEM_A) {
             this.execute(config.getAct("linkAction", this.data.direction))
         }
-        else if (this.data.type === TYPE_TEXT || this.data.type === TYPE_ELEM) {
+        else if (this.data.type === TYPE_TEXT || this.data.type === TYPE_ELEM || this.data.type === TYPE_TEXT_AREA) {
             this.execute(config.getAct("textAction", this.data.direction));
         }
         else if (this.data.type === TYPE_ELEM_IMG) {
@@ -253,6 +252,7 @@ function loadUserOptionsFromBackUp(raw_json = "", save_after = true) {
 }
 
 function loadDefaultOptions() {
+    config.loadDefault();
     config.save();
 }
 
@@ -281,7 +281,7 @@ browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
 });
 
-browser.runtime.sendNativeMessage(appName, "testsignal").then(
+browser.runtime.sendNativeMessage(appName, "test").then(
     response => {
         console.log("From native app:" + response);
         supportCopyImage = true;

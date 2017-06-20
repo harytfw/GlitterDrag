@@ -19,6 +19,10 @@ class DragClass {
         if (t === TYPE_TEXT || t === TYPE_TEXT_URL) {
             x = s = this.selection;
         }
+        else if(t === TYPE_TEXT_AREA){
+            s = this.targetElem.value;
+            x = s = s.substring(this.targetElem.selectionStart,this.targetElem.selectionEnd);
+        }
         else if (t === TYPE_ELEM_A) {
             s = this.targetElem.href;
             x = this.targetElem.textContent;
@@ -29,7 +33,7 @@ class DragClass {
         else if (t === TYPE_ELEM) {
             s = "";
         }
-
+        this.selection = s;
         //sendMessage只能传递字符串化后（类似json）的数据
         //不能传递具体对象
         browser.runtime.sendMessage({
@@ -182,13 +186,13 @@ function onCopy(event) {
 function listener(msg) {
     let dontExecute = false;
     let elem = drag.targetElem;
-    let input = document.createElement("input");
+    let input = document.createElement("textarea");
     input.style.width = "0px";
     input.style.height = "0px";
     if (elem instanceof HTMLAnchorElement) {
         if (msg.copy_type === COPY_LINK) input.value = elem.href;
         else if (msg.copy_type === COPY_TEXT) input.value = elem.textContent;
-        else if(msg.copy_type ===COPY_IMAGE) {
+        else if (msg.copy_type === COPY_IMAGE) {
             //如果复制链接里的图像
             drag.targetElem = elem.querySelector("img");
             listener(msg);
@@ -226,15 +230,24 @@ function listener(msg) {
     else {
         input.value = drag.selection;
     }
-    if(!dontExecute){
+    if (!dontExecute) {
         elem.parentElement.appendChild(input);
         input.focus()
-        input.setSelectionRange(0,input.value.length);
+        input.setSelectionRange(0, input.value.length);
         document.execCommand("copy");
+        elem.parentElement.removeChild(input);
     }
 
 }
 
+
 const drag = new DragClass(document.children[0])
 // document.addEventListener("copy", onCopy);
-browser.runtime.onMessage.addListener(listener);
+if (window.hasOwnProperty("backgroundPage")) {
+    //如果是在options.html内运行，那么使用另外的listener
+    //见options.js
+}
+else {
+    browser.runtime.onMessage.addListener(listener);
+}
+console.log(location)

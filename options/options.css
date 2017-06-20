@@ -74,6 +74,10 @@ a:visited{
     background: #6eadbd;
     width: 30%;
 }
+#content-2 input{
+  margin-right: 10px;
+}
+
 #actions>div{
     border: 1px #0c99d5 solid;
     box-shadow: 0px 0px 2px #0c99d5;
@@ -91,3 +95,4 @@ a:visited{
 #actions>div>div{
     margin-bottom: 10px;
 }
+
