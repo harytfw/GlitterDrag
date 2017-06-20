@@ -150,39 +150,6 @@ const MIME_TYPE = {
     ".txt": "text/plain",
 }
 
-let copyMessage = null;
-function onCopy(event) {
-    let elem = drag.targetElem;
-    let clipboard = event.clipboardData
-    if (copyMessage.copy_type === COPY_LINK) {
-        if (elem instanceof HTMLAnchorElement) clipboard.setData(MIME_TYPE[".txt"], elem.href)
-        else if (elem instanceof HTMLImageElement) clipboard.setData(MIME_TYPE[".txt"], elem.src)
-    }
-    else if (elem instanceof HTMLImageElement) {
-        //获取路径名
-        let pathname = new URL(elem.src).pathname;
-        //获得图像的扩展名
-        let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
-        //下面尝试得到图像的二进制数据
-        let canvas = document.createElement("canvas");
-        canvas.height = elem.height;
-        canvas.width = elem.width;
-        let ctx = canvas.getContext("2d");
-        ctx.drawImage(elem, 0, 0);
-        //得到没有data:image ...头的base64字符串
-        let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
-        //转换为二进制字符串
-        // let binString = atob(bareBase64);
-        browser.runtime.sendMessage({
-            imageBase64: base64
-        });
-        // port.postMessage(base64);
-        // clipboard.setData(MIME_TYPE[ext],binString);
-        // delete canvas;
-        // delete bareBase64
-    }
-    event.preventDefault();
-}
 function listener(msg) {
     let dontExecute = false;
     let elem = drag.targetElem;
