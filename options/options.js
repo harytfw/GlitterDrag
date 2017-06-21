@@ -356,7 +356,7 @@ browser.runtime.getBackgroundPage().then((page) => {
         }
     });
     document.querySelector("#backup").addEventListener("click", (event) => {
-        event.target.setAttribute("href", "data:," + escape(JSON.stringify(backgroundPage.config, null, 2)));
+        event.target.setAttribute("href", "data:," + encodeURI(JSON.stringify(backgroundPage.config, null, 2)));
         event.target.setAttribute("download", `GlitterDrag-${new Date().getTime()}.json`);
     });
     document.querySelector("#restore").addEventListener("click", () => {
@@ -378,7 +378,7 @@ function initForm(force = false) {
     if (content.children.length === 0 || force) {
         if (force) {
             let c = null;
-            while (c = content.firstChild) {
+            while ((c = content.firstChild)) {
                 content.removeChild(c);
             }
         }
@@ -394,7 +394,7 @@ function initSearcheTab(force) {
     if (content.children.length === 0 || force) {
         if (force) {
             let c = null;
-            while (c = content.firstChild) {
+            while ((c = content.firstChild)) {
                 content.removeChild(c);
             }
         }
