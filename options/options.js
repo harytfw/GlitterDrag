@@ -374,32 +374,32 @@ browser.runtime.getBackgroundPage().then((page) => {
     initForm();
 }, () => { });
 function initForm(force = false) {
-    let content1 = document.querySelector("#content-1");
-    if (content1.children.length === 0 || force) {
+    let content = document.querySelector("#content-1");
+    if (content.children.length === 0 || force) {
         if (force) {
-            let c = content1.firstChild;
-            while (c) {
-                content1.removeChild(c);
+            let c = null;
+            while (c = content.firstChild) {
+                content.removeChild(c);
             }
         }
         let wrapper = new Wrapper(backgroundPage.config.get("Actions"));
-        wrapper.appendTo(content1);
+        wrapper.appendTo(content);
     }
 }
 
 
 
 function initSearcheTab(force) {
-    let content2 = document.querySelector("#content-2")
-    if (content2.children.length === 0 || force) {
+    let content = document.querySelector("#content-2")
+    if (content.children.length === 0 || force) {
         if (force) {
-            let c = content1.firstChild;
-            while (c) {
-                content1.removeChild(c);
+            let c = null;
+            while (c = content.firstChild) {
+                content.removeChild(c);
             }
         }
         let wrapper = new EngineWrapper(backgroundPage.config.get("Engines"))
-        wrapper.appendTo(content2)
+        wrapper.appendTo(content)
     }
 }
 

@@ -217,4 +217,3 @@ if (window.hasOwnProperty("backgroundPage")) {
 else {
     browser.runtime.onMessage.addListener(listener);
 }
-console.log(location)
