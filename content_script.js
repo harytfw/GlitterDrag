@@ -1,3 +1,9 @@
+let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
+
+let bgPort = null;
+if (isRunInOptionsContext) {
+    bgPort = browser.runtime.connect({ name: "cs" });
+}
 class DragClass {
     constructor(elem) {
         this.dragged = elem;
@@ -5,8 +11,14 @@ class DragClass {
         this.targetElem = null;
         this.direction = DIR_U;
 
-        this.startPos = { x: 0, y: 0 };
-        this.endPos = { x: 0, y: 0 };
+        this.startPos = {
+            x: 0,
+            y: 0
+        };
+        this.endPos = {
+            x: 0,
+            y: 0
+        };
 
         this.offset = 2;
         this.handler = this.handler.bind(this);
@@ -19,9 +31,9 @@ class DragClass {
         if (t === TYPE_TEXT || t === TYPE_TEXT_URL) {
             x = s = this.selection;
         }
-        else if(t === TYPE_TEXT_AREA){
+        else if (t === TYPE_TEXT_AREA) {
             s = this.targetElem.value;
-            x = s = s.substring(this.targetElem.selectionStart,this.targetElem.selectionEnd);
+            x = s = s.substring(this.targetElem.selectionStart, this.targetElem.selectionEnd);
         }
         else if (t === TYPE_ELEM_A) {
             s = this.targetElem.href;
@@ -36,12 +48,18 @@ class DragClass {
         this.selection = s;
         //sendMessage只能传递字符串化后（类似json）的数据
         //不能传递具体对象
-        browser.runtime.sendMessage({
+        let sended = {
             direction: this.direction,
             selection: s,
             textSelection: x,
-            type: t
-        });
+            type: t,
+            sendToOptions: false
+        }
+        if (isRunInOptionsContext) {
+            sended.sendToOptions = true;
+            backgroundPage.executor.DO(sended);
+        }
+        else browser.runtime.sendMessage(sended);
     }
 
 
@@ -151,6 +169,7 @@ const MIME_TYPE = {
 }
 
 function listener(msg) {
+    // console.log("@from content_script");
     let dontExecute = false;
     let elem = drag.targetElem;
     let input = document.createElement("textarea");
@@ -163,7 +182,6 @@ function listener(msg) {
             //如果复制链接里的图像
             drag.targetElem = elem.querySelector("img");
             listener(msg);
-            return;
         }
     }
     else if (elem instanceof HTMLImageElement) {
@@ -207,13 +225,11 @@ function listener(msg) {
 
 }
 
+browser.runtime.onConnect.addListener(port => {
+    if (port.name === "sendToContentScript") {
+        port.onMessage.addListener(listener);
+    }
+})
+
 
 const drag = new DragClass(document.children[0])
-// document.addEventListener("copy", onCopy);
-if (window.hasOwnProperty("backgroundPage")) {
-    //如果是在options.html内运行，那么使用另外的listener
-    //见options.js
-}
-else {
-    browser.runtime.onMessage.addListener(listener);
-}

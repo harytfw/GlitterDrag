@@ -161,7 +161,6 @@ class ChildWrapper {
     disableOpt(...opts) {
         [this.WrapperD, this.WrapperL, this.WrapperR, this.WrapperU].forEach(w => w.disableOpt(...opts))
     }
-
     collect() {
         return {
             DIR_U: this.WrapperU.act,
@@ -332,17 +331,10 @@ class EngineWrapper {
 
 
 
-
-
-
 var backgroundPage = null;
 browser.runtime.getBackgroundPage().then((page) => {
-    console.log("Add listenerForOptionsPage")
-    //在content_script.js提到的listener
-    //主要是为了方便测试与powershell的通信
-    browser.runtime.onMessage.addListener(listenerForOptionsPage);
-
     backgroundPage = page;
+
     let fileReader = new FileReader();
     fileReader.addEventListener("loadend", () => {
         try {
@@ -403,12 +395,16 @@ function initSearcheTab(force) {
     }
 }
 
-function listenerForOptionsPage(msg) {
-
-    let logArea = document.querySelector("#logArea");
+function messageListener(msg) {
     function log(message) {
         logArea.value = `${logArea.value}\n${new Date().toTimeString()} --- ${message}`
     }
+    // console.log("@@@run at here, options.js");
+    // if(msg.from==="tabs"){
+    //     console.log("@@@stop");
+    //     return;
+    // }
+    let logArea = document.querySelector("#logArea");
     if (msg.copy_type === COPY_IMAGE) {
         log("1.向脚本发送测试信息");
         browser.runtime.sendNativeMessage(appName, "test").then((r) => {
@@ -417,8 +413,6 @@ function listenerForOptionsPage(msg) {
             log("2.2.发送测试信息失败:" + e);
         });
     }
-
-
     let dontExecute = false;
     let elem = drag.targetElem;
     let input = document.createElement("textarea");
@@ -477,6 +471,8 @@ function listenerForOptionsPage(msg) {
         document.execCommand("copy");
     }
 }
-
-
-
+browser.runtime.onConnect.addListener(port=>{
+    if(port.name==="sendToOptions"){
+        port.onMessage.addListener(messageListener);
+    }
+});

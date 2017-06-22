@@ -8,28 +8,25 @@
 //var enableInterruption = false; //在拖拽过程按下鼠标右键强制打断拖拽
 // var urlMatchPattern = /[A-z]/
 var supportCopyImage = false;
-// let port = browser.runtime.connectNative("ping_pong");
-// port.onMessage.addListener((response) => {
-//     console.log("Received: " + response);
-// });
+
+
 
 class ExecutorClass {
     constructor() {
         this.data = {
             direction: DIR_U,
             selection: "",
-            type: TYPE_UNKNOWN
+            type: TYPE_UNKNOWN,
+            sendToOptions: false
         };
         this.action = null;
     }
     DO(m) {
         this.data = m;
-
         if (this.data.type === TYPE_UNKNOWN) {
             console.error("未知的拖拽目标类型！~");
             return;
         }
-
         if (this.data.type === TYPE_TEXT_URL || this.data.type == TYPE_ELEM_A) {
             this.execute(config.getAct("linkAction", this.data.direction))
         }
@@ -49,14 +46,20 @@ class ExecutorClass {
             return;
         }
         switch (this.action.act_name) {
-            case ACT_OPEN: this.openURL(this.data.selection); break;
-            case ACT_COPY: this.copy(); break;
+            case ACT_OPEN:
+                this.openURL(this.data.selection);
+                break;
+            case ACT_COPY:
+                this.copy();
+                break;
             case ACT_SEARCH:
                 if (this.action.search_type === SEARCH_LINK) this.searchText(this.data.selection);
                 else this.searchText(this.data.textSelection);
                 break;
-            case ACT_DL: break;
-            case ACT_TRANS: break;
+            case ACT_DL:
+                break;
+            case ACT_TRANS:
+                break;
         }
     }
     openTab(url) {
@@ -69,11 +72,20 @@ class ExecutorClass {
                     else {
                         let index = 0;
                         switch (tab_pos) {
-                            case TAB_CLEFT: index = tab.index; break;
-                            case TAB_CRIGHT: index = tab.index + 1; break;
-                            case TAB_FIRST: index = 0; break;
-                            case TAB_LAST: index = tabs.length; break;
-                            default: break;
+                            case TAB_CLEFT:
+                                index = tab.index;
+                                break;
+                            case TAB_CRIGHT:
+                                index = tab.index + 1;
+                                break;
+                            case TAB_FIRST:
+                                index = 0;
+                                break;
+                            case TAB_LAST:
+                                index = tabs.length;
+                                break;
+                            default:
+                                break;
                         }
                         browser.tabs.create({
                             active: tab_active,
@@ -92,9 +104,14 @@ class ExecutorClass {
         this.openTab(url);
     }
     copy() {
+        //发送给指定的tab
+        let sended = { command: "copy", copy_type: this.action.copy_type };
+        let portName = this.data.sendToOptions ? "sendToOptions" : "sendToContentScript";
         browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
-            browser.tabs.sendMessage(tabs[0].id, { command: "copy", copy_type: this.action.copy_type });
-        })
+            let port = browser.tabs.connect(tabs[0].id, { name: portName });
+            port.postMessage(sended);
+        });
+
     }
     searchText(keyword) {
         this.openURL(config.getSearchURL(this.action.engine_name).replace("%s", keyword));
@@ -126,7 +143,7 @@ class ConfigClass {
         this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
     }
     clear(callback) {
-        this.storageArea.clear().then(callback, () => { });
+        this.storageArea.clear().then(callback, () => {});
     }
     save() {
         this.storageArea.set(this);
@@ -197,7 +214,9 @@ class ConfigClass {
             let _default = {
                 Actions: {
                     textAction: {
-                        DIR_U: new ActClass(), DIR_D: new ActClass(), DIR_L: new ActClass(),
+                        DIR_U: new ActClass(),
+                        DIR_D: new ActClass(),
+                        DIR_L: new ActClass(),
                         DIR_R: new ActClass(),
                     },
                     linkAction: {
@@ -289,20 +308,37 @@ browser.runtime.sendNativeMessage(appName, "test").then(
     error => supportCopyImage = false
 );
 
+function sendImageToNative(base64) {
+    let sending = browser.runtime.sendNativeMessage(appName, base64);
+    sending.then((response) => {
+        console.log("Receive:" + response);
+    }, (error) => {
+        console.log("Error:" + error);
+    });
+}
+//这条线路只限与content_script通信
+//包括在options.html里
+//有发送和接收
 browser.runtime.onMessage.addListener((m) => {
-    if (m.imageBase64) {
-        console.log("Send: ")
-        let sending = browser.runtime.sendNativeMessage(appName, m.imageBase64);
-        sending.then((response) => {
-            console.log("Receive:" + response);
-        }, (error) => {
-            console.log("Error:" + error);
-        })
-
-    }
-    else {
-        executor.DO(m);
-    }
+    m.sendToOptions = false;
+    if (m.imageBase64) sendImageToNative(m.imageBase64);
+    else executor.DO(m);
 });
+
+// var myPort;
+// //
+// function connected(port) {
+//     if (port.name === "cs") {
+
+//         //从content_script连接port和发送信息并不是同时进行的，所以myPort不可确定
+//         //不过可以肯定的是，myPort是最后一次连接进来的
+//         myPort.onMessage.addListener((m) => {
+//             m.sendToOptions = true;
+//             if (m.imageBase64) executor.DO(m);
+//             else executor.DO(m);
+//         });
+//     }
+// }
+// browser.runtime.onConnect.addListener(connected)
 
 config.load();
