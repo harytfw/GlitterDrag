@@ -87,6 +87,7 @@ class ExecutorClass {
         }
         return index;
     }
+    
     openTab(url) {
         browser.tabs.query({}).then(tabs => {
             for (let tab of tabs) {
@@ -142,10 +143,10 @@ class ExecutorClass {
 
 class ConfigClass {
     constructor() {
-        this.enableSync = false;
-        this.Actions = {};
-        this.Engines = [];
-        this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
+        // this.enableSync = false;
+        // this.Actions = {};
+        // this.Engines = [];
+        // this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
     }
     clear(callback) {
         this.storageArea.clear().then(callback, () => {});
@@ -177,21 +178,8 @@ class ConfigClass {
         if (key === "storageArea") {
             val = this.enableSync ? browser.storage.sync : browser.storage.local;
         }
-        else if (key === "Actions") {
-            let oldval = val;
-            val = {};
-            val = this.Actions;
-            for (let t of Object.keys(oldval)) {
-                val[t] = {};
-                for (let d of Object.keys(oldval[t])) {
-                    let a = oldval[t][d];
-                    //NEW SELECT
-                    val[t][d] = new ActClass(a.act_name, a.tab_active, a.tab_pos, a.engine_name, a.search_type, a.copy_type)
-                }
-            }
-        }
-        else if (key === "Engines") {
-            val = Array.from(val, v => ({ name: v.name, url: v.url }))
+        else if(typeof val==="object"){
+            val = JSON.parse(JSON.stringify(val));
         }
         this[key] = val;
     }
@@ -216,32 +204,8 @@ class ConfigClass {
     }
     loadDefault(callback) {
         this.clear(() => {
-            let _default = {
-                Actions: {
-                    textAction: {
-                        DIR_U: new ActClass(),
-                        DIR_D: new ActClass(),
-                        DIR_L: new ActClass(),
-                        DIR_R: new ActClass(),
-                    },
-                    linkAction: {
-                        DIR_U: new ActClass(),
-                        DIR_D: new ActClass(),
-                        DIR_L: new ActClass(),
-                        DIR_R: new ActClass(),
-                    },
-                    imageAction: {
-                        DIR_U: new ActClass(),
-                        DIR_D: new ActClass(),
-                        DIR_L: new ActClass(),
-                        DIR_R: new ActClass(),
-                    },
-                },
-                Engines: [],
-                enableSync: false
-            }
-            for (let k of Object.keys(_default)) {
-                this.set(k, _default[k]);
+            for (let k of Object.keys(_default_config)) {
+                this.set(k, _default_config[k]);
             }
             if (callback) callback();
             return true;
@@ -315,9 +279,6 @@ function sendImageToNative(base64) {
         console.log("Error:" + error);
     });
 }
-//这条线路只限与content_script通信
-//包括在options.html里
-//有发送和接收
 
 browser.runtime.onMessage.addListener((m) => {
     m.sendToOptions = false;

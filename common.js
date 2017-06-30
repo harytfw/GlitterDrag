@@ -51,6 +51,11 @@ const TAB_CRIGHT = "TAB_CRIGHT";//右边
 const FORE_GROUND = true;//前台打开
 const BACK_GROUND = false;//后台打开
 
+const ALLOW_H = "ALLOW_H";
+const ALLOW_V = "ALLOW_V";
+const ALLOW_ALL = "ALLOW_ALL";
+const ALLOW_ONE = "ALLOW_ONE";
+
 const _DEBUG = true;
 
 

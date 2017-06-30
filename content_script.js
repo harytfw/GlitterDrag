@@ -49,8 +49,8 @@ class DragClass {
 
     post() {
         this.targetType = checkDragTargetType(this.selection, this.targetElem);
-        let sel = ""; //选中的数据
-        let text = ""; //选中的文本
+        let sel = ""; //选中的数据,文本，链接
+        let text = ""; //选中的文本，跟上面的可能相同可能不同
         switch (this.targetType) {
             case TYPE_TEXT:
             case TYPE_TEXT_URL:
@@ -103,6 +103,7 @@ class DragClass {
             this.endPos.x = evt.screenX;
             this.endPos.y = evt.screenY;
             this.selection = document.getSelection().toString();
+            this.selection = String.prototype.trim(this.selection);
             this.direction = this.getDirection();
             this.targetElem = evt.target;
             this.post();
@@ -128,15 +129,13 @@ class DragClass {
         }
         let d = {
             normal: DIR_D, //普通的四个方向
-            horizontal: DIR_L, //水平方向
-            vertical: DIR_D //竖直方向
+            horizontal: DIR_L, //水平方向,只有左右
+            vertical: DIR_D //竖直方向，只有上下
         }
 
-
-        //屏幕的坐标从左上角开始计算
         let rad = Math.atan2(this.startPos.y - this.endPos.y, this.startPos.x - this.endPos.x);
         let degree = rad * (180 / Math.PI);
-        degree = degree >= 0 ? degree : Math.abs(degree) + 180;
+        degree = degree >= 0 ? degree : Math.abs(degree) + 180;//-180~180转换成0~360
         if (between(degree, 45, 135)) d.normal = DIR_U;
         else if (between(degree, 135, 225)) d.normal = DIR_L;
         else if (between(degree, 225, 315)) d.normal = DIR_D;
@@ -180,6 +179,7 @@ function getImageBase64(src = "", callback) {
 
 function listener(msg) {
     // console.log("@from content_script");
+    let has
     let needExecute = true;
     let elem = mydrag.targetElem;
     let input = document.createElement("textarea");
@@ -196,7 +196,7 @@ function listener(msg) {
                 break;
             case COPY_IMAGE:
                 drag.targetElem = elem.querySelector("img");
-                listener(msg);
+                listener(msg);//可能有更好的办法
                 break;
         }
         // if (msg.copy_type === COPY_LINK) input.value = elem.href;
