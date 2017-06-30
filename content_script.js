@@ -1,16 +1,32 @@
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
+//config
+const MIME_TYPE = {
+    ".gif": "image/gif",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".bmp": "image/bmp",
+    ".txt": "text/plain",
+}
+
 
 let bgPort = null;
 if (isRunInOptionsContext) {
     bgPort = browser.runtime.connect({ name: "cs" });
 }
+
 class DragClass {
     constructor(elem) {
         this.dragged = elem;
+        this.handler = this.handler.bind(this);
+        ["dragstart", "dragend", "dragover", "drop"].forEach(name =>
+            this.dragged.addEventListener(name, this.handler, false)
+        );
         this.selection = "";
         this.targetElem = null;
+        this.targetType = TYPE_UNKNOWN;
         this.direction = DIR_U;
-
+        this.triggerDistance = 1;
         this.startPos = {
             x: 0,
             y: 0
@@ -19,40 +35,52 @@ class DragClass {
             x: 0,
             y: 0
         };
-
-        this.offset = 2;
-        this.handler = this.handler.bind(this);
-        this.eventRegister();
+        // this.offset = 2;
     }
+
+    render() {
+        //动作1
+        //动作2
+        //...
+        //取消
+        //使用canvas还是svg还是原生html
+
+    }
+
     post() {
-        let t = checkDragTargetType(this.selection, this.targetElem);
-        let s = "";
-        let x = ""
-        if (t === TYPE_TEXT || t === TYPE_TEXT_URL) {
-            x = s = this.selection;
+        this.targetType = checkDragTargetType(this.selection, this.targetElem);
+        let sel = ""; //选中的数据
+        let text = ""; //选中的文本
+        switch (this.targetType) {
+            case TYPE_TEXT:
+            case TYPE_TEXT_URL:
+                text = sel = this.selection;
+                break;
+            case TYPE_TEXT_AREA:
+                sel = this.targetElem.value;
+                text = sel = sel.substring(this.targetElem.selectionStart, this.targetElem.selectionEnd);
+                break;
+            case TYPE_ELEM_A:
+                sel = this.targetElem.href;
+                text = this.targetElem.textContent;
+                break;
+            case TYPE_ELEM_IMG:
+                sel = this.targetElem.src;
+                break;
+            case TYPE_ELEM:
+                sel = "";
+                break;
+            default:
+                break;
         }
-        else if (t === TYPE_TEXT_AREA) {
-            s = this.targetElem.value;
-            x = s = s.substring(this.targetElem.selectionStart, this.targetElem.selectionEnd);
-        }
-        else if (t === TYPE_ELEM_A) {
-            s = this.targetElem.href;
-            x = this.targetElem.textContent;
-        }
-        else if (t === TYPE_ELEM_IMG) {
-            s = this.targetElem.src;
-        }
-        else if (t === TYPE_ELEM) {
-            s = "";
-        }
-        this.selection = s;
+        this.selection = sel;
         //sendMessage只能传递字符串化后（类似json）的数据
         //不能传递具体对象
         let sended = {
             direction: this.direction,
-            selection: s,
-            textSelection: x,
-            type: t,
+            selection: sel,
+            textSelection: text,
+            type: this.targetType,
             sendToOptions: false
         }
         if (isRunInOptionsContext) {
@@ -62,16 +90,6 @@ class DragClass {
         else browser.runtime.sendMessage(sended);
     }
 
-
-
-    eventRegister() {
-        // this.dragged.setAttribute("draggable",true);
-        this.dragged.addEventListener("dragstart", this.handler, false);
-        this.dragged.addEventListener("dragend", this.handler, false);
-        this.dragged.addEventListener("dragover", this.handler, false);
-        this.dragged.addEventListener("drop", this.handler, false);
-
-    }
     handler(evt) {
         // console.log(evt);
         const type = evt.type;
@@ -97,132 +115,128 @@ class DragClass {
         }
         else if (type === "dragover") {
             //加上这行代码，拖拽时鼠标指针由禁止（一个圆加斜杠）变成正常的指针
+            let distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
+            if(distance>this.triggerDistance) this.render();
             evt.preventDefault();
             // console.log(evt);
         }
     }
 
     getDirection() {
-        const m = Math.sqrt(Math.pow(this.startPos.x - this.endPos.x, 2) + Math.pow(this.startPos.y - this.endPos.y, 2));
+        function between(ang, ang1, ang2) {
+            return ang1 < ang2 && ang >= ang1 && ang < ang2;
+        }
+        let d = {
+            normal: DIR_D, //普通的四个方向
+            horizontal: DIR_L, //水平方向
+            vertical: DIR_D //竖直方向
+        }
+
+
         //屏幕的坐标从左上角开始计算
-        const sin = (this.startPos.y - this.endPos.y) / m;
-        const cos = (this.endPos.x - this.startPos.x) / m;
-        //0~180
-        if (sin >= 0 && sin <= 1) {
-            //小于90度
-            if (cos >= 0) {
-                //大于等于45度
-                if (sin >= sin45) {
-                    //45~90
-                    return DIR_U;
-                }
-                //0~45
-                return DIR_R;
-            }
-            //大于90度
-            else if (cos < 0) {
-                //小于135度
-                if (sin >= sin135) {
-                    //90~135
-                    return DIR_U;
-                }
-                //135-180
-                return DIR_L;
-            }
-        }
-        //180-360
-        else if (sin < 0 && sin >= -1) {
-            //大于270
-            if (cos >= 0) {
-                //大于315度
-                if (sin >= sin315) {
-                    //315~360
-                    return DIR_R;
-                }
-                //270-315   
-                return DIR_D;
-            }
-            //小于270
-            else if (cos < 0) {
-                //小于225度
-                if (sin >= sin225) {
-                    //180~225
-                    return DIR_L;
-                }
-                //225~270
-                return DIR_D;
-            }
+        let rad = Math.atan2(this.startPos.y - this.endPos.y, this.startPos.x - this.endPos.x);
+        let degree = rad * (180 / Math.PI);
+        degree = degree >= 0 ? degree : Math.abs(degree) + 180;
+        if (between(degree, 45, 135)) d.normal = DIR_U;
+        else if (between(degree, 135, 225)) d.normal = DIR_L;
+        else if (between(degree, 225, 315)) d.normal = DIR_D;
+        else d.normal = DIR_R;
 
-        }
+        if (between(degree, 90, 270)) d.horizontal = DIR_L;
+        else d.horizontal = DIR_R;
 
-
+        if (between(degree, 0, 180)) d.vertical = DIR_U;
+        else d.horizontal = DIR_D;
+        return d.normal;
     }
 
 }
-const MIME_TYPE = {
-    ".gif": "image/gif",
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".png": "image/png",
-    ".bmp": "image/bmp",
-    ".txt": "text/plain",
+
+function getImageBase64(src = "", callback) {
+    let pathname = new URL(src).pathname;
+    let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
+    let img = new Image();
+    img.src = src;
+    img.onload = () => {
+        //下面尝试得到图像的二进制数据
+        let canvas = document.createElement("canvas");
+        canvas.height = img.height;
+        canvas.width = img.width;
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        //得到没有data:image ...头的base64字符串
+        let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
+        callback(base64);
+        //发送给background，让background发送字符串到powershell脚本
+        // browser.runtime.sendMessage({
+        //     imageBase64: base64
+        // });
+        img = null;
+        canvas = null;
+        base64 = null;
+        callback(base64)
+    }
 }
 
 function listener(msg) {
     // console.log("@from content_script");
-    let dontExecute = false;
-    let elem = drag.targetElem;
+    let needExecute = true;
+    let elem = mydrag.targetElem;
     let input = document.createElement("textarea");
     input.style.width = "0px";
     input.style.height = "0px";
+
     if (elem instanceof HTMLAnchorElement) {
-        if (msg.copy_type === COPY_LINK) input.value = elem.href;
-        else if (msg.copy_type === COPY_TEXT) input.value = elem.textContent;
-        else if (msg.copy_type === COPY_IMAGE) {
-            //如果复制链接里的图像
-            drag.targetElem = elem.querySelector("img");
-            listener(msg);
+        switch (msg.copy_type) {
+            case COPY_LINK:
+                input.value = elem.href;
+                break;
+            case COPY_TEXT:
+                input.value = elem.textContent;
+                break;
+            case COPY_IMAGE:
+                drag.targetElem = elem.querySelector("img");
+                listener(msg);
+                break;
         }
+        // if (msg.copy_type === COPY_LINK) input.value = elem.href;
+        // else if (msg.copy_type === COPY_TEXT) input.value = elem.textContent;
+        // else if (msg.copy_type === COPY_IMAGE) {
+        //     //如果复制链接里的图像
+        //     drag.targetElem = elem.querySelector("img");
+        //     listener(msg);
+        // }
     }
     else if (elem instanceof HTMLImageElement) {
-        if (msg.copy_type === COPY_LINK) input.value = elem.src;
-        else if (msg.copy_type === COPY_IMAGE) {
-            dontExecute = true;
-            //获得图像的扩展
-            let pathname = new URL(elem.src).pathname;
-            let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
-            let img = new Image();
-            img.src = elem.src;
-            img.onload = () => {
-                //下面尝试得到图像的二进制数据
-                let canvas = document.createElement("canvas");
-                canvas.height = img.height;
-                canvas.width = img.width;
-                let ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0);
-                //得到没有data:image ...头的base64字符串
-                let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
-                //发送给background，让background发送字符串到powershell脚本
-                browser.runtime.sendMessage({
-                    imageBase64: base64
-                });
-                img = null;
-                canvas = null;
-                base64 = null;
-            }
+        switch (msg.copy_type) {
+            case COPY_LINK:
+                input.value = elem.src;
+                break;
+            case COPY_IMAGE:
+                needExecute = false;
+                getImageBase64(elem.src, (s) => {
+                    browser.runtime.sendMessage({ imageBase64: s })
+                })
+                break;
         }
+        // if (msg.copy_type === COPY_LINK) input.value = elem.src;
+        // else if (msg.copy_type === COPY_IMAGE) {
+        //     dontExecute = true;
+        //     getImageBase64(elem.src, (s) => {
+        //         browser.runtime.sendMessage({ imageBase64: s })
+        //     })
+        // }
     }
     else {
         input.value = drag.selection;
     }
-    if (!dontExecute) {
+    if (needExecute) {
         elem.parentElement.appendChild(input);
-        input.focus()
+        input.focus();
         input.setSelectionRange(0, input.value.length);
         document.execCommand("copy");
         elem.parentElement.removeChild(input);
     }
-
 }
 
 browser.runtime.onConnect.addListener(port => {
@@ -231,5 +245,4 @@ browser.runtime.onConnect.addListener(port => {
     }
 })
 
-
-const drag = new DragClass(document.children[0])
+const mydrag = new DragClass(document.children[0]);

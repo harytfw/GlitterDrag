@@ -7,6 +7,12 @@
 // var enableAnimation = false;//启用过渡动画
 //var enableInterruption = false; //在拖拽过程按下鼠标右键强制打断拖拽
 // var urlMatchPattern = /[A-z]/
+// 关闭左右方向
+// 关闭上下方向
+// 关闭左右下方向
+// 右键打断
+// 触发距离
+// 动作提示
 var supportCopyImage = false;
 
 
@@ -19,7 +25,9 @@ class ExecutorClass {
             type: TYPE_UNKNOWN,
             sendToOptions: false
         };
-        this.action = null;
+        this.action = {
+
+        };
     }
     DO(m) {
         this.data = m;
@@ -35,9 +43,6 @@ class ExecutorClass {
         }
         else if (this.data.type === TYPE_ELEM_IMG) {
             this.execute(config.getAct("imageAction", this.data.direction));
-        }
-        else {
-
         }
     }
     execute(action) {
@@ -62,39 +67,41 @@ class ExecutorClass {
                 break;
         }
     }
+    getTabIndex(tabsLength = 0, currentTabIndex = 0) {
+        let index = 0;
+        switch (this.action.tab_pos) {
+            case TAB_CLEFT:
+                index = currentTabIndex;
+                break;
+            case TAB_CRIGHT:
+                index = currentTabIndex + 1;
+                break;
+            case TAB_FIRST:
+                index = 0;
+                break;
+            case TAB_LAST:
+                index = tabsLength;
+                break;
+            default:
+                break;
+        }
+        return index;
+    }
     openTab(url) {
         browser.tabs.query({}).then(tabs => {
-            let tab_pos = this.action.tab_pos;
-            let tab_active = this.action.tab_active;
-            tabs.forEach(tab => {
+            for (let tab of tabs) {
                 if (tab.active === true) {
                     if (this.action.tab_pos == TAB_CUR) browser.tabs.update(tab.id, { url: url });
                     else {
-                        let index = 0;
-                        switch (tab_pos) {
-                            case TAB_CLEFT:
-                                index = tab.index;
-                                break;
-                            case TAB_CRIGHT:
-                                index = tab.index + 1;
-                                break;
-                            case TAB_FIRST:
-                                index = 0;
-                                break;
-                            case TAB_LAST:
-                                index = tabs.length;
-                                break;
-                            default:
-                                break;
-                        }
                         browser.tabs.create({
-                            active: tab_active,
-                            index: index,
+                            active: this.action.tab_active,
+                            index: this.getTabIndex(tabs.length, tab.index),
                             url: url
-                        })
+                        });
                     }
+                    break;
                 }
-            });
+            };
         }, (error) => {
             console.error(error);
         });
@@ -103,6 +110,7 @@ class ExecutorClass {
     openURL(url) {
         this.openTab(url);
     }
+
     copy() {
         //发送给指定的tab
         let sended = { command: "copy", copy_type: this.action.copy_type };
@@ -111,8 +119,8 @@ class ExecutorClass {
             let port = browser.tabs.connect(tabs[0].id, { name: portName });
             port.postMessage(sended);
         });
-
     }
+
     searchText(keyword) {
         this.openURL(config.getSearchURL(this.action.engine_name).replace("%s", keyword));
     }
@@ -122,17 +130,14 @@ class ExecutorClass {
     }
 
     downloadImage(url) {
-
     }
 
     translateText(text) {
-
     }
 
     onError(error) {
         console.log(`Error: %{error}`)
     }
-
 }
 
 class ConfigClass {
@@ -241,10 +246,8 @@ class ConfigClass {
             if (callback) callback();
             return true;
         });
-
     }
 }
-
 
 var executor = new ExecutorClass();
 var config = new ConfigClass();
@@ -253,17 +256,13 @@ function loadUserOptions(callback) {
     config.load(callback);
 }
 
-
 function saveUserOptions(callback) {
     config.save(callback);
 }
 
-
-
 function convertOptionsToJson() {
     return config.backup();
 }
-
 
 function loadUserOptionsFromBackUp(raw_json = "", save_after = true) {
     config.recover(raw_json);
@@ -319,6 +318,7 @@ function sendImageToNative(base64) {
 //这条线路只限与content_script通信
 //包括在options.html里
 //有发送和接收
+
 browser.runtime.onMessage.addListener((m) => {
     m.sendToOptions = false;
     if (m.imageBase64) sendImageToNative(m.imageBase64);
@@ -326,7 +326,7 @@ browser.runtime.onMessage.addListener((m) => {
 });
 
 // var myPort;
-// //
+// 
 // function connected(port) {
 //     if (port.name === "cs") {
 

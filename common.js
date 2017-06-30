@@ -1,6 +1,6 @@
 const urlPattern = /^(https?:\/\/)?((\w|-)*\.){0,3}((\w|-)+)\.(com|net|org|gov|edu|mil|biz|cc|info|fm|mobi|tv|ag|am|asia|at|au|be|br|bz|ca|cn|co|de|do|ee|es|eu|fr|gd|gl|gs|im|in|it|jp|la|ly|me|mp|ms|mx|nl|pe|ph|ru|se|so|tk|to|tt|tw|us|uk|ws|xxx)(\/(\w|%|&|-|_|\||\?|\.|=|\/|#|~|!|\+|,|\*|@)*)?$/i
 //from superdrag   https://addons.mozilla.org/en-US/firefox/addon/super-drag/
-var appName = "setClipboard";
+const appName = "setClipboard";
 
 const TYPE_UNKNOWN = -1;//未知类型
 const TYPE_TEXT = 0; //文本,包含普通文本、链接
@@ -15,16 +15,15 @@ const DIR_D = "DIR_D";
 const DIR_L = "DIR_L";
 const DIR_R = "DIR_R";
 
-const sin0 = 0;
-const sin45 = Math.sqrt(2) / 2;
-const sin90 = 1;
-const sin135 = sin45;
-const sin180 = sin0;
-const sin225 = -sin45;
-const sin270 = -sin90;
-const sin315 = -sin45;
-const sin360 = sin0;
-
+// const sin0 = 0;
+// const sin45 = Math.sqrt(2) / 2;
+// const sin90 = 1;
+// const sin135 = sin45;
+// const sin180 = sin0;
+// const sin225 = -sin45;
+// const sin270 = -sin90;
+// const sin315 = -sin45;
+// const sin360 = sin0;
 
 const ACT_NONE = "ACT_NONE";//无动作
 const ACT_OPEN = "ACT_OPEN"; //打开
@@ -42,8 +41,6 @@ const SEARCH_IMAGE = "SEARCH_IMAGE"
 // const KEY_CTRL = 0;//ctrl键
 // const KEY_SHIFT = 1;//shift键
 
-
-
 const NEW_WINDOW = "NEW_WINDOW";//新窗口打开?
 const TAB_CUR = "TAB_CUR";//当前标签页
 const TAB_FIRST = "TAB_FIRST";//新建标签页在最左边
@@ -51,11 +48,8 @@ const TAB_LAST = "TAB_LAST";//最右边
 const TAB_CLEFT = "TAB_CLEFT";//新建的标签页在当前标签页的左边
 const TAB_CRIGHT = "TAB_CRIGHT";//右边
 
-
-
 const FORE_GROUND = true;//前台打开
 const BACK_GROUND = false;//后台打开
-
 
 const _DEBUG = true;
 

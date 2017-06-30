@@ -40,7 +40,7 @@ Function setImageToClipboard($base64String)
     $ms = [IO.MemoryStream]::new($imageBytes,0,$imageBytes.Length)
     $ms.Seek(0,[System.IO.SeekOrigin]::Begin)
     $img = [Drawing.Image]::FromStream($ms,$true,$true)
-    $img.Save("f:\\save.jpg",[System.Drawing.Imaging.ImageFormat]::Jpeg)
+    #$img.Save("f:\\save.jpg",[System.Drawing.Imaging.ImageFormat]::Jpeg)
     $null = [System.Windows.Forms.Clipboard]::SetImage($img)
     return "END"
 }
