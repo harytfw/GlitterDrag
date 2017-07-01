@@ -24,6 +24,7 @@
         "tabs",
         "<all_urls>",
         "clipboardWrite",
+        "downloads",
         "nativeMessaging"
     ],
     "background": {
@@ -44,6 +45,9 @@
             "js": [
                 "common.js",
                 "content_script.js"
+            ],
+            "css":[
+                "content_script.css"
             ]
         }
     ],

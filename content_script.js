@@ -1,5 +1,6 @@
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
-//config
+let bgConfig = null;
+//bgConfig
 const MIME_TYPE = {
     ".gif": "image/gif",
     ".jpg": "image/jpeg",
@@ -9,24 +10,82 @@ const MIME_TYPE = {
     ".txt": "text/plain",
 }
 
+//获得用户的配置
+let bgPort = browser.runtime.connect({ name: "getConfig" });
+bgPort.onMessage.addListener((c) => {
+    c = JSON.parse(c);
+    // console.log(c);
+    bgConfig = c;
+})
+// bgPort.postMessage("iam ready");
 
-let bgPort = null;
-if (isRunInOptionsContext) {
-    bgPort = browser.runtime.connect({ name: "cs" });
+
+
+class Prompt {
+    constructor() {
+        this.container = document.createElement("div");
+        this.container.id = "GDPrompt";
+        this.textContainer = document.createElement("div");
+        this.arrow = document.createElement("i")
+        this.arrow.id = "GDArrow";
+        this.container.appendChild(this.arrow);
+        this.container.appendChild(this.textContainer);
+        this.hide();
+        document.body.appendChild(this.container);
+    }
+    renderDir(d = DIR_U) {
+        switch (d) {
+            case DIR_U:
+                this.arrow.className = "GDArrow-U";
+                break;
+            case DIR_L:
+                this.arrow.className = "GDArrow-L";
+                break;
+            case DIR_R:
+                this.arrow.className = "GDArrow-R";
+                break;
+            case DIR_D:
+                this.arrow.className = "GDArrow-D";
+                break;
+        }
+    }
+
+    renderText(t) {
+        this.textContainer.textContent = t;
+    }
+
+    render(dir, text) {
+        if (this.container.style.display === "none") this.display();
+        this.renderDir(dir);
+        this.renderText(text);
+    }
+    stopRender() {
+        this.hide();
+    }
+    display() {
+        this.container.style.display = "block";
+    }
+    hide() {
+        this.container.style.display = "none";
+    }
+    remove() {
+        document.body.removeChild(this.parent);
+    }
 }
 
 class DragClass {
     constructor(elem) {
         this.dragged = elem;
         this.handler = this.handler.bind(this);
-        ["dragstart", "dragend", "dragover", "drop"].forEach(name =>
+        ["dragstart", "dragend", "dragover", "drop", "context", "contextmenu"].forEach(name =>
             this.dragged.addEventListener(name, this.handler, false)
         );
         this.selection = "";
         this.targetElem = null;
         this.targetType = TYPE_UNKNOWN;
         this.direction = DIR_U;
-        this.triggerDistance = 1;
+        this.distance = 0;
+        this.triggerDistance = 100;
         this.startPos = {
             x: 0,
             y: 0
@@ -35,16 +94,12 @@ class DragClass {
             x: 0,
             y: 0
         };
+        this.promptBox = null; //new Prompt();
+        this.isFirstRender = true;
+        document.addEventListener("DOMContentLoaded", () => {
+            this.promptBox = new Prompt();
+        });
         // this.offset = 2;
-    }
-
-    render() {
-        //动作1
-        //动作2
-        //...
-        //取消
-        //使用canvas还是svg还是原生html
-
     }
 
     post() {
@@ -89,24 +144,46 @@ class DragClass {
         }
         else browser.runtime.sendMessage(sended);
     }
+    dragstart(evt) {
+        this.selection = "";
+        this.startPos.x = evt.screenX;
+        this.startPos.y = evt.screenY;
+    }
+    dragend(evt) {
+        this.promptBox.stopRender();
+        this.selection = document.getSelection().toString();
+        // this.selection = String.prototype.trim(this.selection);
+        this.targetElem = evt.target;
+        if (this.distance >= bgConfig.triggeredDistance) {
+            this.post();
+        }
 
+    }
+    dragover(evt) {
+        this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
+        if (this.distance > this.triggerDistance) {
+
+            this.direction = this.getDirection();
+            this.promptBox.render(this.direction, "测试");
+        }
+        evt.preventDefault();
+
+    }
     handler(evt) {
         // console.log(evt);
         const type = evt.type;
+        this.endPos.x = evt.screenX;
+        this.endPos.y = evt.screenY;
         //TODO:把拖拽的数据放在event里传递
-        if (type === "dragstart") {
-            this.selection = "";
-            this.startPos.x = evt.screenX;
-            this.startPos.y = evt.screenY;
+        if (type === "contextmenu" && 1) {
+            console.log(evt);
+            this.dragend(evt);
+        }
+        else if (type === "dragstart") {
+            this.dragstart(evt);
         }
         else if (type === "dragend") {
-            this.endPos.x = evt.screenX;
-            this.endPos.y = evt.screenY;
-            this.selection = document.getSelection().toString();
-            this.selection = String.prototype.trim(this.selection);
-            this.direction = this.getDirection();
-            this.targetElem = evt.target;
-            this.post();
+            this.dragend(evt)
         }
         else if (type === "drop") {
             // console.log(evt);
@@ -115,10 +192,8 @@ class DragClass {
             evt.preventDefault();
         }
         else if (type === "dragover") {
+            this.dragover(evt);
             //加上这行代码，拖拽时鼠标指针由禁止（一个圆加斜杠）变成正常的指针
-            let distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
-            if(distance>this.triggerDistance) this.render();
-            evt.preventDefault();
             // console.log(evt);
         }
     }
@@ -133,9 +208,9 @@ class DragClass {
             vertical: DIR_D //竖直方向，只有上下
         }
 
-        let rad = Math.atan2(this.startPos.y - this.endPos.y, this.startPos.x - this.endPos.x);
+        let rad = Math.atan2(this.startPos.y - this.endPos.y, this.endPos.x - this.startPos.x);
         let degree = rad * (180 / Math.PI);
-        degree = degree >= 0 ? degree : Math.abs(degree) + 180;//-180~180转换成0~360
+        degree = degree >= 0 ? degree : degree + 360; //-180~180转换成0~360
         if (between(degree, 45, 135)) d.normal = DIR_U;
         else if (between(degree, 135, 225)) d.normal = DIR_L;
         else if (between(degree, 225, 315)) d.normal = DIR_D;
@@ -145,11 +220,12 @@ class DragClass {
         else d.horizontal = DIR_R;
 
         if (between(degree, 0, 180)) d.vertical = DIR_U;
-        else d.horizontal = DIR_D;
+        else d.vertical = DIR_D;
         return d.normal;
     }
 
 }
+
 
 function getImageBase64(src = "", callback) {
     let pathname = new URL(src).pathname;
@@ -177,9 +253,8 @@ function getImageBase64(src = "", callback) {
     }
 }
 
-function listener(msg) {
+function CSlistener(msg) {
     // console.log("@from content_script");
-    let has
     let needExecute = true;
     let elem = mydrag.targetElem;
     let input = document.createElement("textarea");
@@ -195,8 +270,8 @@ function listener(msg) {
                 input.value = elem.textContent;
                 break;
             case COPY_IMAGE:
-                drag.targetElem = elem.querySelector("img");
-                listener(msg);//可能有更好的办法
+                mydrag.targetElem = elem.querySelector("img");
+                CSlistener(msg); //可能有更好的办法
                 break;
         }
         // if (msg.copy_type === COPY_LINK) input.value = elem.href;
@@ -208,16 +283,18 @@ function listener(msg) {
         // }
     }
     else if (elem instanceof HTMLImageElement) {
-        switch (msg.copy_type) {
-            case COPY_LINK:
-                input.value = elem.src;
-                break;
-            case COPY_IMAGE:
-                needExecute = false;
-                getImageBase64(elem.src, (s) => {
-                    browser.runtime.sendMessage({ imageBase64: s })
-                })
-                break;
+        if (msg.command === "copy") {
+            switch (msg.copy_type) {
+                case COPY_LINK:
+                    input.value = elem.src;
+                    break;
+                case COPY_IMAGE:
+                    needExecute = false;
+                    getImageBase64(elem.src, (s) => {
+                        browser.runtime.sendMessage({ imageBase64: s })
+                    })
+                    break;
+            }
         }
         // if (msg.copy_type === COPY_LINK) input.value = elem.src;
         // else if (msg.copy_type === COPY_IMAGE) {
@@ -241,7 +318,7 @@ function listener(msg) {
 
 browser.runtime.onConnect.addListener(port => {
     if (port.name === "sendToContentScript") {
-        port.onMessage.addListener(listener);
+        port.onMessage.addListener(CSlistener);
     }
 })
 

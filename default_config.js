@@ -10,6 +10,7 @@ function _act(act = ACT_NONE, active = BACK_GROUND, pos = TAB_LAST, en = "", sea
 }
 var _default_config = {
     enableSync: false,
+    triggeredDistance:1,//px
     Actions: {
         textAction: {
             DIR_U: _act(),
@@ -31,7 +32,7 @@ var _default_config = {
         },
     },
     Engines: [],
-    DirectionControl: {
+    directionControl: {
         textAction: ALLOW_ALL,
         linkAction: ALLOW_ALL,
         imageAction: ALLOW_ALL

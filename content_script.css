@@ -1,0 +1,41 @@
+:root {
+    --scale-ratio: 1;
+    --arrow-size: 12px;
+    --prompt-height: 360px;
+    --prompt-width: 400px;
+}
+
+#GDPrompt {
+    position: fixed;
+    z-index: 888;
+    background-color: blanchedalmond;
+    left: 40%;
+    top: 40%;
+    height: var(--prompt-height);
+    width: var(--prompt-width);
+}
+
+#GDArrow {
+    display: block;
+    text-align: center;
+    vertical-align: middle;
+    font-style: normal;
+    font-size: 30px;
+    height: 60px;
+}
+
+.GDArrow-U::after {
+    content: "\1f871";
+}
+
+.GDArrow-L::after {
+    content: "\1f870";
+}
+
+.GDArrow-R::after {
+    content: "\1f872";
+}
+
+.GDArrow-D::after {
+    content: "\1f873";
+}

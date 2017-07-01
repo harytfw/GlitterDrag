@@ -1,20 +1,19 @@
-
 let OptionTextTable = {
     act: [{ text: "无动作", value: ACT_NONE },
-    { text: "直接打开", value: ACT_OPEN },
-    { text: "搜索", value: ACT_SEARCH },
-    { text: "复制", value: ACT_COPY },
-    { text: "下载", value: ACT_DL },
-    { text: "翻译", value: ACT_TRANS },
-    { text: "二维码", value: ACT_QRCODE },
+        { text: "直接打开", value: ACT_OPEN },
+        { text: "搜索", value: ACT_SEARCH },
+        { text: "复制", value: ACT_COPY },
+        { text: "下载", value: ACT_DL },
+        { text: "翻译", value: ACT_TRANS },
+        { text: "二维码", value: ACT_QRCODE },
     ],
     active: [{ text: "前台", value: FORE_GROUND },
-    { text: "后台", value: BACK_GROUND },
+        { text: "后台", value: BACK_GROUND },
     ],
     pos: [{ text: "尾", value: TAB_LAST },
-    { text: "首", value: TAB_FIRST },
-    { text: "前", value: TAB_CLEFT },
-    { text: "后", value: TAB_CRIGHT },
+        { text: "首", value: TAB_FIRST },
+        { text: "前", value: TAB_CLEFT },
+        { text: "后", value: TAB_CRIGHT },
     ],
     search: [{ text: "链接", value: SEARCH_LINK }, { text: "文本", value: SEARCH_TEXT }, { text: "图像", value: SEARCH_IMAGE }],
     copy: [{ text: "文本", value: COPY_TEXT }, { text: "链接", value: COPY_LINK }, { text: "图像", value: COPY_IMAGE }]
@@ -96,8 +95,11 @@ class DirWrapper {
         this.elem.appendChild(this.label);
         this.direction = dir.value;
         this.act = {
-            act_name: conf.act_name, tab_active: conf.tab_active,
-            tab_pos: conf.tab_pos, engine_name: conf.engine_name, copy_type: conf.copy_type,
+            act_name: conf.act_name,
+            tab_active: conf.tab_active,
+            tab_pos: conf.tab_pos,
+            engine_name: conf.engine_name,
+            copy_type: conf.copy_type,
             search_type: conf.search_type
         };
         this.actSelect = new SelectWrapper(OptionTextTable.act, this.act.act_name, tooltipTable.act, cb);
@@ -120,23 +122,33 @@ class DirWrapper {
         //NEW SELECT
         Object.assign(this.act, {
             act_name: this.actSelect.value,
-            tab_active: this.activeSelect.value, tab_pos: this.posSelect.value, engine_name: this.engineSelect.value,
-            copy_type: this.copySelect.value, search_type: this.searchTypeSelect.value
+            tab_active: this.activeSelect.value,
+            tab_pos: this.posSelect.value,
+            engine_name: this.engineSelect.value,
+            copy_type: this.copySelect.value,
+            search_type: this.searchTypeSelect.value
         });
         [this.activeSelect, this.posSelect, this.engineSelect, this.copySelect, this.searchTypeSelect].forEach(s => {
             s.hide();
         })
         //NEW SELECT
         switch (this.act.act_name) {
-            case ACT_COPY: this.copySelect.show(); break;
-            case ACT_SEARCH: this.activeSelect.show();
-                this.posSelect.show(); this.engineSelect.show();
+            case ACT_COPY:
+                this.copySelect.show();
+                break;
+            case ACT_SEARCH:
+                this.activeSelect.show();
+                this.posSelect.show();
+                this.engineSelect.show();
                 this.searchTypeSelect.show();
                 break;
             case ACT_OPEN:
             case ACT_QRCODE:
-                this.activeSelect.show(); this.posSelect.show(); break;
-            default: break;
+                this.activeSelect.show();
+                this.posSelect.show();
+                break;
+            default:
+                break;
         }
     }
     disableOpt(...opts) {
@@ -364,7 +376,8 @@ browser.runtime.getBackgroundPage().then((page) => {
         fileReader.readAsText(event.target.files[0])
     });
     initForm();
-}, () => { });
+}, () => {});
+
 function initForm(force = false) {
     let content = document.querySelector("#content-1");
     if (content.children.length === 0 || force) {
@@ -399,80 +412,107 @@ function messageListener(msg) {
     function log(message) {
         logArea.value = `${logArea.value}\n${new Date().toTimeString()} --- ${message}`
     }
-    // console.log("@@@run at here, options.js");
-    // if(msg.from==="tabs"){
-    //     console.log("@@@stop");
-    //     return;
-    // }
+    let elem = mydrag.targetElem;
     let logArea = document.querySelector("#logArea");
-    if (msg.copy_type === COPY_IMAGE) {
+    if (elem instanceof HTMLImageElement && msg.command === "copy" && msg.copy_type === COPY_IMAGE) {
         log("1.向脚本发送测试信息");
         browser.runtime.sendNativeMessage(appName, "test").then((r) => {
             log("2.1.脚本回复：" + r);
         }, (e) => {
             log("2.2.发送测试信息失败:" + e);
         });
-    }
-    let dontExecute = false;
-    let elem = drag.targetElem;
-    let input = document.createElement("textarea");
-    input.style.width = "0px";
-    input.style.height = "0px";
-    if (elem instanceof HTMLAnchorElement) {
-        if (msg.copy_type === COPY_LINK) input.value = elem.href;
-        else if (msg.copy_type === COPY_TEXT) input.value = elem.textContent;
-        else if (msg.copy_type === COPY_IMAGE) {
-            //如果复制的是链接里的图像
-            drag.targetElem = elem.querySelector("img");
-            listenerForOptionsPage(msg);
-            return;
-        }
-    }
-    else if (elem instanceof HTMLImageElement) {
-        if (msg.copy_type === COPY_LINK) input.value = elem.src;
-        else if (msg.copy_type === COPY_IMAGE) {
-            log("3.检测到复制图像行为");
-            dontExecute = true;
-            //获得图像的扩展
-            let pathname = new URL(elem.src).pathname;
-            let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
-            let img = new Image();
-            img.src = elem.src;
-            img.onload = () => {
-                //下面尝试得到图像的二进制数据
-                let canvas = document.createElement("canvas");
-                log("4.创建canvas");
-                canvas.height = img.height;
-                canvas.width = img.width;
-                let ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0);
-                //得到没有data:image ...头的base64字符串
-                let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
-                //发送给background，让background发送字符串到powershell脚本
-                log("5.向脚本发送图像")
-                browser.runtime.sendNativeMessage(appName, base64).then((response) => {
-                    log("5.1.发送成功，接收到回复消息:" + response);
-                }, (error) => {
-                    log("5.2.发送图像失败: " + error);
-                })
-                img = null;
-                canvas = null;
-                base64 = null;
-            }
+        log("3.检测到复制图像行为");
+        //获得图像的扩展名
+        let pathname = new URL(elem.src).pathname;
+        let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
+        let img = new Image();
+        img.src = elem.src;
+        img.onload = () => {
+            //下面尝试得到图像的二进制数据
+            let canvas = document.createElement("canvas");
+            log("4.创建canvas");
+            canvas.height = img.height;
+            canvas.width = img.width;
+            let ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            //得到没有data:image ...头的base64字符串
+            let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
+            //发送给background，让background发送字符串到powershell脚本
+            log("5.向脚本发送图像")
+            browser.runtime.sendNativeMessage(appName, base64).then((response) => {
+                log("5.1.发送成功，接收到回复消息:" + response);
+            }, (error) => {
+                log("5.2.发送图像失败: " + error);
+            })
+            img = null;
+            canvas = null;
+            base64 = null;
         }
     }
     else {
-        input.value = drag.selection;
+        CSlistener(msg);
     }
-    if (!dontExecute) {
-        elem.parentElement.appendChild(input);
-        input.focus()
-        input.setSelectionRange(0, input.value.length);
-        document.execCommand("copy");
-    }
+
+    // let dontExecute = false;
+    // let elem = drag.targetElem;
+    // let input = document.createElement("textarea");
+    // input.style.width = "0px";
+    // input.style.height = "0px";
+    // if (elem instanceof HTMLAnchorElement) {
+    //     if (msg.copy_type === COPY_LINK) input.value = elem.href;
+    //     else if (msg.copy_type === COPY_TEXT) input.value = elem.textContent;
+    //     else if (msg.copy_type === COPY_IMAGE) {
+    //         //如果复制的是链接里的图像
+    //         drag.targetElem = elem.querySelector("img");
+    //         listenerForOptionsPage(msg);
+    //         return;
+    //     }
+    // }
+    // else if (elem instanceof HTMLImageElement) {
+    //     if (msg.copy_type === COPY_LINK) input.value = elem.src;
+    //     else if (msg.copy_type === COPY_IMAGE) {
+    //         log("3.检测到复制图像行为");
+    //         dontExecute = true;
+    //         //获得图像的扩展
+    //         let pathname = new URL(elem.src).pathname;
+    //         let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
+    //         let img = new Image();
+    //         img.src = elem.src;
+    //         img.onload = () => {
+    //             //下面尝试得到图像的二进制数据
+    //             let canvas = document.createElement("canvas");
+    //             log("4.创建canvas");
+    //             canvas.height = img.height;
+    //             canvas.width = img.width;
+    //             let ctx = canvas.getContext("2d");
+    //             ctx.drawImage(img, 0, 0);
+    //             //得到没有data:image ...头的base64字符串
+    //             let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
+    //             //发送给background，让background发送字符串到powershell脚本
+    //             log("5.向脚本发送图像")
+    //             browser.runtime.sendNativeMessage(appName, base64).then((response) => {
+    //                 log("5.1.发送成功，接收到回复消息:" + response);
+    //             }, (error) => {
+    //                 log("5.2.发送图像失败: " + error);
+    //             })
+    //             img = null;
+    //             canvas = null;
+    //             base64 = null;
+    //         }
+    //     }
+    // }
+    // else {
+    //     input.value = drag.selection;
+    // }
+    // if (!dontExecute) {
+    //     elem.parentElement.appendChild(input);
+    //     input.focus()
+    //     input.setSelectionRange(0, input.value.length);
+    //     document.execCommand("copy");
+    // }
 }
-browser.runtime.onConnect.addListener(port=>{
-    if(port.name==="sendToOptions"){
+browser.runtime.onConnect.addListener(port => {
+    if (port.name === "sendToOptions") {
         port.onMessage.addListener(messageListener);
     }
 });

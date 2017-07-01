@@ -62,6 +62,7 @@ class ExecutorClass {
                 else this.searchText(this.data.textSelection);
                 break;
             case ACT_DL:
+                this.downloadImage(this.data.selection);
                 break;
             case ACT_TRANS:
                 break;
@@ -87,7 +88,7 @@ class ExecutorClass {
         }
         return index;
     }
-    
+
     openTab(url) {
         browser.tabs.query({}).then(tabs => {
             for (let tab of tabs) {
@@ -131,14 +132,14 @@ class ExecutorClass {
     }
 
     downloadImage(url) {
+        browser.downloads.download({
+            url: url,
+            saveAs:true
+        });
     }
 
-    translateText(text) {
-    }
+    translateText(text) {}
 
-    onError(error) {
-        console.log(`Error: %{error}`)
-    }
 }
 
 class ConfigClass {
@@ -146,7 +147,7 @@ class ConfigClass {
         // this.enableSync = false;
         // this.Actions = {};
         // this.Engines = [];
-        // this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
+        this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
     }
     clear(callback) {
         this.storageArea.clear().then(callback, () => {});
@@ -178,7 +179,7 @@ class ConfigClass {
         if (key === "storageArea") {
             val = this.enableSync ? browser.storage.sync : browser.storage.local;
         }
-        else if(typeof val==="object"){
+        else if (typeof val === "object") {
             val = JSON.parse(JSON.stringify(val));
         }
         this[key] = val;
@@ -286,20 +287,22 @@ browser.runtime.onMessage.addListener((m) => {
     else executor.DO(m);
 });
 
+
 // var myPort;
 // 
-// function connected(port) {
-//     if (port.name === "cs") {
 
-//         //从content_script连接port和发送信息并不是同时进行的，所以myPort不可确定
-//         //不过可以肯定的是，myPort是最后一次连接进来的
-//         myPort.onMessage.addListener((m) => {
-//             m.sendToOptions = true;
-//             if (m.imageBase64) executor.DO(m);
-//             else executor.DO(m);
-//         });
-//     }
-// }
-// browser.runtime.onConnect.addListener(connected)
+function connected(port) {
+    // console.log("port",port);
+    if (port.name === "getConfig") {
+        // // console.log("connected")
+        // port.onMessage.addListener(m=>{
+        //     if(m==="iam ready"){
+        // console.log("postmessage");
+        port.postMessage(JSON.stringify(config));
+        // }
+        // });
+    }
+}
+browser.runtime.onConnect.addListener(connected)
 
 config.load();
