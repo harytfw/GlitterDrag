@@ -65,7 +65,6 @@ class Prompt {
     }
 
     render(dir, text) {
-        if (this.container.style.display === "none") this.display();
         this.renderDir(dir);
         this.renderText(text);
     }
@@ -73,7 +72,7 @@ class Prompt {
         this.hide();
     }
     display() {
-        this.container.style.display = "block";
+        if (this.container.style.display === "none") this.container.style.display = "block";
     }
     hide() {
         this.container.style.display = "none";
@@ -181,7 +180,6 @@ class DragClass {
             this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
             this.indicatorBox.display();
         }
-        if (bgConfig.enablePrompt) {}
         this.targetElem = evt.target;
         this.selection = document.getSelection().toString();
         this.targetType = checkDragTargetType(this.selection, this.targetElem);
@@ -202,9 +200,12 @@ class DragClass {
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
         if (this.distance > bgConfig.triggeredDistance) {
             this.direction = this.getDirection();
-            this.promptBox.render(this.direction, actionNames[
-                bgConfig.Actions[this.actionType][this.direction]["act_name"]
-            ]);
+            if (bgConfig.enablePrompt) {
+                this.promptBox.display();
+                this.promptBox.render(this.direction, actionNames[
+                    bgConfig.Actions[this.actionType][this.direction]["act_name"]
+                ]);
+            }
         }
         else {
             this.promptBox.stopRender();

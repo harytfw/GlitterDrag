@@ -13,6 +13,7 @@
 }
 #GDPrompt {
     position: fixed;
+    color:black;
     z-index: 9;
     box-sizing: initial;
     border: initial;
