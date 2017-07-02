@@ -54,8 +54,9 @@ a:visited{
 }
 
 .tab-active{
-    visibility: visible !important;
-    opacity: 1 !important;
+    display: block !important;
+    /*visibility: visible !important;*/
+    /*opacity: 1 !important;*/
     height: initial !important;
     width: initial !important;
 }
@@ -64,11 +65,12 @@ a:visited{
 }
 
 .tab-content{
-    visibility: hidden;
+    /*visibility: hidden;*/
     height:0px;
     width: 0px;
-    opacity: 0;
-    transition: visibility 0s, opacity 0.5s linear;
+    /*opacity: 0;*/
+    /*transition: visibility 0s, opacity 0.5s linear;*/
+    display: none;
 }
 #content-0{
     background: #6eadbd;
