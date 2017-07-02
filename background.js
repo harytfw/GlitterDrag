@@ -22,8 +22,8 @@ class ExecutorClass {
         this.data = {
             direction: DIR_U,
             selection: "",
-            type: TYPE_UNKNOWN,
-            sendToOptions: false
+            sendToOptions: false,
+            actionType: "textAction"
         };
         this.action = {
 
@@ -31,22 +31,10 @@ class ExecutorClass {
     }
     DO(m) {
         this.data = m;
-        if (this.data.type === TYPE_UNKNOWN) {
-            console.error("未知的拖拽目标类型！~");
-            return;
-        }
-        if (this.data.type === TYPE_TEXT_URL || this.data.type == TYPE_ELEM_A) {
-            this.execute(config.getAct("linkAction", this.data.direction))
-        }
-        else if (this.data.type === TYPE_TEXT || this.data.type === TYPE_ELEM || this.data.type === TYPE_TEXT_AREA) {
-            this.execute(config.getAct("textAction", this.data.direction));
-        }
-        else if (this.data.type === TYPE_ELEM_IMG) {
-            this.execute(config.getAct("imageAction", this.data.direction));
-        }
+        this.execute();
     }
-    execute(action) {
-        this.action = action
+    execute() {
+        this.action = config.getAct(this.data.actionType, this.data.direction);
         if (this.data.selection.length === 0) {
             return;
         }
@@ -134,7 +122,7 @@ class ExecutorClass {
     downloadImage(url) {
         browser.downloads.download({
             url: url,
-            saveAs:true
+            saveAs: true
         });
     }
 
@@ -168,10 +156,18 @@ class ConfigClass {
                 }
                 callback ? callback() : null;
             }
+            //检查是否有新的选项出现在_default_config.js，有的话添加进来
+            for (let key1 of Object.keys(_default_config)) {
+                if (this[key1] === undefined) {
+                    this[key1] = _default_config[key1];
+                }
+            }
+            
             return true;
         });
     }
     get(key, callback) {
+        if (this[key] === undefined) this[key] = _default_config[key];
         if (callback) callback(this[key]);
         return this[key];
     }

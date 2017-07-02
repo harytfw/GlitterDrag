@@ -2,12 +2,12 @@ const urlPattern = /^(https?:\/\/)?((\w|-)*\.){0,3}((\w|-)+)\.(com|net|org|gov|e
 //from superdrag   https://addons.mozilla.org/en-US/firefox/addon/super-drag/
 const appName = "setClipboard";
 
-const TYPE_UNKNOWN = -1;//未知类型
+const TYPE_UNKNOWN = -1; //未知类型
 const TYPE_TEXT = 0; //文本,包含普通文本、链接
-const TYPE_TEXT_URL = 1;//链接
+const TYPE_TEXT_URL = 1; //链接
 const TYPE_TEXT_AREA = 5
-const TYPE_ELEM = 2;//元素，主要是没有选中文本，对元素进行了拖拽
-const TYPE_ELEM_A = 3;//超链接，a元素
+const TYPE_ELEM = 2; //元素，主要是没有选中文本，对元素进行了拖拽
+const TYPE_ELEM_A = 3; //超链接，a元素
 const TYPE_ELEM_IMG = 4;
 
 const DIR_U = "DIR_U";
@@ -15,17 +15,7 @@ const DIR_D = "DIR_D";
 const DIR_L = "DIR_L";
 const DIR_R = "DIR_R";
 
-// const sin0 = 0;
-// const sin45 = Math.sqrt(2) / 2;
-// const sin90 = 1;
-// const sin135 = sin45;
-// const sin180 = sin0;
-// const sin225 = -sin45;
-// const sin270 = -sin90;
-// const sin315 = -sin45;
-// const sin360 = sin0;
-
-const ACT_NONE = "ACT_NONE";//无动作
+const ACT_NONE = "ACT_NONE"; //无动作
 const ACT_OPEN = "ACT_OPEN"; //打开
 const ACT_COPY = "ACT_COPY" //复制
 const ACT_SEARCH = "ACT_SEARCH" //搜索
@@ -38,18 +28,19 @@ const COPY_IMAGE = "COPY_IMAGE"
 const SEARCH_TEXT = "SEARCH_TEXT"
 const SEARCH_LINK = "SEARCH_LINK"
 const SEARCH_IMAGE = "SEARCH_IMAGE"
+
 // const KEY_CTRL = 0;//ctrl键
 // const KEY_SHIFT = 1;//shift键
 
-const NEW_WINDOW = "NEW_WINDOW";//新窗口打开?
-const TAB_CUR = "TAB_CUR";//当前标签页
-const TAB_FIRST = "TAB_FIRST";//新建标签页在最左边
-const TAB_LAST = "TAB_LAST";//最右边
-const TAB_CLEFT = "TAB_CLEFT";//新建的标签页在当前标签页的左边
-const TAB_CRIGHT = "TAB_CRIGHT";//右边
+const NEW_WINDOW = "NEW_WINDOW"; //新窗口打开?
+const TAB_CUR = "TAB_CUR"; //当前标签页
+const TAB_FIRST = "TAB_FIRST"; //新建标签页在最左边
+const TAB_LAST = "TAB_LAST"; //最右边
+const TAB_CLEFT = "TAB_CLEFT"; //新建的标签页在当前标签页的左边
+const TAB_CRIGHT = "TAB_CRIGHT"; //右边
 
-const FORE_GROUND = true;//前台打开
-const BACK_GROUND = false;//后台打开
+const FORE_GROUND = true; //前台打开
+const BACK_GROUND = false; //后台打开
 
 const ALLOW_H = "ALLOW_H";
 const ALLOW_V = "ALLOW_V";
@@ -67,6 +58,15 @@ function $E(s = "") {
     return r;
 }
 
+function getActionType(t) {
+    if (t === TYPE_UNKNOWN) {
+        console.error("未知的拖拽目标类型！~");
+        return;
+    }
+    if (t === TYPE_TEXT_URL || t == TYPE_ELEM_A) return "linkAction";
+    else if (t === TYPE_TEXT || t === TYPE_ELEM || t === TYPE_TEXT_AREA) return "textAction";
+    else if (t === TYPE_ELEM_IMG) return "imageAction";
+}
 
 class ActClass {
     //NEW OPT
@@ -95,7 +95,7 @@ class ActClass {
 }
 
 function checkDragTargetType(selection, target) {
-    if (selection && selection.length !== 0) {
+   if (selection && selection.length !== 0) {
         if (urlPattern.test(selection)) {
             return TYPE_TEXT_URL;
         }
@@ -108,7 +108,7 @@ function checkDragTargetType(selection, target) {
         else if (target instanceof HTMLImageElement) {
             return TYPE_ELEM_IMG;
         }
-        else if(target instanceof HTMLTextAreaElement){
+        else if (target instanceof HTMLTextAreaElement) {
             return TYPE_TEXT_AREA;
         }
         return TYPE_ELEM;

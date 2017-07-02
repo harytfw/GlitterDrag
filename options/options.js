@@ -408,6 +408,34 @@ function initSearcheTab(force) {
     }
 }
 
+function initGeneral(force) {
+    let content = document.querySelector("#content-3")
+    if (content.children.length === 0 || force) {
+        if (force) {
+            let c = null;
+            while ((c = content.firstChild)) {
+                content.removeChild(c);
+            }
+        }
+        // let wrapper = new EngineWrapper(backgroundPage.config.get("Engines"))
+        // wrapper.appendTo(content)
+    }
+
+    function handleChange(evt) {
+        if (evt.target.type === "checkbox") backgroundPage.config.set(evt.target.id, evt.target.checked);
+        else backgroundPage.config.set(evt.target.id, parseInt(evt.target.value));
+        backgroundPage.config.save();
+    }
+    ["#enablePrompt", "#enableIndicator", "#triggeredDistance"].forEach(id => {
+        let e = content.querySelector(id);
+        if (e.type === "checkbox") e.checked = backgroundPage.config.get(e.id);
+        else e.value = backgroundPage.config.get(e.id);
+        e.removeEventListener("change", handleChange);
+        e.addEventListener("change", handleChange);
+    })
+
+}
+
 function messageListener(msg) {
     function log(message) {
         logArea.value = `${logArea.value}\n${new Date().toTimeString()} --- ${message}`

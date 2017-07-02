@@ -1,5 +1,4 @@
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
-let bgConfig = null;
 //bgConfig
 const MIME_TYPE = {
     ".gif": "image/gif",
@@ -12,14 +11,23 @@ const MIME_TYPE = {
 
 //获得用户的配置
 let bgPort = browser.runtime.connect({ name: "getConfig" });
+let bgConfig = null;
 bgPort.onMessage.addListener((c) => {
     c = JSON.parse(c);
     // console.log(c);
     bgConfig = c;
+    // bgConfig.triggeredDistance = 100 * (window.devicePixelRatio);
+    // bgConfig.enableIndicator = true;
+    // bgConfig.enablePrompt = true;
 })
 // bgPort.postMessage("iam ready");
 
-
+let actionNames = {
+    ACT_OPEN: "打开",
+    ACT_COPY: "复制",
+    ACT_SEARCH: "搜索",
+    ACT_DL: "下载"
+}
 
 class Prompt {
     constructor() {
@@ -34,20 +42,22 @@ class Prompt {
         document.body.appendChild(this.container);
     }
     renderDir(d = DIR_U) {
+        let name = "";
         switch (d) {
             case DIR_U:
-                this.arrow.className = "GDArrow-U";
+                name = "GDArrow-U";
                 break;
             case DIR_L:
-                this.arrow.className = "GDArrow-L";
+                name = "GDArrow-L";
                 break;
             case DIR_R:
-                this.arrow.className = "GDArrow-R";
+                name = "GDArrow-R";
                 break;
             case DIR_D:
-                this.arrow.className = "GDArrow-D";
+                name = "GDArrow-D";
                 break;
         }
+        this.arrow.className = name;
     }
 
     renderText(t) {
@@ -72,7 +82,28 @@ class Prompt {
         document.body.removeChild(this.parent);
     }
 }
-
+class Indicator {
+    constructor() {
+        this.box = document.createElement("div");
+        this.box.id = "GDIndicator";
+        this.hide();
+        document.body.appendChild(this.box);
+    }
+    place(x = 0, y = 0, radius = 0) {
+        radius = radius / devicePixelRatio;
+        this.box.style.left = (x - radius) + "px";
+        this.box.style.top = (y - radius) + "px";
+        let h = this.box.style.height = (radius * 2) + "px";
+        let w = this.box.style.width = (radius * 2) + "px";
+        this.box.style.borderRadius = w + " " + h;
+    }
+    display() {
+        this.box.style.display = "initial";
+    }
+    hide() {
+        this.box.style.display = "none";
+    }
+}
 class DragClass {
     constructor(elem) {
         this.dragged = elem;
@@ -83,9 +114,9 @@ class DragClass {
         this.selection = "";
         this.targetElem = null;
         this.targetType = TYPE_UNKNOWN;
+        this.actionType = "textAction";
         this.direction = DIR_U;
         this.distance = 0;
-        this.triggerDistance = 100;
         this.startPos = {
             x: 0,
             y: 0
@@ -95,6 +126,7 @@ class DragClass {
             y: 0
         };
         this.promptBox = null; //new Prompt();
+        this.indicatorBox = null
         this.isFirstRender = true;
         document.addEventListener("DOMContentLoaded", () => {
             this.promptBox = new Prompt();
@@ -103,7 +135,6 @@ class DragClass {
     }
 
     post() {
-        this.targetType = checkDragTargetType(this.selection, this.targetElem);
         let sel = ""; //选中的数据,文本，链接
         let text = ""; //选中的文本，跟上面的可能相同可能不同
         switch (this.targetType) {
@@ -135,7 +166,7 @@ class DragClass {
             direction: this.direction,
             selection: sel,
             textSelection: text,
-            type: this.targetType,
+            actionType: this.actionType,
             sendToOptions: false
         }
         if (isRunInOptionsContext) {
@@ -145,15 +176,23 @@ class DragClass {
         else browser.runtime.sendMessage(sended);
     }
     dragstart(evt) {
-        this.selection = "";
+        if (bgConfig.enableIndicator) {
+            if (this.indicatorBox === null) this.indicatorBox = new Indicator();
+            this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
+            this.indicatorBox.display();
+        }
+        if (bgConfig.enablePrompt) {}
+        this.targetElem = evt.target;
+        this.selection = document.getSelection().toString();
+        this.targetType = checkDragTargetType(this.selection, this.targetElem);
+        this.actionType = getActionType(this.targetType);
         this.startPos.x = evt.screenX;
         this.startPos.y = evt.screenY;
     }
     dragend(evt) {
         this.promptBox.stopRender();
-        this.selection = document.getSelection().toString();
+        this.indicatorBox && this.indicatorBox.hide();
         // this.selection = String.prototype.trim(this.selection);
-        this.targetElem = evt.target;
         if (this.distance >= bgConfig.triggeredDistance) {
             this.post();
         }
@@ -161,10 +200,14 @@ class DragClass {
     }
     dragover(evt) {
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
-        if (this.distance > this.triggerDistance) {
-
+        if (this.distance > bgConfig.triggeredDistance) {
             this.direction = this.getDirection();
-            this.promptBox.render(this.direction, "测试");
+            this.promptBox.render(this.direction, actionNames[
+                bgConfig.Actions[this.actionType][this.direction]["act_name"]
+            ]);
+        }
+        else {
+            this.promptBox.stopRender();
         }
         evt.preventDefault();
 
@@ -175,11 +218,11 @@ class DragClass {
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
         //TODO:把拖拽的数据放在event里传递
-        if (type === "contextmenu" && 1) {
-            console.log(evt);
-            this.dragend(evt);
-        }
-        else if (type === "dragstart") {
+        // if (type === "contextmenu" && 1) {
+        //     console.log(evt);
+        //     this.dragend(evt);
+        // }
+        if (type === "dragstart") {
             this.dragstart(evt);
         }
         else if (type === "dragend") {
@@ -205,7 +248,8 @@ class DragClass {
         let d = {
             normal: DIR_D, //普通的四个方向
             horizontal: DIR_L, //水平方向,只有左右
-            vertical: DIR_D //竖直方向，只有上下
+            vertical: DIR_D, //竖直方向，只有上下
+            all: DIR_D //
         }
 
         let rad = Math.atan2(this.startPos.y - this.endPos.y, this.endPos.x - this.startPos.x);
@@ -221,7 +265,7 @@ class DragClass {
 
         if (between(degree, 0, 180)) d.vertical = DIR_U;
         else d.vertical = DIR_D;
-        return d.normal;
+        return d.normal; //暂时
     }
 
 }
@@ -272,7 +316,8 @@ function CSlistener(msg) {
             case COPY_IMAGE:
                 mydrag.targetElem = elem.querySelector("img");
                 CSlistener(msg); //可能有更好的办法
-                break;
+                return;
+                //break;
         }
         // if (msg.copy_type === COPY_LINK) input.value = elem.href;
         // else if (msg.copy_type === COPY_TEXT) input.value = elem.textContent;
@@ -305,7 +350,7 @@ function CSlistener(msg) {
         // }
     }
     else {
-        input.value = drag.selection;
+        input.value = mydrag.selection;
     }
     if (needExecute) {
         elem.parentElement.appendChild(input);

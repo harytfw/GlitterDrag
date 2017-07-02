@@ -10,7 +10,9 @@ function _act(act = ACT_NONE, active = BACK_GROUND, pos = TAB_LAST, en = "", sea
 }
 var _default_config = {
     enableSync: false,
-    triggeredDistance:1,//px
+    enableIndicator:false,
+    enablePrompt:false,
+    triggeredDistance:20,//px
     Actions: {
         textAction: {
             DIR_U: _act(),

@@ -1,14 +1,26 @@
 :root {
     --scale-ratio: 1;
     --arrow-size: 12px;
-    --prompt-height: 360px;
-    --prompt-width: 400px;
+    --prompt-height: 100px;
+    --prompt-width: 200px;
 }
-
+#GDIndicator{
+    position: absolute;
+    z-index: 8;
+    border:4px dashed rgba(30, 180, 180, 0.85);
+    box-sizing: initial;
+    pointer-events: none;
+}
 #GDPrompt {
     position: fixed;
-    z-index: 888;
-    background-color: blanchedalmond;
+    z-index: 9;
+    box-sizing: initial;
+    border: initial;
+    border-radius: 4px;
+    background-color: rgba(30, 180, 180, 0.85);
+    line-height: initial;
+    font-weight: initial;
+    text-align: center !important;
     left: 40%;
     top: 40%;
     height: var(--prompt-height);
@@ -17,10 +29,8 @@
 
 #GDArrow {
     display: block;
-    text-align: center;
-    vertical-align: middle;
-    font-style: normal;
-    font-size: 30px;
+    font-style: normal !important;
+    font-size: 30px !important;
     height: 60px;
 }
 
