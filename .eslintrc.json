@@ -1,0 +1,31 @@
+{
+    "root": true,
+    "parserOptions": {
+        "ecmaVersion": 8
+    },
+    "env": {
+        "browser": true,
+        "es6": true,
+        "webextensions": true
+    },
+    "extends": [
+        "eslint:recommended"
+    ],
+    "rules": {
+        "no-console": "warn",
+        "no-const-assign": "warn",
+        "no-this-before-super": "warn",
+        "no-undef": "warn",
+        "no-unreachable": "warn",
+        "no-unused-vars": "warn",
+        "constructor-super": "warn",
+        "valid-typeof": "warn",
+        "arrow-parens": ["warn", "as-needed"],
+        "arrow-spacing": ["warn"],
+        "no-unused-vars": ["warn", { "vars": "all", "args": "all" } ],
+        "no-proto": ["error"],
+        "no-undef": ["warn"],
+        "prefer-arrow-callback": ["warn"],
+        "prefer-spread": ["warn"]
+     }
+}
