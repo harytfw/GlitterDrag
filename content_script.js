@@ -1,3 +1,5 @@
+/* exported CSlistener */
+
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 //bgConfig
 const MIME_TYPE = {
@@ -41,19 +43,19 @@ class Prompt {
         this.hide();
         document.body.appendChild(this.container);
     }
-    renderDir(d = DIR_U) {
+    renderDir(d = commons.DIR_U) {
         let name = "";
         switch (d) {
-            case DIR_U:
+            case commons.DIR_U:
                 name = "GDArrow-U";
                 break;
-            case DIR_L:
+            case commons.DIR_L:
                 name = "GDArrow-L";
                 break;
-            case DIR_R:
+            case commons.DIR_R:
                 name = "GDArrow-R";
                 break;
-            case DIR_D:
+            case commons.DIR_D:
                 name = "GDArrow-D";
                 break;
         }
@@ -112,9 +114,9 @@ class DragClass {
         );
         this.selection = "";
         this.targetElem = null;
-        this.targetType = TYPE_UNKNOWN;
+        this.targetType = commons.TYPE_UNKNOWN;
         this.actionType = "textAction";
-        this.direction = DIR_U;
+        this.direction = commons.DIR_U;
         this.distance = 0;
         this.startPos = {
             x: 0,
@@ -137,22 +139,22 @@ class DragClass {
         let sel = ""; //选中的数据,文本，链接
         let text = ""; //选中的文本，跟上面的可能相同可能不同
         switch (this.targetType) {
-            case TYPE_TEXT:
-            case TYPE_TEXT_URL:
+            case commons.TYPE_TEXT:
+            case commons.TYPE_TEXT_URL:
                 text = sel = this.selection;
                 break;
-            case TYPE_TEXT_AREA:
+            case commons.TYPE_TEXT_AREA:
                 sel = this.targetElem.value;
                 text = sel = sel.substring(this.targetElem.selectionStart, this.targetElem.selectionEnd);
                 break;
-            case TYPE_ELEM_A:
+            case commons.TYPE_ELEM_A:
                 sel = this.targetElem.href;
                 text = this.targetElem.textContent;
                 break;
-            case TYPE_ELEM_IMG:
+            case commons.TYPE_ELEM_IMG:
                 sel = this.targetElem.src;
                 break;
-            case TYPE_ELEM:
+            case commons.TYPE_ELEM:
                 sel = "";
                 break;
             default:
@@ -247,25 +249,25 @@ class DragClass {
             return ang1 < ang2 && ang >= ang1 && ang < ang2;
         }
         let d = {
-            normal: DIR_D, //普通的四个方向
-            horizontal: DIR_L, //水平方向,只有左右
-            vertical: DIR_D, //竖直方向，只有上下
-            all: DIR_D //
+            normal: commons.DIR_D, //普通的四个方向
+            horizontal: commons.DIR_L, //水平方向,只有左右
+            vertical: commons.DIR_D, //竖直方向，只有上下
+            all: commons.DIR_D //
         }
 
         let rad = Math.atan2(this.startPos.y - this.endPos.y, this.endPos.x - this.startPos.x);
         let degree = rad * (180 / Math.PI);
         degree = degree >= 0 ? degree : degree + 360; //-180~180转换成0~360
-        if (between(degree, 45, 135)) d.normal = DIR_U;
-        else if (between(degree, 135, 225)) d.normal = DIR_L;
-        else if (between(degree, 225, 315)) d.normal = DIR_D;
-        else d.normal = DIR_R;
+        if (between(degree, 45, 135)) d.normal = commons.DIR_U;
+        else if (between(degree, 135, 225)) d.normal = commons.DIR_L;
+        else if (between(degree, 225, 315)) d.normal = commons.DIR_D;
+        else d.normal = commons.DIR_R;
 
-        if (between(degree, 90, 270)) d.horizontal = DIR_L;
-        else d.horizontal = DIR_R;
+        if (between(degree, 90, 270)) d.horizontal = commons.DIR_L;
+        else d.horizontal = commons.DIR_R;
 
-        if (between(degree, 0, 180)) d.vertical = DIR_U;
-        else d.vertical = DIR_D;
+        if (between(degree, 0, 180)) d.vertical = commons.DIR_U;
+        else d.vertical = commons.DIR_D;
         return d.normal; //暂时
     }
 
@@ -308,21 +310,21 @@ function CSlistener(msg) {
 
     if (elem instanceof HTMLAnchorElement) {
         switch (msg.copy_type) {
-            case COPY_LINK:
+            case commons.COPY_LINK:
                 input.value = elem.href;
                 break;
-            case COPY_TEXT:
+            case commons.COPY_TEXT:
                 input.value = elem.textContent;
                 break;
-            case COPY_IMAGE:
+            case commons.COPY_IMAGE:
                 mydrag.targetElem = elem.querySelector("img");
                 CSlistener(msg); //可能有更好的办法
                 return;
                 //break;
         }
-        // if (msg.copy_type === COPY_LINK) input.value = elem.href;
-        // else if (msg.copy_type === COPY_TEXT) input.value = elem.textContent;
-        // else if (msg.copy_type === COPY_IMAGE) {
+        // if (msg.copy_type === commons.COPY_LINK) input.value = elem.href;
+        // else if (msg.copy_type === commons.COPY_TEXT) input.value = elem.textContent;
+        // else if (msg.copy_type === commons.COPY_IMAGE) {
         //     //如果复制链接里的图像
         //     drag.targetElem = elem.querySelector("img");
         //     listener(msg);
@@ -331,10 +333,10 @@ function CSlistener(msg) {
     else if (elem instanceof HTMLImageElement) {
         if (msg.command === "copy") {
             switch (msg.copy_type) {
-                case COPY_LINK:
+                case commons.COPY_LINK:
                     input.value = elem.src;
                     break;
-                case COPY_IMAGE:
+                case commons.COPY_IMAGE:
                     needExecute = false;
                     getImageBase64(elem.src, (s) => {
                         browser.runtime.sendMessage({ imageBase64: s })
@@ -342,8 +344,8 @@ function CSlistener(msg) {
                     break;
             }
         }
-        // if (msg.copy_type === COPY_LINK) input.value = elem.src;
-        // else if (msg.copy_type === COPY_IMAGE) {
+        // if (msg.copy_type === commons.COPY_LINK) input.value = elem.src;
+        // else if (msg.copy_type === commons.COPY_IMAGE) {
         //     dontExecute = true;
         //     getImageBase64(elem.src, (s) => {
         //         browser.runtime.sendMessage({ imageBase64: s })

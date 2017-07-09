@@ -1,28 +1,28 @@
 let OptionTextTable = {
-    act: [{ text: "无动作", value: ACT_NONE },
-        { text: "直接打开", value: ACT_OPEN },
-        { text: "搜索", value: ACT_SEARCH },
-        { text: "复制", value: ACT_COPY },
-        { text: "下载", value: ACT_DL },
-        { text: "翻译", value: ACT_TRANS },
-        { text: "二维码", value: ACT_QRCODE },
+    act: [{ text: "无动作", value: commons.ACT_NONE },
+        { text: "直接打开", value: commons.ACT_OPEN },
+        { text: "搜索", value: commons.ACT_SEARCH },
+        { text: "复制", value: commons.ACT_COPY },
+        { text: "下载", value: commons.ACT_DL },
+        { text: "翻译", value: commons.ACT_TRANS },
+        { text: "二维码", value: commons.ACT_QRCODE },
     ],
-    active: [{ text: "前台", value: FORE_GROUND },
-        { text: "后台", value: BACK_GROUND },
+    active: [{ text: "前台", value: commons.FORE_GROUND },
+        { text: "后台", value: commons.BACK_GROUND },
     ],
-    pos: [{ text: "尾", value: TAB_LAST },
-        { text: "首", value: TAB_FIRST },
-        { text: "前", value: TAB_CLEFT },
-        { text: "后", value: TAB_CRIGHT },
+    pos: [{ text: "尾", value: commons.TAB_LAST },
+        { text: "首", value: commons.TAB_FIRST },
+        { text: "前", value: commons.TAB_CLEFT },
+        { text: "后", value: commons.TAB_CRIGHT },
     ],
-    search: [{ text: "链接", value: SEARCH_LINK }, { text: "文本", value: SEARCH_TEXT }, { text: "图像", value: SEARCH_IMAGE }],
-    copy: [{ text: "文本", value: COPY_TEXT }, { text: "链接", value: COPY_LINK }, { text: "图像", value: COPY_IMAGE }]
+    search: [{ text: "链接", value: commons.SEARCH_LINK }, { text: "文本", value: commons.SEARCH_TEXT }, { text: "图像", value: commons.SEARCH_IMAGE }],
+    copy: [{ text: "文本", value: commons.COPY_TEXT }, { text: "链接", value: commons.COPY_LINK }, { text: "图像", value: commons.COPY_IMAGE }]
 }
 let DirTextTable = {
-    DIR_U: { text: "上", value: DIR_U },
-    DIR_D: { text: "下", value: DIR_D },
-    DIR_L: { text: "左", value: DIR_L },
-    DIR_R: { text: "右", value: DIR_R },
+    DIR_U: { text: "上", value: commons.DIR_U },
+    DIR_D: { text: "下", value: commons.DIR_D },
+    DIR_L: { text: "左", value: commons.DIR_L },
+    DIR_R: { text: "右", value: commons.DIR_R },
 }
 let typeNameTable = {
     text: { text: "文本" },
@@ -133,17 +133,17 @@ class DirWrapper {
         })
         //NEW SELECT
         switch (this.act.act_name) {
-            case ACT_COPY:
+            case commons.ACT_COPY:
                 this.copySelect.show();
                 break;
-            case ACT_SEARCH:
+            case commons.ACT_SEARCH:
                 this.activeSelect.show();
                 this.posSelect.show();
                 this.engineSelect.show();
                 this.searchTypeSelect.show();
                 break;
-            case ACT_OPEN:
-            case ACT_QRCODE:
+            case commons.ACT_OPEN:
+            case commons.ACT_QRCODE:
                 this.activeSelect.show();
                 this.posSelect.show();
                 break;
@@ -190,22 +190,22 @@ class Wrapper {
 
         this.child_text = new ChildWrapper(typeNameTable.text.text, conf.textAction, this.callback);
         this.child_text.disableOpt(
-            ACT_DL, ACT_TRANS, ACT_QRCODE,
-            SEARCH_IMAGE, SEARCH_LINK,
-            COPY_LINK, COPY_IMAGE
+            commons.ACT_DL, commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.SEARCH_IMAGE, commons.SEARCH_LINK,
+            commons.COPY_LINK, commons.COPY_IMAGE
         );
 
         this.child_image = new ChildWrapper(typeNameTable.image.text, conf.imageAction, this.callback);
         this.child_image.disableOpt(
-            ACT_TRANS, ACT_QRCODE,
-            SEARCH_IMAGE, SEARCH_TEXT,
-            COPY_TEXT,
-        )
+            commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.SEARCH_IMAGE, commons.SEARCH_TEXT,
+            commons.COPY_TEXT
+        );
 
         this.child_link = new ChildWrapper(typeNameTable.link.text, conf.linkAction, this.callback);
         this.child_link.disableOpt(
-            ACT_DL, ACT_TRANS, ACT_QRCODE,
-            SEARCH_IMAGE
+            commons.ACT_DL, commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.SEARCH_IMAGE
         );
 
         [this.child_text, this.child_link, this.child_image].every(c => this.elem.appendChild(c.elem));
@@ -442,9 +442,9 @@ function messageListener(msg) {
     }
     let elem = mydrag.targetElem;
     let logArea = document.querySelector("#logArea");
-    if (elem instanceof HTMLImageElement && msg.command === "copy" && msg.copy_type === COPY_IMAGE) {
+    if (elem instanceof HTMLImageElement && msg.command === "copy" && msg.copy_type === commons.commons.COPY_IMAGE) {
         log("1.向脚本发送测试信息");
-        browser.runtime.sendNativeMessage(appName, "test").then((r) => {
+        browser.runtime.sendNativeMessage(commons.appName, "test").then((r) => {
             log("2.1.脚本回复：" + r);
         }, (e) => {
             log("2.2.发送测试信息失败:" + e);
@@ -467,7 +467,7 @@ function messageListener(msg) {
             let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
             //发送给background，让background发送字符串到powershell脚本
             log("5.向脚本发送图像")
-            browser.runtime.sendNativeMessage(appName, base64).then((response) => {
+            browser.runtime.sendNativeMessage(commons.appName, base64).then((response) => {
                 log("5.1.发送成功，接收到回复消息:" + response);
             }, (error) => {
                 log("5.2.发送图像失败: " + error);
@@ -487,9 +487,9 @@ function messageListener(msg) {
     // input.style.width = "0px";
     // input.style.height = "0px";
     // if (elem instanceof HTMLAnchorElement) {
-    //     if (msg.copy_type === COPY_LINK) input.value = elem.href;
-    //     else if (msg.copy_type === COPY_TEXT) input.value = elem.textContent;
-    //     else if (msg.copy_type === COPY_IMAGE) {
+    //     if (msg.copy_type === commons.COPY_LINK) input.value = elem.href;
+    //     else if (msg.copy_type === commons.COPY_TEXT) input.value = elem.textContent;
+    //     else if (msg.copy_type === commons.COPY_IMAGE) {
     //         //如果复制的是链接里的图像
     //         drag.targetElem = elem.querySelector("img");
     //         listenerForOptionsPage(msg);
@@ -497,8 +497,8 @@ function messageListener(msg) {
     //     }
     // }
     // else if (elem instanceof HTMLImageElement) {
-    //     if (msg.copy_type === COPY_LINK) input.value = elem.src;
-    //     else if (msg.copy_type === COPY_IMAGE) {
+    //     if (msg.copy_type === commons.COPY_LINK) input.value = elem.src;
+    //     else if (msg.copy_type === commons.COPY_IMAGE) {
     //         log("3.检测到复制图像行为");
     //         dontExecute = true;
     //         //获得图像的扩展
@@ -518,7 +518,7 @@ function messageListener(msg) {
     //             let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
     //             //发送给background，让background发送字符串到powershell脚本
     //             log("5.向脚本发送图像")
-    //             browser.runtime.sendNativeMessage(appName, base64).then((response) => {
+    //             browser.runtime.sendNativeMessage(commons.appName, base64).then((response) => {
     //                 log("5.1.发送成功，接收到回复消息:" + response);
     //             }, (error) => {
     //                 log("5.2.发送图像失败: " + error);
