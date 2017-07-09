@@ -91,7 +91,7 @@ class ExecutorClass {
                     }
                     break;
                 }
-            };
+            }
         }, (error) => {
             console.error(error);
         });
