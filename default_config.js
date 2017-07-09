@@ -1,4 +1,4 @@
-function _act(act = ACT_NONE, active = BACK_GROUND, pos = TAB_LAST, en = "", search_type = SEARCH_TEXT, copy_type = COPY_LINK) {
+function _act(act = commons.ACT_NONE, active = commons.BACK_GROUND, pos = commons.TAB_LAST, en = "", search_type = commons.SEARCH_TEXT, copy_type = commons.COPY_LINK) {
     return {
         act_name: act,
         tab_active: active,
@@ -35,8 +35,8 @@ var _default_config = {
     },
     Engines: [],
     directionControl: {
-        textAction: ALLOW_ALL,
-        linkAction: ALLOW_ALL,
-        imageAction: ALLOW_ALL
+        textAction: commons.ALLOW_ALL,
+        linkAction: commons.ALLOW_ALL,
+        imageAction: commons.ALLOW_ALL
     },
 }

@@ -20,7 +20,7 @@ var supportCopyImage = false;
 class ExecutorClass {
     constructor() {
         this.data = {
-            direction: DIR_U,
+            direction: commons.DIR_U,
             selection: "",
             sendToOptions: false,
             actionType: "textAction"
@@ -39,36 +39,36 @@ class ExecutorClass {
             return;
         }
         switch (this.action.act_name) {
-            case ACT_OPEN:
+            case commons.ACT_OPEN:
                 this.openURL(this.data.selection);
                 break;
-            case ACT_COPY:
+            case commons.ACT_COPY:
                 this.copy();
                 break;
-            case ACT_SEARCH:
-                if (this.action.search_type === SEARCH_LINK) this.searchText(this.data.selection);
+            case commons.ACT_SEARCH:
+                if (this.action.search_type === commons.SEARCH_LINK) this.searchText(this.data.selection);
                 else this.searchText(this.data.textSelection);
                 break;
-            case ACT_DL:
+            case commons.ACT_DL:
                 this.downloadImage(this.data.selection);
                 break;
-            case ACT_TRANS:
+            case commons.ACT_TRANS:
                 break;
         }
     }
     getTabIndex(tabsLength = 0, currentTabIndex = 0) {
         let index = 0;
         switch (this.action.tab_pos) {
-            case TAB_CLEFT:
+            case commons.TAB_CLEFT:
                 index = currentTabIndex;
                 break;
-            case TAB_CRIGHT:
+            case commons.TAB_CRIGHT:
                 index = currentTabIndex + 1;
                 break;
-            case TAB_FIRST:
+            case commons.TAB_FIRST:
                 index = 0;
                 break;
-            case TAB_LAST:
+            case commons.TAB_LAST:
                 index = tabsLength;
                 break;
             default:
@@ -81,7 +81,7 @@ class ExecutorClass {
         browser.tabs.query({}).then(tabs => {
             for (let tab of tabs) {
                 if (tab.active === true) {
-                    if (this.action.tab_pos == TAB_CUR) browser.tabs.update(tab.id, { url: url });
+                    if (this.action.tab_pos == commons.TAB_CUR) browser.tabs.update(tab.id, { url: url });
                     else {
                         browser.tabs.create({
                             active: this.action.tab_active,
@@ -260,7 +260,7 @@ browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
 });
 
-browser.runtime.sendNativeMessage(appName, "test").then(
+browser.runtime.sendNativeMessage(commons.appName, "test").then(
     response => {
         console.log("From native app:" + response);
         supportCopyImage = true;
@@ -269,7 +269,7 @@ browser.runtime.sendNativeMessage(appName, "test").then(
 );
 
 function sendImageToNative(base64) {
-    let sending = browser.runtime.sendNativeMessage(appName, base64);
+    let sending = browser.runtime.sendNativeMessage(commons.appName, base64);
     sending.then((response) => {
         console.log("Receive:" + response);
     }, (error) => {
