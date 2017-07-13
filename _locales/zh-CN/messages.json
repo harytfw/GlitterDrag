@@ -7,8 +7,24 @@
         "message":"闪耀拖拽",
         "description":"扩展的名称"
     },
-    "browserActionTitle":{
-        "message":"闪耀拖拽 选项",
-        "descript":"浏览器工具栏按钮显示的标题"
+    "browserActionTitle": {
+        "message": "闪耀拖拽 选项",
+        "description": "浏览器工具栏按钮显示的标题"
+    },
+    "ACT_OPEN": {
+        "message": "打开",
+        "description": "Action name"
+    },
+    "ACT_COPY": {
+        "message": "复制",
+        "description": "Action name"
+    },
+    "ACT_SEARCH": {
+        "message": "搜索",
+        "description": "Action name"
+    },
+    "ACT_DL": {
+        "message": "下载",
+        "description": "Action name"
     }
 }

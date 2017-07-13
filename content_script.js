@@ -24,11 +24,12 @@ bgPort.onMessage.addListener((c) => {
 })
 // bgPort.postMessage("iam ready");
 
-let actionNames = {
-    ACT_OPEN: "打开",
-    ACT_COPY: "复制",
-    ACT_SEARCH: "搜索",
-    ACT_DL: "下载"
+function getActionName(actName) {
+    const message = browser.i18n.getMessage(actName);
+    if (message === "" || message === "??") {
+        return actName;
+    }
+    return message;
 }
 
 class Prompt {
@@ -204,9 +205,9 @@ class DragClass {
             this.direction = this.getDirection();
             if (bgConfig.enablePrompt) {
                 this.promptBox.display();
-                this.promptBox.render(this.direction, actionNames[
+                this.promptBox.render(this.direction, getActionName(
                     bgConfig.Actions[this.actionType][this.direction]["act_name"]
-                ]);
+                ));
             }
         }
         else {

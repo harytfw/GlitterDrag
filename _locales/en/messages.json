@@ -9,6 +9,22 @@
     },
     "browserActionTitle":{
         "message":"Glitter Drag option",
-        "descript":""
+        "description":""
+    },
+    "ACT_OPEN": {
+        "message": "Open",
+        "description": "Action name"
+    },
+    "ACT_COPY": {
+        "message": "Copy",
+        "description": "Action name"
+    },
+    "ACT_SEARCH": {
+        "message": "Search",
+        "description": "Action name"
+    },
+    "ACT_DL": {
+        "message": "Download",
+        "description": "Action name"
     }
 }
