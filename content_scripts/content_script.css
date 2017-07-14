@@ -6,7 +6,7 @@
 }
 #GDIndicator{
     position: absolute;
-    z-index: 8;
+    z-index: 1234;
     border:4px dashed rgba(30, 180, 180, 0.85);
     box-sizing: initial;
     pointer-events: none;
@@ -14,7 +14,7 @@
 #GDPrompt {
     position: fixed;
     color:black;
-    z-index: 9;
+    z-index: 1233;
     box-sizing: initial;
     border: initial;
     border-radius: 4px;

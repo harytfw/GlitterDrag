@@ -3,7 +3,7 @@
     "manifest_version": 2,
     "name": "__MSG_extensionName__",
     "version": "1.37",
-    "homepage_url": "https://github.com/harytfw",
+    "homepage_url": "https://github.com/harytfw/GlitterDrag",
     "icons": {
         "48": "Drag.png",
         "128": "Drag.png",
@@ -38,7 +38,7 @@
         {
             "run_at": "document_start",
             "match_about_blank": true,
-            "all_frames": true,
+            "all_frames": false,
             "matches": [
                 "<all_urls>"
             ],

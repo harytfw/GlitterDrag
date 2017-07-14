@@ -1,50 +1,49 @@
+document.title = geti18nMessage("option_page_title");
+
 let OptionTextTable = {
-    act: [{ text: "无动作", value: commons.ACT_NONE },
-        { text: "直接打开", value: commons.ACT_OPEN },
-        { text: "搜索", value: commons.ACT_SEARCH },
-        { text: "复制", value: commons.ACT_COPY },
-        { text: "下载", value: commons.ACT_DL },
-        { text: "翻译", value: commons.ACT_TRANS },
-        { text: "二维码", value: commons.ACT_QRCODE },
-    ],
-    active: [{ text: "前台", value: commons.FORE_GROUND },
-        { text: "后台", value: commons.BACK_GROUND },
-    ],
-    pos: [{ text: "尾", value: commons.TAB_LAST },
-        { text: "首", value: commons.TAB_FIRST },
-        { text: "前", value: commons.TAB_CLEFT },
-        { text: "后", value: commons.TAB_CRIGHT },
-    ],
-    search: [{ text: "链接", value: commons.SEARCH_LINK }, { text: "文本", value: commons.SEARCH_TEXT }, { text: "图像", value: commons.SEARCH_IMAGE }],
-    copy: [{ text: "文本", value: commons.COPY_TEXT }, { text: "链接", value: commons.COPY_LINK }, { text: "图像", value: commons.COPY_IMAGE }]
-}
-let DirTextTable = {
-    DIR_U: { text: "上", value: commons.DIR_U },
-    DIR_D: { text: "下", value: commons.DIR_D },
-    DIR_L: { text: "左", value: commons.DIR_L },
-    DIR_R: { text: "右", value: commons.DIR_R },
-}
-let typeNameTable = {
-    text: { text: "文本" },
-    link: { text: "链接" },
-    image: { text: "图像" }
+    act: [],
+    active: [],
+    pos: [],
+    search: [],
+    copy: []
 }
 
-let tooltipTable = {
-    act: "要执行的动作",
-    active: "新建标签页的激活状态",
-    pos: "标签页的位置",
-    search: "调用的搜索引擎，默认调用百度",
-    search_type: "需要搜索的东西，文本、链接",
-    copy: "指定需要复制的东西，文本、链接或图像.复制图像可能会有很多问题，谨慎使用"
+let tooltipTable = {};
+["act", "active", "pos", "search", "search_type", "copy"].forEach(
+    (name) => {
+        tooltipTable[name] = geti18nMessage("option_tooltip_" + name);
+    }
+)
+
+let DirTextTable = {};
+for (let item of Object.keys(commons)) {
+    if (/^ACT_/.test(item)) {
+        OptionTextTable.act.push({ text: geti18nMessage(item), value: commons[item] })
+    }
+    else if (/^DIR_/.test(item)) {
+        DirTextTable[item] = { text: geti18nMessage(item), value: commons[item] };
+    }
+    else if (["TAB_FIRST", "TAB_LAST", "TAB_CLEFT", "TAB_CRIGHT"].includes(item)) {
+        OptionTextTable.pos.push({ text: geti18nMessage(item), value: commons[item] });
+    }
+    else if (["FORE_GROUND", "BACK_GROUND"].includes(item)) {
+        OptionTextTable.active.push({ text: geti18nMessage(item), value: commons[item] });
+    }
+    else if (["SEARCH_LINK", "SEARCH_TEXT", "SEARCH_IMAGE"].includes(item)) {
+        OptionTextTable.search.push({ text: geti18nMessage(item), value: commons[item] });
+    }
+    else if (["COPY_TEXT", "COPY_LINK", "COPY_IMAGE"].includes(item)) {
+        OptionTextTable.copy.push({ text: geti18nMessage(item), value: commons[item] });
+    }
 }
+
 class SelectWrapper {
     constructor(optList = [], value, tooltip, cb) {
         this.elem = document.createElement("select");
         this.elem.setAttribute("title", tooltip);
         optList.every(opt => {
             let option = document.createElement("option");
-            option.setAttribute("value", opt.value);
+            option.setAttribute("value", opt.value); //
             option.textContent = opt.text;
             this.elem.appendChild(option);
             return 1;
@@ -68,7 +67,7 @@ class SelectWrapper {
     set value(v) {
         this.elem.value = v;
     }
-    onchange(event) {
+    onchange() {
         this.callback();
     }
     disableOpt(...opts) {
@@ -188,21 +187,21 @@ class Wrapper {
         this.elem = document.createElement("div");
         this.elem.id = "actions";
 
-        this.child_text = new ChildWrapper(typeNameTable.text.text, conf.textAction, this.callback);
+        this.child_text = new ChildWrapper(geti18nMessage('textType'), conf.textAction, this.callback);
         this.child_text.disableOpt(
             commons.ACT_DL, commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE, commons.SEARCH_LINK,
             commons.COPY_LINK, commons.COPY_IMAGE
         );
 
-        this.child_image = new ChildWrapper(typeNameTable.image.text, conf.imageAction, this.callback);
+        this.child_image = new ChildWrapper(geti18nMessage('imageType'), conf.imageAction, this.callback);
         this.child_image.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE, commons.SEARCH_TEXT,
             commons.COPY_TEXT
         );
 
-        this.child_link = new ChildWrapper(typeNameTable.link.text, conf.linkAction, this.callback);
+        this.child_link = new ChildWrapper(geti18nMessage('linkType'), conf.linkAction, this.callback);
         this.child_link.disableOpt(
             commons.ACT_DL, commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE
@@ -239,11 +238,11 @@ class EngineItemWrapper {
         this.nameInput = document.createElement("input");
         this.nameInput.type = "text";
         this.nameInput.onchange = this.onchange;
-        this.nameInput.title = "搜索引擎的名称";
+        this.nameInput.title = geti18nMessage('search_name_tooltip');
         this.urlInput = document.createElement("input");
         this.urlInput.type = "text";
         this.urlInput.onchange = this.onchange;
-        this.urlInput.title = "调用的链接"
+        this.urlInput.title = geti18nMessage('search_url_tooltip');
         // this.label1 = document.createElement("label");
         // this.label2 = document.createElement("label");
         // this.remove = document.createElement("a");
@@ -325,10 +324,11 @@ class EngineWrapper {
 
         let refresh = this.buttonsDiv.firstElementChild;
         refresh.onclick = () => this.onRefresh();
+        refresh.textContent = browser.i18n.getMessage('RefreshbtnOnEngines');
 
         let add = this.buttonsDiv.lastElementChild;
         add.onclick = () => this.onAdd();
-
+        add.textContent = browser.i18n.getMessage('AddbtnOnEngines');
         this.refreshItems(engineList);
     }
     onButtonCallback(isRemove, item) {
@@ -386,8 +386,8 @@ browser.runtime.getBackgroundPage().then((page) => {
             initSearcheTab(true);
         }
         catch (e) {
-            console.error("在恢复用户配置时出现异常！", e);
-            alert("在恢复用户配置时出现异常！");
+            console.error("Error when loadUserOptionsFromBackUp", e);
+            alert("An error occurred!");
         }
     });
     document.querySelector("#backup").addEventListener("click", (event) => {
@@ -407,6 +407,11 @@ browser.runtime.getBackgroundPage().then((page) => {
         fileReader.readAsText(event.target.files[0])
     });
     initForm();
+
+    for (let elem of document.querySelectorAll("[i18n-id]")){
+        elem.textContent = geti18nMessage('elem_' + elem.attributes['i18n-id'].value);
+    }
+        
 }, () => {});
 
 function initForm(force = false) {
@@ -474,13 +479,13 @@ function messageListener(msg) {
     let elem = mydrag.targetElem;
     let logArea = document.querySelector("#logArea");
     if (elem instanceof HTMLImageElement && msg.command === "copy" && msg.copy_type === commons.COPY_IMAGE) {
-        log("1.向脚本发送测试信息");
+        log("1. Handshake to script");
         browser.runtime.sendNativeMessage(commons.appName, "test").then((r) => {
-            log("2.1.脚本回复：" + r);
+            log("2.1. The script reply：" + r);
         }, (e) => {
-            log("2.2.发送测试信息失败:" + e);
+            log("2.2. Test no response:" + e);
         });
-        log("3.检测到复制图像行为");
+        log("3. Copy image behavior is detected.");
         //获得图像的扩展名
         let pathname = new URL(elem.src).pathname;
         let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
@@ -489,7 +494,7 @@ function messageListener(msg) {
         img.onload = () => {
             //下面尝试得到图像的二进制数据
             let canvas = document.createElement("canvas");
-            log("4.创建canvas");
+            log("4. Create canvas");
             canvas.height = img.height;
             canvas.width = img.width;
             let ctx = canvas.getContext("2d");
@@ -497,11 +502,11 @@ function messageListener(msg) {
             //得到没有data:image ...头的base64字符串
             let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
             //发送给background，让background发送字符串到powershell脚本
-            log("5.向脚本发送图像")
+            log("5. Send image to script")
             browser.runtime.sendNativeMessage(commons.appName, base64).then((response) => {
-                log("5.1.发送成功，接收到回复消息:" + response);
+                log("5.1. Sent successfully, receive the reply: " + response);
             }, (error) => {
-                log("5.2.发送图像失败: " + error);
+                log("5.2. Send image failed: " + error);
             })
             img = null;
             canvas = null;
