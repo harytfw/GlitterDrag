@@ -13,11 +13,13 @@
     ],
     "globals": {
         "commons": false,
+        "ActClass": false,
+        "_default_config": false,
         "geti18nMessage": false,
-        "DEFAULT_CONFIG":false,
-        "eventUtil":false,
-        "typeUtil":false,
-        "$E":false
+        "initForm": false,
+        "initSearcheTab": false,
+        "initGeneral": false,
+        "checkDragTargetType": false
     },
     "rules": {
         "no-console": 0,

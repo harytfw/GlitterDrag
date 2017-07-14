@@ -381,6 +381,6 @@
     },
     "elem_SaveStyle": {
         "message": "Save style",
-        "descripttion": "Element on Options page"
+        "description": "Element on Options page"
     }
 }

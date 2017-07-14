@@ -379,6 +379,6 @@
     },
     "elem_SaveStyle": {
         "message": "保存样式",
-        "descripttion": "Element on Options page"
+        "description": "Element on Options page"
     }
 }

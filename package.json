@@ -1,0 +1,14 @@
+{
+  "name": "GlitterDrag",
+  "description": "An drag extension for Firefox Browser.",
+  "devDependencies": {
+    "eslint": "^4.4.1",
+    "web-ext": "^2.0.0"
+  },
+  "scripts": {
+    "build": "web-ext build",
+    "lint": "eslint . && web-ext lint",
+    "test": "npm run lint"
+  },
+  "license": "MIT"
+}
