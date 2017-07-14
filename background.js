@@ -190,13 +190,13 @@ class ConfigClass {
     }
     getSearchURL(name) {
         let defaultUrl = browser.i18n.getMessage('default_search_url');
-        if (message === "" || message === "??") {
+        if (defaultUrl === "" || defaultUrl === "??") {
             console.warn('get default_search_url fail, fallback to Google.')
             defaultUrl = "https://www.google.com/search?q=%s";
         }
-        let searchUrl
+        let searchUrl = defaultUrl;
         this.get("Engines").every(engine => engine.name === name ? (searchUrl = engine.url, false) : true);
-        return (searchUrl || defaultUrl);
+        return (searchUrl);
     }
     recover(json) {
         let parsed = JSON.parse(json);
