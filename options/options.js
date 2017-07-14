@@ -1,50 +1,60 @@
 let OptionTextTable = {
-    act: [{ text: "无动作", value: commons.ACT_NONE },
-        { text: "直接打开", value: commons.ACT_OPEN },
-        { text: "搜索", value: commons.ACT_SEARCH },
-        { text: "复制", value: commons.ACT_COPY },
-        { text: "下载", value: commons.ACT_DL },
-        { text: "翻译", value: commons.ACT_TRANS },
-        { text: "二维码", value: commons.ACT_QRCODE },
-    ],
-    active: [{ text: "前台", value: commons.FORE_GROUND },
-        { text: "后台", value: commons.BACK_GROUND },
-    ],
-    pos: [{ text: "尾", value: commons.TAB_LAST },
-        { text: "首", value: commons.TAB_FIRST },
-        { text: "前", value: commons.TAB_CLEFT },
-        { text: "后", value: commons.TAB_CRIGHT },
-    ],
-    search: [{ text: "链接", value: commons.SEARCH_LINK }, { text: "文本", value: commons.SEARCH_TEXT }, { text: "图像", value: commons.SEARCH_IMAGE }],
-    copy: [{ text: "文本", value: commons.COPY_TEXT }, { text: "链接", value: commons.COPY_LINK }, { text: "图像", value: commons.COPY_IMAGE }]
-}
-let DirTextTable = {
-    DIR_U: { text: "上", value: commons.DIR_U },
-    DIR_D: { text: "下", value: commons.DIR_D },
-    DIR_L: { text: "左", value: commons.DIR_L },
-    DIR_R: { text: "右", value: commons.DIR_R },
-}
-let typeNameTable = {
-    text: { text: "文本" },
-    link: { text: "链接" },
-    image: { text: "图像" }
+    act: [],
+    active: [],
+    pos: [],
+    search: [],
+    copy: []
 }
 
+const tooltip_strprefix = "option_tooltip_";
 let tooltipTable = {
-    act: "要执行的动作",
-    active: "新建标签页的激活状态",
-    pos: "标签页的位置",
-    search: "调用的搜索引擎，默认调用百度",
-    search_type: "需要搜索的东西，文本、链接",
-    copy: "指定需要复制的东西，文本、链接或图像.复制图像可能会有很多问题，谨慎使用"
+    act: geti18nMessage(tooltip_strprefix + 'act'),
+    active: geti18nMessage(tooltip_strprefix + 'active'),
+    pos: geti18nMessage(tooltip_strprefix + 'pos'),
+    search: geti18nMessage(tooltip_strprefix + 'search'),
+    search_type: geti18nMessage(tooltip_strprefix + 'search_type'),
+    copy: geti18nMessage(tooltip_strprefix + 'copy')
 }
+
+function geti18nMessage(strName) {
+    const message = browser.i18n.getMessage(strName);
+    if (message === "" || message === "??") {
+        return strName;
+    }
+    return message;
+}
+
+let DirTextTable = {};
+for (let item of Object.keys(commons)) {
+    if (/^ACT_/.test(item)) {
+        OptionTextTable.act.push({ text: geti18nMessage(item), value: commons[item] })
+    }
+    else if (/^DIR_/.test(item)) {
+        DirTextTable[item] = { text: geti18nMessage(item), value: commons[item] };
+    }
+    else if (["TAB_FIRST", "TAB_LAST", "TAB_CLEFT", "TAB_CRIGHT"].includes(item)) {
+        OptionTextTable.pos.push({ text: geti18nMessage(item), value: commons[item] });
+    }
+    else if (["FORE_GROUND", "BACK_GROUND"].includes(item)) {
+        OptionTextTable.active.push({ text: geti18nMessage(item), value: commons[item] });
+    }
+    else if (["SEARCH_LINK", "SEARCH_TEXT", "SEARCH_IMAGE"].includes(item)) {
+        OptionTextTable.search.push({ text: geti18nMessage(item), value: commons[item] });
+    }
+    else if (["COPY_TEXT", "COPY_LINK", "COPY_IMAGE"].includes(item)) {
+        OptionTextTable.copy.push({ text: geti18nMessage(item), value: commons[item] });
+    }
+    //    console.dir(commons[item])
+}
+//console.dir(DirTextTable)
+
 class SelectWrapper {
     constructor(optList = [], value, tooltip, cb) {
         this.elem = document.createElement("select");
         this.elem.setAttribute("title", tooltip);
         optList.every(opt => {
             let option = document.createElement("option");
-            option.setAttribute("value", opt.value);
+            option.setAttribute("value", opt.value); //
             option.textContent = opt.text;
             this.elem.appendChild(option);
             return 1;
@@ -188,21 +198,21 @@ class Wrapper {
         this.elem = document.createElement("div");
         this.elem.id = "actions";
 
-        this.child_text = new ChildWrapper(typeNameTable.text.text, conf.textAction, this.callback);
+        this.child_text = new ChildWrapper(geti18nMessage('textType'), conf.textAction, this.callback);
         this.child_text.disableOpt(
             commons.ACT_DL, commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE, commons.SEARCH_LINK,
             commons.COPY_LINK, commons.COPY_IMAGE
         );
 
-        this.child_image = new ChildWrapper(typeNameTable.image.text, conf.imageAction, this.callback);
+        this.child_image = new ChildWrapper(geti18nMessage('imageType'), conf.imageAction, this.callback);
         this.child_image.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE, commons.SEARCH_TEXT,
             commons.COPY_TEXT
         );
 
-        this.child_link = new ChildWrapper(typeNameTable.link.text, conf.linkAction, this.callback);
+        this.child_link = new ChildWrapper(geti18nMessage('linkType'), conf.linkAction, this.callback);
         this.child_link.disableOpt(
             commons.ACT_DL, commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE
@@ -239,11 +249,11 @@ class EngineItemWrapper {
         this.nameInput = document.createElement("input");
         this.nameInput.type = "text";
         this.nameInput.onchange = this.onchange;
-        this.nameInput.title = "搜索引擎的名称";
+        this.nameInput.title = geti18nMessage('search_name_tooltip');
         this.urlInput = document.createElement("input");
         this.urlInput.type = "text";
         this.urlInput.onchange = this.onchange;
-        this.urlInput.title = "调用的链接"
+        this.urlInput.title = geti18nMessage('search_url_tooltip');
         // this.label1 = document.createElement("label");
         // this.label2 = document.createElement("label");
         // this.remove = document.createElement("a");
