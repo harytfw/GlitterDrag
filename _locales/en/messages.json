@@ -158,5 +158,57 @@
     "AddbtnOnEngines": {
         "message": "Add",
         "description": "Add button on Options - Search Template"
+    },
+    "elem_Backup": {
+        "message": "Backup",
+        "description": "Element on Options page"
+    },
+    "elem_Restore": {
+        "message": "Restore",
+        "description": "Element on Options page"
+    },
+    "elem_Default": {
+        "message": "Restore to default",
+        "description": "Element on Options page"
+    },
+    "elem_Debug": {
+        "message": "Debug",
+        "description": "Element on Options page"
+    },
+    "elem_Actions": {
+        "message": "Actions",
+        "description": "Element on Options page"
+    },
+    "elem_SearchTemplate": {
+        "message": "Search template",
+        "description": "Element on Options page"
+    },
+    "elem_General": {
+        "message": "General",
+        "description": "Element on Options page"
+    },
+    "elem_Baidu": {
+        "message": "Baidu",
+        "description": "Element on Options page"
+    },
+    "elem_Bing": {
+        "message": "Bing",
+        "description": "Element on Options page"
+    },
+    "elem_PlaceholderTip": {
+        "message": "With %s as keyword in search url",
+        "description": "Element on Options page"
+    },
+    "elem_ShowActionTip": {
+        "message": "Show Actions tip",
+        "description": "Element on Options page"
+    },
+    "elem_EnableDistanceTip": {
+        "message": "Enable Distance tip",
+        "description": "Element on Options page"
+    },
+    "elem_DistancePx": {
+        "message": "Trigger distance (px)",
+        "description": "Element on Options page"
     }
 }

@@ -118,3 +118,11 @@ function checkDragTargetType(selection, target) {
     }
     return commons.TYPE_UNKNOWN;
 }
+
+function geti18nMessage(strName) {
+    const message = browser.i18n.getMessage(strName);
+    if (message === "" || message === "??") {
+        return strName;
+    }
+    return message;
+}

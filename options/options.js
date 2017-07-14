@@ -16,14 +16,6 @@ let tooltipTable = {
     copy: geti18nMessage(tooltip_strprefix + 'copy')
 }
 
-function geti18nMessage(strName) {
-    const message = browser.i18n.getMessage(strName);
-    if (message === "" || message === "??") {
-        return strName;
-    }
-    return message;
-}
-
 let DirTextTable = {};
 for (let item of Object.keys(commons)) {
     if (/^ACT_/.test(item)) {
@@ -44,9 +36,7 @@ for (let item of Object.keys(commons)) {
     else if (["COPY_TEXT", "COPY_LINK", "COPY_IMAGE"].includes(item)) {
         OptionTextTable.copy.push({ text: geti18nMessage(item), value: commons[item] });
     }
-    //    console.dir(commons[item])
 }
-//console.dir(DirTextTable)
 
 class SelectWrapper {
     constructor(optList = [], value, tooltip, cb) {
@@ -386,6 +376,11 @@ browser.runtime.getBackgroundPage().then((page) => {
         fileReader.readAsText(event.target.files[0])
     });
     initForm();
+
+    for (let elem of document.querySelectorAll("[i18n-id]")){
+        elem.textContent = geti18nMessage('elem_' + elem.attributes['i18n-id'].value);
+    }
+        
 }, () => {});
 
 function initForm(force = false) {

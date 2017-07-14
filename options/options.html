@@ -11,9 +11,9 @@
 <body>
 
     <div id="control">
-        <a class="default" id="backup" href="#" target="window" download="GlitterDrag-time.json">备份配置</a>
-        <a class="default" id="restore" href="#" >恢复配置 </a>
-        <a class="default" id="default" href="#">恢复默认 </a>
+        <a class="default" i18n-id="Backup" id="backup" href="#" target="window" download="GlitterDrag-time.json">备份配置</a> | 
+        <a class="default" i18n-id="Restore" id="restore" href="#" >恢复配置 </a> | 
+        <a class="default" i18n-id="Default" id="default" href="#">恢复默认 </a>
         <input type="file" id="fileInput" accept=".json" style="display:none">
     </div>
     <br>
@@ -21,18 +21,18 @@
     <div id="container">
         <section id="tabs">
             <nav>
-                <a id="_debug" bind="content-0" style="color:crimson;display:none" class="nav-a" href="#">调试</a>
-                <a class="nav-a nav-active" href="#">动作</a>
-                <a class="nav-a" href="#">搜索模板</a>
-                <a class="nav-a" href="#">常规</a>
+                <a id="_debug" bind="content-0" i18n-id="Debug" style="color:crimson;display:none" class="nav-a" href="#">调试</a>
+                <a class="nav-a nav-active" i18n-id="Actions" href="#">动作</a>
+                <a class="nav-a" i18n-id="SearchTemplate" href="#">搜索模板</a>
+                <a class="nav-a" i18n-id="General" href="#">常规</a>
             </nav>
             <ul style="list-style:none">
                 <li class="tab-content" id="content-0">
                     <div>
                         <br>
-                        <a href="https://baidu.com/">百度</a>
-                        <a href="https://bing.com/">Bing</a>
-                        <a href="https://www.mozilla.org/zh-CN/firefox/new/">Firefox</a>
+                        <a href="https://baidu.com/" i18n-id="Baidu">百度</a>
+                        <a href="https://bing.com/" i18n-id="Bing">Bing</a>
+                        <a href="https://www.mozilla.org/firefox/new/">Firefox</a>
                         <br>
                         <p>Mozilla Firefox (or simply Firefox) is a free and open-source web browser developed by the Mozilla
                             Foundation and its subsidiary the Mozilla Corporation.</p>
@@ -43,13 +43,13 @@
                     </div>
                 </li>
                 <li class="tab-content tab-active" id="content-1"></li>
-                <li class="tab-content" id="content-2">用 %s 替代链接里的关键词</li>
+                <li class="tab-content" id="content-2" i18n-id="PlaceholderTip">用 %s 替代链接里的关键词</li>
                 <li class="tab-content" id="content-3">
-                    <input type="checkbox" id="enablePrompt"><label for="enablePrompt">显示动作提示</label>
+                    <input type="checkbox" id="enablePrompt"><label for="enablePrompt" i18n-id="ShowActionTip">显示动作提示</label>
                     <br>
-                    <input type="checkbox" id="enableIndicator"><label for="enableIndicator">启用距离指示</label>
+                    <input type="checkbox" id="enableIndicator"><label for="enableIndicator" i18n-id="EnableDistanceTip">启用距离指示</label>
                     <br>
-                    <label for="triggeredDistance">触发距离（px）</label><input type="number" id="triggeredDistance">
+                    <label for="triggeredDistance" i18n-id="DistancePx">触发距离（px）</label><input type="number" id="triggeredDistance">
                 </li>
             </ul>
 

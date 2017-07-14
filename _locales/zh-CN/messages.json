@@ -158,5 +158,57 @@
     "AddbtnOnEngines": {
         "message": "添加",
         "description": "Add button on Options - Search Template"
+    },
+    "elem_Backup": {
+        "message": "备份配置",
+        "description": "Element on Options page"
+    },
+    "elem_Restore": {
+        "message": "恢复配置",
+        "description": "Element on Options page"
+    },
+    "elem_Default": {
+        "message": "恢复默认",
+        "description": "Element on Options page"
+    },
+    "elem_Debug": {
+        "message": "调试",
+        "description": "Element on Options page"
+    },
+    "elem_Actions": {
+        "message": "动作",
+        "description": "Element on Options page"
+    },
+    "elem_SearchTemplate": {
+        "message": "搜索模板",
+        "description": "Element on Options page"
+    },
+    "elem_General": {
+        "message": "常规",
+        "description": "Element on Options page"
+    },
+    "elem_Baidu": {
+        "message": "百度",
+        "description": "Element on Options page"
+    },
+    "elem_Bing": {
+        "message": "必应",
+        "description": "Element on Options page"
+    },
+    "elem_PlaceholderTip": {
+        "message": "用 %s 替代链接里的关键词",
+        "description": "Element on Options page"
+    },
+    "elem_ShowActionTip": {
+        "message": "显示动作提示",
+        "description": "Element on Options page"
+    },
+    "elem_EnableDistanceTip": {
+        "message": "启用距离指示",
+        "description": "Element on Options page"
+    },
+    "elem_DistancePx": {
+        "message": "触发距离（px）",
+        "description": "Element on Options page"
     }
 }
