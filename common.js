@@ -1,5 +1,3 @@
-/* exported commons */
-
 const commons = {
     urlPattern: /^(https?:\/\/)?((\w|-)*\.){0,3}((\w|-)+)\.(com|net|org|gov|edu|mil|biz|cc|info|fm|mobi|tv|ag|am|asia|at|au|be|br|bz|ca|cn|co|de|do|ee|es|eu|fr|gd|gl|gs|im|in|it|jp|la|ly|me|mp|ms|mx|nl|pe|ph|ru|se|so|tk|to|tt|tw|us|uk|ws|xxx)(\/(\w|%|&|-|_|\||\?|\.|=|\/|#|~|!|\+|,|\*|@)*)?$/i,
     //from superdrag   https://addons.mozilla.org/en-US/firefox/addon/super-drag/
@@ -71,32 +69,6 @@ function getActionType(t) {
     else if (t === commons.TYPE_ELEM_IMG) return "imageAction";
 }
 
-class ActClass {
-    //NEW OPT
-    constructor(act = commons.ACT_NONE, active = commons.BACK_GROUND, pos = commons.TAB_LAST, en = "", search_type = commons.SEARCH_TEXT, copy_type = commons.COPY_LINK) {
-        this.act_name = act;
-        this.tab_active = active;
-        this.tab_pos = pos;
-        this.engine_name = en;
-        this.copy_type = copy_type;
-
-        this.search_type = search_type;
-    }
-    isAct(any) {
-        if (act_name === any) {
-            return true;
-        }
-    }
-    update(opt = { act: commons.ACT_NONE, active: commons.BACK_GROUND, pos: commons.TAB_LAST, en: "", search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_LINK }) {
-        this.act_name = opt.act;
-        this.tab_active = opt.active;
-        this.tab_pos = opt.pos;
-        this.engine_name = opt.en;
-        this.copy_type = opt.copy_type;
-        this.search_type = search_type;
-    }
-}
-
 function checkDragTargetType(selection, target) {
    if (selection && selection.length !== 0) {
         if (commons.urlPattern.test(selection)) {
@@ -117,4 +89,16 @@ function checkDragTargetType(selection, target) {
         return commons.TYPE_ELEM;
     }
     return commons.TYPE_UNKNOWN;
+}
+
+function geti18nMessage(strName) {
+    const message = browser.i18n.getMessage(strName);
+    if (message === "" || message === "??") {
+        return strName;
+    }
+    return message;
+}
+
+function getActionName(act){
+    return geti18nMessage(act);
 }

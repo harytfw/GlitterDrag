@@ -9,6 +9,211 @@
     },
     "browserActionTitle":{
         "message":"Glitter Drag option",
-        "descript":""
+        "description":""
+    },
+    "ACT_OPEN": {
+        "message": "Open",
+        "description": "Action name"
+    },
+    "ACT_COPY": {
+        "message": "Copy",
+        "description": "Action name"
+    },
+    "ACT_SEARCH": {
+        "message": "Search",
+        "description": "Action name"
+    },
+    "ACT_DL": {
+        "message": "Download",
+        "description": "Action name"
+    },
+    "ACT_NONE": {
+        "message": "No action",
+        "description": "Action name"
+    },
+    "ACT_TRANS": {
+        "message": "Translate",
+        "description": "Action name"
+    },
+    "ACT_QRCODE": {
+        "message": "QR code",
+        "description": "Action name"
+    },
+    "DIR_U": {
+        "message": "Up",
+        "description": "Direction"
+    },
+    "DIR_D": {
+        "message": "Down",
+        "description": "Direction"
+    },
+    "DIR_L": {
+        "message": "Left",
+        "description": "Direction"
+    },
+    "DIR_R": {
+        "message": "Right",
+        "description": "Direction"
+    },
+    "textType": {
+        "message": "Text",
+        "description": "An section of Options"
+    },
+    "linkType": {
+        "message": "Links",
+        "description": "An section of Options"
+    },
+    "imageType": {
+        "message": "Images",
+        "description": "An section of Options"
+    },
+    "TAB_LAST": {
+        "message": "Last",
+        "description": "Position of tab opened."
+    },
+    "TAB_FIRST": {
+        "message": "First",
+        "description": "Position of tab opened."
+    },
+    "TAB_CLEFT": {
+        "message": "Left",
+        "description": "Position of tab opened."
+    },
+    "TAB_CRIGHT": {
+        "message": "Right",
+        "description": "Position of tab opened."
+    },
+    "FORE_GROUND": {
+        "message": "Foreground",
+        "description": "The tab opened in foreground."
+    },
+    "BACK_GROUND": {
+        "message": "Background",
+        "description": "The tab opened in background."
+    },
+    "SEARCH_LINK": {
+        "message": "Link",
+        "description": "Search action"
+    },
+    "SEARCH_TEXT": {
+        "message": "Text",
+        "description": "Search action"
+    },
+    "SEARCH_IMAGE": {
+        "message": "Image",
+        "description": "Search action"
+    },
+    "COPY_TEXT": {
+        "message": "Text",
+        "description": "Copy action"
+    },
+    "COPY_LINK": {
+        "message": "Link",
+        "description": "Copy action"
+    },
+    "COPY_IMAGE": {
+        "message": "Image",
+        "description": "Copy action"
+    },
+    "option_page_title":{
+        "message":"Glitter Drag - Options",
+        "description":"title of page"
+    },
+
+    "option_tooltip_act": {
+        "message": "Perform the action",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_active": {
+        "message": "The activation status of the new tab",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_pos": {
+        "message": "The location of the tab",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_search": {
+        "message": "Call the search engine, the default call Google",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_search_type": {
+        "message": "Need to search for something, like text, link, etc.",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_copy": {
+        "message": "Specifies what needs to be copied, like text, links, or images. Copying images may have a lot of problems, careful to use",
+        "description": "tooltip on option"
+    },
+    "search_name_tooltip": {
+        "message": "Search engine name",
+        "description": "tooltip on Options - Search Template"
+    },
+    "search_url_tooltip": {
+        "message": "Open the link",
+        "description": "tooltip on Options - Search Template"
+    },
+    "default_search_url": {
+        "message": "https://www.google.com/search?q=%s",
+        "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
+    },
+    "RefreshbtnOnEngines": {
+        "message": "Refresh",
+        "description": "Reload button on Options - Search Template"
+    },
+    "AddbtnOnEngines": {
+        "message": "Add",
+        "description": "Add button on Options - Search Template"
+    },
+    "elem_Backup": {
+        "message": "Backup",
+        "description": "Element on Options page"
+    },
+    "elem_Restore": {
+        "message": "Restore",
+        "description": "Element on Options page"
+    },
+    "elem_Default": {
+        "message": "Restore to default",
+        "description": "Element on Options page"
+    },
+    "elem_Debug": {
+        "message": "Debug",
+        "description": "Element on Options page"
+    },
+    "elem_Actions": {
+        "message": "Actions",
+        "description": "Element on Options page"
+    },
+    "elem_SearchTemplate": {
+        "message": "Search template",
+        "description": "Element on Options page"
+    },
+    "elem_General": {
+        "message": "General",
+        "description": "Element on Options page"
+    },
+    "elem_Baidu": {
+        "message": "Baidu",
+        "description": "Element on Options page"
+    },
+    "elem_Bing": {
+        "message": "Bing",
+        "description": "Element on Options page"
+    },
+    "elem_PlaceholderTip": {
+        "message": "With %s as keyword in search url",
+        "description": "Element on Options page"
+    },
+    "elem_ShowActionTip": {
+        "message": "Show Actions tip",
+        "description": "Element on Options page"
+    },
+    "elem_EnableDistanceTip": {
+        "message": "Enable Distance tip",
+        "description": "Element on Options page"
+    },
+    "elem_DistancePx": {
+        "message": "Trigger distance (px)",
+        "description": "Element on Options page"
     }
 }

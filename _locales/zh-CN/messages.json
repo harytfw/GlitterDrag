@@ -7,8 +7,212 @@
         "message":"闪耀拖拽",
         "description":"扩展的名称"
     },
-    "browserActionTitle":{
-        "message":"闪耀拖拽 选项",
-        "descript":"浏览器工具栏按钮显示的标题"
+    "browserActionTitle": {
+        "message": "闪耀拖拽 选项",
+        "description": "浏览器工具栏按钮显示的标题"
+    },
+    "ACT_OPEN": {
+        "message": "打开",
+        "description": "Action name"
+    },
+    "ACT_COPY": {
+        "message": "复制",
+        "description": "Action name"
+    },
+    "ACT_SEARCH": {
+        "message": "搜索",
+        "description": "Action name"
+    },
+    "ACT_DL": {
+        "message": "下载",
+        "description": "Action name"
+    },
+    "ACT_NONE": {
+        "message": "无动作",
+        "description": "Action name"
+    },
+    "ACT_TRANS": {
+        "message": "翻译",
+        "description": "Action name"
+    },
+    "ACT_QRCODE": {
+        "message": "二维码",
+        "description": "Action name"
+    },
+    "DIR_U": {
+        "message": "上",
+        "description": "Direction"
+    },
+    "DIR_D": {
+        "message": "下",
+        "description": "Direction"
+    },
+    "DIR_L": {
+        "message": "左",
+        "description": "Direction"
+    },
+    "DIR_R": {
+        "message": "右",
+        "description": "Direction"
+    },
+    "textType": {
+        "message": "文本",
+        "description": "An section of Options"
+    },
+    "linkType": {
+        "message": "链接",
+        "description": "An section of Options"
+    },
+    "imageType": {
+        "message": "图像",
+        "description": "An section of Options"
+    },
+    "TAB_LAST": {
+        "message": "尾",
+        "description": "Position of tab opened."
+    },
+    "TAB_FIRST": {
+        "message": "首",
+        "description": "Position of tab opened."
+    },
+    "TAB_CLEFT": {
+        "message": "前",
+        "description": "Position of tab opened."
+    },
+    "TAB_CRIGHT": {
+        "message": "后",
+        "description": "Position of tab opened."
+    },
+    "FORE_GROUND": {
+        "message": "前台",
+        "description": "The tab opened in foreground."
+    },
+    "BACK_GROUND": {
+        "message": "后台",
+        "description": "The tab opened in background."
+    },
+    "SEARCH_LINK": {
+        "message": "链接",
+        "description": "Search action"
+    },
+    "SEARCH_TEXT": {
+        "message": "文本",
+        "description": "Search action"
+    },
+    "SEARCH_IMAGE": {
+        "message": "图像",
+        "description": "Search action"
+    },
+    "COPY_TEXT": {
+        "message": "文本",
+        "description": "Copy action"
+    },
+    "COPY_LINK": {
+        "message": "链接",
+        "description": "Copy action"
+    },
+    "COPY_IMAGE": {
+        "message": "图像",
+        "description": "Copy action"
+    },
+    "option_page_title":{
+        "message":"闪耀拖拽-选项",
+        "description":"title of page"
+    },
+    "option_tooltip_act": {
+        "message": "要执行的动作",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_active": {
+        "message": "新建标签页的激活状态",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_pos": {
+        "message": "标签页的位置",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_search": {
+        "message": "调用的搜索引擎，默认调用百度",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_search_type": {
+        "message": "需要搜索的东西，文本、链接",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_copy": {
+        "message": "指定需要复制的东西，文本、链接或图像。复制图像可能会有很多问题，谨慎使用",
+        "description": "tooltip on option"
+    },
+    "search_name_tooltip": {
+        "message": "搜索引擎的名称",
+        "description": "tooltip on Options - Search Template"
+    },
+    "search_url_tooltip": {
+        "message": "调用的链接",
+        "description": "tooltip on Options - Search Template"
+    },
+    "default_search_url": {
+        "message": "https://www.baidu.com/s?wd=%s",
+        "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
+    },
+    "RefreshbtnOnEngines": {
+        "message": "刷新",
+        "description": "Reload button on Options - Search Template"
+    },
+    "AddbtnOnEngines": {
+        "message": "添加",
+        "description": "Add button on Options - Search Template"
+    },
+    "elem_Backup": {
+        "message": "备份配置",
+        "description": "Element on Options page"
+    },
+    "elem_Restore": {
+        "message": "恢复配置",
+        "description": "Element on Options page"
+    },
+    "elem_Default": {
+        "message": "恢复默认",
+        "description": "Element on Options page"
+    },
+    "elem_Debug": {
+        "message": "调试",
+        "description": "Element on Options page"
+    },
+    "elem_Actions": {
+        "message": "动作",
+        "description": "Element on Options page"
+    },
+    "elem_SearchTemplate": {
+        "message": "搜索模板",
+        "description": "Element on Options page"
+    },
+    "elem_General": {
+        "message": "常规",
+        "description": "Element on Options page"
+    },
+    "elem_Baidu": {
+        "message": "百度",
+        "description": "Element on Options page"
+    },
+    "elem_Bing": {
+        "message": "必应",
+        "description": "Element on Options page"
+    },
+    "elem_PlaceholderTip": {
+        "message": "用 %s 替代链接里的关键词",
+        "description": "Element on Options page"
+    },
+    "elem_ShowActionTip": {
+        "message": "显示动作提示",
+        "description": "Element on Options page"
+    },
+    "elem_EnableDistanceTip": {
+        "message": "启用距离指示",
+        "description": "Element on Options page"
+    },
+    "elem_DistancePx": {
+        "message": "触发距离（px）",
+        "description": "Element on Options page"
     }
 }

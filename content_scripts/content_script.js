@@ -1,5 +1,3 @@
-/* exported CSlistener */
-
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 
 const MIME_TYPE = {
@@ -20,13 +18,6 @@ bgPort.onMessage.addListener((c) => {
     // console.log(c);
     bgConfig = c;
 });
-
-let actionNames = {
-    ACT_OPEN: "打开",
-    ACT_COPY: "复制",
-    ACT_SEARCH: "搜索",
-    ACT_DL: "下载"
-}
 
 class Prompt {
     constructor() {
@@ -188,6 +179,9 @@ class DragClass {
     }
     dragend(evt) {
         this.promptBox.stopRender();
+        if (this.promptBox) { // may be null if viewing an image
+            this.promptBox.stopRender();
+        }
         this.indicatorBox && this.indicatorBox.hide();
         // this.selection = String.prototype.trim(this.selection);
         if (this.distance >= bgConfig.triggeredDistance) {
@@ -201,13 +195,15 @@ class DragClass {
             this.direction = this.getDirection();
             if (bgConfig.enablePrompt) {
                 this.promptBox.display();
-                this.promptBox.render(this.direction, actionNames[
+                this.promptBox.render(this.direction, getActionName(
                     bgConfig.Actions[this.actionType][this.direction]["act_name"]
-                ]);
+                ));
             }
         }
         else {
-            this.promptBox.stopRender();
+            if (this.promptBox) { // may be null if viewing an image
+                this.promptBox.stopRender();
+            }
         }
         evt.preventDefault();
 
@@ -267,8 +263,8 @@ class DragClass {
 
 
 function getImageBase64(src = "", callback) {
-    let pathname = new URL(src).pathname;
-    let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
+    // let pathname = new URL(src).pathname;
+    // let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
     let img = new Image();
     img.src = src;
     img.onload = () => {
@@ -354,6 +350,6 @@ browser.runtime.onConnect.addListener(port => {
     }
 });
 document.addEventListener("DOMContentLoaded", () => {
-    if (mydrag === null) mydrag = new DragClass(document.children[0]);
+    mydrag = new DragClass(document.children[0]);
 });
 // const mydrag = new DragClass(document.children[0]);
