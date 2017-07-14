@@ -128,7 +128,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_search": {
-        "message": "Call the search engine, the default call Baidu",
+        "message": "Call the search engine, the default call Google",
         "description": "tooltip on option"
     },
     "option_tooltip_search_type": {
@@ -146,5 +146,9 @@
     "search_url_tooltip": {
         "message": "Open the link",
         "description": "tooltip on option - search template"
+    },
+    "default_search_url": {
+        "message": "https://www.google.com/search?q=%s",
+        "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     }
 }

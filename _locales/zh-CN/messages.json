@@ -146,5 +146,9 @@
     "search_url_tooltip": {
         "message": "调用的链接",
         "description": "tooltip on option - search template"
+    },
+    "default_search_url": {
+        "message": "https://www.baidu.com/s?wd=%s",
+        "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     }
 }

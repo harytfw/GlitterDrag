@@ -189,9 +189,14 @@ class ConfigClass {
         }
     }
     getSearchURL(name) {
-        let url = "http://www.baidu.com/s?wd=%s";
-        this.get("Engines").every(engine => engine.name === name ? (url = engine.url, false) : true);
-        return url;
+        let defaultUrl = browser.i18n.getMessage('default_search_url');
+        if (message === "" || message === "??") {
+            console.warn('get default_search_url fail, fallback to Google.')
+            defaultUrl = "https://www.google.com/search?q=%s";
+        }
+        let searchUrl
+        this.get("Engines").every(engine => engine.name === name ? (searchUrl = engine.url, false) : true);
+        return (searchUrl || defaultUrl);
     }
     recover(json) {
         let parsed = JSON.parse(json);
