@@ -1,7 +1,7 @@
 /* exported CSlistener */
 
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
-//bgConfig
+
 const MIME_TYPE = {
     ".gif": "image/gif",
     ".jpg": "image/jpeg",
@@ -14,15 +14,12 @@ const MIME_TYPE = {
 //获得用户的配置
 let bgPort = browser.runtime.connect({ name: "getConfig" });
 let bgConfig = null;
+let mydrag = null;
 bgPort.onMessage.addListener((c) => {
     c = JSON.parse(c);
     // console.log(c);
     bgConfig = c;
-    // bgConfig.triggeredDistance = 100 * (window.devicePixelRatio);
-    // bgConfig.enableIndicator = true;
-    // bgConfig.enablePrompt = true;
-})
-// bgPort.postMessage("iam ready");
+});
 
 let actionNames = {
     ACT_OPEN: "打开",
@@ -109,8 +106,8 @@ class DragClass {
     constructor(elem) {
         this.dragged = elem;
         this.handler = this.handler.bind(this);
-        ["dragstart", "dragend", "dragover", "drop", "context", "contextmenu"].forEach(name =>
-            this.dragged.addEventListener(name, this.handler, false)
+        ["dragstart", "dragend", "dragover", "drop"].forEach(name =>
+            this.dragged.addEventListener(name, this.handler,true)
         );
         this.selection = "";
         this.targetElem = null;
@@ -129,9 +126,9 @@ class DragClass {
         this.promptBox = null; //new Prompt();
         this.indicatorBox = null
         this.isFirstRender = true;
-        document.addEventListener("DOMContentLoaded", () => {
-            this.promptBox = new Prompt();
-        });
+        // document.addEventListener("DOMContentLoaded", () => {
+        this.promptBox = new Prompt();
+        // });
         // this.offset = 2;
     }
 
@@ -216,15 +213,11 @@ class DragClass {
 
     }
     handler(evt) {
-        // console.log(evt);
+        // evt.stopPropagation();//有些网页也有drag事件，可能会妨碍脚本运行
         const type = evt.type;
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
         //TODO:把拖拽的数据放在event里传递
-        // if (type === "contextmenu" && 1) {
-        //     console.log(evt);
-        //     this.dragend(evt);
-        // }
         if (type === "dragstart") {
             this.dragstart(evt);
         }
@@ -239,7 +232,6 @@ class DragClass {
         }
         else if (type === "dragover") {
             this.dragover(evt);
-            //加上这行代码，拖拽时鼠标指针由禁止（一个圆加斜杠）变成正常的指针
             // console.log(evt);
         }
     }
@@ -280,28 +272,20 @@ function getImageBase64(src = "", callback) {
     let img = new Image();
     img.src = src;
     img.onload = () => {
-        //下面尝试得到图像的二进制数据
         let canvas = document.createElement("canvas");
         canvas.height = img.height;
         canvas.width = img.width;
         let ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
-        //得到没有data:image ...头的base64字符串
         let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
         callback(base64);
-        //发送给background，让background发送字符串到powershell脚本
-        // browser.runtime.sendMessage({
-        //     imageBase64: base64
-        // });
         img = null;
         canvas = null;
         base64 = null;
-        callback(base64)
     }
 }
 
 function CSlistener(msg) {
-    // console.log("@from content_script");
     let needExecute = true;
     let elem = mydrag.targetElem;
     let input = document.createElement("textarea");
@@ -339,7 +323,7 @@ function CSlistener(msg) {
                 case commons.COPY_IMAGE:
                     needExecute = false;
                     getImageBase64(elem.src, (s) => {
-                        browser.runtime.sendMessage({ imageBase64: s })
+                        browser.runtime.sendMessage({ imageBase64: s });
                     })
                     break;
             }
@@ -368,6 +352,8 @@ browser.runtime.onConnect.addListener(port => {
     if (port.name === "sendToContentScript") {
         port.onMessage.addListener(CSlistener);
     }
-})
-
-const mydrag = new DragClass(document.children[0]);
+});
+document.addEventListener("DOMContentLoaded", () => {
+    if (mydrag === null) mydrag = new DragClass(document.children[0]);
+});
+// const mydrag = new DragClass(document.children[0]);

@@ -183,11 +183,11 @@ class ConfigClass {
     getAct(type, dir) {
         return this.Actions[type][dir]
     }
-    setAct(type, dir, act) {
-        if (act instanceof ActClass) {
-            this.Actions[type][dir] = act;
-        }
-    }
+    // setAct(type, dir, act) {
+    //     if (act instanceof ActClass) {
+    //         this.Actions[type][dir] = act;
+    //     }
+    // }
     getSearchURL(name) {
         let url = "http://www.baidu.com/s?wd=%s";
         this.get("Engines").every(engine => engine.name === name ? (url = engine.url, false) : true);
@@ -235,10 +235,10 @@ function loadDefaultOptions() {
     config.save();
 }
 
-function updateUserActionOptions(type, dir, act_value) {
-    config.setAct(type, dir, new ActClass(act_value));
-    config.save();
-}
+// function updateUserActionOptions(type, dir, act_value) {
+//     config.setAct(type, dir, new ActClass(act_value));
+//     config.save();
+// }
 
 function updateUserCustomizedSearch(index, name, url, remove = false) {
     let searchList = config.Engines;

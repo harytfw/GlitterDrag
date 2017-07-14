@@ -4,8 +4,11 @@
 
 <head>
     <meta charset="utf-8">
+    
+    <link rel="stylesheet" type="text/css" href="extension.css">
     <link rel="stylesheet" type="text/css" href="options.css">
-    <link rel="stylesheet" type="text/css" href="./../content_script.css">
+    <link rel="stylesheet" type="text/css" href="./../content_scripts/content_script.css">
+    
 </head>
 
 <body>
@@ -24,7 +27,7 @@
                 <a id="_debug" bind="content-0" style="color:crimson;display:none" class="nav-a" href="#">调试</a>
                 <a class="nav-a nav-active" href="#">动作</a>
                 <a class="nav-a" href="#">搜索模板</a>
-                <a class="nav-a" href="#">常规</a>
+                <a class="nav-a" href="#">其它</a>
             </nav>
             <ul style="list-style:none">
                 <li class="tab-content" id="content-0">
@@ -38,18 +41,30 @@
                             Foundation and its subsidiary the Mozilla Corporation.</p>
                         <br>
                         <img src="https://www.mozilla.org/media/img/firefox/template/header-logo-inverse.510f97e92635.png" srcset="https://www.mozilla.org/media/img/firefox/template/header-logo-inverse-high-res.6a42e6a524f0.png 1.5x"
-                            alt="Firefox" width="185" height="70">
+                            alt="Firefox" width="185" height="70"
+                            style="background-color: rgb(147, 147, 147);border-radius: 4px;">
+                        <br>
+                        <br>
                         <textarea id="logArea" rows="10" cols="80"></textarea>
                     </div>
                 </li>
                 <li class="tab-content tab-active" id="content-1"></li>
-                <li class="tab-content" id="content-2">用 %s 替代链接里的关键词</li>
+                <li class="tab-content" id="content-2">
+                    <p>用 %s 替代链接里的关键词</p>
+                    <div id="engine-buttons"> 
+                        <button>刷新</button>
+                        <button>添加</button>
+                    </div>
+                    <div id="engine-items"></div>
+                </li>
                 <li class="tab-content" id="content-3">
+                    <!-- <input type="checkbox" id="enablePrompt"><label for="enablePrompt">打开无协议的链接</label> -->
+                    <!-- <br> -->
                     <input type="checkbox" id="enablePrompt"><label for="enablePrompt">显示动作提示</label>
                     <br>
                     <input type="checkbox" id="enableIndicator"><label for="enableIndicator">启用距离指示</label>
                     <br>
-                    <label for="triggeredDistance">触发距离（px）</label><input type="number" id="triggeredDistance">
+                    <label for="triggeredDistance">触发距离（px）</label><input type="text" id="triggeredDistance">
                 </li>
             </ul>
 
@@ -60,7 +75,7 @@
 
     <script src="options_tab.js"></script>
     <script src="options_debug.js"></script>
-    <script src="./../content_script.js"></script>
+    <script src="./../content_scripts/content_script.js"></script>
 </body>
 
 </html>

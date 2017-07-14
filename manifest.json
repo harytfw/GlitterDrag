@@ -44,17 +44,17 @@
             ],
             "js": [
                 "common.js",
-                "content_script.js"
+                "content_scripts/content_script.js"
             ],
             "css":[
-                "content_script.css"
+                "content_scripts/content_script.css"
             ]
         }
     ],
     "options_ui": {
         "page": "options/options.html",
         "browser_style": true,
-        "open_in_tab":false
+        "open_in_tab":true
     },
     "default_locale": "en",
     "applications": {

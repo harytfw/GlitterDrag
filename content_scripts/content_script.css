@@ -27,7 +27,9 @@
     height: var(--prompt-height);
     width: var(--prompt-width);
 }
-
+#GDPrompt > *{
+    text-align: inherit;
+}
 #GDArrow {
     display: block;
     font-style: normal !important;

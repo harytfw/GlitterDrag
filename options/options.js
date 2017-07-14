@@ -234,7 +234,7 @@ class EngineItemWrapper {
     constructor(val, callback) {
         this.callback = callback;
         this.onchange = this.onchange.bind(this);
-        this.onclick = this.onclick.bind(this);
+
         this.elem = document.createElement("div");
         this.nameInput = document.createElement("input");
         this.nameInput.type = "text";
@@ -252,25 +252,33 @@ class EngineItemWrapper {
 
         this.confirm = document.createElement("a");
         this.confirm.href = "#";
-        this.confirm.innerHTML = "&#10003";
-        this.confirm.onclick = this.onclick;
-        [this.nameInput, this.urlInput, this.confirm].forEach(t => this.elem.appendChild(t));
+        this.confirm.innerHTML = "&#10003"; //勾
+        this.confirm.onclick = () => this.onConfirmClick();
+
+        this.remove = this.confirm.cloneNode();
+        this.remove.innerHTML = "&#10007"; //叉
+        this.remove.onclick = () => this.onRemoveClick();
+
+        [this.nameInput, this.urlInput, this.confirm, this.remove].forEach(t => this.elem.appendChild(t));
         this.value = val;
     }
-    onclick() {
-        let notempty = true;
+    onConfirmClick() {
+        let noEmpty = true;
         [this.nameInput, this.urlInput].every(input => {
-            return notempty = input.value.length === 0 ? (this.addBorder(input), false) : true;
+            return noEmpty = input.value.length === 0 ? (this.addBorder(input), false) : true;
         });
-        if (notempty) {
+        if (noEmpty) {
             this.callback();
         }
+    }
 
+    onRemoveClick() {
+        this.callback(true, this);
     }
     addBorder(input) {
-        input.style.border = "1px red solid";
+        input.className = "warn";
         setTimeout(() => {
-            input.style.border = "";
+            input.className = "";
         }, 1200);
     }
     onchange() {
@@ -307,37 +315,60 @@ class EngineItemWrapper {
 }
 class EngineWrapper {
     constructor(engineList) {
-        this.add_event = this.add_event.bind(this);
-        this.onsave_callback = this.onsave_callback.bind(this);
-        this.elem = document.createElement("div");
-        this.items = [];
-        let refresh = document.createElement("button")
-        refresh.textContent = "刷新"
+        this.items = []; //
 
-        let add = document.createElement("button")
-        add.textContent = "添加"
-        add.onclick = this.add_event
-        this.elem.appendChild(refresh)
-        this.elem.appendChild(add)
-        engineList.forEach(s => this.newItem(s));
+        // this.onAdd = this.onAdd.bind(this);
+        this.onButtonCallback = this.onButtonCallback.bind(this);
+
+        this.buttonsDiv = document.querySelector("#engine-buttons");
+        this.itemsDiv = document.querySelector("#engine-items");
+
+        let refresh = this.buttonsDiv.firstElementChild;
+        refresh.onclick = () => this.onRefresh();
+
+        let add = this.buttonsDiv.lastElementChild;
+        add.onclick = () => this.onAdd();
+
+        this.refreshItems(engineList);
     }
-    onsave_callback() {
+    onButtonCallback(isRemove, item) {
+        if (isRemove) {
+            // console.log(item);
+            this.items = this.items.filter((v) => v !== item);
+            this.itemsDiv.removeChild(item.elem);
+        }
         backgroundPage.config.set("Engines", this.collect());
         backgroundPage.config.save();
     }
-    add_event() {
-        this.newItem({ name: "", url: "" });
+
+    onRefresh() {
+        this.refreshItems(backgroundPage.config.get("Engines"));
     }
-    newItem(val) {
-        let item = new EngineItemWrapper(val, this.onsave_callback);
+    onAdd() {
+        this.newItem();
+    }
+    refreshItems(list) {
+        this.removeItems();
+        list.forEach(s => this.newItem(s));
+    }
+    removeItems() {
+        this.items.forEach(item => {
+            this.itemsDiv.removeChild(item.elem);
+            item = null;
+        });
+        this.items = [];
+    }
+
+    newItem(val = { name: "", url: "" }) {
+        let item = new EngineItemWrapper(val, this.onButtonCallback);
         this.items.push(item);
-        item.appendTo(this.elem);
+        item.appendTo(this.itemsDiv);
     }
     collect() {
         return Array.from(this.items, item => item.value);
     }
     appendTo(parent) {
-        parent.appendChild(this.elem)
+        // parent.appendChild(this.itemsDiv)
     }
 }
 
@@ -395,7 +426,7 @@ function initForm(force = false) {
 
 
 function initSearcheTab(force) {
-    let content = document.querySelector("#content-2")
+    let content = document.querySelector("#engine-items");
     if (content.children.length === 0 || force) {
         if (force) {
             let c = null;
@@ -404,7 +435,7 @@ function initSearcheTab(force) {
             }
         }
         let wrapper = new EngineWrapper(backgroundPage.config.get("Engines"))
-        wrapper.appendTo(content)
+        // wrapper.appendTo(content)
     }
 }
 
@@ -442,7 +473,7 @@ function messageListener(msg) {
     }
     let elem = mydrag.targetElem;
     let logArea = document.querySelector("#logArea");
-    if (elem instanceof HTMLImageElement && msg.command === "copy" && msg.copy_type === commons.commons.COPY_IMAGE) {
+    if (elem instanceof HTMLImageElement && msg.command === "copy" && msg.copy_type === commons.COPY_IMAGE) {
         log("1.向脚本发送测试信息");
         browser.runtime.sendNativeMessage(commons.appName, "test").then((r) => {
             log("2.1.脚本回复：" + r);
