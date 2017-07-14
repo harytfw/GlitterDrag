@@ -6,15 +6,12 @@ let OptionTextTable = {
     copy: []
 }
 
-const tooltip_strprefix = "option_tooltip_";
-let tooltipTable = {
-    act: geti18nMessage(tooltip_strprefix + 'act'),
-    active: geti18nMessage(tooltip_strprefix + 'active'),
-    pos: geti18nMessage(tooltip_strprefix + 'pos'),
-    search: geti18nMessage(tooltip_strprefix + 'search'),
-    search_type: geti18nMessage(tooltip_strprefix + 'search_type'),
-    copy: geti18nMessage(tooltip_strprefix + 'copy')
-}
+let tooltipTable = {};
+["act", "active", "pos", "search", "search_type", "copy"].forEach(
+    (name) => {
+        tooltipTable[name] = geti18nMessage("option_tooltip_" + name);
+    }
+)
 
 let DirTextTable = {};
 for (let item of Object.keys(commons)) {
