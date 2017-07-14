@@ -141,14 +141,22 @@
     },
     "search_name_tooltip": {
         "message": "搜索引擎的名称",
-        "description": "tooltip on option - search template"
+        "description": "tooltip on Options - Search Template"
     },
     "search_url_tooltip": {
         "message": "调用的链接",
-        "description": "tooltip on option - search template"
+        "description": "tooltip on Options - Search Template"
     },
     "default_search_url": {
         "message": "https://www.baidu.com/s?wd=%s",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
+    },
+    "RefreshbtnOnEngines": {
+        "message": "刷新",
+        "description": "Reload button on Options - Search Template"
+    },
+    "AddbtnOnEngines": {
+        "message": "添加",
+        "description": "Add button on Options - Search Template"
     }
 }

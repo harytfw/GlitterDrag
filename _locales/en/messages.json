@@ -141,14 +141,22 @@
     },
     "search_name_tooltip": {
         "message": "Search engine name",
-        "description": "tooltip on option - search template"
+        "description": "tooltip on Options - Search Template"
     },
     "search_url_tooltip": {
         "message": "Open the link",
-        "description": "tooltip on option - search template"
+        "description": "tooltip on Options - Search Template"
     },
     "default_search_url": {
         "message": "https://www.google.com/search?q=%s",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
+    },
+    "RefreshbtnOnEngines": {
+        "message": "Refresh",
+        "description": "Reload button on Options - Search Template"
+    },
+    "AddbtnOnEngines": {
+        "message": "Add",
+        "description": "Add button on Options - Search Template"
     }
 }

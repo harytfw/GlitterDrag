@@ -322,10 +322,10 @@ class EngineWrapper {
         this.elem = document.createElement("div");
         this.items = [];
         let refresh = document.createElement("button")
-        refresh.textContent = "刷新"
+        refresh.textContent = browser.i18n.getMessage('RefreshbtnOnEngines');
 
         let add = document.createElement("button")
-        add.textContent = "添加"
+        add.textContent = browser.i18n.getMessage('AddbtnOnEngines');
         add.onclick = this.add_event
         this.elem.appendChild(refresh)
         this.elem.appendChild(add)
@@ -365,8 +365,8 @@ browser.runtime.getBackgroundPage().then((page) => {
             initSearcheTab(true);
         }
         catch (e) {
-            console.error("在恢复用户配置时出现异常！", e);
-            alert("在恢复用户配置时出现异常！");
+            console.error("Error when loadUserOptionsFromBackUp", e);
+            alert("An error occurred!");
         }
     });
     document.querySelector("#backup").addEventListener("click", (event) => {
@@ -453,13 +453,13 @@ function messageListener(msg) {
     let elem = mydrag.targetElem;
     let logArea = document.querySelector("#logArea");
     if (elem instanceof HTMLImageElement && msg.command === "copy" && msg.copy_type === commons.commons.COPY_IMAGE) {
-        log("1.向脚本发送测试信息");
+        log("1. Handshake to script");
         browser.runtime.sendNativeMessage(commons.appName, "test").then((r) => {
-            log("2.1.脚本回复：" + r);
+            log("2.1. The script reply：" + r);
         }, (e) => {
-            log("2.2.发送测试信息失败:" + e);
+            log("2.2. Test no response:" + e);
         });
-        log("3.检测到复制图像行为");
+        log("3. Copy image behavior is detected.");
         //获得图像的扩展名
         let pathname = new URL(elem.src).pathname;
         let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
@@ -468,7 +468,7 @@ function messageListener(msg) {
         img.onload = () => {
             //下面尝试得到图像的二进制数据
             let canvas = document.createElement("canvas");
-            log("4.创建canvas");
+            log("4. Create canvas");
             canvas.height = img.height;
             canvas.width = img.width;
             let ctx = canvas.getContext("2d");
@@ -476,11 +476,11 @@ function messageListener(msg) {
             //得到没有data:image ...头的base64字符串
             let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
             //发送给background，让background发送字符串到powershell脚本
-            log("5.向脚本发送图像")
+            log("5. Send image to script")
             browser.runtime.sendNativeMessage(commons.appName, base64).then((response) => {
-                log("5.1.发送成功，接收到回复消息:" + response);
+                log("5.1. Sent successfully, receive the reply: " + response);
             }, (error) => {
-                log("5.2.发送图像失败: " + error);
+                log("5.2. Send image failed: " + error);
             })
             img = null;
             canvas = null;
