@@ -98,7 +98,3 @@ function geti18nMessage(strName) {
     }
     return message;
 }
-
-function getActionName(act){
-    return geti18nMessage(act);
-}
