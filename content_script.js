@@ -1,5 +1,3 @@
-/* exported CSlistener */
-
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 //bgConfig
 const MIME_TYPE = {
@@ -23,14 +21,6 @@ bgPort.onMessage.addListener((c) => {
     // bgConfig.enablePrompt = true;
 })
 // bgPort.postMessage("iam ready");
-
-function getActionName(actName) {
-    const message = browser.i18n.getMessage(actName);
-    if (message === "" || message === "??") {
-        return actName;
-    }
-    return message;
-}
 
 class Prompt {
     constructor() {
@@ -192,6 +182,9 @@ class DragClass {
     }
     dragend(evt) {
         this.promptBox.stopRender();
+        if (this.promptBox) { // may be null if viewing an image
+            this.promptBox.stopRender();
+        }
         this.indicatorBox && this.indicatorBox.hide();
         // this.selection = String.prototype.trim(this.selection);
         if (this.distance >= bgConfig.triggeredDistance) {
@@ -211,7 +204,9 @@ class DragClass {
             }
         }
         else {
-            this.promptBox.stopRender();
+            if (this.promptBox) { // may be null if viewing an image
+                this.promptBox.stopRender();
+            }
         }
         evt.preventDefault();
 

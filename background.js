@@ -46,8 +46,17 @@ class ExecutorClass {
                 this.copy();
                 break;
             case commons.ACT_SEARCH:
-                if (this.action.search_type === commons.SEARCH_LINK) this.searchText(this.data.selection);
-                else this.searchText(this.data.textSelection);
+                if (this.action.search_type === commons.SEARCH_LINK) {
+                    this.searchText(this.data.selection);
+                }
+                // this.data.selection is image's url
+                // TODO: how to get the ALT attribute or event.
+                /*else if (this.action.search_type === commons.SEARCH_IMAGE) {
+                    console.dir(e);
+                }*/
+                else {
+                    this.searchText(this.data.textSelection);
+                }
                 break;
             case commons.ACT_DL:
                 this.downloadImage(this.data.selection);
@@ -115,8 +124,8 @@ class ExecutorClass {
         this.openURL(config.getSearchURL(this.action.engine_name).replace("%s", keyword));
     }
 
-    searchImage(url, keyword) {
-        this.openURL(this.searchTemplate.replace("%s", text));
+    searchImage(url, keyword) { // unused
+        this.openURL(this.searchTemplate.replace("%s", keyword));
     }
 
     downloadImage(url) {

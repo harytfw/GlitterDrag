@@ -11,8 +11,12 @@
     "extends": [
         "eslint:recommended"
     ],
+    "globals": {
+        "commons": false,
+        "geti18nMessage": false
+    },
     "rules": {
-        "no-console": "warn",
+        "no-console": 0,
         "no-const-assign": "warn",
         "no-this-before-super": "warn",
         "no-undef": "warn",
@@ -20,7 +24,6 @@
         "no-unused-vars": "warn",
         "constructor-super": "warn",
         "valid-typeof": "warn",
-        "arrow-parens": ["warn", "as-needed"],
         "arrow-spacing": ["warn"],
         "no-unused-vars": ["warn", { "vars": "all", "args": "all" } ],
         "no-proto": ["error"],
