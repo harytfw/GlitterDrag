@@ -37,17 +37,16 @@
     "content_scripts": [
         {
             "run_at": "document_start",
-            "match_about_blank": true,
             "all_frames": false,
             "matches": [
                 "<all_urls>"
             ],
+            "css":[
+                "content_scripts/content_script.css"
+            ],
             "js": [
                 "common.js",
                 "content_scripts/content_script.js"
-            ],
-            "css":[
-                "content_scripts/content_script.css"
             ]
         }
     ],

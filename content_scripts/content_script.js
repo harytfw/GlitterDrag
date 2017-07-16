@@ -9,15 +9,6 @@ const MIME_TYPE = {
     ".txt": "text/plain",
 }
 
-//获得用户的配置
-let bgPort = browser.runtime.connect({ name: "getConfig" });
-let bgConfig = null;
-let mydrag = null;
-bgPort.onMessage.addListener((c) => {
-    c = JSON.parse(c);
-    // console.log(c);
-    bgConfig = c;
-});
 
 class Prompt {
     constructor() {
@@ -98,8 +89,18 @@ class DragClass {
         this.dragged = elem;
         this.handler = this.handler.bind(this);
         ["dragstart", "dragend", "dragover", "drop"].forEach(name =>
-            this.dragged.addEventListener(name, this.handler,true)
+            //这里是capture阶段
+            this.dragged.addEventListener(name, this.handler, true)
         );
+        //添加在冒泡阶段
+        //网页自己添加的dragstart事件并使用preventDefault会妨碍扩展运行
+        //这里取消preventDefault的作用
+        document.addEventListener("dragstart", (event) => {
+            // console.log(event);
+            event.returnValue = true;
+        }, false);
+
+
         this.selection = "";
         this.targetElem = null;
         this.targetType = commons.TYPE_UNKNOWN;
@@ -172,13 +173,13 @@ class DragClass {
         }
         this.targetElem = evt.target;
         this.selection = document.getSelection().toString();
+        // this.selection = evt.dataTransfer.getData("text/plain");
         this.targetType = checkDragTargetType(this.selection, this.targetElem);
         this.actionType = getActionType(this.targetType);
         this.startPos.x = evt.screenX;
         this.startPos.y = evt.screenY;
     }
     dragend(evt) {
-        this.promptBox.stopRender();
         if (this.promptBox) { // may be null if viewing an image
             this.promptBox.stopRender();
         }
@@ -209,7 +210,17 @@ class DragClass {
 
     }
     handler(evt) {
-        // evt.stopPropagation();//有些网页也有drag事件，可能会妨碍脚本运行
+        //dragstart target是拖拽的东西
+        //dragend   同上
+        //dragover  target是document
+        //drop      同上
+
+        //document 无getAttribute
+        //
+        if (evt.target.getAttribute && evt.target.getAttribute("draggable") !== null) {
+            //如果target设置了draggable属性，那么不处理
+            return;
+        }
         const type = evt.type;
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
@@ -221,14 +232,10 @@ class DragClass {
             this.dragend(evt)
         }
         else if (type === "drop") {
-            // console.log(evt);
-            //不加这行代码会产生副作用，在页面打开链接
-            //不知道为什么
             evt.preventDefault();
         }
         else if (type === "dragover") {
             this.dragover(evt);
-            // console.log(evt);
         }
     }
 
@@ -262,25 +269,6 @@ class DragClass {
 }
 
 
-function getImageBase64(src = "", callback) {
-    // let pathname = new URL(src).pathname;
-    // let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
-    let img = new Image();
-    img.src = src;
-    img.onload = () => {
-        let canvas = document.createElement("canvas");
-        canvas.height = img.height;
-        canvas.width = img.width;
-        let ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
-        callback(base64);
-        img = null;
-        canvas = null;
-        base64 = null;
-    }
-}
-
 function CSlistener(msg) {
     let needExecute = true;
     let elem = mydrag.targetElem;
@@ -302,13 +290,7 @@ function CSlistener(msg) {
                 return;
                 //break;
         }
-        // if (msg.copy_type === commons.COPY_LINK) input.value = elem.href;
-        // else if (msg.copy_type === commons.COPY_TEXT) input.value = elem.textContent;
-        // else if (msg.copy_type === commons.COPY_IMAGE) {
-        //     //如果复制链接里的图像
-        //     drag.targetElem = elem.querySelector("img");
-        //     listener(msg);
-        // }
+
     }
     else if (elem instanceof HTMLImageElement) {
         if (msg.command === "copy") {
@@ -318,19 +300,14 @@ function CSlistener(msg) {
                     break;
                 case commons.COPY_IMAGE:
                     needExecute = false;
-                    getImageBase64(elem.src, (s) => {
-                        browser.runtime.sendMessage({ imageBase64: s });
-                    })
+                    browser.runtime.sendMessage({ imageSrc: elem.src });
+                    // getImageBase64(elem.src, (s) => {
+                    //     browser.runtime.sendMessage({ imageBase64: s });
+                    // })
                     break;
             }
         }
-        // if (msg.copy_type === commons.COPY_LINK) input.value = elem.src;
-        // else if (msg.copy_type === commons.COPY_IMAGE) {
-        //     dontExecute = true;
-        //     getImageBase64(elem.src, (s) => {
-        //         browser.runtime.sendMessage({ imageBase64: s })
-        //     })
-        // }
+
     }
     else {
         input.value = mydrag.selection;
@@ -349,7 +326,33 @@ browser.runtime.onConnect.addListener(port => {
         port.onMessage.addListener(CSlistener);
     }
 });
-document.addEventListener("DOMContentLoaded", () => {
-    mydrag = new DragClass(document.children[0]);
+let bgPort = browser.runtime.connect({ name: "getConfig" });
+let bgConfig = null;
+let mydrag = null;
+bgPort.onMessage.addListener((c) => {
+    bgConfig = JSON.parse(c);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        if (mydrag === null) {
+            mydrag = new DragClass(document);
+        }
+
+    }, { once: true });
+
+    //如果上面没有执行
+    let times = 3; //次数
+    let id = setInterval(() => {
+        if (mydrag === null) {
+            console.log("Init By setInterval !");
+            mydrag = new DragClass(document);
+            clearInterval(id);
+            return;
+        }
+        times--;
+        if (times < 0) clearInterval(id);
+    }, 1000);
 });
-// const mydrag = new DragClass(document.children[0]);
+// document.addEventListener("DOMContentLoaded", () => {
+//     mydrag = new DragClass(document.children[0]);
+// });
+// mydrag = new DragClass(document.children[0]);

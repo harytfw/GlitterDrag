@@ -381,24 +381,30 @@ browser.runtime.getBackgroundPage().then((page) => {
     let fileReader = new FileReader();
     fileReader.addEventListener("loadend", () => {
         try {
-            backgroundPage.loadUserOptionsFromBackUp(fileReader.result);
+            backgroundPage.config.restore(fileReader.result);
+            backgroundPage.config.save();
             initForm(true);
             initSearcheTab(true);
         }
         catch (e) {
-            console.error("Error when loadUserOptionsFromBackUp", e);
+            console.error("Error when restore from backup", e);
             alert("An error occurred!");
         }
     });
     document.querySelector("#backup").addEventListener("click", (event) => {
-        event.target.setAttribute("href", "data:," + encodeURI(JSON.stringify(backgroundPage.config, null, 2)));
-        event.target.setAttribute("download", `GlitterDrag-${new Date().getTime()}.json`);
+        let blob = new Blob([JSON.stringify(backgroundPage.config, null, 2)]);
+        let url = URL.createObjectURL(blob);
+        browser.downloads.download({
+            url: url,
+            filename: `GlitterDrag-${new Date().getTime()}.json`,
+            conflictAction: 'uniquify',
+            saveAs: true
+        });
     });
     document.querySelector("#restore").addEventListener("click", () => {
         document.querySelector("#fileInput").click();
     });
     document.querySelector("#default").addEventListener("click", () => {
-
         backgroundPage.config.loadDefault();
         initForm(true);
         initSearcheTab(true);
@@ -408,10 +414,10 @@ browser.runtime.getBackgroundPage().then((page) => {
     });
     initForm();
 
-    for (let elem of document.querySelectorAll("[i18n-id]")){
+    for (let elem of document.querySelectorAll("[i18n-id]")) {
         elem.textContent = geti18nMessage('elem_' + elem.attributes['i18n-id'].value);
     }
-        
+
 }, () => {});
 
 function initForm(force = false) {
@@ -486,94 +492,61 @@ function messageListener(msg) {
             log("2.2. Test no response:" + e);
         });
         log("3. Copy image behavior is detected.");
-        //获得图像的扩展名
-        let pathname = new URL(elem.src).pathname;
-        let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
-        let img = new Image();
-        img.src = elem.src;
-        img.onload = () => {
-            //下面尝试得到图像的二进制数据
-            let canvas = document.createElement("canvas");
-            log("4. Create canvas");
-            canvas.height = img.height;
-            canvas.width = img.width;
-            let ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            //得到没有data:image ...头的base64字符串
-            let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
-            //发送给background，让background发送字符串到powershell脚本
-            log("5. Send image to script")
-            browser.runtime.sendNativeMessage(commons.appName, base64).then((response) => {
-                log("5.1. Sent successfully, receive the reply: " + response);
-            }, (error) => {
-                log("5.2. Send image failed: " + error);
+
+        fetch(elem.src)
+            .then(response => {
+                log("4. Get the blob of image");
+                return response.blob();
+
             })
-            img = null;
-            canvas = null;
-            base64 = null;
-        }
+            .then(blob => {
+                let reader = new FileReader();
+                reader.readAsDataURL(blob);
+                return new Promise(resolve => {
+                    reader.onloadend = () => {
+                        log("5. Convert blob to base64");
+                        resolve(reader.result.split(",")[1]);
+                    }
+                });
+            })
+            .then(base64 => {
+                log("6. Send image to script");
+                return browser.runtime.sendNativeMessage(commons.appName, base64);
+            })
+            .catch(error => {
+                console.log(error)
+                log("An error occurred: " + error);
+            } );
+        //获得图像的扩展名
+        // let pathname = new URL(elem.src).pathname;
+        // let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
+        // let img = new Image();
+        // img.src = elem.src;
+        // img.onload = () => {
+        //下面尝试得到图像的二进制数据
+        // let canvas = document.createElement("canvas");
+        // log("4. Create canvas");
+        // canvas.height = img.height;
+        // canvas.width = img.width;
+        // let ctx = canvas.getContext("2d");
+        // ctx.drawImage(img, 0, 0);
+        //得到没有data:image ...头的base64字符串
+        //     let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
+        //     //发送给background，让background发送字符串到powershell脚本
+        //     log("5. Send image to script")
+        //     browser.runtime.sendNativeMessage(commons.appName, base64).then((response) => {
+        //         log("5.1. Sent successfully, receive the reply: " + response);
+        //     }, (error) => {
+        //         log("5.2. Send image failed: " + error);
+        //     })
+        //     img = null;
+        //     canvas = null;
+        //     base64 = null;
+        // }
     }
     else {
         CSlistener(msg);
     }
-
-    // let dontExecute = false;
-    // let elem = drag.targetElem;
-    // let input = document.createElement("textarea");
-    // input.style.width = "0px";
-    // input.style.height = "0px";
-    // if (elem instanceof HTMLAnchorElement) {
-    //     if (msg.copy_type === commons.COPY_LINK) input.value = elem.href;
-    //     else if (msg.copy_type === commons.COPY_TEXT) input.value = elem.textContent;
-    //     else if (msg.copy_type === commons.COPY_IMAGE) {
-    //         //如果复制的是链接里的图像
-    //         drag.targetElem = elem.querySelector("img");
-    //         listenerForOptionsPage(msg);
-    //         return;
-    //     }
-    // }
-    // else if (elem instanceof HTMLImageElement) {
-    //     if (msg.copy_type === commons.COPY_LINK) input.value = elem.src;
-    //     else if (msg.copy_type === commons.COPY_IMAGE) {
-    //         log("3.检测到复制图像行为");
-    //         dontExecute = true;
-    //         //获得图像的扩展
-    //         let pathname = new URL(elem.src).pathname;
-    //         let ext = pathname.substring(pathname.lastIndexOf("."), pathname.length);
-    //         let img = new Image();
-    //         img.src = elem.src;
-    //         img.onload = () => {
-    //             //下面尝试得到图像的二进制数据
-    //             let canvas = document.createElement("canvas");
-    //             log("4.创建canvas");
-    //             canvas.height = img.height;
-    //             canvas.width = img.width;
-    //             let ctx = canvas.getContext("2d");
-    //             ctx.drawImage(img, 0, 0);
-    //             //得到没有data:image ...头的base64字符串
-    //             let base64 = canvas.toDataURL("image/png", 1).split(",")[1];
-    //             //发送给background，让background发送字符串到powershell脚本
-    //             log("5.向脚本发送图像")
-    //             browser.runtime.sendNativeMessage(commons.appName, base64).then((response) => {
-    //                 log("5.1.发送成功，接收到回复消息:" + response);
-    //             }, (error) => {
-    //                 log("5.2.发送图像失败: " + error);
-    //             })
-    //             img = null;
-    //             canvas = null;
-    //             base64 = null;
-    //         }
-    //     }
-    // }
-    // else {
-    //     input.value = drag.selection;
-    // }
-    // if (!dontExecute) {
-    //     elem.parentElement.appendChild(input);
-    //     input.focus()
-    //     input.setSelectionRange(0, input.value.length);
-    //     document.execCommand("copy");
-    // }
 }
 browser.runtime.onConnect.addListener(port => {
     if (port.name === "sendToOptions") {

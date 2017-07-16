@@ -106,7 +106,10 @@ class ExecutorClass {
         });
     }
 
-    openURL(url) {
+    openURL(url = "") {
+        if (url.match(/^https?:\/\//) === null) {
+            url = "http://" + url;
+        }
         this.openTab(url);
     }
 
@@ -147,7 +150,7 @@ class ConfigClass {
         this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
     }
     clear(callback) {
-        this.storageArea.clear().then(callback, () => {});
+        this.storageArea.clear().then(callback, () => {}, (e) => { console.error(e) });
     }
     save() {
         this.storageArea.set(this);
@@ -171,9 +174,7 @@ class ConfigClass {
                     this[key1] = _default_config[key1];
                 }
             }
-            
-            return true;
-        });
+        }, (e) => { console.error(e) });
     }
     get(key, callback) {
         if (this[key] === undefined) this[key] = _default_config[key];
@@ -227,60 +228,52 @@ class ConfigClass {
 var executor = new ExecutorClass();
 var config = new ConfigClass();
 
-function loadUserOptions(callback) {
-    config.load(callback);
-}
-
-function saveUserOptions(callback) {
-    config.save(callback);
-}
-
-function convertOptionsToJson() {
-    return config.backup();
-}
-
-function loadUserOptionsFromBackUp(raw_json = "", save_after = true) {
-    config.recover(raw_json);
-    config.save();
-}
-
-function loadDefaultOptions() {
-    config.loadDefault();
-    config.save();
-}
-
-// function updateUserActionOptions(type, dir, act_value) {
-//     config.setAct(type, dir, new ActClass(act_value));
-//     config.save();
-// }
-
-function updateUserCustomizedSearch(index, name, url, remove = false) {
-    let searchList = config.Engines;
-    if (index === -1) {
-        searchList.push({ name: name, url: url });
-    }
-    else if (remove) {
-        searchsList.splice(index, 1);
-    }
-    else {
-        searchsList[index] = { name: name, url: url };
-    }
-    config.set("Engines", searchList);
-    config.save();
-}
-
-
 browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
 });
 
 browser.runtime.sendNativeMessage(commons.appName, "test").then(
     response => {
-        console.log("From native app:" + response);
+        // console.log("From native app:" + response);
         supportCopyImage = true;
     },
     error => supportCopyImage = false
 );
+
+function convertImageSrcToBase64(src) {
+    let request = new Request(src);
+    return fetch(request)
+        .then(response => {
+            return response.blob();
+        })
+        .then(blob => {
+            let reader = new FileReader();
+            reader.readAsDataURL(blob);
+            return new Promise(resolve => {
+                reader.onloadend = () => {
+                    resolve(reader.result.split(",")[1]);
+                }
+            });
+        })
+        .then(base64 => {
+            return new Promise(resolve => {
+                resolve(base64);
+            });
+        });
+}
+
+function sendImageToNativeBySrc(src) {
+    convertImageSrcToBase64(src)
+        .then(base64 => {
+            return browser.runtime.sendNativeMessage(commons.appName, base64);
+        })
+        .then(rec => {
+            console.log("Receive: ", rec);
+        })
+        .catch(error => {
+            console.log("Error:" + error);
+        });
+}
 
 function sendImageToNative(base64) {
     let sending = browser.runtime.sendNativeMessage(commons.appName, base64);
@@ -293,7 +286,10 @@ function sendImageToNative(base64) {
 
 browser.runtime.onMessage.addListener((m) => {
     m.sendToOptions = false;
-    if (m.imageBase64) sendImageToNative(m.imageBase64);
+    if (("imageBase64" in m || "imageSrc" in m) && supportCopyImage) {
+        if (m.imageBase64) sendImageToNative(m.imageBase64);
+        else if (m.imageSrc) sendImageToNativeBySrc(m.imageSrc);
+    }
     else executor.DO(m);
 });
 
