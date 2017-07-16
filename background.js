@@ -110,6 +110,7 @@ class ExecutorClass {
         if (url.match(/^https?:\/\//) === null) {
             url = "http://" + url;
         }
+        
         this.openTab(url);
     }
 
@@ -208,7 +209,7 @@ class ConfigClass {
         this.get("Engines").every(engine => engine.name === name ? (searchUrl = engine.url, false) : true);
         return (searchUrl);
     }
-    recover(json) {
+    restore(json) {
         let parsed = JSON.parse(json);
         for (let key of Object.keys(parsed)) {
             this.set(key, parsed[key]);
