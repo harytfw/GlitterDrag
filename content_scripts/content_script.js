@@ -196,7 +196,7 @@ class DragClass {
             this.direction = this.getDirection();
             if (bgConfig.enablePrompt) {
                 this.promptBox.display();
-                this.promptBox.render(this.direction, getActionName(
+                this.promptBox.render(this.direction, geti18nMessage(
                     bgConfig.Actions[this.actionType][this.direction]["act_name"]
                 ));
             }
