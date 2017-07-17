@@ -43,6 +43,7 @@ const commons = {
     FORE_GROUND: true, //前台打开
     BACK_GROUND: false, //后台打开
 
+    ALLOW_NORMAL:"ALLOW_NORMAL",
     ALLOW_H: "ALLOW_H",
     ALLOW_V: "ALLOW_V",
     ALLOW_ALL: "ALLOW_ALL",
