@@ -15,6 +15,10 @@ const commons = {
     DIR_D: "DIR_D",
     DIR_L: "DIR_L",
     DIR_R: "DIR_R",
+    DIR_UP_L: "DIR_UP_L",
+    DIR_UP_R: "DIR_UP_R",
+    DIR_LOW_L: "DIR_LOW_L",
+    DIR_LOW_R: "DIR_LOW_R",
 
     ACT_NONE: "ACT_NONE", //无动作
     ACT_OPEN: "ACT_OPEN", //打开
@@ -43,6 +47,7 @@ const commons = {
     FORE_GROUND: true, //前台打开
     BACK_GROUND: false, //后台打开
 
+    ALLOW_NORMAL: "ALLOW_NORMAL",
     ALLOW_H: "ALLOW_H",
     ALLOW_V: "ALLOW_V",
     ALLOW_ALL: "ALLOW_ALL",
@@ -59,6 +64,14 @@ function $E(s = "") {
     return r;
 }
 
+function attachEventS(selector = "body", func = () => {}, eventName = "click") {
+    attachEventT($E(selector), func, eventName);
+}
+
+function attachEventT(target = document, func = () => {}, eventName = "click") {
+    target.addEventListener(eventName, func);
+}
+
 function getActionType(t) {
     if (t === commons.TYPE_UNKNOWN) {
         console.error("未知的拖拽目标类型！~");
@@ -70,7 +83,7 @@ function getActionType(t) {
 }
 
 function checkDragTargetType(selection, target) {
-   if (selection && selection.length !== 0) {
+    if (selection && selection.length !== 0) {
         if (commons.urlPattern.test(selection)) {
             return commons.TYPE_TEXT_URL;
         }

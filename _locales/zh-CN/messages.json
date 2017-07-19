@@ -1,15 +1,43 @@
 {
-    "extensionDescription":{
-        "message":"一个拖拽扩展，通过拖拽文字、链接、图像，非常方便的在前台或后台打开标签页，并且允许修改四个方向所执行的动作",
-        "description":"扩展的描述"
+    "extensionDescription": {
+        "message": "一个拖拽扩展，通过拖拽文字、链接、图像，非常方便的在前台或后台打开标签页，并且允许修改四个方向所执行的动作",
+        "description": "扩展的描述"
     },
-    "extensionName":{
-        "message":"闪耀拖拽",
-        "description":"扩展的名称"
+    "extensionName": {
+        "message": "闪耀拖拽",
+        "description": "扩展的名称"
     },
     "browserActionTitle": {
         "message": "闪耀拖拽 选项",
         "description": "浏览器工具栏按钮显示的标题"
+    },
+    "defaultText": {
+        "message": "默认",
+        "description": ""
+    },
+    "directionControl": {
+        "message": "方向控制",
+        "description": ""
+    },
+    "ALLOW_NORMAL": {
+        "message": "普通4个方向",
+        "description": ""
+    },
+    "ALLOW_H": {
+        "message": "水平2个方向",
+        "description": ""
+    },
+    "ALLOW_V": {
+        "message": "垂直2个方向",
+        "description": ""
+    },
+    "ALLOW_ALL": {
+        "message": "惊人的8个方向",
+        "description": ""
+    },
+    "ALLOW_ONE": {
+        "message": "只有单方向",
+        "description": ""
     },
     "ACT_OPEN": {
         "message": "打开",
@@ -53,6 +81,22 @@
     },
     "DIR_R": {
         "message": "右",
+        "description": "Direction"
+    },
+    "DIR_UP_L": {
+        "message": "左上",
+        "description": "Direction"
+    },
+    "DIR_UP_R": {
+        "message": "右上",
+        "description": "Direction"
+    },
+    "DIR_LOW_L": {
+        "message": "左下",
+        "description": "Direction"
+    },
+    "DIR_LOW_R": {
+        "message": "右下",
         "description": "Direction"
     },
     "textType": {
@@ -115,9 +159,9 @@
         "message": "图像",
         "description": "Copy action"
     },
-    "option_page_title":{
-        "message":"闪耀拖拽-选项",
-        "description":"title of page"
+    "option_page_title": {
+        "message": "闪耀拖拽-选项",
+        "description": "title of page"
     },
     "option_tooltip_act": {
         "message": "要执行的动作",
@@ -141,6 +185,10 @@
     },
     "option_tooltip_copy": {
         "message": "指定需要复制的东西，文本、链接或图像。复制图像可能会有很多问题，谨慎使用",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_allow": {
+        "message": "限制允许拖拽的方向",
         "description": "tooltip on option"
     },
     "search_name_tooltip": {
