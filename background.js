@@ -1,22 +1,4 @@
-//全局变量
-// var Actions = {};
-// var Engines = [];
-// var userSearchTemplate = {};
-// var enableSync = false;//启动数据同步
-// var allowedTopLevelDomains = [];//顶级域名，如cn com org net
-// var enableAnimation = false;//启用过渡动画
-//var enableInterruption = false; //在拖拽过程按下鼠标右键强制打断拖拽
-// var urlMatchPattern = /[A-z]/
-// 关闭左右方向
-// 关闭上下方向
-// 关闭左右下方向
-// 右键打断
-// 触发距离
-// 动作提示
 var supportCopyImage = false;
-
-
-
 class ExecutorClass {
     constructor() {
         this.data = {
@@ -209,7 +191,8 @@ class ConfigClass {
         this[key] = val;
     }
     getAct(type, dir) {
-        return this.Actions[type][dir]
+        const r = this.Actions[type][dir];
+        return r ? r : _default_config.Actions[type][dir];
     }
     // setAct(type, dir, act) {
     //     if (act instanceof ActClass) {

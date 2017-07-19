@@ -1,15 +1,43 @@
 {
-    "extensionDescription":{
-        "message":"A drag extension that supports you drag text, link or image then helps you open or search it",
+    "extensionDescription": {
+        "message": "A drag extension that supports you drag text, link or image then helps you open or search it",
+        "description": ""
+    },
+    "extensionName": {
+        "message": "Glitter Drag",
+        "description": "name of extension"
+    },
+    "browserActionTitle": {
+        "message": "Glitter Drag option",
+        "description": ""
+    },
+    "defaultText": {
+        "message": "default",
+        "description": ""
+    },
+    "directionControl":{
+        "message":"Direction Control",
         "description":""
     },
-    "extensionName":{
-        "message":"Glitter Drag",
-        "description":"name of extension"
+    "ALLOW_NORMAL": {
+        "message": "Normal 4 directions ",
+        "description": ""
     },
-    "browserActionTitle":{
-        "message":"Glitter Drag option",
-        "description":""
+    "ALLOW_H": {
+        "message": "Horizontal 2 direction",
+        "description": ""
+    },
+    "ALLOW_V": {
+        "message": "Vertical 2 direction",
+        "description": ""
+    },
+    "ALLOW_ALL": {
+        "message": "Crazy 8 directions",
+        "description": ""
+    },
+    "ALLOW_ONE": {
+        "message": "Only 1 direction",
+        "description": ""
     },
     "ACT_OPEN": {
         "message": "Open",
@@ -53,6 +81,22 @@
     },
     "DIR_R": {
         "message": "Right",
+        "description": "Direction"
+    },
+    "DIR_UP_L": {
+        "message": "Upper Left",
+        "description": "Direction"
+    },
+    "DIR_UP_R": {
+        "message": "Upper Right",
+        "description": "Direction"
+    },
+    "DIR_LOW_L": {
+        "message": "Lower Left",
+        "description": "Direction"
+    },
+    "DIR_LOW_R": {
+        "message": "Lower Right",
         "description": "Direction"
     },
     "textType": {
@@ -115,9 +159,9 @@
         "message": "Image",
         "description": "Copy action"
     },
-    "option_page_title":{
-        "message":"Glitter Drag - Options",
-        "description":"title of page"
+    "option_page_title": {
+        "message": "Glitter Drag - Options",
+        "description": "title of page"
     },
 
     "option_tooltip_act": {
@@ -142,6 +186,10 @@
     },
     "option_tooltip_copy": {
         "message": "Specifies what needs to be copied, like text, links, or images. Copying images may have a lot of problems, careful to use",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_allow": {
+        "message": "",
         "description": "tooltip on option"
     },
     "search_name_tooltip": {

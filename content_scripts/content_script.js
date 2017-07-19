@@ -25,22 +25,28 @@ class Prompt {
         document.body.appendChild(this.container);
     }
     renderDir(d = commons.DIR_U) {
-        let name = "";
-        switch (d) {
-            case commons.DIR_U:
-                name = "GDArrow-U";
-                break;
-            case commons.DIR_L:
-                name = "GDArrow-L";
-                break;
-            case commons.DIR_R:
-                name = "GDArrow-R";
-                break;
-            case commons.DIR_D:
-                name = "GDArrow-D";
-                break;
-        }
-        this.arrow.className = name;
+        //DIR_UP_L
+        //[DIR,UP,L]
+        //[UP,L]
+        //UP-L
+
+        const suffix = d.split("_").slice(1).join("-");
+        // console.log(suffix);
+        // switch (d) {
+        //     case commons.DIR_U:
+        //         name = "GDArrow-U";
+        //         break;
+        //     case commons.DIR_L:
+        //         name = "GDArrow-L";
+        //         break;
+        //     case commons.DIR_R:
+        //         name = "GDArrow-R";
+        //         break;
+        //     case commons.DIR_D:
+        //         name = "GDArrow-D";
+        //         break;
+        // }
+        this.arrow.className = `GDArrow-${suffix}`;
     }
 
     renderText(t) {
@@ -161,6 +167,7 @@ class DragClass {
             actionType: this.actionType,
             sendToOptions: false
         }
+
         if (isRunInOptionsContext) {
             sended.sendToOptions = true;
             backgroundPage.executor.DO(sended);
@@ -198,9 +205,11 @@ class DragClass {
             this.direction = this.getDirection();
             if (bgConfig.enablePrompt) {
                 this.promptBox.display();
-                this.promptBox.render(this.direction, geti18nMessage(
-                    bgConfig.Actions[this.actionType][this.direction]["act_name"]
-                ));
+                let message = ""
+                if (this.direction in bgConfig.Actions[this.actionType]) {
+                    message = geti18nMessage(bgConfig.Actions[this.actionType][this.direction]["act_name"]);
+                }
+                this.promptBox.render(this.direction, message);
             }
         }
         else {
@@ -208,6 +217,7 @@ class DragClass {
                 this.promptBox.stopRender();
             }
         }
+        // console.log(evt);
         evt.preventDefault();
 
     }
@@ -219,10 +229,10 @@ class DragClass {
 
         //document 无getAttribute
         //
-        if (evt.target.getAttribute && evt.target.getAttribute("draggable") !== null) {
-            //如果target设置了draggable属性，那么不处理
-            return;
-        }
+        // if ("draggable" in evt.target.attributes) {
+        //     //如果target设置了draggable属性，那么不处理
+        //     return;
+        // }
         const type = evt.type;
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
@@ -242,9 +252,11 @@ class DragClass {
     }
 
     getDirection() {
-        function between(ang, ang1, ang2) {
-            return ang1 < ang2 && ang >= ang1 && ang < ang2;
+        function BETW(a, b) {
+            if (a < 0 || b < 0 || a > 360 || b > 360) alert("范围错误");
+            return a < b && a <= scale && scale < b;
         }
+
         let d = {
             normal: commons.DIR_D, //普通的四个方向
             horizontal: commons.DIR_L, //水平方向,只有左右
@@ -254,20 +266,54 @@ class DragClass {
 
         let rad = Math.atan2(this.startPos.y - this.endPos.y, this.endPos.x - this.startPos.x);
         let degree = rad * (180 / Math.PI);
+        let unit = 0; //按方向分割后的每一部分角度单元
+        let scale = 0; //把得到的角度除以单元得到相应的比例,
+
         degree = degree >= 0 ? degree : degree + 360; //-180~180转换成0~360
-        if (between(degree, 45, 135)) d.normal = commons.DIR_U;
-        else if (between(degree, 135, 225)) d.normal = commons.DIR_L;
-        else if (between(degree, 225, 315)) d.normal = commons.DIR_D;
+
+        unit = 360 / 8; //4个方向需要分割成八部分，也就是方向*2
+        scale = degree / unit;
+        if (BETW(1, 3)) d.normal = commons.DIR_U; //unit*1=45, unit*3=135
+        else if (BETW(3, 5)) d.normal = commons.DIR_L;
+        else if (BETW(5, 7)) d.normal = commons.DIR_D;
+        //角度越过零，放在这里
         else d.normal = commons.DIR_R;
 
-        if (between(degree, 90, 270)) d.horizontal = commons.DIR_L;
+        unit = 360 / 4;
+        scale = degree / unit;
+        if (BETW(1, 3)) d.horizontal = commons.DIR_L;
         else d.horizontal = commons.DIR_R;
 
-        if (between(degree, 0, 180)) d.vertical = commons.DIR_U;
+        unit = 360 / 4;
+        scale = degree / unit;
+        if (BETW(0, 2)) d.vertical = commons.DIR_U;
         else d.vertical = commons.DIR_D;
 
-
-        return d.normal; //暂时
+        unit = 360 / 16;
+        scale = degree / unit;
+        if (BETW(1, 3)) d.all = commons.DIR_UP_R;
+        else if (BETW(3, 5)) d.all = commons.DIR_U;
+        else if (BETW(5, 7)) d.all = commons.DIR_UP_L;
+        else if (BETW(7, 9)) d.all = commons.DIR_L;
+        else if (BETW(9, 11)) d.all = commons.DIR_LOW_L;
+        else if (BETW(11, 13)) d.all = commons.DIR_D;
+        else if (BETW(13, 15)) d.all = commons.DIR_LOW_R;
+        else d.all = commons.DIR_R;
+        // return d.normal;
+        switch (bgConfig.directionControl[this.actionType]) {
+            case commons.ALLOW_ALL:
+                return d.all;
+            case commons.ALLOW_NORMAL:
+                return d.normal;
+            case commons.ALLOW_H:
+                return d.horizontal;
+            case commons.ALLOW_V:
+                return d.vertical;
+            case commons.ALLOW_ONE:
+                return d.normal;
+            default:
+                return d.normal;
+        }
     }
 
 }
@@ -289,11 +335,11 @@ function CSlistener(msg) {
                 input.value = elem.textContent;
                 break;
             case commons.COPY_IMAGE:
-                mydrag.targetElem = elem.querySelector("img");
-                CSlistener(msg); //可能有更好的办法
-                return;
-                //break;
+                if ((mydrag.targetElem = elem.querySelector("img")) != null) {
+                    CSlistener(msg); //可能有更好的办法
+                }
         }
+        return;
 
     }
     else if (elem instanceof HTMLImageElement) {
