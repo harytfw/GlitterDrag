@@ -393,24 +393,4 @@ bgPort.onMessage.addListener((c) => {
         mydrag = new DragClass(document);
     }
 
-<<<<<<< HEAD
-    //如果上面没有执行
-    // let times = 3; //次数
-    // let id = setInterval(() => {
-    //     if (mydrag === null) {
-    //         console.log("Init By setInterval !");
-    //         mydrag = new DragClass(document);
-    //         clearInterval(id);
-    //         return;
-    //     }
-    //     times--;
-    //     if (times < 0) clearInterval(id);
-    // }, 1000);
 });
-// document.addEventListener("DOMContentLoaded", () => {
-//     mydrag = new DragClass(document.children[0]);
-// });
-// mydrag = new DragClass(document.children[0]);
-=======
-});
->>>>>>> new-feature
