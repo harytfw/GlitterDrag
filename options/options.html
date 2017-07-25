@@ -9,14 +9,14 @@
     <link rel="stylesheet" type="text/css" href="extension.css">
     <link rel="stylesheet" type="text/css" href="options.css">
     <link rel="stylesheet" type="text/css" href="./../content_scripts/content_script.css">
-    
+
 </head>
 
 <body>
 
     <div id="control">
-        <button class="default" i18n-id="Backup" id="backup" href="#" target="window" download="GlitterDrag-time.json">备份配置</button> 
-        <button class="default" i18n-id="Restore" id="restore" href="#" >恢复配置 </button>  
+        <button class="default" i18n-id="Backup" id="backup" href="#" target="window" download="GlitterDrag-time.json">备份配置</button>
+        <button class="default" i18n-id="Restore" id="restore" href="#">恢复配置 </button>
         <button class="default" i18n-id="Default" id="default" href="#">恢复默认 </button>
         <input type="file" id="fileInput" accept=".json" style="display:none">
     </div>
@@ -29,6 +29,7 @@
                 <a class="nav-a nav-active" i18n-id="Actions" href="#">动作</a>
                 <a class="nav-a" i18n-id="SearchTemplate" href="#">搜索模板</a>
                 <a class="nav-a" i18n-id="General" href="#">常规</a>
+                <a class="nav-a" i18n-id="Styles" href="#">样式</a>
             </nav>
             <ul style="list-style:none">
                 <li class="tab-content" id="content-0">
@@ -38,11 +39,9 @@
                         <a href="https://bing.com/" i18n-id="Bing">Bing</a>
                         <a href="https://www.mozilla.org/firefox/new/">Firefox</a>
                         <br>
-                        <p>Mozilla Firefox (or simply Firefox) is a free and open-source web browser developed by the Mozilla
-                            Foundation and its subsidiary the Mozilla Corporation.</p>
+                        <p>Mozilla Firefox (or simply Firefox) is a free and open-source web browser developed by the Mozilla Foundation and its subsidiary the Mozilla Corporation.</p>
                         <br>
-                        <img src="./../image/logo.png" alt="Firefox" 
-                            style="background-color: rgb(147, 147, 147);border-radius: 4px;">
+                        <img src="./../image/logo.png" alt="Firefox" style="background-color: rgb(147, 147, 147);border-radius: 4px;">
                         <br>
                         <br>
                         <textarea id="logArea" rows="10" cols="80"></textarea>
@@ -51,18 +50,24 @@
                 <li class="tab-content tab-active" id="content-1"></li>
                 <li class="tab-content" id="content-2">
                     <p i18n-id="PlaceholderTip">用 %s 替代链接里的关键词</p>
-                    <div id="engine-buttons"> 
+                    <div id="engine-buttons">
                         <button i18n-id="RefreshbtnOnEngines">刷新</button>
                         <button i18n-id="AddbtnOnEngines">添加</button>
                     </div>
                     <div id="engine-items"></div>
                 </li>
                 <li class="tab-content" id="content-3">
-                    <input type="checkbox" id="enablePrompt"><label for="enablePrompt" i18n-id="ShowActionTip" >显示动作提示</label>
+                    <input type="checkbox" id="enablePrompt"><label for="enablePrompt" i18n-id="ShowActionTip">显示动作提示</label>
                     <br>
                     <input type="checkbox" id="enableIndicator"><label for="enableIndicator" i18n-id="EnableDistanceTip">启用距离指示</label>
                     <br>
+                    <input type="checkbox" id="enableStyle"><label for="enableStyle" i18n-id="EnableStyle">允许使用自定义样式></label>
+                    <br>
                     <label for="triggeredDistance" i18n-id="DistancePx">触发距离（px）</label><input type="text" id="triggeredDistance">
+                </li>
+                <li class="tab-content" id="content-4">
+                    <textarea id="styleContent" ></textarea>
+                    <button id="saveStyle" i18n-id="SaveStyle"></button>
                 </li>
             </ul>
 

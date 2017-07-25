@@ -1,5 +1,5 @@
 class Tab {
-    constructor(elem, id, func,init_once=false) {
+    constructor(elem, id, func, init_once = false) {
         this.elem = elem;
         this.id = id;
         this.initFunc = func;
@@ -43,8 +43,9 @@ class TabContainer {
     }
 }
 let tabContainer = new TabContainer("#tabs", [
-    { selector: "#content-0", func: () => { } },
+    { selector: "#content-0", func: () => {} },
     { selector: "#content-1", func: initForm },
     { selector: "#content-2", func: initSearcheTab },
-    { selector: "#content-3", func: initGeneral }
+    { selector: "#content-3", func: initGeneral },
+    { selector: "#content-4", func: initStyle }
 ]);

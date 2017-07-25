@@ -1,3 +1,5 @@
+//TODO:减少全局变量
+
 document.title = geti18nMessage("option_page_title");
 
 let OptionTextTable = {
@@ -719,7 +721,7 @@ function initSearcheTab(force) {
 }
 
 function initGeneral(force) {
-    let content = document.querySelector("#content-3")
+    let content = document.querySelector("#content-3");
     if (content.children.length === 0 || force) {
         if (force) {
             let c = null;
@@ -734,9 +736,14 @@ function initGeneral(force) {
     function handleChange(evt) {
         if (evt.target.type === "checkbox") backgroundPage.config.set(evt.target.id, evt.target.checked);
         else backgroundPage.config.set(evt.target.id, parseInt(evt.target.value));
+
+        // if (evt.id === "enableStyle") {
+        //     tabContainer.activeById(4);
+        // }
+
         backgroundPage.config.save();
     }
-    ["#enablePrompt", "#enableIndicator", "#triggeredDistance"].forEach(id => {
+    ["#enablePrompt", "#enableIndicator", "#enableStyle", "#triggeredDistance"].forEach(id => {
         let e = content.querySelector(id);
         if (e.type === "checkbox") e.checked = backgroundPage.config.get(e.id);
         else e.value = backgroundPage.config.get(e.id);
@@ -744,6 +751,26 @@ function initGeneral(force) {
         e.addEventListener("change", handleChange);
     })
 
+}
+
+function initStyle(force) {
+    let content = document.querySelector("#content-4");
+
+    let styleArea = content.querySelector("#styleContent");
+    let style = backgroundPage.config.get("style");
+    if (style.length === 0) {
+        let styleURL = browser.runtime.getURL("./../content_scripts/content_script.css");
+        fetch(styleURL).then(
+            response => response.text()
+        ).then(text => styleArea.value = text);
+    }
+    else {
+        styleArea.value = style;
+    }
+
+    attachEventS("#saveStyle", () => {
+        backgroundPage.config.set("style", styleArea.value);
+    })
 }
 
 function messageListener(msg) {

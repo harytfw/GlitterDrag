@@ -301,13 +301,11 @@ browser.runtime.onMessage.addListener((m) => {
 function connected(port) {
     // console.log("port",port);
     if (port.name === "getConfig") {
-        // // console.log("connected")
-        // port.onMessage.addListener(m=>{
-        //     if(m==="iam ready"){
-        // console.log("postmessage");
         port.postMessage(JSON.stringify(config));
-        // }
-        // });
+        //自定义样式
+        if (config.get("enableStyle") === true) {
+            browser.tabs.insertCSS({ code: config.get("style") });
+        }
     }
 }
 browser.runtime.onConnect.addListener(connected)

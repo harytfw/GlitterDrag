@@ -1,3 +1,5 @@
+//TODO:减少全局变量,修改变量名
+
 const _act = (act = commons.ACT_NONE, active = commons.BACK_GROUND, pos = commons.TAB_LAST, en = "", search_type = commons.SEARCH_TEXT, copy_type = commons.COPY_LINK) => {
     return {
         act_name: act,
@@ -29,6 +31,7 @@ var _default_config = {
     enableSync: false,
     enableIndicator: false,
     enablePrompt: false,
+    enableStyle:false,
     triggeredDistance: 20, //px
     Actions: {
         textAction: _clone(tempAction),
@@ -37,8 +40,9 @@ var _default_config = {
     },
     Engines: [],
     directionControl: {
-        textAction: commons.ALLOW_ALL,
-        linkAction: commons.ALLOW_ALL,
-        imageAction: commons.ALLOW_ALL
+        textAction: commons.ALLOW_NORMAL,
+        linkAction: commons.ALLOW_NORMAL,
+        imageAction: commons.ALLOW_NORMAL
     },
+    style:"",
 }

@@ -1,3 +1,6 @@
+//TODO: 处理拖放区域为textArea,input@type=text
+//
+
 "use strict";
 
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
@@ -29,23 +32,7 @@ class Prompt {
         //[DIR,UP,L]
         //[UP,L]
         //UP-L
-
         const suffix = d.split("_").slice(1).join("-");
-        // console.log(suffix);
-        // switch (d) {
-        //     case commons.DIR_U:
-        //         name = "GDArrow-U";
-        //         break;
-        //     case commons.DIR_L:
-        //         name = "GDArrow-L";
-        //         break;
-        //     case commons.DIR_R:
-        //         name = "GDArrow-R";
-        //         break;
-        //     case commons.DIR_D:
-        //         name = "GDArrow-D";
-        //         break;
-        // }
         this.arrow.className = `GDArrow-${suffix}`;
     }
 
@@ -94,14 +81,17 @@ class Indicator {
 }
 class DragClass {
     constructor(elem) {
+
+        this.running = false;
+
         this.dragged = elem;
         this.handler = this.handler.bind(this);
         ["dragstart", "dragend", "dragover", "drop"].forEach(name =>
             //这里是capture阶段
-            this.dragged.addEventListener(name, this.handler, true)
+            this.dragged.addEventListener(name, evt => this.handler(evt), true)
         );
         //添加在冒泡阶段
-        //网页自己添加的dragstart事件并使用preventDefault会妨碍扩展运行
+        //网页如果自己添加了dragstart事件并使用preventDefault，会阻止浏览器的拖拽功能
         //这里取消preventDefault的作用
         document.addEventListener("dragstart", (event) => {
             // console.log(event);
@@ -123,13 +113,9 @@ class DragClass {
             x: 0,
             y: 0
         };
-        this.promptBox = null; //new Prompt();
-        this.indicatorBox = null
+        this.promptBox = null;
+        this.indicatorBox = null;
         this.isFirstRender = true;
-        // document.addEventListener("DOMContentLoaded", () => {
-        this.promptBox = new Prompt();
-        // });
-        // this.offset = 2;
     }
 
     post() {
@@ -180,9 +166,11 @@ class DragClass {
             this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
             this.indicatorBox.display();
         }
+        if (bgConfig.enablePrompt) {
+            if (this.promptBox === null) this.promptBox = new Prompt();
+        }
         this.targetElem = evt.target;
         this.selection = document.getSelection().toString().trim();
-        // this.selection = evt.dataTransfer.getData("text/plain");
         this.targetType = checkDragTargetType(this.selection, this.targetElem);
         this.actionType = getActionType(this.targetType);
         this.startPos.x = evt.screenX;
@@ -203,7 +191,7 @@ class DragClass {
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
         if (this.distance > bgConfig.triggeredDistance) {
             this.direction = this.getDirection();
-            if (bgConfig.enablePrompt) {
+            if (this.promptBox !== null) {
                 this.promptBox.display();
                 let message = ""
                 if (this.direction in bgConfig.Actions[this.actionType]) {
@@ -217,9 +205,6 @@ class DragClass {
                 this.promptBox.stopRender();
             }
         }
-        // console.log(evt);
-        evt.preventDefault();
-
     }
     handler(evt) {
         //dragstart target是拖拽的东西
@@ -229,25 +214,42 @@ class DragClass {
 
         //document 无getAttribute
         //
-        // if ("draggable" in evt.target.attributes) {
-        //     //如果target设置了draggable属性，那么不处理
-        //     return;
-        // }
+
         const type = evt.type;
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
         //TODO:把拖拽的数据放在event里传递
         if (type === "dragstart") {
-            this.dragstart(evt);
+            // 如果target没有设置draggable属性，那么才处理
+            if (evt.target.nodeName === "#text" || (evt.target.getAttribute && evt.target.getAttribute("draggable") === null)) {
+                this.running = true;
+                evt.dataTransfer.effectAllowed = "move";
+                this.dragstart(evt);
+            }
         }
         else if (type === "dragend") {
-            this.dragend(evt)
+            if (this.running) {
+                this.running = false;
+                this.dragend(evt);
+            }
         }
         else if (type === "drop") {
-            evt.preventDefault();
+            //如果是从浏览器外部外浏览器拽文件或其它东西，并且放下东西，那么这个事件会被触发，加一个判断
+            //判断脚本有没有处在运行阶段，否则不处理
+            //这样就不会和页面本身的拖拽功能重突
+            if (this.running) {
+                // this.running = false;
+                evt.preventDefault();
+            }
         }
         else if (type === "dragover") {
-            this.dragover(evt);
+            //如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
+            //判断脚本有没有处在运行阶段，否则不处理
+            if (this.running) {
+                this.dragover(evt);
+                // evt.dataTransfer.dropEffect = "move";
+                evt.preventDefault();
+            }
         }
     }
 
