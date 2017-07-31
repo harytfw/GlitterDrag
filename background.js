@@ -106,17 +106,34 @@ class ExecutorClass {
         });
     }
 
+
+
     openURL(url = "") {
-        if (url.match(/^https?:\/\//) === null) {
-            url = "http://" + url;
+        function validURL(u) {
+            let r = true;
+            try {
+                new URL(u);
+            }
+            catch (e) {
+                r = false;
+            }
+            return r;
+
         }
-        
-        this.openTab(url);
+        if (validURL(url)) {
+            this.openTab(url);
+        }
+        else if (commons.urlPattern.test("http://" + url)) {
+            this.openTab("http://" + url);
+        }
+        else {
+            this.searchText(url);
+        }
     }
 
     copy() {
         //发送给指定的tab
-        let sended = { command: "copy", copy_type: this.action.copy_type };
+        const sended = { command: "copy", copy_type: this.action.copy_type };
         let portName = this.data.sendToOptions ? "sendToOptions" : "sendToContentScript";
         browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
             let port = browser.tabs.connect(tabs[0].id, { name: portName });
@@ -125,7 +142,7 @@ class ExecutorClass {
     }
 
     searchText(keyword) {
-        this.openURL(config.getSearchURL(this.action.engine_name).replace("%s", keyword));
+        this.openTab(config.getSearchURL(this.action.engine_name).replace("%s", keyword));
     }
 
     searchImage(url, keyword) { // unused
@@ -210,7 +227,7 @@ class ConfigClass {
         return (searchUrl);
     }
     restore(json) {
-        let parsed = JSON.parse(json);
+        const parsed = JSON.parse(json);
         for (let key of Object.keys(parsed)) {
             this.set(key, parsed[key]);
         }
@@ -242,13 +259,13 @@ browser.runtime.sendNativeMessage(commons.appName, "test").then(
 );
 
 function convertImageSrcToBase64(src) {
-    let request = new Request(src);
+    const request = new Request(src);
     return fetch(request)
         .then(response => {
             return response.blob();
         })
         .then(blob => {
-            let reader = new FileReader();
+            const reader = new FileReader();
             reader.readAsDataURL(blob);
             return new Promise(resolve => {
                 reader.onloadend = () => {
@@ -277,7 +294,7 @@ function sendImageToNativeBySrc(src) {
 }
 
 function sendImageToNative(base64) {
-    let sending = browser.runtime.sendNativeMessage(commons.appName, base64);
+    const sending = browser.runtime.sendNativeMessage(commons.appName, base64);
     sending.then((response) => {
         console.log("Receive:" + response);
     }, (error) => {

@@ -1,3 +1,5 @@
+"use strict";
+
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 
 const MIME_TYPE = {
@@ -73,9 +75,9 @@ class Indicator {
         radius = radius / devicePixelRatio;
         this.box.style.left = (x - radius) + "px";
         this.box.style.top = (y - radius) + "px";
-        let h = this.box.style.height = (radius * 2) + "px";
-        let w = this.box.style.width = (radius * 2) + "px";
-        this.box.style.borderRadius = w + " " + h;
+        const h = this.box.style.height = (radius * 2) + "px";
+        const w = this.box.style.width = (radius * 2) + "px";
+        this.box.style.borderRadius = `${w}  ${h}`;
     }
     display() {
         this.box.style.display = "initial";
@@ -172,7 +174,7 @@ class DragClass {
             this.indicatorBox.display();
         }
         this.targetElem = evt.target;
-        this.selection = document.getSelection().toString();
+        this.selection = document.getSelection().toString().trim();
         // this.selection = evt.dataTransfer.getData("text/plain");
         this.targetType = checkDragTargetType(this.selection, this.targetElem);
         this.actionType = getActionType(this.targetType);
@@ -247,7 +249,7 @@ class DragClass {
             normal: commons.DIR_D, //普通的四个方向
             horizontal: commons.DIR_L, //水平方向,只有左右
             vertical: commons.DIR_D, //竖直方向，只有上下
-            all: commons.DIR_D //
+            all: commons.DIR_D //达到了8个方向，绝对够用
         }
 
         let rad = Math.atan2(this.startPos.y - this.endPos.y, this.endPos.x - this.startPos.x);
@@ -263,6 +265,8 @@ class DragClass {
 
         if (between(degree, 0, 180)) d.vertical = commons.DIR_U;
         else d.vertical = commons.DIR_D;
+
+
         return d.normal; //暂时
     }
 
@@ -331,28 +335,16 @@ let bgConfig = null;
 let mydrag = null;
 bgPort.onMessage.addListener((c) => {
     bgConfig = JSON.parse(c);
+    if (["loading", "interactive"].includes(document.readyState)) {
+        document.addEventListener("DOMContentLoaded", () => {
+            if (mydrag === null) {
+                mydrag = new DragClass(document);
+            }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        if (mydrag === null) {
-            mydrag = new DragClass(document);
-        }
+        }, { once: true });
+    }
+    else {
+        mydrag = new DragClass(document);
+    }
 
-    }, { once: true });
-
-    //如果上面没有执行
-    let times = 3; //次数
-    let id = setInterval(() => {
-        if (mydrag === null) {
-            console.log("Init By setInterval !");
-            mydrag = new DragClass(document);
-            clearInterval(id);
-            return;
-        }
-        times--;
-        if (times < 0) clearInterval(id);
-    }, 1000);
 });
-// document.addEventListener("DOMContentLoaded", () => {
-//     mydrag = new DragClass(document.children[0]);
-// });
-// mydrag = new DragClass(document.children[0]);
