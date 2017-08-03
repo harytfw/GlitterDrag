@@ -13,7 +13,10 @@
     ],
     "globals": {
         "commons": false,
-        "geti18nMessage": false
+        "geti18nMessage": false,
+        "DEFAULT_CONFIG":false,
+        "eventUtil":false,
+        "typeUtil":false
     },
     "rules": {
         "no-console": 0,

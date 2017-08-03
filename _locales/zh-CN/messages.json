@@ -32,7 +32,7 @@
         "description": ""
     },
     "ALLOW_ALL": {
-        "message": "惊人的8个方向",
+        "message": "无意义的8个方向",
         "description": ""
     },
     "ALLOW_ONE": {
@@ -203,11 +203,11 @@
         "message": "https://www.baidu.com/s?wd=%s",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     },
-    "RefreshbtnOnEngines": {
+    "elem_RefreshbtnOnEngines": {
         "message": "刷新",
         "description": "Reload button on Options - Search Template"
     },
-    "AddbtnOnEngines": {
+    "elem_AddbtnOnEngines": {
         "message": "添加",
         "description": "Add button on Options - Search Template"
     },
@@ -262,5 +262,13 @@
     "elem_DistancePx": {
         "message": "触发距离（px）",
         "description": "Element on Options page"
+    },
+    "elem_Styles": {
+        "message": "样式",
+        "description": "Element on Options page"
+    },
+    "elem_SaveStyle": {
+        "message": "保存样式",
+        "descripttion": "Element on Options page"
     }
 }
