@@ -10,6 +10,10 @@ class ExecutorClass {
         this.action = {
 
         };
+
+        //TODO: switch to the old tab when  closing the tab that created via openTab(). 
+        // this.idOfTab = null;
+
     }
     DO(m) {
         this.data = m;
@@ -91,7 +95,7 @@ class ExecutorClass {
 
 
     openURL(url = "") {
-        function validURL(u) {
+        function isValidURL(u) {
             let r = true;
             try {
                 new URL(u);
@@ -102,7 +106,7 @@ class ExecutorClass {
             return r;
 
         }
-        if (validURL(url)) {
+        if (isValidURL(url)) {
             this.openTab(url);
         }
         else if (commons.urlPattern.test("http://" + url)) {
@@ -168,16 +172,16 @@ class ConfigClass {
                 }
                 callback ? callback() : null;
             }
-            //检查是否有新的选项出现在_default_config.js，有的话添加进来
-            for (let key1 of Object.keys(_default_config)) {
+            //检查是否有新的选项出现在DEFAULT_CONFIG.js，有的话添加进来
+            for (let key1 of Object.keys(DEFAULT_CONFIG)) {
                 if (this[key1] === undefined) {
-                    this[key1] = _default_config[key1];
+                    this[key1] = DEFAULT_CONFIG[key1];
                 }
             }
         }, (e) => { console.error(e) });
     }
     get(key, callback) {
-        if (this[key] === undefined) this[key] = _default_config[key];
+        if (this[key] === undefined) this[key] = DEFAULT_CONFIG[key];
         if (callback) callback(this[key]);
         return this[key];
     }
@@ -192,7 +196,7 @@ class ConfigClass {
     }
     getAct(type, dir) {
         const r = this.Actions[type][dir];
-        return r ? r : _default_config.Actions[type][dir];
+        return r ? r : DEFAULT_CONFIG.Actions[type][dir];
     }
     // setAct(type, dir, act) {
     //     if (act instanceof ActClass) {
@@ -217,8 +221,8 @@ class ConfigClass {
     }
     loadDefault(callback) {
         this.clear(() => {
-            for (let k of Object.keys(_default_config)) {
-                this.set(k, _default_config[k]);
+            for (let k of Object.keys(DEFAULT_CONFIG)) {
+                this.set(k, DEFAULT_CONFIG[k]);
             }
             if (callback) callback();
             return true;

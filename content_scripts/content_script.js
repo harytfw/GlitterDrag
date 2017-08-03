@@ -1,5 +1,4 @@
 //TODO: 处理拖放区域为textArea,input@type=text
-//
 
 "use strict";
 
@@ -171,8 +170,9 @@ class DragClass {
         }
         this.targetElem = evt.target;
         this.selection = document.getSelection().toString().trim();
-        this.targetType = checkDragTargetType(this.selection, this.targetElem);
-        this.actionType = getActionType(this.targetType);
+
+        this.targetType = typeUtil.checkDragTargetType(this.selection, this.targetElem);
+        this.actionType = typeUtil.getActionType(this.targetType);
         this.startPos.x = evt.screenX;
         this.startPos.y = evt.screenY;
     }
@@ -219,37 +219,43 @@ class DragClass {
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
         //TODO:把拖拽的数据放在event里传递
-        if (type === "dragstart") {
-            // 如果target没有设置draggable属性，那么才处理
-            if (evt.target.nodeName === "#text" || (evt.target.getAttribute && evt.target.getAttribute("draggable") === null)) {
-                this.running = true;
-                evt.dataTransfer.effectAllowed = "move";
-                this.dragstart(evt);
-            }
-        }
-        else if (type === "dragend") {
-            if (this.running) {
-                this.running = false;
-                this.dragend(evt);
-            }
-        }
-        else if (type === "drop") {
-            //如果是从浏览器外部外浏览器拽文件或其它东西，并且放下东西，那么这个事件会被触发，加一个判断
-            //判断脚本有没有处在运行阶段，否则不处理
-            //这样就不会和页面本身的拖拽功能重突
-            if (this.running) {
-                // this.running = false;
-                evt.preventDefault();
-            }
-        }
-        else if (type === "dragover") {
-            //如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
-            //判断脚本有没有处在运行阶段，否则不处理
-            if (this.running) {
-                this.dragover(evt);
-                // evt.dataTransfer.dropEffect = "move";
-                evt.preventDefault();
-            }
+        switch (type) {
+            case "dragstart":
+                if (evt.target.tagName === "A" &&
+                    (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
+                    return;
+                }
+
+                // 如果target没有设置draggable属性，那么才处理
+                if (evt.target.nodeName === "#text" || (evt.target.getAttribute && evt.target.getAttribute("draggable") === null)) {
+                    this.running = true;
+                    // evt.dataTransfer.effectAllowed = "move";
+                    this.dragstart(evt);
+                }
+                break;
+            case "dragend":
+                if (this.running) {
+                    this.running = false;
+                    this.dragend(evt);
+                }
+                break;
+            case "drop":
+                //如果是从浏览器外部外浏览器拽文件或其它东西，并且放下东西，那么这个事件会被触发，加一个判断
+                //判断脚本有没有处在运行阶段，否则不处理
+                //这样就不会和页面本身的拖拽功能重突
+                //drop发生在dragend之前
+                if (this.running) {
+                    evt.preventDefault();
+                }
+                break;
+            case "dragover":
+                //如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
+                //判断脚本有没有处在运行阶段，否则不处理
+                if (this.running) {
+                    this.dragover(evt);
+                    evt.preventDefault();
+                }
+                break;
         }
     }
 
@@ -320,21 +326,72 @@ class DragClass {
 
 }
 
+const clipboard = {
+    storage: null,
+    parent: null,
+    write: function(parent, content = "") {
+        //why we need parent?
+        //assumed that the textarea element  become the last child of document.body
+        //if we call focus() method, the window will scroll to the bottom  which brings annoying
+        //experience to user. 
+        this.parent = parent;
+        this.writeClipboard(content);
+
+        //cleanup
+        this.storage = null;
+        this.parent = null;
+    },
+    read: function() {},
+    writeClipboard: function(content = "") {
+        this.storage = document.createElement("textarea");
+        this.storage.style.width = "0px";
+        this.storage.style.height = "0px";
+        this.parent.appendChild(this.storage);
+        this.storage.focus();
+        this.storage.setSelectionRange(0, this.storage.value.length);
+        document.execCommand("copy");
+        this.parent.removeChild(this.storage);
+    }
+}
+
+//alternative clipboard
+/*
+class Clipboard {
+    constructor() {
+        this.copyListener = this.copyListener.bind(this);
+        this.pasterListener = this.pasterListener.bind(this);
+        document.addEventListener("copy", this.copyListener);
+        this.data = "";
+        // document.addEventListener("paste",this.pasterListener);      
+    }
+    copyListener(event) {
+        event.clipboardData.setData("text/plain", this.data);
+        event.preventDefault();
+    }
+    pasterListener() {
+
+    }
+    write(data) {
+        this.data = data;
+        document.execCommand("copy");
+    }
+    read() {
+    }
+}
+const clipboard = new Clipboard();
+*/
+
 
 function CSlistener(msg) {
-    let needExecute = true;
     let elem = mydrag.targetElem;
-    let input = document.createElement("textarea");
-    input.style.width = "0px";
-    input.style.height = "0px";
 
     if (elem instanceof HTMLAnchorElement) {
         switch (msg.copy_type) {
             case commons.COPY_LINK:
-                input.value = elem.href;
+                clipboard.write(elem.parentElement, elem.href);
                 break;
             case commons.COPY_TEXT:
-                input.value = elem.textContent;
+                clipboard.write(elem.parentElement, elem.textContent);
                 break;
             case commons.COPY_IMAGE:
                 if ((mydrag.targetElem = elem.querySelector("img")) != null) {
@@ -348,10 +405,9 @@ function CSlistener(msg) {
         if (msg.command === "copy") {
             switch (msg.copy_type) {
                 case commons.COPY_LINK:
-                    input.value = elem.src;
+                    clipboard.write(elem.parentElement, elem.src);
                     break;
                 case commons.COPY_IMAGE:
-                    needExecute = false;
                     browser.runtime.sendMessage({ imageSrc: elem.src });
                     // getImageBase64(elem.src, (s) => {
                     //     browser.runtime.sendMessage({ imageBase64: s });
@@ -359,17 +415,6 @@ function CSlistener(msg) {
                     break;
             }
         }
-
-    }
-    else {
-        input.value = mydrag.selection;
-    }
-    if (needExecute) {
-        elem.parentElement.appendChild(input);
-        input.focus();
-        input.setSelectionRange(0, input.value.length);
-        document.execCommand("copy");
-        elem.parentElement.removeChild(input);
     }
 }
 

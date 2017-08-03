@@ -52,11 +52,58 @@ const commons = {
     ALLOW_V: "ALLOW_V",
     ALLOW_ALL: "ALLOW_ALL",
     ALLOW_ONE: "ALLOW_ONE",
-
+    //ALLOW_NOT:"ALLOW_NOT",
+    
     _DEBUG: true
 };
+//freezing them, avoid modify them in unconscious.
+Object.freeze(commons);
 
-function $E(s = "") {
+const eventUtil = {
+    attachEventS: function(selector = "body", func = () => {}, eventName = "click") {
+        this.attachEventT($E(selector), func, eventName);
+    },
+    attachEventT: function(target = document, func = () => {}, eventName = "click") {
+        target.addEventListener(eventName, func);
+    }
+}
+Object.freeze(eventUtil);
+
+const typeUtil = {
+    getActionType: (t) => {
+        if (t === commons.TYPE_UNKNOWN) {
+            console.error("未知的拖拽目标类型！~");
+            return;
+        }
+        if (t === commons.TYPE_TEXT_URL || t == commons.TYPE_ELEM_A) return "linkAction";
+        else if (t === commons.TYPE_TEXT || t === commons.TYPE_ELEM || t === commons.TYPE_TEXT_AREA) return "textAction";
+        else if (t === commons.TYPE_ELEM_IMG) return "imageAction";
+    },
+    checkDragTargetType: (selection, target) => {
+        if (selection && selection.length !== 0) {
+            if (commons.urlPattern.test(selection)) {
+                return commons.TYPE_TEXT_URL;
+            }
+            return commons.TYPE_TEXT;
+        }
+        else if (target !== null) {
+            if (target instanceof HTMLAnchorElement) {
+                return commons.TYPE_ELEM_A;
+            }
+            else if (target instanceof HTMLImageElement) {
+                return commons.TYPE_ELEM_IMG;
+            }
+            else if (target instanceof HTMLTextAreaElement) {
+                return commons.TYPE_TEXT_AREA;
+            }
+            return commons.TYPE_ELEM;
+        }
+        return commons.TYPE_UNKNOWN;
+    }
+}
+Object.freeze(typeUtil);
+
+const $E = (s = "") => {
     let r = document.querySelector(s);
     if (!r) {
         console.trace("No Result: document.querySelector", s)
@@ -64,47 +111,7 @@ function $E(s = "") {
     return r;
 }
 
-function attachEventS(selector = "body", func = () => {}, eventName = "click") {
-    attachEventT($E(selector), func, eventName);
-}
-
-function attachEventT(target = document, func = () => {}, eventName = "click") {
-    target.addEventListener(eventName, func);
-}
-
-function getActionType(t) {
-    if (t === commons.TYPE_UNKNOWN) {
-        console.error("未知的拖拽目标类型！~");
-        return;
-    }
-    if (t === commons.TYPE_TEXT_URL || t == commons.TYPE_ELEM_A) return "linkAction";
-    else if (t === commons.TYPE_TEXT || t === commons.TYPE_ELEM || t === commons.TYPE_TEXT_AREA) return "textAction";
-    else if (t === commons.TYPE_ELEM_IMG) return "imageAction";
-}
-
-function checkDragTargetType(selection, target) {
-    if (selection && selection.length !== 0) {
-        if (commons.urlPattern.test(selection)) {
-            return commons.TYPE_TEXT_URL;
-        }
-        return commons.TYPE_TEXT;
-    }
-    else if (target !== null) {
-        if (target instanceof HTMLAnchorElement) {
-            return commons.TYPE_ELEM_A;
-        }
-        else if (target instanceof HTMLImageElement) {
-            return commons.TYPE_ELEM_IMG;
-        }
-        else if (target instanceof HTMLTextAreaElement) {
-            return commons.TYPE_TEXT_AREA;
-        }
-        return commons.TYPE_ELEM;
-    }
-    return commons.TYPE_UNKNOWN;
-}
-
-function geti18nMessage(strName) {
+const geti18nMessage = (strName = "") => {
     const message = browser.i18n.getMessage(strName);
     if (message === "" || message === "??") {
         return strName;

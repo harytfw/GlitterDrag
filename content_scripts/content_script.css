@@ -1,6 +1,4 @@
 :root {
-    --scale-ratio: 1;
-    --arrow-size: 12px;
     --prompt-height: 100px;
     --prompt-width: 200px;
 }

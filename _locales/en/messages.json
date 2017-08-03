@@ -15,9 +15,9 @@
         "message": "default",
         "description": ""
     },
-    "directionControl":{
-        "message":"Direction Control",
-        "description":""
+    "directionControl": {
+        "message": "Direction Control",
+        "description": ""
     },
     "ALLOW_NORMAL": {
         "message": "Normal 4 directions ",
@@ -32,7 +32,7 @@
         "description": ""
     },
     "ALLOW_ALL": {
-        "message": "Crazy 8 directions",
+        "message": "Meaningless 8 directions",
         "description": ""
     },
     "ALLOW_ONE": {
@@ -204,11 +204,11 @@
         "message": "https://www.google.com/search?q=%s",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     },
-    "RefreshbtnOnEngines": {
+    "elem_RefreshbtnOnEngines": {
         "message": "Refresh",
         "description": "Reload button on Options - Search Template"
     },
-    "AddbtnOnEngines": {
+    "elem_AddbtnOnEngines": {
         "message": "Add",
         "description": "Add button on Options - Search Template"
     },
@@ -263,5 +263,13 @@
     "elem_DistancePx": {
         "message": "Trigger distance (px)",
         "description": "Element on Options page"
+    },
+    "elem_Styles":{
+        "message":"Styles",
+        "description": "Element on Options page"
+    },
+    "elem_SaveStyle": {
+        "message": "Save Style",
+        "descripttion": "Element on Options page"
     }
 }
