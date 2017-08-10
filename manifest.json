@@ -2,7 +2,7 @@
     "description": "__MSG_extensionDescription__",
     "manifest_version": 2,
     "name": "__MSG_extensionName__",
-    "version": "1.41b1",
+    "version": "1.41b2",
     "homepage_url": "https://github.com/harytfw/GlitterDrag",
     "icons": {
         "48": "Drag.png",
@@ -16,7 +16,7 @@
             "48": "Drag.png",
             "512": "Drag.png"
         },
-        "browser_style":true
+        "browser_style": true
     },
     "permissions": [
         "activeTab",
@@ -34,26 +34,24 @@
             "background.js"
         ]
     },
-    "content_scripts": [
-        {
-            "run_at": "document_start",
-            "all_frames": false,
-            "matches": [
-                "<all_urls>"
-            ],
-            "css":[
-                "content_scripts/content_script.css"
-            ],
-            "js": [
-                "common.js",
-                "content_scripts/content_script.js"
-            ]
-        }
-    ],
+    "content_scripts": [{
+        "run_at": "document_start",
+        "all_frames": false,
+        "matches": [
+            "<all_urls>"
+        ],
+        "css": [
+            "content_scripts/content_script.css"
+        ],
+        "js": [
+            "common.js",
+            "content_scripts/content_script.js"
+        ]
+    }],
     "options_ui": {
         "page": "options/options.html",
         "browser_style": true,
-        "open_in_tab":true
+        "open_in_tab": true
     },
     "default_locale": "en",
     "applications": {
