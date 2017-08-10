@@ -16,7 +16,8 @@
         "geti18nMessage": false,
         "DEFAULT_CONFIG":false,
         "eventUtil":false,
-        "typeUtil":false
+        "typeUtil":false,
+        "$E":false
     },
     "rules": {
         "no-console": 0,

@@ -266,6 +266,7 @@ class DragClass {
         }
 
         let d = {
+            one:commons.DIR_U,
             normal: commons.DIR_D, //普通的四个方向
             horizontal: commons.DIR_L, //水平方向,只有左右
             vertical: commons.DIR_D, //竖直方向，只有上下
@@ -318,7 +319,7 @@ class DragClass {
             case commons.ALLOW_V:
                 return d.vertical;
             case commons.ALLOW_ONE:
-                return d.normal;
+                return d.one;
             default:
                 return d.normal;
         }

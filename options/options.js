@@ -57,53 +57,53 @@ for (let item of Object.keys(commons)) {
     }
 }
 
-class SelectWrapper {
-    //              选项      值      提示    回调
-    constructor(optList = [], value, tooltip, cb) {
-        this.elem = document.createElement("select");
-        this.elem.setAttribute("title", tooltip);
-        optList.every(opt => {
-            let option = document.createElement("option");
-            option.setAttribute("value", opt.value); //
-            option.textContent = opt.text;
-            this.elem.appendChild(option);
-            return 1;
-        });
-        this.onchange = this.onchange.bind(this);
-        this.elem.onchange = this.onchange;
-        this.callback = cb;
-        this.value = value;
-    }
-    hide() {
-        this.elem.style.display = "none";
-    }
-    show() {
-        this.elem.style.display = "";
-    }
-    get value() {
-        if (this.elem.value === "false") return false;
-        else if (this.elem.value === "true") return true;
-        return this.elem.value;
-    }
-    set value(v) {
-        this.elem.value = v;
-    }
-    onchange() {
-        this.callback();
-    }
-    disableOpt(...opts) {
-        opts.forEach(opt => {
-            Array.from(this.elem.children, child => {
-                if (opt === child.value) {
-                    child.setAttribute("disabled", "disabled");
-                }
-            })
-        })
-    }
-    appendTo(parent) {
-        parent.appendChild(this.elem);
-    }
-}
+// class SelectWrapper {
+//     //              选项      值      提示    回调
+//     constructor(optList = [], value, tooltip, cb) {
+//         this.elem = document.createElement("select");
+//         this.elem.setAttribute("title", tooltip);
+//         optList.every(opt => {
+//             let option = document.createElement("option");
+//             option.setAttribute("value", opt.value); //
+//             option.textContent = opt.text;
+//             this.elem.appendChild(option);
+//             return 1;
+//         });
+//         this.onchange = this.onchange.bind(this);
+//         this.elem.onchange = this.onchange;
+//         this.callback = cb;
+//         this.value = value;
+//     }
+//     hide() {
+//         this.elem.style.display = "none";
+//     }
+//     show() {
+//         this.elem.style.display = "";
+//     }
+//     get value() {
+//         if (this.elem.value === "false") return false;
+//         else if (this.elem.value === "true") return true;
+//         return this.elem.value;
+//     }
+//     set value(v) {
+//         this.elem.value = v;
+//     }
+//     onchange() {
+//         this.callback();
+//     }
+//     disableOpt(...opts) {
+//         opts.forEach(opt => {
+//             Array.from(this.elem.children, child => {
+//                 if (opt === child.value) {
+//                     child.setAttribute("disabled", "disabled");
+//                 }
+//             })
+//         })
+//     }
+//     appendTo(parent) {
+//         parent.appendChild(this.elem);
+//     }
+// }
 class _SelectWrapper {
     //                         选项      值      提示    
     constructor(name = "", optList = [], value, tooltip = "") {
@@ -192,10 +192,16 @@ class EngineSelect extends _SelectWrapper {
     constructor(value) {
         let engines = backgroundPage.config.get("Engines");
 
-        let optList = [{ text: geti18nMessage("defaultText"), value: "" }];
+        let optList = [{
+            text: geti18nMessage("defaultText"),
+            value: ""
+        }];
         if (engines.length !== 0) {
             optList = Array.from(engines, v => {
-                return { text: v.name, value: v.name };
+                return {
+                    text: v.name,
+                    value: v.name
+                };
             });
         }
 
@@ -274,6 +280,11 @@ class DirWrapper {
                 this.searchTypeSelect.show();
                 break;
             case commons.ACT_OPEN:
+
+                this.activeSelect.show();
+                this.posSelect.show();
+                this.engineSelect.show();
+                break;
             case commons.ACT_QRCODE:
                 this.activeSelect.show();
                 this.posSelect.show();
@@ -369,7 +380,7 @@ class ChildWrapper {
                 backgroundPage.config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[key].value)
             ));
         }
-    
+
         this.dirWrappers.forEach(w =>
             w.appendTo(this.elem)
         );
@@ -551,14 +562,14 @@ class EngineItemWrapper {
             <a href="#" >&#10007</a>
         `;
         this.nameInput = this.elem.children[0];
-        eventUtil.attachEventS(this.nameInput, this.onchange, "change");
+        eventUtil.attachEventT(this.nameInput, this.onchange, "change");
         this.urlInput = this.elem.children[1];
         eventUtil.attachEventT(this.urlInput, this.onchange, "change");
 
         this.confirm = this.elem.children[2];
-        eventUtil.attachEventS(this.confirm, () => this.onConfirmClick());
+        eventUtil.attachEventT(this.confirm, () => this.onConfirmClick());
         this.remove = this.elem.children[3];
-        eventUtil.attachEventS(this.remove, () => this.onRemoveClick());
+        eventUtil.attachEventT(this.remove, () => this.onRemoveClick());
 
         [this.nameInput, this.urlInput, this.confirm, this.remove].forEach(t => this.elem.appendChild(t));
         this.value = val;
@@ -574,10 +585,10 @@ class EngineItemWrapper {
     }
 
     onRemoveClick() {
-        this.callback(true, this);
-    }
-    //addWarnBorder
-    //addAcceptBorder
+            this.callback(true, this);
+        }
+        //addWarnBorder
+        //addAcceptBorder
 
     addBorder(input) {
         input.className = "warn";
@@ -598,11 +609,11 @@ class EngineItemWrapper {
         return this.urlInput.value;
     }
     set url(s) {
-        return this.urlInput.value = s;
-    }
-    // valid() {
-    //     return name.length !== 0 && url.length !== 0;
-    // }
+            return this.urlInput.value = s;
+        }
+        // valid() {
+        //     return name.length !== 0 && url.length !== 0;
+        // }
     get value() {
         return {
             name: this.name,
@@ -664,7 +675,10 @@ class EngineWrapper {
         this.items = [];
     }
 
-    newItem(val = { name: "", url: "" }) {
+    newItem(val = {
+        name: "",
+        url: ""
+    }) {
         let item = new EngineItemWrapper(val, this.onButtonCallback);
         this.items.push(item);
         item.appendTo(this.itemsDiv);
@@ -679,6 +693,7 @@ class EngineWrapper {
         return result;
     }
     appendTo(parent) {
+        parent;
         // parent.appendChild(this.itemsDiv)
     }
 }
@@ -776,8 +791,7 @@ browser.runtime.getBackgroundPage().then((page) => {
         try {
             backgroundPage.config.restore(fileReader.result);
             backgroundPage.config.save();
-            initForm(true);
-            initSearcheTab(true);
+            location.reload();
         }
         catch (e) {
             console.error("Error when restore from backup", e);
@@ -800,8 +814,6 @@ browser.runtime.getBackgroundPage().then((page) => {
     });
     eventUtil.attachEventS("#default", () => {
         backgroundPage.config.loadDefault();
-        initForm(true);
-        initSearcheTab(true);
     });
     eventUtil.attachEventS("#fileInput", (event) => {
         fileReader.readAsText(event.target.files[0]);
@@ -813,91 +825,6 @@ browser.runtime.getBackgroundPage().then((page) => {
 }, () => {});
 
 
-
-
-
-// function initForm(force = false) {
-//     let content = document.querySelector("#content-1");
-//     if (content.children.length === 0 || force) {
-//         if (force) {
-//             let c = null;
-//             while ((c = content.firstChild)) {
-//                 content.removeChild(c);
-//             }
-//         }
-//         let wrapper = new Wrapper(backgroundPage.config.get("Actions"));
-//         wrapper.appendTo(content);
-//     }
-// }
-
-
-
-// function initSearcheTab(force) {
-//     let content = document.querySelector("#engine-items");
-//     if (content.children.length === 0 || force) {
-//         if (force) {
-//             let c = null;
-//             while ((c = content.firstChild)) {
-//                 content.removeChild(c);
-//             }
-//         }
-//         let wrapper = new EngineWrapper(backgroundPage.config.get("Engines"))
-//         // wrapper.appendTo(content)
-//     }
-// }
-
-// function initGeneral(force) {
-//     let content = document.querySelector("#content-3");
-//     if (content.children.length === 0 || force) {
-//         if (force) {
-//             let c = null;
-//             while ((c = content.firstChild)) {
-//                 content.removeChild(c);
-//             }
-//         }
-//         // let wrapper = new EngineWrapper(backgroundPage.config.get("Engines"))
-//         // wrapper.appendTo(content)
-//     }
-
-//     function handleChange(evt) {
-//         if (evt.target.type === "checkbox") backgroundPage.config.set(evt.target.id, evt.target.checked);
-//         else backgroundPage.config.set(evt.target.id, parseInt(evt.target.value));
-
-//         // if (evt.id === "enableStyle") {
-//         //     tabContainer.activeById(4);
-//         // }
-
-//         backgroundPage.config.save();
-//     }
-//     ["#enablePrompt", "#enableIndicator", "#enableStyle", "#triggeredDistance"].forEach(id => {
-//         let e = content.querySelector(id);
-//         if (e.type === "checkbox") e.checked = backgroundPage.config.get(e.id);
-//         else e.value = backgroundPage.config.get(e.id);
-//         e.removeEventListener("change", handleChange);
-//         e.addEventListener("change", handleChange);
-//     })
-
-// }
-
-// function initStyle(force) {
-//     let content = document.querySelector("#content-4");
-
-//     let styleArea = content.querySelector("#styleContent");
-//     let style = backgroundPage.config.get("style");
-//     if (style.length === 0) {
-//         let styleURL = browser.runtime.getURL("./../content_scripts/content_script.css");
-//         fetch(styleURL).then(
-//             response => response.text()
-//         ).then(text => styleArea.value = text);
-//     }
-//     else {
-//         styleArea.value = style;
-//     }
-
-//     eventUtil.attachEventS("#saveStyle", () => {
-//         backgroundPage.config.set("style", styleArea.value);
-//     })
-// }
 
 function messageListener(msg) {
     function log(message) {
