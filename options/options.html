@@ -29,7 +29,7 @@
                 <a class="nav-a nav-active" nav-id="1" i18n-id="Actions" href="#">动作</a>
                 <a class="nav-a" nav-id="2" i18n-id="SearchTemplate" href="#">搜索模板</a>
                 <a class="nav-a" nav-id="3" i18n-id="General" href="#">常规</a>
-                <a class="nav-a" nav-id="4" i18n-id="Styles" href="#">样式</a>
+                <a class="nav-a" nav-id="4" i18n-id="Style" href="#">样式</a>
             </nav>
             <ul style="list-style:none">
                 <li class="tab-content" id="content-0">
@@ -47,11 +47,32 @@
                 </li>
                 <li class="tab-content tab-active" id="content-1"></li>
                 <li class="tab-content" id="content-2">
-                    <p i18n-id="PlaceholderTip">用 %s 替代链接里的关键词</p>
+                    <p i18n-id="PlaceholderTip">用 %s 替代链接里的关键词，输入栏不能为空</p>
+                    <div id="builtin-engine">
+                        <span i18n-id="BuiltinEngineHelperText">这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：</span>
+                        <select style="display:inline-block">
+                            <option selected value="https://www.google.com/search?q=%s">Google Search</option>
+                            <option value="https://www.bing.com/search?q=%s">Bing Search</option>
+                            <option value="https://search.yahoo.com/search;?p=chinese">Yahoo Search</option>
+                            <option value="https://www.amazon.com/s/ref=nb_sb_noss?field-keywords=%s">Amazon Search</option>
+                            <option value="https://www.youtube.com/results?search_query=%s">Youtube Search</option>
+                            <option value="https://www.yandex.com/search/?text=%s">Yandex Search</option>
+                            <option value="https://zh.wikipedia.org/wiki/%s">wikipedia</option>
+                            <option value="https://www.baidu.com/baidu?wd=%s">百度搜索</option>
+                            <option value="https://www.so.com/s?q=%s">360搜索</option>
+                            <option value="http://www.acfun.cn/search/#query=%s">Acfun搜索</option>
+                            <option value="https://search.bilibili.com/all?keyword=%s">哔哩哔哩搜索</option>
+                            <option value="http://www.soku.com/search_video/q_%s">优酷搜索</option>
+                            <option value="https://www.zhihu.com/search?q=%s">知乎搜索</option>
+                            <option value="https://music.163.com/#/search/m/?s=%s">网易云音乐搜索</option>
+                        </select>
+                    </div>
+                    <br>
                     <div id="engine-buttons">
                         <button i18n-id="RefreshbtnOnEngines">刷新</button>
                         <button i18n-id="AddbtnOnEngines">添加</button>
                     </div>
+                    <br>
                     <div id="engine-items"></div>
                 </li>
                 <li class="tab-content" id="content-3">

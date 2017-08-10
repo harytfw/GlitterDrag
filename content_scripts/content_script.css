@@ -41,7 +41,7 @@
 
 .GDArrow-UP-R::after {
     display: block;
-    content: "\1f871";
+    content: "\2191";
     transform: rotate(45deg);
     /*
                            ^
@@ -51,7 +51,7 @@
 
 .GDArrow-U::after {
     display: block;
-    content: "\1f871";
+    content: "\2191";
     /*
                           ^
                           |
@@ -60,7 +60,7 @@
 
 .GDArrow-UP-L::after {
     display: block;
-    content: "\1f871";
+    content: "\2191";
     transform: rotate(-45deg);
     /*
                          ^
@@ -70,7 +70,7 @@
 
 .GDArrow-L::after {
     display: block;
-    content: "\1f870";
+    content: "\2190";
     /*
                          <--
                           
@@ -79,7 +79,7 @@
 
 .GDArrow-R::after {
     display: block;
-    content: "\1f872";
+    content: "\2192";
     /*
                         -->
 
@@ -88,7 +88,7 @@
 
 .GDArrow-LOW-L::after {
     display: block;
-    content: "\1f873";
+    content: "\2193";
     transform: rotate(45deg);
     /*
                          /
@@ -98,7 +98,7 @@
 
 .GDArrow-D::after {
     display: block;
-    content: "\1f873";
+    content: "\2193";
     /*
                         |
                         v
@@ -107,7 +107,7 @@
 
 .GDArrow-LOW-R::after {
     display: block;
-    content: "\1f873";
+    content: "\2193";
     transform: rotate(-45deg);
     /*
                        \

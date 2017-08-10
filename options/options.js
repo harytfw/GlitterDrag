@@ -577,9 +577,18 @@ class EngineItemWrapper {
     onConfirmClick() {
         let noEmpty = true;
         [this.nameInput, this.urlInput].every(input => {
-            return noEmpty = input.value.length === 0 ? (this.addBorder(input), false) : true;
+            if (input.value.length === 0) {
+                this.addWarningBorder(input);
+                return noEmpty = false;
+            }
+            else {
+                this.addAcceptBorder(input);
+                //continue iteratorion
+                return true;
+            }
         });
         if (noEmpty) {
+            //every thing is ok,no input field is empty.
             this.callback();
         }
     }
@@ -590,8 +599,14 @@ class EngineItemWrapper {
         //addWarnBorder
         //addAcceptBorder
 
-    addBorder(input) {
-        input.className = "warn";
+    addAcceptBorder(input) {
+        input.className = "accept";
+        setTimeout(() => {
+            input.className = "";
+        }, 1200);
+    }
+    addWarningBorder(input) {
+        input.className = "warning";
         setTimeout(() => {
             input.className = "";
         }, 1200);
@@ -630,6 +645,15 @@ class EngineItemWrapper {
 }
 class EngineWrapper {
     constructor(engineList) {
+
+        eventUtil.attachEventS("#builtin-engine>select", (event) => {
+            this.newItem({
+                name: event.target.selectedOptions[0].textContent,
+                url: event.target.value
+            })
+        }, "change");
+
+
         this.items = []; //
 
         // this.onAdd = this.onAdd.bind(this);
@@ -646,6 +670,7 @@ class EngineWrapper {
         add.onclick = () => this.onAdd();
         // add.textContent = browser.i18n.getMessage('AddbtnOnEngines');
         this.refreshItems(engineList);
+
     }
     onButtonCallback(isRemove, item) {
         if (isRemove) {
@@ -804,7 +829,7 @@ browser.runtime.getBackgroundPage().then((page) => {
         const date = new Date();
         browser.downloads.download({
             url: url,
-            filename: `GlitterDrag-${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()}-${date.getHours()}-${date.getMinutes()}.json`,
+            filename: `GlitterDrag-${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.json`,
             conflictAction: 'uniquify',
             saveAs: true
         });

@@ -189,7 +189,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_allow": {
-        "message": "",
+        "message": "Limit direction to drag",
         "description": "tooltip on option"
     },
     "search_name_tooltip": {
@@ -211,6 +211,10 @@
     "elem_AddbtnOnEngines": {
         "message": "Add",
         "description": "Add button on Options - Search Template"
+    },
+    "elem_BuiltinEngineHelperText": {
+        "message": "The built-in search engines that provided by addon, you need to click save button yourself after select one of engines: ",
+        "description": "Helper text on Options - Search Template"
     },
     "elem_Backup": {
         "message": "Backup",
@@ -253,23 +257,27 @@
         "description": "Element on Options page"
     },
     "elem_ShowActionTip": {
-        "message": "Show Actions tip",
+        "message": "Show actions tip",
         "description": "Element on Options page"
     },
     "elem_EnableDistanceTip": {
-        "message": "Enable Distance tip",
+        "message": "Enable distance tip",
         "description": "Element on Options page"
     },
     "elem_DistancePx": {
         "message": "Trigger distance (px)",
         "description": "Element on Options page"
     },
-    "elem_Styles":{
-        "message":"Styles",
+    "elem_EnableStyle": {
+        "message": "Enable customize style",
+        "description": "Element on Options page"
+    },
+    "elem_Style": {
+        "message": "Style",
         "description": "Element on Options page"
     },
     "elem_SaveStyle": {
-        "message": "Save Style",
+        "message": "Save style",
         "descripttion": "Element on Options page"
     }
 }

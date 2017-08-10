@@ -211,6 +211,10 @@
         "message": "添加",
         "description": "Add button on Options - Search Template"
     },
+    "elem_BuiltinEngineHelperText": {
+        "message": "这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：",
+        "description": "Helper text on Options - Search Template"
+    },
     "elem_Backup": {
         "message": "备份配置",
         "description": "Element on Options page"
@@ -263,7 +267,11 @@
         "message": "触发距离（px）",
         "description": "Element on Options page"
     },
-    "elem_Styles": {
+    "elem_EnableStyle": {
+        "message": "启用自定义样式",
+        "description": "Element on Options page"
+    },
+    "elem_Style": {
         "message": "样式",
         "description": "Element on Options page"
     },
