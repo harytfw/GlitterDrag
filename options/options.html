@@ -25,35 +25,42 @@
     <div id="container">
         <section id="tabs">
             <nav>
-                <a id="_debug" nav-id="0" i18n-id="Debug" style="color:crimson;display:none" class="nav-a" href="#">调试</a>
-                <a class="nav-a nav-active" nav-id="1" i18n-id="Actions" href="#">动作</a>
-                <a class="nav-a" nav-id="2" i18n-id="SearchTemplate" href="#">搜索模板</a>
-                <a class="nav-a" nav-id="3" i18n-id="General" href="#">常规</a>
-                <a class="nav-a" nav-id="4" i18n-id="Style" href="#">样式</a>
+                <a id="_debug" nav-id="1" i18n-id="Debug" style="color:crimson;display:none" class="nav-a" href="#">调试</a>
+                <a class="nav-a nav-active" nav-id="2" i18n-id="Actions" href="#">动作</a>
+                <a class="nav-a" nav-id="3" i18n-id="SearchTemplate" href="#">搜索模板</a>
+                <a class="nav-a" nav-id="4" i18n-id="General" href="#">常规</a>
+                <a class="nav-a" nav-id="5" i18n-id="Style" href="#">样式</a>
             </nav>
             <ul style="list-style:none">
-                <li class="tab-content" id="content-0">
+                <li class="tab-content">
                     <div>
                         <br>
                         <a href="https://baidu.com/" i18n-id="Baidu">百度</a>
                         <a href="https://bing.com/" i18n-id="Bing">Bing</a>
                         <a href="https://www.mozilla.org/firefox/new/">Firefox</a>
                         <br>
-                        <p>A quick brown fox jump over the lazy dog.</p>
+                        <p>The quick brown fox jumps over the lazy dog</p>
+                        <br>
+                        <a href="blank.html">
+                            <image src="../Drag.png" style="width: 128px;height:128px"></image>
+                        </a>
                         <br>
                         <br>
+                        <image src="../Drag.png" style="width: 64px;height:64px;background-color:aliceblue"></image>
                         <textarea id="logArea" rows="10" cols="80"></textarea>
                     </div>
                 </li>
-                <li class="tab-content tab-active" id="content-1"></li>
-                <li class="tab-content" id="content-2">
-                    <p i18n-id="PlaceholderTip">用 %s 替代链接里的关键词，输入栏不能为空</p>
+                <li class="tab-content tab-active"></li>
+                <li class="tab-content">
+                    <p i18n-id="PlaceholderTip">用 %s 替代链接里的关键词，输入栏不能为空，名称不应该重复</p>
                     <div id="builtin-engine">
                         <span i18n-id="BuiltinEngineHelperText">这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：</span>
                         <select style="display:inline-block">
                             <option selected value="https://www.google.com/search?q=%s">Google Search</option>
                             <option value="https://www.bing.com/search?q=%s">Bing Search</option>
-                            <option value="https://search.yahoo.com/search;?p=chinese">Yahoo Search</option>
+                            <option value="https://search.yahoo.com/search;?p=%s">Yahoo Search</option>
+                            <option value="https://duckduckgo.com/?q=%s&ia=web">DuckDuckGo Search</option>
+                            <option value="https://www.qwant.com/?q=%s&t=all">Qwant Search</option>
                             <option value="https://www.amazon.com/s/ref=nb_sb_noss?field-keywords=%s">Amazon Search</option>
                             <option value="https://www.youtube.com/results?search_query=%s">Youtube Search</option>
                             <option value="https://www.yandex.com/search/?text=%s">Yandex Search</option>
@@ -67,6 +74,12 @@
                             <option value="https://music.163.com/#/search/m/?s=%s">网易云音乐搜索</option>
                         </select>
                     </div>
+                    <div id="browser-engine" style="display:none">
+                        <span i18n-id="">这些是浏览器自身的搜索引擎：</span>
+                        <select style="display:inline-block">
+                             <option value="">000</option>
+                        </select>
+                    </div>
                     <br>
                     <div id="engine-buttons">
                         <button i18n-id="RefreshbtnOnEngines">刷新</button>
@@ -75,16 +88,25 @@
                     <br>
                     <div id="engine-items"></div>
                 </li>
-                <li class="tab-content" id="content-3">
-                    <input type="checkbox" id="enablePrompt"><label for="enablePrompt" i18n-id="ShowActionTip">显示动作提示</label>
+                <li class="tab-content" id="tab-general">
+                    <input type="checkbox" id="enablePrompt">
+                    <label for="enablePrompt" i18n-id="ShowActionTip">显示动作提示</label>
                     <br>
-                    <input type="checkbox" id="enableIndicator"><label for="enableIndicator" i18n-id="EnableDistanceTip">启用距离指示</label>
+                    <input type="checkbox" id="enableIndicator">
+                    <label for="enableIndicator" i18n-id="EnableDistanceTip">启用距离指示</label>
                     <br>
-                    <input type="checkbox" id="enableStyle"><label for="enableStyle" i18n-id="EnableStyle">允许使用自定义样式></label>
+                    <input type="checkbox" id="enableStyle">
+                    <label for="enableStyle" i18n-id="EnableStyle">允许使用自定义样式></label>
                     <br>
-                    <label for="triggeredDistance" i18n-id="DistancePx">触发距离（px）</label><input type="text" id="triggeredDistance">
+                    <label for="triggeredDistance" i18n-id="DistancePx">触发距离（px）</label>
+                    <input type="text" id="triggeredDistance">
+                    <br>
+                    <input type="checkbox" id="enableTimeoutCancel">
+                    <label for="enableTimeoutCancel" i18n-id="EnableTimeoutCancel">启用超时取消></label>
+                    <br>
+                    <label for="timeoutCancel" i18n-id="TimeoutCancel">超时取消时间（ms）</label><input type="text" id="timeoutCancel">
                 </li>
-                <li class="tab-content" id="content-4">
+                <li class="tab-content" id="tab-style">
                     <textarea id="styleContent"></textarea>
                     <button id="saveStyle" i18n-id="SaveStyle"></button>
                 </li>

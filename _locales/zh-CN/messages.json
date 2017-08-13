@@ -135,9 +135,21 @@
         "message": "后台",
         "description": "The tab opened in background."
     },
+    "OPEN_IMAGE": {
+        "message": "图像本身",
+        "description": ""
+    },
+    "OPEN_IMAGE_LINK": {
+        "message": "图像超链接",
+        "description": ""
+    },
     "SEARCH_LINK": {
         "message": "链接",
         "description": "Search action"
+    },
+    "SEARCH_IMAGE_LINK": {
+        "message": "图像超链接",
+        "description": ""
     },
     "SEARCH_TEXT": {
         "message": "文本",
@@ -154,6 +166,10 @@
     "COPY_LINK": {
         "message": "链接",
         "description": "Copy action"
+    },
+    "COPY_IMAGE_LINK": {
+        "message": "图像超链接",
+        "description": ""
     },
     "COPY_IMAGE": {
         "message": "图像",
@@ -177,6 +193,10 @@
     },
     "option_tooltip_search": {
         "message": "调用的搜索引擎，默认调用百度",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_open_type": {
+        "message": "指定如何打开图像",
         "description": "tooltip on option"
     },
     "option_tooltip_search_type": {
@@ -265,6 +285,14 @@
     },
     "elem_DistancePx": {
         "message": "触发距离（px）",
+        "description": "Element on Options page"
+    },
+    "elem_EnableTimeoutCancel": {
+        "message": "启用超时取消",
+        "description": "Element on Options page"
+    },
+    "elem_TimeoutCancel": {
+        "message": "超时取消时间：",
         "description": "Element on Options page"
     },
     "elem_EnableStyle": {

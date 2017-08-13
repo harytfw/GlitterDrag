@@ -135,8 +135,21 @@
         "message": "Background",
         "description": "The tab opened in background."
     },
+    "OPEN_IMAGE": {
+        "message": "Image",
+        "description": ""
+    },
+    "OPEN_IMAGE_LINK": {
+        "message": "Image's hyper link",
+        "description": ""
+    },
     "SEARCH_LINK": {
         "message": "Link",
+        "description": "Search action"
+    },
+
+    "SEARCH_IMAGE_LINK": {
+        "message": "Image hyper link",
         "description": "Search action"
     },
     "SEARCH_TEXT": {
@@ -154,6 +167,10 @@
     "COPY_LINK": {
         "message": "Link",
         "description": "Copy action"
+    },
+    "COPY_IMAGE_LINK": {
+        "message": "Image hyper link",
+        "description": ""
     },
     "COPY_IMAGE": {
         "message": "Image",
@@ -178,6 +195,10 @@
     },
     "option_tooltip_search": {
         "message": "Call the search engine, the default call Google",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_open_type": {
+        "message": "Specifies how image will be opened",
         "description": "tooltip on option"
     },
     "option_tooltip_search_type": {
@@ -266,6 +287,14 @@
     },
     "elem_DistancePx": {
         "message": "Trigger distance (px)",
+        "description": "Element on Options page"
+    },
+    "elem_EnableTimeoutCancel": {
+        "message": "Enable timeout cancel",
+        "description": "Element on Options page"
+    },
+    "elem_TimeoutCancel": {
+        "message": "Time to cancel: ",
         "description": "Element on Options page"
     },
     "elem_EnableStyle": {

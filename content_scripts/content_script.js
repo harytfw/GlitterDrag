@@ -103,6 +103,7 @@ class DragClass {
         this.targetType = commons.TYPE_UNKNOWN;
         this.actionType = "textAction";
         this.direction = commons.DIR_U;
+
         this.distance = 0;
         this.startPos = {
             x: 0,
@@ -112,6 +113,7 @@ class DragClass {
             x: 0,
             y: 0
         };
+        this.timeoutId = 0;
         this.promptBox = null;
         this.indicatorBox = null;
         this.isFirstRender = true;
@@ -120,6 +122,7 @@ class DragClass {
     post() {
         let sel = ""; //选中的数据,文本，链接
         let text = ""; //选中的文本，跟上面的可能相同可能不同
+        let imageLink = ""; //当图像是超链接保存超链接
         switch (this.targetType) {
             case commons.TYPE_TEXT:
             case commons.TYPE_TEXT_URL:
@@ -132,6 +135,10 @@ class DragClass {
             case commons.TYPE_ELEM_A:
                 sel = this.targetElem.href;
                 text = this.targetElem.textContent;
+                break;
+            case commons.TYPE_ELEM_A_IMG:
+                sel = this.targetElem.src;
+                imageLink = this.targetElem.parentElement.href;
                 break;
             case commons.TYPE_ELEM_IMG:
                 sel = this.targetElem.src;
@@ -149,6 +156,7 @@ class DragClass {
             direction: this.direction,
             selection: sel,
             textSelection: text,
+            imageLink: imageLink,
             actionType: this.actionType,
             sendToOptions: false
         }
@@ -159,6 +167,12 @@ class DragClass {
         }
         else browser.runtime.sendMessage(sended);
     }
+    cancel() {
+        clearTimeout(this.timeoutId);
+        this.running = false;
+        this.promptBox && this.promptBox.stopRender();
+        this.indicatorBox && this.indicatorBox.hide();
+    }
     dragstart(evt) {
         if (bgConfig.enableIndicator) {
             if (this.indicatorBox === null) this.indicatorBox = new Indicator();
@@ -168,15 +182,27 @@ class DragClass {
         if (bgConfig.enablePrompt) {
             if (this.promptBox === null) this.promptBox = new Prompt();
         }
+        if (bgConfig.enableTimeoutCancel) {
+            this.timeoutId = setTimeout(() => this.cancel(), bgConfig.timeoutCancel);
+        }
         this.targetElem = evt.target;
         this.selection = document.getSelection().toString().trim();
 
-        this.targetType = typeUtil.checkDragTargetType(this.selection, this.targetElem);
+        const isOriginalImageTarget = evt.explicitOriginalTarget instanceof HTMLImageElement;
+
+
+        this.targetType = typeUtil.checkDragTargetType(this.selection, this.targetElem, isOriginalImageTarget);
+        if (isOriginalImageTarget) {
+            this.targetElem = evt.explicitOriginalTarget;
+        }
+
         this.actionType = typeUtil.getActionType(this.targetType);
         this.startPos.x = evt.screenX;
         this.startPos.y = evt.screenY;
     }
     dragend(evt) {
+        clearTimeout(this.timeoutId);
+
         if (this.promptBox) { // may be null if viewing an image
             this.promptBox.stopRender();
         }
@@ -225,7 +251,9 @@ class DragClass {
                     (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
                     return;
                 }
-
+                if (evt.target.tagName === "TEXTAREA") {
+                    return;
+                }
                 // 如果target没有设置draggable属性，那么才处理
                 if (evt.target.nodeName === "#text" || (evt.target.getAttribute && evt.target.getAttribute("draggable") === null)) {
                     this.running = true;
@@ -266,7 +294,7 @@ class DragClass {
         }
 
         let d = {
-            one:commons.DIR_U,
+            one: commons.DIR_U,
             normal: commons.DIR_D, //普通的四个方向
             horizontal: commons.DIR_L, //水平方向,只有左右
             vertical: commons.DIR_D, //竖直方向，只有上下
@@ -347,6 +375,7 @@ const clipboard = {
         this.storage = document.createElement("textarea");
         this.storage.style.width = "0px";
         this.storage.style.height = "0px";
+        this.storage.value = content;
         this.parent.appendChild(this.storage);
         this.storage.focus();
         this.storage.setSelectionRange(0, this.storage.value.length);
@@ -385,7 +414,6 @@ const clipboard = new Clipboard();
 
 function CSlistener(msg) {
     let elem = mydrag.targetElem;
-
     if (elem instanceof HTMLAnchorElement) {
         switch (msg.copy_type) {
             case commons.COPY_LINK:
@@ -394,10 +422,10 @@ function CSlistener(msg) {
             case commons.COPY_TEXT:
                 clipboard.write(elem.parentElement, elem.textContent);
                 break;
-            case commons.COPY_IMAGE:
-                if ((mydrag.targetElem = elem.querySelector("img")) != null) {
-                    CSlistener(msg); //可能有更好的办法
-                }
+                // case commons.COPY_IMAGE:
+                //     if ((mydrag.targetElem = elem.querySelector("img")) != null) {
+                //         CSlistener(msg); //可能有更好的办法
+                //     }
         }
         return;
 
@@ -408,14 +436,27 @@ function CSlistener(msg) {
                 case commons.COPY_LINK:
                     clipboard.write(elem.parentElement, elem.src);
                     break;
+                case commons.COPY_IMAGE_LINK:
+                    if (elem.parentElement instanceof HTMLAnchorElement) {
+                        clipboard.write(elem.parentElement, elem.parentElement.href);
+                    }
+                    else {
+                        clipboard.write(elem.parentElement, elem.src);
+                    }
+                    break;
                 case commons.COPY_IMAGE:
-                    browser.runtime.sendMessage({ imageSrc: elem.src });
+                    browser.runtime.sendMessage({
+                        imageSrc: elem.src
+                    });
                     // getImageBase64(elem.src, (s) => {
                     //     browser.runtime.sendMessage({ imageBase64: s });
                     // })
                     break;
             }
         }
+    }
+    else {
+        clipboard.write(elem.parentElement, mydrag.selection)
     }
 }
 
@@ -424,7 +465,9 @@ browser.runtime.onConnect.addListener(port => {
         port.onMessage.addListener(CSlistener);
     }
 });
-let bgPort = browser.runtime.connect({ name: "getConfig" });
+let bgPort = browser.runtime.connect({
+    name: "getConfig"
+});
 let bgConfig = null;
 let mydrag = null;
 bgPort.onMessage.addListener((c) => {
@@ -435,7 +478,9 @@ bgPort.onMessage.addListener((c) => {
                 mydrag = new DragClass(document);
             }
 
-        }, { once: true });
+        }, {
+            once: true
+        });
     }
     else {
         mydrag = new DragClass(document);

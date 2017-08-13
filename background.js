@@ -26,7 +26,14 @@ class ExecutorClass {
         }
         switch (this.action.act_name) {
             case commons.ACT_OPEN:
-                this.openURL(this.data.selection);
+                if (this.data.actionType === "imageAction" &&
+                    this.action.open_type === commons.OPEN_IMAGE_LINK &&
+                    this.data.imageLink !== "") {
+                    this.openURL(this.data.imageLink)
+                }
+                else {
+                    this.openURL(this.data.selection)
+                }
                 break;
             case commons.ACT_COPY:
                 this.copy();
@@ -34,6 +41,9 @@ class ExecutorClass {
             case commons.ACT_SEARCH:
                 if (this.action.search_type === commons.SEARCH_LINK) {
                     this.searchText(this.data.selection);
+                }
+                else if (this.action.search_type === commons.SEARCH_IMAGE_LINK) {
+                    this.searchText(this.data.imageLink);
                 }
                 // this.data.selection is image's url
                 // TODO: how to get the ALT attribute or event.
@@ -47,6 +57,18 @@ class ExecutorClass {
             case commons.ACT_DL:
                 this.downloadImage(this.data.selection);
                 break;
+
+                // let downloadURL = ""
+                // if(this.action.download_type===commons.DOWNLOAD_TEXT){
+                //     downloadlURL = this.data.textContent;
+                // }
+                // else if(this.action.download_type===commons.DOWNLOAD_IMAGE_LINK){
+                //     downloadURL = this.data.imageLink;
+                // }
+                // else{
+                //     downloadURL = this.data.selection;
+                // }
+
             case commons.ACT_TRANS:
                 break;
         }
@@ -76,7 +98,9 @@ class ExecutorClass {
         browser.tabs.query({}).then(tabs => {
             for (let tab of tabs) {
                 if (tab.active === true) {
-                    if (this.action.tab_pos == commons.TAB_CUR) browser.tabs.update(tab.id, { url: url });
+                    if (this.action.tab_pos == commons.TAB_CUR) browser.tabs.update(tab.id, {
+                        url: url
+                    });
                     else {
                         browser.tabs.create({
                             active: this.action.tab_active,
@@ -119,10 +143,18 @@ class ExecutorClass {
 
     copy() {
         //发送给指定的tab
-        const sended = { command: "copy", copy_type: this.action.copy_type };
+        const sended = {
+            command: "copy",
+            copy_type: this.action.copy_type
+        };
         let portName = this.data.sendToOptions ? "sendToOptions" : "sendToContentScript";
-        browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
-            let port = browser.tabs.connect(tabs[0].id, { name: portName });
+        browser.tabs.query({
+            currentWindow: true,
+            active: true
+        }, (tabs) => {
+            let port = browser.tabs.connect(tabs[0].id, {
+                name: portName
+            });
             port.postMessage(sended);
         });
     }
@@ -154,7 +186,9 @@ class ConfigClass {
         this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
     }
     clear(callback) {
-        this.storageArea.clear().then(callback, () => {}, (e) => { console.error(e) });
+        this.storageArea.clear().then(callback, () => {}, (e) => {
+            console.error(e)
+        });
     }
     save() {
         this.storageArea.set(this);
@@ -178,7 +212,9 @@ class ConfigClass {
                     this[key1] = DEFAULT_CONFIG[key1];
                 }
             }
-        }, (e) => { console.error(e) });
+        }, (e) => {
+            console.error(e)
+        });
     }
     get(key, callback) {
         if (this[key] === undefined) this[key] = DEFAULT_CONFIG[key];
@@ -195,14 +231,14 @@ class ConfigClass {
         this[key] = val;
     }
     getAct(type, dir) {
-        const r = this.Actions[type][dir];
-        return r ? r : DEFAULT_CONFIG.Actions[type][dir];
-    }
-    // setAct(type, dir, act) {
-    //     if (act instanceof ActClass) {
-    //         this.Actions[type][dir] = act;
-    //     }
-    // }
+            const r = this.Actions[type][dir];
+            return r ? r : DEFAULT_CONFIG.Actions[type][dir];
+        }
+        // setAct(type, dir, act) {
+        //     if (act instanceof ActClass) {
+        //         this.Actions[type][dir] = act;
+        //     }
+        // }
     getSearchURL(name) {
         let defaultUrl = browser.i18n.getMessage('default_search_url');
         if (defaultUrl === "" || defaultUrl === "??") {
@@ -308,7 +344,9 @@ function connected(port) {
         port.postMessage(JSON.stringify(config));
         //自定义样式
         if (config.get("enableStyle") === true) {
-            browser.tabs.insertCSS({ code: config.get("style") });
+            browser.tabs.insertCSS({
+                code: config.get("style")
+            });
         }
     }
 }

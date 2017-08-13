@@ -133,7 +133,6 @@ a:visited {
 #actions>div {
     display: flex;
     flex-wrap: wrap;
-    width: 40%;
     flex-direction: column;
     font-size: var(--font-size);
     border: 1px rgb(242, 242, 242) solid;

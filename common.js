@@ -9,7 +9,8 @@ const commons = {
     TYPE_TEXT_AREA: 5,
     TYPE_ELEM: 2, //元素，主要是没有选中文本，对元素进行了拖拽
     TYPE_ELEM_A: 3, //超链接，a元素
-    TYPE_ELEM_IMG: 4,
+    TYPE_ELEM_A_IMG: 6, //a元素里面包含图片，但把它当做图片处理
+    TYPE_ELEM_IMG: 4, //图片
 
     DIR_U: "DIR_U",
     DIR_D: "DIR_D",
@@ -27,11 +28,18 @@ const commons = {
     ACT_TRANS: "ACT_TRANS", //翻译
     ACT_DL: "ACT_DL", //下载
     ACT_QRCODE: "ACT_QRCODE", //二维码
+
+    OPEN_IMAGE: "OPEN_IMAGE",
+    OPEN_IMAGE_LINK: "OPEN_IMAGE_LINK",
+
     COPY_LINK: "COPY_LINK",
+    COPY_IMAGE_LINK: "COPY_IMAGE_LINK",
     COPY_TEXT: "COPY_TEXT",
     COPY_IMAGE: "COPY_IMAGE",
-    SEARCH_TEXT: "SEARCH_TEXT",
+
     SEARCH_LINK: "SEARCH_LINK",
+    SEARCH_IMAGE_LINK: "SEARCH_IMAGE_LINK",
+    SEARCH_TEXT: "SEARCH_TEXT",
     SEARCH_IMAGE: "SEARCH_IMAGE",
 
     // KEY_CTRL: 0,//ctrl键
@@ -53,7 +61,7 @@ const commons = {
     ALLOW_ALL: "ALLOW_ALL",
     ALLOW_ONE: "ALLOW_ONE",
     //ALLOW_NOT:"ALLOW_NOT",
-    
+
     _DEBUG: true
 };
 //freezing them, avoid modify them in unconscious.
@@ -75,11 +83,12 @@ const typeUtil = {
             console.error("未知的拖拽目标类型！~");
             return;
         }
-        if (t === commons.TYPE_TEXT_URL || t == commons.TYPE_ELEM_A) return "linkAction";
+        if (t === commons.TYPE_TEXT_URL || t === commons.TYPE_ELEM_A) return "linkAction";
         else if (t === commons.TYPE_TEXT || t === commons.TYPE_ELEM || t === commons.TYPE_TEXT_AREA) return "textAction";
-        else if (t === commons.TYPE_ELEM_IMG) return "imageAction";
+        else if (t === commons.TYPE_ELEM_IMG || t === commons.TYPE_ELEM_A_IMG) return "imageAction";
+        else alert("Not Support Type!");
     },
-    checkDragTargetType: (selection, target) => {
+    checkDragTargetType: (selection, target, imageFlag) => {
         if (selection && selection.length !== 0) {
             if (commons.urlPattern.test(selection)) {
                 return commons.TYPE_TEXT_URL;
@@ -88,6 +97,9 @@ const typeUtil = {
         }
         else if (target !== null) {
             if (target instanceof HTMLAnchorElement) {
+                if (imageFlag) {
+                    return commons.TYPE_ELEM_A_IMG;
+                }
                 return commons.TYPE_ELEM_A;
             }
             else if (target instanceof HTMLImageElement) {
