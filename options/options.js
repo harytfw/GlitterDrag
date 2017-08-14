@@ -7,7 +7,7 @@ document.title = geti18nMessage("option_page_title");
 
 const TOOLTIP_TEXT_TABLE = {};
 //TODO add allow_ tooltip
-["act", "active", "pos", "search", "search_type", "copy", "allow", "open_type", "download_type", "download_saveas"].forEach(
+["act", "active", "pos", "search", "search_type", "copy", "allow", "open_type", "download_type", "download_saveas", "download_directory"].forEach(
     (name) => {
         TOOLTIP_TEXT_TABLE[name] = geti18nMessage("option_tooltip_" + name);
     }
@@ -48,7 +48,7 @@ for (let item of Object.keys(commons)) {
     else if (["SEARCH_LINK", "SEARCH_TEXT", "SEARCH_IMAGE", "SEARCH_IMAGE_LINK"].includes(item)) {
         OPTION_TEXT_VALUE_TABLE.search.push(obj);
     }
-    else if (["OPEN_IMAGE", "OPEN_IMAGE_LINK"].includes(item)) {
+    else if (["OPEN_LINK", "OPEN_IMAGE", "OPEN_IMAGE_LINK"].includes(item)) {
         OPTION_TEXT_VALUE_TABLE.open.push(obj);
     }
     else if (["COPY_TEXT", "COPY_LINK", "COPY_IMAGE", "COPY_IMAGE_LINK"].includes(item)) {
@@ -154,12 +154,23 @@ class _SelectWrapper {
             }
         }
     }
+    setDefaultOpt(opt) {
+        if (this.value === "") {
+            if (typeof opt === "string" && opt.startsWith("DEFAULT")) {
+                this.value = this.elem.firstElementChild.value;
+            }
+            else {
+                this.value = opt;
+            }
+        }
+        //触发change事件
+        this.elem.dispatchEvent(new Event("change", {}));
+    }
     hide() {
         this.elem.style.display = "none";
     }
     show() {
         if (this.disableFlag) return;
-
         this.elem.style.display = "";
     }
     disable() {
@@ -211,7 +222,7 @@ class EngineSelect extends _SelectWrapper {
 
         let optList = [{
             text: geti18nMessage("defaultText"),
-            value: ""
+            value: "DEFAULT_SEARCH_ENGINE"
         }];
         if (engines.length !== 0) {
             optList = Array.from(engines, v => {
@@ -372,6 +383,11 @@ class DirWrapper {
             s.disableOpt(...opts);
         });
     }
+    setDefaultOpt(...opts) {
+        this.selectGroup.forEach((s, index) => {
+            s.setDefaultOpt(opts[index]);
+        });
+    }
     disableSelect(...selects) {
         for (const keyName of selects) {
             if (keyName in this) {
@@ -474,6 +490,9 @@ class ChildWrapper {
     disableOpt(...opts) {
         this.dirWrappers.forEach(w => w.disableOpt(...opts))
     }
+    setDefaultOpt(...opts) {
+        this.dirWrappers.forEach(w => w.setDefaultOpt(...opts))
+    }
     disableSelect(...selects) {
             this.dirWrappers.forEach(s => s.disableSelect(...selects));
         }
@@ -575,6 +594,23 @@ class Wrapper {
         this.elem.id = "actions";
 
         this.child_text = new ChildWrapper(geti18nMessage('textType'), "textAction");
+        //顺序
+        /*
+        this.selectGroup = [
+            this.actSelect, this.activationSelect,
+            this.posSelect, this.engineSelect,
+            this.openTypeSelect, this.searchTypeSelect,
+            this.copySelect, this.downloadSelect,
+            this.downloadDirectorySelect, this.downloadSaveasSelect,
+        ];
+        */
+        this.child_text.setDefaultOpt(
+            commons.ACT_OPEN, commons.FORE_GROUND,
+            commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
+            commons.PLACE_HOLDER, commons.SEARCH_TEXT,
+            commons.COPY_TEXT, commons.DOWNLOAD_TEXT,
+            commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
+        )
         this.child_text.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE, commons.SEARCH_LINK, commons.SEARCH_IMAGE_LINK,
@@ -585,28 +621,43 @@ class Wrapper {
         this.child_text.disableSelect("openTypeSelect", "copySelect", "searchTypeSelect");
 
         this.child_image = new ChildWrapper(geti18nMessage('imageType'), "imageAction");
-
+        this.child_image.setDefaultOpt(
+            commons.ACT_OPEN, commons.FORE_GROUND,
+            commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
+            commons.OPEN_LINK, commons.SEARCH_LINK,
+            commons.COPY_LINK, commons.DOWNLOAD_LINK,
+            commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
+        )
         this.child_image.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
-            commons.SEARCH_IMAGE, commons.SEARCH_TEXT,
-            commons.COPY_TEXT,
-            commons.DOWNLOAD_TEXT,
+            commons.SEARCH_IMAGE_LINK, commons.SEARCH_TEXT, commons.SEARCH_IMAGE,
+            commons.OPEN_IMAGE_LINK,
+            commons.COPY_TEXT, commons.COPY_IMAGE_LINK,
+            commons.DOWNLOAD_TEXT, commons.DOWNLOAD_IMAGE_LINK, commons.DOWNLOAD_IMAGE
         );
-        if (backgroundPage.supportCopyImage === false) {
-            this.child_image.disableOpt(commons.COPY_IMAGE);
-        }
-        // this.child_image.disableSelect("engineSelect");
+        this.child_image.disableSelect("openTypeSelect");
+
 
         this.child_link = new ChildWrapper(geti18nMessage('linkType'), "linkAction");
+        this.child_link.setDefaultOpt(
+            commons.ACT_OPEN, commons.FORE_GROUND,
+            commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
+            commons.OPEN_LINK, commons.SEARCH_LINK,
+            commons.COPY_LINK, commons.DOWNLOAD_LINK,
+            commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
+        )
         this.child_link.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
-            commons.SEARCH_IMAGE, commons.SEARCH_IMAGE_LINK,
-            commons.COPY_IMAGE, commons.COPY_IMAGE_LINK,
-            commons.OPEN_IMAGE, commons.OPEN_IMAGE_LINK,
-            commons.DOWNLOAD_IMAGE, commons.DOWNLOAD_IMAGE_LINK
+            commons.OPEN_IMAGE,
+            commons.SEARCH_IMAGE,
+            commons.DOWNLOAD_IMAGE,
         );
-        this.child_link.disableSelect("openTypeSelect");
-        // this.child_link.disableSpecificSelect(commons.ACT_OPEN, "engineSelect");
+
+
+        if (backgroundPage.supportCopyImage === false) {
+            this.child_image.disableOpt(commons.COPY_IMAGE);
+            this.child_link.disableOpt(commons.COPY_IMAGE);
+        }
 
         [this.child_text, this.child_link, this.child_image].forEach(c => {
             c.bindCallBack(this.callback); //这里会调用到下面的callback;
@@ -917,6 +968,20 @@ const tabs = {
         w = new styleWrapper();
         this._tabs.push(w);
 
+
+
+        document.addEventListener("keypress", (evt) => {
+            const char = evt.key.charAt(0);
+            if (char >= "1" && char <= "9") {
+                try {
+                    $E(`a.nav-a:nth-child(${char})`).click();
+                }
+                catch (error) {
+                    // console.error(error);
+                }
+            }
+        });
+
         document.querySelectorAll(".nav-a").forEach(a => {
             a.addEventListener("click", this.navOnClick);
         });
@@ -988,6 +1053,7 @@ browser.runtime.getBackgroundPage().then((page) => {
     });
     eventUtil.attachEventS("#default", () => {
         backgroundPage.config.loadDefault();
+        location.reload();
     });
     eventUtil.attachEventS("#fileInput", (event) => {
         fileReader.readAsText(event.target.files[0]);

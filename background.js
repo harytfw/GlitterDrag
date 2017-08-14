@@ -1,4 +1,15 @@
 var supportCopyImage = false;
+
+function createBlobObjectURLForText(text = "") {
+    let blob = new window.Blob([text], {
+        type: "text/plain"
+    });
+    let url = window.URL.createObjectURL(blob);
+    setTimeout((u) => window.URL.revokeObjectURL(u), 10000, url);
+    return url;
+}
+
+
 class ExecutorClass {
     constructor() {
         this.data = {
@@ -10,9 +21,6 @@ class ExecutorClass {
         this.action = {
 
         };
-
-        //TODO: switch to the old tab when  closing the tab that created via openTab(). 
-        // this.idOfTab = null;
 
     }
     DO(m) {
@@ -26,9 +34,7 @@ class ExecutorClass {
         }
         switch (this.action.act_name) {
             case commons.ACT_OPEN:
-                if (this.data.actionType === "imageAction" &&
-                    this.action.open_type === commons.OPEN_IMAGE_LINK &&
-                    this.data.imageLink !== "") {
+                if (this.data.actionType === "linkAction" && this.action.open_type === commons.OPEN_IMAGE_LINK && this.data.imageLink !== "") {
                     this.openURL(this.data.imageLink)
                 }
                 else {
@@ -36,51 +42,63 @@ class ExecutorClass {
                 }
                 break;
             case commons.ACT_COPY:
-                this.copy();
+                switch (this.action.copy_type) {
+                    case commons.COPY_IMAGE_LINK:
+                        if (this.data.actionType === "linkAction" && this.data.imageLink !== "") {
+                            this.copy(this.data.imageLink);
+                        }
+                        else {
+                            this.copy(this.data.selection);
+                        }
+                        break;
+                    case commons.COPY_IMAGE:
+                        if (this.data.actionType === "linkAction" && this.data.imageLink !== "") {
+                            sendImageToNativeBySrc(this.data.imageLink);
+                        }
+                        else {
+                            sendImageToNativeBySrc(this.data.selection);
+                        }
+                        break;
+                    case commons.COPY_TEXT:
+                        this.copy(this.data.textSelection);
+                        break;
+                    case commons.COPY_LINK:
+                        this.copy(this.data.selection)
+                        break;
+                }
                 break;
             case commons.ACT_SEARCH:
-                if (this.action.search_type === commons.SEARCH_LINK) {
-                    this.searchText(this.data.selection);
+                if (this.data.actionType === "linkAction") {
+                    if (this.action.search_type === commons.SEARCH_IMAGE_LINK && this.data.imageLink !== "") {
+                        this.searchText(this.data.imageLink);
+                    }
+                    else if (this.action.search_type === commons.SEARCH_TEXT && this.data.textSelection !== "") {
+                        this.searchText(this.data.textSelection);
+                    }
+                    else {
+                        this.searchText(this.data.selection);
+                    }
                 }
-                else if (this.action.search_type === commons.SEARCH_IMAGE_LINK) {
-                    this.searchText(this.data.imageLink);
-                }
-                // this.data.selection is image's url
-                // TODO: how to get the ALT attribute or event.
-                /*else if (this.action.search_type === commons.SEARCH_IMAGE) {
-                    console.dir(e);
-                }*/
-                else {
+                else if (this.action.search_type === commons.SEARCH_TEXT) {
                     this.searchText(this.data.textSelection);
+                }
+                else {
+                    this.searchText(this.data.selection);
                 }
                 break;
             case commons.ACT_DL:
-                if (this.action.download_type === commons.DOWNLOAD_IMAGE_LINK) {
+                if (this.data.actionType === "linkAction" && this.action.download_type === commons.DOWNLOAD_IMAGE_LINK && this.data.imageLink !== "") {
                     this.download(this.data.imageLink);
                 }
                 else if (this.action.download_type === commons.DOWNLOAD_TEXT) {
-                    const blob = new Blob([this.data.textContent]);
-                    const url = URL.createObjectURL(blob);
+                    const url = createBlobObjectURLForText(this.data.textSelection);
                     const date = new Date();
                     this.download(url, `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.txt`);
                 }
                 else {
-                    //可以从url获得文件名，使用文件名
-                    //没有的话，使用随机生成的文件名
                     this.download(this.data.selection);
                 }
                 break;
-
-                // let downloadURL = ""
-                // if(this.action.download_type===commons.DOWNLOAD_TEXT){
-                //     downloadlURL = this.data.textContent;
-                // }
-                // else if(this.action.download_type===commons.DOWNLOAD_IMAGE_LINK){
-                //     downloadURL = this.data.imageLink;
-                // }
-                // else{
-                //     downloadURL = this.data.selection;
-                // }
 
             case commons.ACT_TRANS:
                 break;
@@ -154,11 +172,12 @@ class ExecutorClass {
         }
     }
 
-    copy() {
+    copy(data) {
         //发送给指定的tab
         const sended = {
             command: "copy",
-            copy_type: this.action.copy_type
+            copy_type: this.action.copy_type,
+            data,
         };
         let portName = this.data.sendToOptions ? "sendToOptions" : "sendToContentScript";
         browser.tabs.query({
@@ -198,19 +217,21 @@ class ExecutorClass {
     download(url, filename = "") {
         let opt = {
             url,
-            saveAs: this.action.download_saveas === true ? true : false
+            saveAs: this.action.download_saveas
         };
         const directories = config.get("downloadDirectories");
-        let pathname = new URL(url).pathname;
-        let parts = pathname.split("/");
+        if (this.action.download_type !== commons.DOWNLOAD_TEXT) {
 
-        if (parts[parts.length - 1] === "" && filename === "") {
-            //把文件名赋值为8个随机字符
-            //扩展名一定是html吗？
-            filename = this.randomString() + ".html";
-        }
-        else {
-            filename = parts[parts.length - 1];
+            let pathname = new URL(url).pathname;
+            let parts = pathname.split("/");
+            if (parts[parts.length - 1] === "" && filename === "") {
+                //把文件名赋值为8个随机字符
+                //扩展名一定是html吗？
+                filename = this.randomString() + ".html";
+            }
+            else if (filename === "") {
+                filename = parts[parts.length - 1];
+            }
         }
         opt.filename = directories[this.action.download_directory] + filename;
 

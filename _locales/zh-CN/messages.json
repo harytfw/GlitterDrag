@@ -143,12 +143,16 @@
         "message": "后台",
         "description": "The tab opened in background."
     },
+    "OPEN_LINK": {
+        "message": "链接",
+        "description": ""
+    },
     "OPEN_IMAGE": {
         "message": "图像本身",
         "description": ""
     },
     "OPEN_IMAGE_LINK": {
-        "message": "图像超链接",
+        "message": "图像链接",
         "description": ""
     },
     "SEARCH_LINK": {
@@ -156,7 +160,7 @@
         "description": "Search action"
     },
     "SEARCH_IMAGE_LINK": {
-        "message": "图像超链接",
+        "message": "图像链接",
         "description": ""
     },
     "SEARCH_TEXT": {
@@ -176,7 +180,7 @@
         "description": "Copy action"
     },
     "COPY_IMAGE_LINK": {
-        "message": "图像超链接",
+        "message": "图像链接",
         "description": ""
     },
     "COPY_IMAGE": {
@@ -192,7 +196,7 @@
         "description": "Copy action"
     },
     "DOWNLOAD_IMAGE_LINK": {
-        "message": "图像超链接",
+        "message": "图像链接",
         "description": "Copy action"
     },
     "DOWNLOAD_IMAGE": {
@@ -245,6 +249,10 @@
     },
     "option_tooltip_download_type": {
         "message": "指定需要下载的类型",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_download_directory": {
+        "message": "指定文件保存的目录",
         "description": "tooltip on option"
     },
     "search_name_tooltip": {

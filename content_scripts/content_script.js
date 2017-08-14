@@ -129,7 +129,11 @@ class DragClass {
 
 
         this.selection = "";
+        this.imageLink = "";
+
         this.targetElem = null;
+        this.originalTargetElem = null;
+
         this.targetType = commons.TYPE_UNKNOWN;
         this.actionType = "textAction";
         this.direction = commons.DIR_U;
@@ -173,8 +177,9 @@ class DragClass {
                 text = this.targetElem.textContent;
                 break;
             case commons.TYPE_ELEM_A_IMG:
-                sel = this.targetElem.src;
-                imageLink = this.targetElem.parentElement.href;
+                sel = this.targetElem.href;
+                text = this.targetElem.textContent;
+                imageLink = this.originalTargetElem.src;
                 break;
             case commons.TYPE_ELEM_IMG:
                 sel = this.targetElem.src;
@@ -185,13 +190,14 @@ class DragClass {
             default:
                 break;
         }
-        this.selection = sel;
+        this.selection = sel.trim();
+        this.imageLink = imageLink.trim();
         //sendMessage只能传递字符串化后（类似json）的数据
         //不能传递具体对象
         let sended = {
             direction: this.direction,
             selection: sel,
-            textSelection: text,
+            textSelection: text.trim(),
             imageLink: imageLink,
             actionType: this.actionType,
             sendToOptions: false
@@ -221,17 +227,18 @@ class DragClass {
         if (bgConfig.enableTimeoutCancel) {
             this.timeoutId = setTimeout(() => this.cancel(), bgConfig.timeoutCancel);
         }
+
         this.targetElem = evt.target;
         this.selection = document.getSelection().toString().trim();
 
-        const isOriginalImageTarget = evt.explicitOriginalTarget instanceof HTMLImageElement;
 
-
-        this.targetType = typeUtil.checkDragTargetType(this.selection, this.targetElem, isOriginalImageTarget);
-        if (isOriginalImageTarget) {
-            this.targetElem = evt.explicitOriginalTarget;
+        if (evt.target.tagName && evt.originalTarget.tagName === "A" && evt.explicitOriginalTarget.tagName === "IMG" && evt.explicitOriginalTarget !== evt.originalTarget) {
+            this.targetType = commons.TYPE_ELEM_A_IMG;
+            this.originalTargetElem = evt.explicitOriginalTarget;
         }
-
+        else {
+            this.targetType = typeUtil.checkDragTargetType(this.selection, this.targetElem);
+        }
         this.actionType = typeUtil.getActionType(this.targetType);
         this.startPos.x = evt.screenX;
         this.startPos.y = evt.screenY;
@@ -283,11 +290,11 @@ class DragClass {
         //TODO:把拖拽的数据放在event里传递
         switch (type) {
             case "dragstart":
-                if (evt.target.tagName === "A" &&
+                if (evt.target.tagName && evt.target.tagName === "A" &&
                     (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
                     return;
                 }
-                if (evt.target.tagName === "TEXTAREA") {
+                if (evt.target.tagName && evt.target.tagName === "TEXTAREA") {
                     return;
                 }
                 // 如果target没有设置draggable属性，那么才处理
@@ -474,51 +481,14 @@ const clipboard = new Clipboard();
 
 
 function CSlistener(msg) {
-    let elem = mydrag.targetElem;
-    if (elem instanceof HTMLAnchorElement) {
-        switch (msg.copy_type) {
-            case commons.COPY_LINK:
-                clipboard.write(elem.parentElement, elem.href);
-                break;
-            case commons.COPY_TEXT:
-                clipboard.write(elem.parentElement, elem.textContent);
-                break;
-                // case commons.COPY_IMAGE:
-                //     if ((mydrag.targetElem = elem.querySelector("img")) != null) {
-                //         CSlistener(msg); //可能有更好的办法
-                //     }
-        }
-        return;
-
-    }
-    else if (elem instanceof HTMLImageElement) {
-        if (msg.command === "copy") {
-            switch (msg.copy_type) {
-                case commons.COPY_LINK:
-                    clipboard.write(elem.parentElement, elem.src);
-                    break;
-                case commons.COPY_IMAGE_LINK:
-                    if (elem.parentElement instanceof HTMLAnchorElement) {
-                        clipboard.write(elem.parentElement, elem.parentElement.href);
-                    }
-                    else {
-                        clipboard.write(elem.parentElement, elem.src);
-                    }
-                    break;
-                case commons.COPY_IMAGE:
-                    browser.runtime.sendMessage({
-                        imageSrc: elem.src
-                    });
-                    // getImageBase64(elem.src, (s) => {
-                    //     browser.runtime.sendMessage({ imageBase64: s });
-                    // })
-                    break;
-            }
-        }
-    }
-    else {
-        clipboard.write(elem.parentElement, mydrag.selection)
-    }
+    clipboard.write(mydrag.targetElem.parentElement, msg.data);
+    // case commons.COPY_IMAGE:
+    //     browser.runtime.sendMessage({
+    //         imageSrc: elem.src
+    //     });
+    // getImageBase64(elem.src, (s) => {
+    //     browser.runtime.sendMessage({ imageBase64: s });
+    // })
 }
 
 browser.runtime.onConnect.addListener(port => {

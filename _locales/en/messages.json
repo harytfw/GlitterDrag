@@ -143,12 +143,16 @@
         "message": "Background",
         "description": "The tab opened in background."
     },
+    "OPEN_LINK": {
+        "message": "Link",
+        "description": ""
+    },
     "OPEN_IMAGE": {
         "message": "Image",
         "description": ""
     },
     "OPEN_IMAGE_LINK": {
-        "message": "Image's hyper link",
+        "message": "Image's link",
         "description": ""
     },
     "SEARCH_LINK": {
@@ -157,7 +161,7 @@
     },
 
     "SEARCH_IMAGE_LINK": {
-        "message": "Image hyper link",
+        "message": "Image's link",
         "description": "Search action"
     },
     "SEARCH_TEXT": {
@@ -177,7 +181,7 @@
         "description": "Copy action"
     },
     "COPY_IMAGE_LINK": {
-        "message": "Image hyper link",
+        "message": "Image's link",
         "description": ""
     },
     "COPY_IMAGE": {
@@ -193,7 +197,7 @@
         "description": "Copy action"
     },
     "DOWNLOAD_IMAGE_LINK": {
-        "message": "Image's hyper link",
+        "message": "Image's link",
         "description": "Copy action"
     },
     "DOWNLOAD_IMAGE": {
@@ -247,6 +251,10 @@
     },
     "option_tooltip_download_type": {
         "message": "Specifies what needs to be downloaded",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_download_directory": {
+        "message": "Specifies the directory to which the file is saved",
         "description": "tooltip on option"
     },
     "option_tooltip_download_saveas": {

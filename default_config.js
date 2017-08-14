@@ -1,14 +1,14 @@
 //TODO:减少全局变量,修改变量名
 const ACTION_CONSTRUCTOR = (
-    act = commons.ACT_OPEN,
-    active = commons.BACK_GROUND,
-    pos = commons.TAB_LAST, en = "",
-    open_type = commons.OPEN_IMAGE,
-    search_type = commons.SEARCH_TEXT,
-    copy_type = commons.COPY_LINK,
-    download_type = commons.DOWNLOAD_TEXT,
-    download_directory = "0",
-    download_saveas = commons.DOWNLOAD_SAVEAS_YES,
+    act = "",
+    active = "",
+    pos = "", en = "",
+    open_type = "",
+    search_type = "",
+    copy_type = "",
+    download_type = "",
+    download_directory = "",
+    download_saveas = "",
 ) => {
     return {
         act_name: act,
