@@ -20,6 +20,7 @@ const commons = {
     DIR_UP_R: "DIR_UP_R",
     DIR_LOW_L: "DIR_LOW_L",
     DIR_LOW_R: "DIR_LOW_R",
+    DIR_OUTER: "DIR_OUTER",
 
     ACT_NONE: "ACT_NONE", //无动作
     ACT_OPEN: "ACT_OPEN", //打开
@@ -42,6 +43,13 @@ const commons = {
     SEARCH_TEXT: "SEARCH_TEXT",
     SEARCH_IMAGE: "SEARCH_IMAGE",
 
+    DOWNLOAD_TEXT: "DOWNLOAD_TEXT",
+    DOWNLOAD_LINK: "DOWNLOAD_LINK",
+    DOWNLOAD_IMAGE_LINK: "DOWNLOAD_IMAGE_LINK",
+    DOWNLOAD_IMAGE: "DOWNLOAD_IMAGE",
+
+    DOWNLOAD_SAVEAS_YES: true,
+    DOWNLOAD_SAVEAS_NO: false,
     // KEY_CTRL: 0,//ctrl键
     // KEY_SHIFT: 1,//shift键
 

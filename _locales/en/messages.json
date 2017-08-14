@@ -99,6 +99,10 @@
         "message": "Lower Right",
         "description": "Direction"
     },
+    "DIR_OUTER": {
+        "message": "Outer",
+        "description": "Direction"
+    },
     "textType": {
         "message": "Text",
         "description": "An section of Options"
@@ -110,6 +114,10 @@
     "imageType": {
         "message": "Images",
         "description": "An section of Options"
+    },
+    "TAB_CUR": {
+        "message": "Current",
+        "description": "Position of tab opened."
     },
     "TAB_LAST": {
         "message": "Last",
@@ -176,6 +184,30 @@
         "message": "Image",
         "description": "Copy action"
     },
+    "DOWNLOAD_TEXT": {
+        "message": "Text",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_LINK": {
+        "message": "Link",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE_LINK": {
+        "message": "Image's hyper link",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE": {
+        "message": "Image",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_SAVEAS_YES": {
+        "message": "Save as",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_SAVEAS_NO": {
+        "message": "Don't save as",
+        "description": "Copy action"
+    },
     "option_page_title": {
         "message": "Glitter Drag - Options",
         "description": "title of page"
@@ -211,6 +243,14 @@
     },
     "option_tooltip_allow": {
         "message": "Limit direction to drag",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_download_type": {
+        "message": "Specifies what needs to be downloaded",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_download_saveas": {
+        "message": "Needs to save the file as ... ?",
         "description": "tooltip on option"
     },
     "search_name_tooltip": {
@@ -299,6 +339,32 @@
     },
     "elem_EnableStyle": {
         "message": "Enable customize style",
+        "description": "Element on Options page"
+    },
+    "elem_Download": {
+        "message": "Download",
+        "description": "Element on Options page"
+    },
+    "elem_ShowDefaultDownloadDirectory": {
+        "message": "Show default download directory",
+        "description": "Element on Options page"
+    },
+    "elem_SettingDownloadDirectory": {
+        "message": "Setting download directory",
+        "description": "Element on Options page"
+    },
+    "DownloadDirectory": {
+        "message": "DL Dir $NUM$",
+        "description": "Element on Options page",
+        "placeholders": {
+            "num": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
+    },
+    "elem_SettingDownloadDirectoryHelperText": {
+        "message": "The set directory can only be used as the subdirectory of the <b> browser's default download directory </b>, and cannot use the absolute path. The second column is the directory you can set. For example: \"<br> image/\" said the final download directory \"<b>default download directory</b>/image/\". Blank is <b> the default download directory </b>. second-level directory need to manually create",
         "description": "Element on Options page"
     },
     "elem_Style": {

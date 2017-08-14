@@ -55,7 +55,20 @@ class ExecutorClass {
                 }
                 break;
             case commons.ACT_DL:
-                this.downloadImage(this.data.selection);
+                if (this.action.download_type === commons.DOWNLOAD_IMAGE_LINK) {
+                    this.download(this.data.imageLink);
+                }
+                else if (this.action.download_type === commons.DOWNLOAD_TEXT) {
+                    const blob = new Blob([this.data.textContent]);
+                    const url = URL.createObjectURL(blob);
+                    const date = new Date();
+                    this.download(url, `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.txt`);
+                }
+                else {
+                    //可以从url获得文件名，使用文件名
+                    //没有的话，使用随机生成的文件名
+                    this.download(this.data.selection);
+                }
                 break;
 
                 // let downloadURL = ""
@@ -174,6 +187,36 @@ class ExecutorClass {
         });
     }
 
+
+    randomString(length = 8) {
+        //https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
+        const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let result = '';
+        for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+        return result;
+    }
+    download(url, filename = "") {
+        let opt = {
+            url,
+            saveAs: this.action.download_saveas === true ? true : false
+        };
+        const directories = config.get("downloadDirectories");
+        let pathname = new URL(url).pathname;
+        let parts = pathname.split("/");
+
+        if (parts[parts.length - 1] === "" && filename === "") {
+            //把文件名赋值为8个随机字符
+            //扩展名一定是html吗？
+            filename = this.randomString() + ".html";
+        }
+        else {
+            filename = parts[parts.length - 1];
+        }
+        opt.filename = directories[this.action.download_directory] + filename;
+
+        console.log(opt.filename);
+        browser.downloads.download(opt);
+    }
     translateText(text) {}
 
 }

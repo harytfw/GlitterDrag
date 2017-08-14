@@ -78,6 +78,36 @@ class Indicator {
         this.box.style.display = "none";
     }
 }
+
+// class CaptureZone {
+//     constructor() {
+//         this.textarea = document.createElement("textarea");
+//         this.textarea.setAttribute("style", `
+//             border: none;
+//             width: 0px;
+//             height: 0px;
+//             position: fixed;
+//             left: 0px;
+//             top: 0px;
+//             z-index: 9999;
+//             opacity: 0;
+//         `);
+//         document.body.appendChild(this.textarea);
+
+//     }
+//     maximization() {
+//         this.textarea.style.width = "100%";
+//         this.textarea.style.height = "100%";
+//     }
+//     minimize() {
+//         this.textarea.style.width = "0px";
+//         this.textarea.style.height = "0px";
+//     }
+//     getText() {
+//         return this.textarea.value;
+//     }
+// }
+
 class DragClass {
     constructor(elem) {
 
@@ -116,7 +146,13 @@ class DragClass {
         this.timeoutId = 0;
         this.promptBox = null;
         this.indicatorBox = null;
+
+        // this.captureZone = new CaptureZone();
+        this.isFromOuter = false;
+
         this.isFirstRender = true;
+
+
     }
 
     post() {
@@ -275,17 +311,42 @@ class DragClass {
                 if (this.running) {
                     evt.preventDefault();
                 }
+                if (this.isFromOuter) {
+                    // evt.preventDefault();
+                    //文字
+                    // if (evt.dataTransfer === null) {
+                    //     // this.captureZone.minimize();
+                    //     this.selection = this.captureZone.getText();
+                    //     this.targetElem = null;
+                    //     this.targetType = typeUtil.checkDragTargetType(this.selection, null);
+                    //     this.actionType = typeUtil.getActionType(this.targetType);
+                    //     this.post();
+                    // }
+                    // else {
+                    //     void(0);
+                    // }
+                }
                 break;
             case "dragover":
                 //如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
-                //判断脚本有没有处在运行阶段，否则不处理
+
                 if (this.running) {
                     this.dragover(evt);
                     evt.preventDefault();
                 }
+                else {
+                    //可能是从浏览器外部拖进来
+                    this.isFromOuter = true;
+
+                    // if (evt.dataTransfer === null) {
+                    //     this.captureZone.maximization();
+                    // }
+                }
                 break;
         }
     }
+
+
 
     getDirection() {
         function BETW(a, b) {

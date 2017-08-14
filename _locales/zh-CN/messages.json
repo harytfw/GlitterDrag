@@ -99,6 +99,10 @@
         "message": "右下",
         "description": "Direction"
     },
+    "DIR_OUTER": {
+        "message": "外部",
+        "description": "Direction"
+    },
     "textType": {
         "message": "文本",
         "description": "An section of Options"
@@ -110,6 +114,10 @@
     "imageType": {
         "message": "图像",
         "description": "An section of Options"
+    },
+    "TAB_CUR": {
+        "message": "当前",
+        "description": "Position of tab opened."
     },
     "TAB_LAST": {
         "message": "尾",
@@ -175,6 +183,30 @@
         "message": "图像",
         "description": "Copy action"
     },
+    "DOWNLOAD_TEXT": {
+        "message": "文本",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_LINK": {
+        "message": "链接",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE_LINK": {
+        "message": "图像超链接",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE": {
+        "message": "图像",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_SAVEAS_YES": {
+        "message": "另存为",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_SAVEAS_NO": {
+        "message": "不另存为",
+        "description": "Copy action"
+    },
     "option_page_title": {
         "message": "闪耀拖拽-选项",
         "description": "title of page"
@@ -211,9 +243,17 @@
         "message": "限制允许拖拽的方向",
         "description": "tooltip on option"
     },
+    "option_tooltip_download_type": {
+        "message": "指定需要下载的类型",
+        "description": "tooltip on option"
+    },
     "search_name_tooltip": {
         "message": "搜索引擎的名称",
         "description": "tooltip on Options - Search Template"
+    },
+    "option_tooltip_download_saveas": {
+        "message": "是否需要另存文件为... ?",
+        "description": "tooltip on option"
     },
     "search_url_tooltip": {
         "message": "调用的链接",
@@ -297,6 +337,32 @@
     },
     "elem_EnableStyle": {
         "message": "启用自定义样式",
+        "description": "Element on Options page"
+    },
+    "elem_Download": {
+        "message": "下载",
+        "description": "Element on Options page"
+    },
+    "elem_ShowDefaultDownloadDirectory": {
+        "message": "打开浏览器的默认下载目录",
+        "description": "Element on Options page"
+    },
+    "elem_SettingDownloadDirectory": {
+        "message": "设置下载目录",
+        "description": "Element on Options page"
+    },
+    "DownloadDirectory": {
+        "message": "下载目录 $NUM$",
+        "description": "Element on Options page",
+        "placeholders": {
+            "num": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
+    },
+    "elem_SettingDownloadDirectoryHelperText": {
+        "message": "设定的目录只能作为 <b>浏览器的默认下载目录</b> 的子目录，同时也无法使用绝对路径。第二列是你可以设置的目录。<br>例如：“image/” 表示的最终下载目录是 “<b>默认下载目录</b>/image/” . 留空是 <b>默认下载目录</b>.  二级目录需要手动创建 ",
         "description": "Element on Options page"
     },
     "elem_Style": {

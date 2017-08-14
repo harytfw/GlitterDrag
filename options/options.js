@@ -7,7 +7,7 @@ document.title = geti18nMessage("option_page_title");
 
 const TOOLTIP_TEXT_TABLE = {};
 //TODO add allow_ tooltip
-["act", "active", "pos", "search", "search_type", "copy", "allow", "open_type"].forEach(
+["act", "active", "pos", "search", "search_type", "copy", "allow", "open_type", "download_type", "download_saveas"].forEach(
     (name) => {
         TOOLTIP_TEXT_TABLE[name] = geti18nMessage("option_tooltip_" + name);
     }
@@ -21,7 +21,9 @@ const OPTION_TEXT_VALUE_TABLE = {
     open: [],
     search: [],
     copy: [],
-    allow: []
+    allow: [],
+    download: [],
+    download_saveas: []
 }
 const DIR_TEXT_VALUE_TABLE = {};
 for (let item of Object.keys(commons)) {
@@ -37,7 +39,7 @@ for (let item of Object.keys(commons)) {
     else if (/^ACT_/.test(item)) {
         OPTION_TEXT_VALUE_TABLE.act.push(obj)
     }
-    else if (["TAB_FIRST", "TAB_LAST", "TAB_CLEFT", "TAB_CRIGHT"].includes(item)) {
+    else if (["TAB_FIRST", "TAB_LAST", "TAB_CLEFT", "TAB_CRIGHT", "TAB_CUR"].includes(item)) {
         OPTION_TEXT_VALUE_TABLE.pos.push(obj);
     }
     else if (["FORE_GROUND", "BACK_GROUND"].includes(item)) {
@@ -51,6 +53,12 @@ for (let item of Object.keys(commons)) {
     }
     else if (["COPY_TEXT", "COPY_LINK", "COPY_IMAGE", "COPY_IMAGE_LINK"].includes(item)) {
         OPTION_TEXT_VALUE_TABLE.copy.push(obj);
+    }
+    else if (["DOWNLOAD_TEXT", "DOWNLOAD_LINK", "DOWNLOAD_IMAGE", "DOWNLOAD_IMAGE_LINK"].includes(item)) {
+        OPTION_TEXT_VALUE_TABLE.download.push(obj);
+    }
+    else if (["DOWNLOAD_SAVEAS_YES", "DOWNLOAD_SAVEAS_NO"].includes(item)) {
+        OPTION_TEXT_VALUE_TABLE.download_saveas.push(obj);
     }
     else if (/^ALLOW_/.test(item)) {
         OPTION_TEXT_VALUE_TABLE.allow.push(obj);
@@ -185,7 +193,7 @@ class ActionSelect extends _SelectWrapper {
     }
 }
 
-class ActiveSelect extends _SelectWrapper {
+class ActivationSelect extends _SelectWrapper {
     constructor(value) {
         super("tab_active", OPTION_TEXT_VALUE_TABLE.active, value, TOOLTIP_TEXT_TABLE.active)
     }
@@ -237,6 +245,32 @@ class CopySelect extends _SelectWrapper {
     }
 }
 
+class DownloadlSelect extends _SelectWrapper {
+    constructor(value) {
+        super("download_type", OPTION_TEXT_VALUE_TABLE.download, value, TOOLTIP_TEXT_TABLE.download_type);
+    }
+}
+
+class DownloadDirectoriesSelect extends _SelectWrapper {
+    constructor(value) {
+        const directories = backgroundPage.config.get("downloadDirectories");
+        const optList = Array.from(directories, (directory, index) => {
+            return {
+                text: browser.i18n.getMessage("DownloadDirectory", index),
+                value: index
+            };
+        });
+
+        super("download_directory", optList, value, TOOLTIP_TEXT_TABLE.download_directory)
+    }
+}
+
+class DownloadSaveasSelect extends _SelectWrapper {
+    constructor(value) {
+        super("download_saveas", OPTION_TEXT_VALUE_TABLE.download_saveas, value, TOOLTIP_TEXT_TABLE.download_saveas);
+    }
+}
+
 class ControlSelect extends _SelectWrapper {
     constructor(value) {
         super("directionControl", OPTION_TEXT_VALUE_TABLE.allow, value, TOOLTIP_TEXT_TABLE.allow);
@@ -266,13 +300,22 @@ class DirWrapper {
         //     search_type: conf.search_type
         // };
         this.actSelect = new ActionSelect(this.act.act_name);
-        this.activeSelect = new ActiveSelect(this.act.tab_active);
+        this.activationSelect = new ActivationSelect(this.act.tab_active);
         this.posSelect = new PositionSelect(this.act.tab_pos);
         this.engineSelect = new EngineSelect(this.act.engine_name);
         this.openTypeSelect = new OpenTypeSelect(this.act.open_type);
         this.searchTypeSelect = new SearchTypeSelect(this.act.search_type);
+        this.downloadSelect = new DownloadlSelect(this.act.download_type);
+        this.downloadDirectorySelect = new DownloadDirectoriesSelect(this.act.download_directory);
+        this.downloadSaveasSelect = new DownloadSaveasSelect(this.act.download_saveas);
         this.copySelect = new CopySelect(this.act.copy_type);
-        this.selectGroup = [this.actSelect, this.activeSelect, this.posSelect, this.engineSelect, this.openTypeSelect, this.searchTypeSelect, this.copySelect];
+        this.selectGroup = [
+            this.actSelect, this.activationSelect,
+            this.posSelect, this.engineSelect,
+            this.openTypeSelect, this.searchTypeSelect,
+            this.copySelect, this.downloadSelect,
+            this.downloadDirectorySelect, this.downloadSaveasSelect,
+        ];
         this.selectGroup.forEach(s => {
             s.appendTo(this.elem);
             s.bindCallBack(this.onchange);
@@ -286,7 +329,12 @@ class DirWrapper {
 
         //选项框显示或隐藏控制的代码
         //the code about control select show or hide.
-        [this.activeSelect, this.posSelect, this.engineSelect, this.copySelect, this.openTypeSelect, this.searchTypeSelect].forEach(s => {
+        [this.activationSelect, this.posSelect,
+            this.engineSelect, this.copySelect,
+            this.openTypeSelect, this.searchTypeSelect,
+            this.downloadSelect, this.downloadDirectorySelect,
+            this.downloadSaveasSelect,
+        ].forEach(s => {
             s.hide();
         });
         switch (this.act.act_name) {
@@ -294,21 +342,26 @@ class DirWrapper {
                 this.copySelect.show();
                 break;
             case commons.ACT_SEARCH:
-                this.activeSelect.show();
+                this.activationSelect.show();
                 this.posSelect.show();
                 this.engineSelect.show();
                 this.searchTypeSelect.show();
                 break;
             case commons.ACT_OPEN:
 
-                this.activeSelect.show();
+                this.activationSelect.show();
                 this.posSelect.show();
                 this.engineSelect.show();
                 this.openTypeSelect.show();
                 break;
             case commons.ACT_QRCODE:
-                this.activeSelect.show();
+                this.activationSelect.show();
                 this.posSelect.show();
+                break;
+            case commons.ACT_DL:
+                this.downloadSelect.show();
+                this.downloadDirectorySelect.show();
+                this.downloadSaveasSelect.show();
                 break;
             default:
                 break;
@@ -347,20 +400,24 @@ class DirWrapper {
     }
     update(conf) {
         this.act = conf;
-        [
-            this.actSelect.value,
-            this.activeSelect.value,
-            this.posSelect.value,
-            this.engineSelect.value,
-            this.searchTypeSelect.value,
-            this.copySelect.value
-        ] = [
-            conf.act_name,
-            conf.tab_active,
-            conf.tab_pos,
-            conf.engine_name,
-            conf.search_type
-        ];
+        // [
+        //     this.actSelect.value,
+        //     this.activationSelect.value,
+        //     this.posSelect.value,
+        //     this.engineSelect.value,
+        //     this.searchTypeSelect.value,
+        //     this.copySelect.value,
+        //     this.downloadSelect.value,
+        //     this.downloadDirectorySelect.value
+        // ] = [
+        //     conf.act_name,
+        //     conf.tab_active,
+        //     conf.tab_pos,
+        //     conf.engine_name,
+        //     conf.search_type,
+        //     conf.copy_type.value,
+        //     conf.download_type,
+        // ];
     }
     get value() {
         return this.act;
@@ -457,7 +514,7 @@ class ChildWrapper {
                 case commons.ALLOW_NORMAL:
                     this.dirWrappers.forEach(w => {
                         w.enable();
-                        if (/^DIR_[UDLR]$/.test(w.dirValue) === false) {
+                        if (/^DIR_([UDLR]|OUTER)$/.test(w.dirValue) === false) {
                             w.disable();
                         }
                     });
@@ -465,7 +522,7 @@ class ChildWrapper {
                 case commons.ALLOW_H:
                     this.dirWrappers.forEach(w => {
                         w.enable();
-                        if (/^DIR_[LR]$/.test(w.dirValue) === false) {
+                        if (/^DIR_([LR]|OUTER)$/.test(w.dirValue) === false) {
                             w.disable();
                         }
                     });
@@ -473,7 +530,7 @@ class ChildWrapper {
                 case commons.ALLOW_V:
                     this.dirWrappers.forEach(w => {
                         w.enable();
-                        if (/^DIR_[UD]$/.test(w.dirValue) === false) {
+                        if (/^DIR_([UD]|OUTER)$/.test(w.dirValue) === false) {
                             w.disable();
                         }
                     });
@@ -481,7 +538,7 @@ class ChildWrapper {
                 case commons.ALLOW_ONE:
                     this.dirWrappers.forEach(w => {
                         w.enable();
-                        if (/^DIR_U$/.test(w.dirValue) === false) {
+                        if (/^DIR_(U|OUTER)$/.test(w.dirValue) === false) {
                             w.disable();
                         }
                     });
@@ -519,10 +576,11 @@ class Wrapper {
 
         this.child_text = new ChildWrapper(geti18nMessage('textType'), "textAction");
         this.child_text.disableOpt(
-            commons.ACT_DL, commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE, commons.SEARCH_LINK, commons.SEARCH_IMAGE_LINK,
             commons.COPY_LINK, commons.COPY_IMAGE, commons.COPY_IMAGE_LINK,
             commons.OPEN_IMAGE, commons.OPEN_IMAGE_LINK,
+            commons.DOWNLOAD_IMAGE, commons.DOWNLOAD_IMAGE_LINK, commons.DOWNLOAD_LINK
         );
         this.child_text.disableSelect("openTypeSelect", "copySelect", "searchTypeSelect");
 
@@ -531,7 +589,8 @@ class Wrapper {
         this.child_image.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE, commons.SEARCH_TEXT,
-            commons.COPY_TEXT
+            commons.COPY_TEXT,
+            commons.DOWNLOAD_TEXT,
         );
         if (backgroundPage.supportCopyImage === false) {
             this.child_image.disableOpt(commons.COPY_IMAGE);
@@ -540,10 +599,11 @@ class Wrapper {
 
         this.child_link = new ChildWrapper(geti18nMessage('linkType'), "linkAction");
         this.child_link.disableOpt(
-            commons.ACT_DL, commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE, commons.SEARCH_IMAGE_LINK,
             commons.COPY_IMAGE, commons.COPY_IMAGE_LINK,
             commons.OPEN_IMAGE, commons.OPEN_IMAGE_LINK,
+            commons.DOWNLOAD_IMAGE, commons.DOWNLOAD_IMAGE_LINK
         );
         this.child_link.disableSelect("openTypeSelect");
         // this.child_link.disableSpecificSelect(commons.ACT_OPEN, "engineSelect");
@@ -589,6 +649,14 @@ class Wrapper {
     }
 }
 
+class OuterActionsWrapper {
+    constructor() {
+        this.textActionSelect = new ActionSelect();
+        this.linkActionSelect = new ActionSelect();
+        this.imageActionSelect = new ActionSelect();
+    }
+    save() {}
+}
 
 class EngineItemWrapper {
     constructor(val, callback) {
@@ -766,18 +834,41 @@ class EngineWrapper {
 
 class generalWrapper {
     constructor() {
-        const tab = $E("#tab-general");
-        tab.querySelectorAll("input").forEach(elem => {
-            if (elem.type === "checkbox") elem.checked = backgroundPage.config.get(elem.id);
-            else elem.value = backgroundPage.config.get(elem.id);
-            elem.addEventListener("change", this.handleChange);
-        })
-    }
-    handleChange(evt) {
-        if (evt.target.type === "checkbox") backgroundPage.config.set(evt.target.id, evt.target.checked);
-        else backgroundPage.config.set(evt.target.id, parseInt(evt.target.value));
 
-        backgroundPage.config.save();
+    }
+}
+
+class downloadWrapper {
+    constructor() {
+
+        this.directories = backgroundPage.config.get("downloadDirectories");
+
+        const tab = document.querySelector("#tab-download");
+
+        eventUtil.attachEventS("#showDefaultDownloadDirectory", () => {
+            browser.downloads.showDefaultFolder();
+        })
+
+        const node = document.importNode(document.querySelector("#template-for-directory-entry").content, true);
+        const entry = node.querySelector(".directory-entry");
+
+        for (let i = 0; i < 8; i++) {
+            const cloned = entry.cloneNode(true);
+
+            const a = cloned.querySelector("a");
+            a.setAttribute("index", i);
+            a.addEventListener("click", (event) => this.onConfirmClick(event));
+
+            cloned.querySelector("input:nth-child(1)").value = browser.i18n.getMessage("DownloadDirectory", i);
+            cloned.querySelector("input:nth-child(2)").value = this.directories[i] || "";
+            tab.appendChild(cloned);
+        }
+
+    }
+    onConfirmClick(event) {
+        const index = event.target.getAttribute("index");
+        this.directories[index] = event.target.previousElementSibling.value;
+        backgroundPage.config.set("downloadDirectories", this.directories);
     }
 }
 
@@ -820,6 +911,9 @@ const tabs = {
         w = new generalWrapper();
         this._tabs.push(w);
 
+        w = new downloadWrapper();
+        this._tabs.push(w);
+
         w = new styleWrapper();
         this._tabs.push(w);
 
@@ -829,8 +923,23 @@ const tabs = {
 
         //do with i18n
         for (let elem of document.querySelectorAll("[i18n-id]")) {
-            elem.textContent = geti18nMessage('elem_' + elem.attributes['i18n-id'].value);
+            elem.innerHTML = geti18nMessage('elem_' + elem.attributes['i18n-id'].value);
         }
+
+        document.querySelectorAll("input[id]").forEach(elem => {
+            if (elem.type === "file") return;
+
+            if (elem.type === "checkbox") elem.checked = backgroundPage.config.get(elem.id);
+            else elem.value = backgroundPage.config.get(elem.id);
+
+            elem.addEventListener("change", (evt) => {
+                if (evt.target.type === "checkbox") backgroundPage.config.set(evt.target.id, evt.target.checked);
+                else if (evt.target.type === "number") backgroundPage.config.set(evt.target.id, parseInt(evt.target.value));
+                else backgroundPage.config.set(evt.target.id, evt.target.value);
+                backgroundPage.config.save();
+            });
+        })
+
     },
 
     navOnClick: function(event) {
@@ -862,12 +971,17 @@ browser.runtime.getBackgroundPage().then((page) => {
         const blob = new Blob([JSON.stringify(backgroundPage.config, null, 2)]);
         const url = URL.createObjectURL(blob);
         const date = new Date();
+
         browser.downloads.download({
             url: url,
             filename: `GlitterDrag-${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.json`,
             conflictAction: 'uniquify',
             saveAs: true
         });
+
+        setTimeout(() => {
+            URL.revokeObjectURL(url)
+        }, 3000);
     });
     eventUtil.attachEventS("#restore", () => {
         $E("#fileInput").click();
