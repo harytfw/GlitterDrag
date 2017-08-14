@@ -255,7 +255,7 @@ class ConfigClass {
         });
     }
     save() {
-        this.storageArea.set(this);
+        this.storageArea.set(JSON.parse(JSON.stringify(this)));
     }
     load(callback) {
         let promise = this.storageArea.get();

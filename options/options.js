@@ -28,6 +28,14 @@ const OPTION_TEXT_VALUE_TABLE = {
 const DIR_TEXT_VALUE_TABLE = {};
 for (let item of Object.keys(commons)) {
 
+    //排除
+    if (["urlPattern", "appName", "PLACE_HOLDER", "NEW_WINDOW", "DEFAULT_SEARCH_ENGINE", "DEFAULT_DOWNLOAD_DIRECTORY", "_DEBUG", ].includes(item)) {
+        continue;
+    }
+    if (/^TYPE_/.test(item)) {
+        continue;
+    }
+
     const obj = {
         text: geti18nMessage(item),
         value: commons[item]
