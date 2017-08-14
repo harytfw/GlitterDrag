@@ -232,7 +232,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_open_type": {
-        "message": "指定如何打开图像",
+        "message": "指定如何打开链接。图像链接 不可用时，会自动转换为 普通链接",
         "description": "tooltip on option"
     },
     "option_tooltip_search_type": {
@@ -240,7 +240,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_copy": {
-        "message": "指定需要复制的东西，文本、链接或图像。复制图像可能会有很多问题，谨慎使用",
+        "message": "指定需要复制的东西，文本、链接或图像。图像链接 不可用时，会自动转换为 普通链接。复制图像可能会有很多问题，谨慎使用。",
         "description": "tooltip on option"
     },
     "option_tooltip_allow": {
@@ -248,7 +248,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_download_type": {
-        "message": "指定需要下载的类型",
+        "message": "指定需要下载的类型。图像链接 不可用时，会自动转换为 普通链接",
         "description": "tooltip on option"
     },
     "option_tooltip_download_directory": {

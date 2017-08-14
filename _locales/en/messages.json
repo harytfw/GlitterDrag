@@ -234,7 +234,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_open_type": {
-        "message": "Specifies how image will be opened",
+        "message": "Specifies how to open a link. While Image's link is not available, it will convert to normal link automatically",
         "description": "tooltip on option"
     },
     "option_tooltip_search_type": {
@@ -242,7 +242,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_copy": {
-        "message": "Specifies what needs to be copied, like text, links, or images. Copying images may have a lot of problems, careful to use",
+        "message": "Specifies what needs to be copied, like text, links, or images. While Image's link is not available, it will convert to normal link automatically. Copying images may have a lot of problems, careful to use",
         "description": "tooltip on option"
     },
     "option_tooltip_allow": {
@@ -250,7 +250,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_download_type": {
-        "message": "Specifies what needs to be downloaded",
+        "message": "Specifies what needs to be downloaded. While Image's link is not available, it will convert to normal link automatically",
         "description": "tooltip on option"
     },
     "option_tooltip_download_directory": {
