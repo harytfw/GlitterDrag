@@ -3,5 +3,10 @@ node_js:
     - "8"
 sudo: false
 
+install:
+    - "npm install web-ext"
+
 script:
-    - "npm test"
+    - "web-ext build"
+
+
