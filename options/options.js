@@ -728,7 +728,7 @@ class EngineItemWrapper {
             <input type="text" title="${geti18nMessage('search_url_tooltip')}"></input>
             <a href="#" >&#10003</a>
             <a href="#" >&#10007</a>
-        `;
+        `; // TODO: Create elements by JavaScript DOM.
         this.nameInput = this.elem.children[0];
         eventUtil.attachEventT(this.nameInput, this.onchange, "change");
         this.urlInput = this.elem.children[1];
@@ -814,15 +814,16 @@ class EngineItemWrapper {
 class EngineWrapper {
     constructor(engineList) {
 
-        eventUtil.attachEventS("#builtin-engine>select", (event) => {
+        eventUtil.attachEventAll("#builtin-engine>select", (event) => {
             this.newItem({
                 name: event.target.selectedOptions[0].textContent,
                 url: event.target.value
             })
+            event.target.selectedIndex = 0; // Reset to group option for re-select to add this value again
         }, "change");
 
 
-        this.items = []; //
+        this.items = [];
 
         // this.onAdd = this.onAdd.bind(this);
         this.onButtonCallback = this.onButtonCallback.bind(this);

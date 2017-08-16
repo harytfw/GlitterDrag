@@ -84,7 +84,12 @@ const commons = {
 Object.freeze(commons);
 
 const eventUtil = {
-    attachEventS: function(selector = "body", func = () => {}, eventName = "click") {
+    attachEventAll: function (selector = "body", func = () => { }, eventName = "click") {
+        for (let el of document.querySelectorAll(selector)) {
+            this.attachEventT(el, func, eventName);
+        }
+    },
+    attachEventS: function (selector = "body", func = () => { }, eventName = "click") {
         this.attachEventT($E(selector), func, eventName);
     },
     attachEventT: function(target = document, func = () => {}, eventName = "click") {
