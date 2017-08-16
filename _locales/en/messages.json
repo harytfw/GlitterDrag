@@ -289,6 +289,14 @@
         "message": "The built-in search engines that provided by addon, you need to click save button yourself after select one of engines: ",
         "description": "Helper text on Options - Search Template"
     },
+    "elem_SearchTemplateClasses_General": {
+        "message": "通用",
+        "description": "Select box classes on Options - Search Template"
+    },
+    "elem_SearchTemplateClasses_Chinese": {
+        "message": "中文",
+        "description": "Select box classes on Options - Search Template"
+    },
     "elem_Backup": {
         "message": "Backup",
         "description": "Element on Options page"

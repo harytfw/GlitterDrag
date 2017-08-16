@@ -287,6 +287,14 @@
         "message": "这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：",
         "description": "Helper text on Options - Search Template"
     },
+    "elem_SearchTemplateClasses_General": {
+        "message": "通用",
+        "description": "Select box classes on Options - Search Template"
+    },
+    "elem_SearchTemplateClasses_Chinese": {
+        "message": "中文",
+        "description": "Select box classes on Options - Search Template"
+    },
     "elem_Backup": {
         "message": "备份配置",
         "description": "Element on Options page"
