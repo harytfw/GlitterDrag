@@ -138,7 +138,7 @@ const $E = (s = "") => {
 
 const geti18nMessage = (strName = "") => {
     const message = browser.i18n.getMessage(strName);
-    if (message === "" || message === "??") {
+    if (message === "") {
         return strName;
     }
     return message;
