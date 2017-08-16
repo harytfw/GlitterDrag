@@ -948,7 +948,9 @@ class styleWrapper {
         }
 
         eventUtil.attachEventS("#saveStyle", () => {
-            backgroundPage.config.set("style", styleArea.value);
+            backgroundPage.config.set("style", styleArea.value); // TODO: promise?
+            document.querySelector("#saveStyle").textContent = geti18nMessage('elem_SaveDone');
+            setTimeout(() => { document.querySelector("#saveStyle").textContent = geti18nMessage('elem_SaveStyle'); }, 2000);
         })
     }
 }

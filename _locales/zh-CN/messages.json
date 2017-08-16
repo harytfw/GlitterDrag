@@ -380,5 +380,9 @@
     "elem_SaveStyle": {
         "message": "保存样式",
         "description": "Element on Options page"
+    },
+    "elem_SaveDone": {
+        "message": "已保存!",
+        "description": "Element on Options page"
     }
 }

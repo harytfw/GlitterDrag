@@ -181,3 +181,8 @@ a:visited {
 #engine-items>div>a {
     margin-right: 1em;
 }
+
+#styleContent {
+    height: 50vh;
+    width: 80vw;
+}
