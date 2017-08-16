@@ -718,14 +718,14 @@ class OuterActionsWrapper {
 }
 
 class EngineItemWrapper {
-    constructor(val, callback) {
+    constructor(val, callback, saved) {
         this.callback = callback;
         this.onchange = this.onchange.bind(this);
 
         this.elem = document.createElement("div");
         this.elem.innerHTML = `
-            <input type="text" title="${geti18nMessage("search_name_tooltip")}"></input>
-            <input type="text" title="${geti18nMessage('search_url_tooltip')}"></input>
+            <input class="search-name-input" type="text" title="${geti18nMessage("search_name_tooltip")}"></input>
+            <input class="search-url-input" type="text" title="${geti18nMessage('search_url_tooltip')}"></input>
             <a href="#" >&#10003</a>
             <a href="#" >&#10007</a>
         `; // TODO: Create elements by JavaScript DOM.
@@ -741,6 +741,10 @@ class EngineItemWrapper {
 
         [this.nameInput, this.urlInput, this.confirm, this.remove].forEach(t => this.elem.appendChild(t));
         this.value = val;
+        if (!saved) {
+            this.elem.className = 'unsaved';
+            //this.setAttribute('class', 'unsaved');
+        }
     }
     onConfirmClick() {
         let noEmpty = true;
@@ -751,7 +755,7 @@ class EngineItemWrapper {
             }
             else {
                 this.addAcceptBorder(input);
-                //continue iteratorion
+                //continue iteration
                 return true;
             }
         });
@@ -818,7 +822,7 @@ class EngineWrapper {
             this.newItem({
                 name: event.target.selectedOptions[0].textContent,
                 url: event.target.value
-            })
+            }, false)
             event.target.selectedIndex = 0; // Reset to group option for re-select to add this value again
         }, "change");
 
@@ -855,25 +859,27 @@ class EngineWrapper {
         this.refreshItems(backgroundPage.config.get("Engines"));
     }
     onAdd() {
-        this.newItem();
+        this.newItem({}, false);
     }
     refreshItems(list) {
-        this.removeItems();
-        list.forEach(s => this.newItem(s));
+        this.clearItems();
+        list.forEach(s => this.newItem(s, true));
     }
-    removeItems() {
+    clearItems() {
         this.items.forEach(item => {
             this.itemsDiv.removeChild(item.elem);
-            item = null;
         });
         this.items = [];
     }
 
-    newItem(val = {
-        name: "",
-        url: ""
-    }) {
-        let item = new EngineItemWrapper(val, this.onButtonCallback);
+    newItem(val, saved = false) {
+        if (val.length === 0) {
+            val = {
+                name: "",
+                url: ""
+            }
+        }
+        let item = new EngineItemWrapper(val, this.onButtonCallback, saved);
         this.items.push(item);
         item.appendTo(this.itemsDiv);
     }

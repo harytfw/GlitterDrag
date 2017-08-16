@@ -186,3 +186,14 @@ a:visited {
     height: 50vh;
     width: 80vw;
 }
+
+#engine-items .unsaved {
+    background-color: yellow
+}
+
+.search-name-input {
+    width: 20%
+}
+.search-url-input {
+    width: 60%
+}
