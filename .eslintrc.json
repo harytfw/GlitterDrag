@@ -19,7 +19,11 @@
         "initForm": false,
         "initSearcheTab": false,
         "initGeneral": false,
-        "checkDragTargetType": false
+        "checkDragTargetType": false,
+        "DEFAULT_CONFIG":false,
+        "eventUtil":false,
+        "typeUtil":false,
+        "$E":false
     },
     "rules": {
         "no-console": 0,
