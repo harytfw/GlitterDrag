@@ -281,6 +281,10 @@
         "message": "Add",
         "description": "Add button on Options - Search Template"
     },
+    "elem_SavebtnOnEngines": {
+        "message": "Save",
+        "description": "Save button on Options - Search Template"
+    },
     "elem_BuiltinEngineHelperText": {
         "message": "The built-in search engines that provided by addon, you need to click save button yourself after select one of engines: ",
         "description": "Helper text on Options - Search Template"

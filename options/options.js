@@ -676,7 +676,7 @@ class Wrapper {
     callback() {
         //当这个类第一初始化时，会调用回调完成第一次赋值，但是我们不想让数据又保存一次，
         //那么使用this.DOSAVE来表明是否需要保存
-        //TODO: 新增选项：选项发生修改时自动保存 或 手动保存
+        //TODO: 新增选项：选项发生修改时自动保存
         if (this.DOSAVE) this.save();
     }
     collect() {
@@ -686,7 +686,7 @@ class Wrapper {
             linkAction: this.child_link.collect()
         }
     }
-    collect1() {
+    collect1() { // TODO: better name
         return {
             textAction: this.child_text.collectControlSelect(),
             imageAction: this.child_image.collectControlSelect(),
@@ -724,67 +724,36 @@ class EngineItemWrapper {
 
         this.elem = document.createElement("div");
         this.elem.innerHTML = `
-            <input class="search-name-input" type="text" title="${geti18nMessage("search_name_tooltip")}"></input>
-            <input class="search-url-input" type="text" title="${geti18nMessage('search_url_tooltip')}"></input>
-            <a href="#" >&#10003</a>
-            <a href="#" >&#10007</a>
-        `; // TODO: Create elements by JavaScript DOM.
-        this.nameInput = this.elem.children[0];
+            <a class="remove-button" href="#">&#10007</a>
+            <input class="search-name-input" type="text"></input>
+            <input class="search-url-input" type="text"></input>
+        `; // TODO: Better if create elements by JavaScript DOM?
+        this.nameInput = this.elem.querySelector('.search-name-input');
+        this.nameInput.title = geti18nMessage("search_name_tooltip");
+        this.nameInput.placeholder = geti18nMessage("search_name_tooltip"); // Did not see the need for separate strings
         eventUtil.attachEventT(this.nameInput, this.onchange, "change");
-        this.urlInput = this.elem.children[1];
+
+        this.urlInput = this.elem.querySelector('.search-url-input');
+        this.urlInput.title = geti18nMessage("search_url_tooltip");
+        this.urlInput.placeholder = geti18nMessage("search_url_tooltip");
         eventUtil.attachEventT(this.urlInput, this.onchange, "change");
 
-        this.confirm = this.elem.children[2];
-        eventUtil.attachEventT(this.confirm, () => this.onConfirmClick());
-        this.remove = this.elem.children[3];
+        this.remove = this.elem.querySelector('.remove-button');
         eventUtil.attachEventT(this.remove, () => this.onRemoveClick());
 
-        [this.nameInput, this.urlInput, this.confirm, this.remove].forEach(t => this.elem.appendChild(t));
+        [this.remove, this.nameInput, this.urlInput].forEach(t => this.elem.appendChild(t));
         this.value = val;
-        if (!saved) {
-            this.elem.className = 'unsaved';
-            //this.setAttribute('class', 'unsaved');
-        }
-    }
-    onConfirmClick() {
-        let noEmpty = true;
-        [this.nameInput, this.urlInput].every(input => {
-            if (input.value.length === 0) {
-                this.addWarningBorder(input);
-                return noEmpty = false;
-            }
-            else {
-                this.addAcceptBorder(input);
-                //continue iteration
-                return true;
-            }
-        });
-        if (noEmpty) {
-            //every thing is ok,no input field is empty.
-            this.callback();
+        if (saved) {
+            this.elem.classList.add("saved");
         }
     }
 
     onRemoveClick() {
-            this.callback(true, this);
-        }
-        //addWarnBorder
-        //addAcceptBorder
+        this.callback(true, this);
+    }
 
-    addAcceptBorder(input) {
-        input.className = "accept";
-        setTimeout(() => {
-            input.className = "";
-        }, 1200);
-    }
-    addWarningBorder(input) {
-        input.className = "warning";
-        setTimeout(() => {
-            input.className = "";
-        }, 1200);
-    }
     onchange() {
-
+        this.elem.classList.remove("saved"); // TODO: better if highlight the changed input only?
     }
     get name() {
         return this.nameInput.value;
@@ -835,31 +804,64 @@ class EngineWrapper {
         this.buttonsDiv = document.querySelector("#engine-buttons");
         this.itemsDiv = document.querySelector("#engine-items");
 
-        let refresh = this.buttonsDiv.firstElementChild;
-        refresh.onclick = () => this.onRefresh();
-        // refresh.textContent = browser.i18n.getMessage('RefreshbtnOnEngines');
+        let refreshbtn = this.buttonsDiv.querySelector("#RefreshbtnOnEngines");
+        refreshbtn.onclick = () => this.onRefresh();
+        // refreshbtn.textContent = browser.i18n.getMessage('RefreshbtnOnEngines');
 
-        let add = this.buttonsDiv.lastElementChild;
-        add.onclick = () => this.onAdd();
-        // add.textContent = browser.i18n.getMessage('AddbtnOnEngines');
+        let addbtn = this.buttonsDiv.querySelector("#AddbtnOnEngines");
+        addbtn.onclick = () => this.onAdd();
+        // addbtn.textContent = browser.i18n.getMessage('AddbtnOnEngines');
+
+        let savebtn = this.buttonsDiv.querySelector("#SavebtnOnEngines");
+        savebtn.onclick = () => this.onButtonCallback();
+        // savebtn.textContent = browser.i18n.getMessage('SavebtnOnEngines');
+
         this.refreshItems(engineList);
-
     }
-    onButtonCallback(isRemove, item) {
+    onButtonCallback(isRemove, item) { // TODO: better name
         if (isRemove) {
             // console.log(item);
             this.items = this.items.filter((v) => v !== item);
             this.itemsDiv.removeChild(item.elem);
+            // TODO: Leave a text line or allow undo, or highlight the save button
+        } else { // onSaveAllClick
+            let hasError = false;
+            for (let input of document.querySelectorAll('#engine-items input')) {
+                if (input.value.length > 0) {
+                    /*input.classList.add("accept");
+                    setTimeout(() => {
+                        input.classList.remove("accept");
+                    }, 1200);*/  // May be misleading, it actually has not been saved if there is any error.
+                }
+                else {
+                    input.classList.add("warning");
+                    setTimeout(() => {
+                        input.classList.remove("warning");
+                    }, 1200);
+                    hasError = true;
+                }
+            }
+            // TODO: checking in each saving
+            if (hasError) {
+                return;
+            }
+            for (let item of document.querySelectorAll('#engine-items>div')) {
+                item.classList.add("saved");
+            } // TODO: Only saves successfully, warnings wrong.
         }
+
         backgroundPage.config.set("Engines", this.collect());
-        backgroundPage.config.save();
+        backgroundPage.config.save(); // TODO: Promise
     }
 
     onRefresh() {
         this.refreshItems(backgroundPage.config.get("Engines"));
     }
     onAdd() {
-        this.newItem({}, false);
+        this.newItem({
+            name: "",
+            url: ""
+        }, false);
     }
     refreshItems(list) {
         this.clearItems();
@@ -873,12 +875,6 @@ class EngineWrapper {
     }
 
     newItem(val, saved = false) {
-        if (val.length === 0) {
-            val = {
-                name: "",
-                url: ""
-            }
-        }
         let item = new EngineItemWrapper(val, this.onButtonCallback, saved);
         this.items.push(item);
         item.appendTo(this.itemsDiv);
