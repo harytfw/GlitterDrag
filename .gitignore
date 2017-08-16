@@ -1,3 +1,4 @@
-.vscode
 run-ext.ps1
 *.zip
+launch.json
+node_modules

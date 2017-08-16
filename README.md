@@ -3,6 +3,6 @@
 
 # GlitterDrag（闪耀拖拽）
 
-An Firefox extension for drag behaviors, with WebExtension.
+An extension for drag behaviors, with WebExtension.
 
-兼容多进程的Firefox拖拽扩展
+兼容多进程的拖拽扩展

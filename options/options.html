@@ -25,48 +25,107 @@
     <div id="container">
         <section id="tabs">
             <nav>
-                <a id="_debug" nav-id="0" i18n-id="Debug" style="color:crimson;display:none" class="nav-a" href="#">调试</a>
-                <a class="nav-a nav-active" nav-id="1"i18n-id="Actions" href="#">动作</a>
-                <a class="nav-a" nav-id="2" i18n-id="SearchTemplate" href="#">搜索模板</a>
-                <a class="nav-a" nav-id="3" i18n-id="General" href="#">常规</a>
-                <a class="nav-a" nav-id="4" i18n-id="Styles" href="#">样式</a>
+                <a id="_debug" nav-id="1" i18n-id="Debug" style="color:crimson;display:none" class="nav-a" href="#">调试</a>
+                <a class="nav-a nav-active" nav-id="2" i18n-id="Actions" href="#">动作</a>
+                <a class="nav-a" nav-id="3" i18n-id="SearchTemplate" href="#">搜索模板</a>
+                <a class="nav-a" nav-id="4" i18n-id="General" href="#">常规</a>
+                <a class="nav-a" nav-id="5" i18n-id="Download" href="#">下载</a>
+                <a class="nav-a" nav-id="6" i18n-id="Style" href="#">样式</a>
             </nav>
             <ul style="list-style:none">
-                <li class="tab-content" id="content-0">
+                <li class="tab-content">
                     <div>
                         <br>
                         <a href="https://baidu.com/" i18n-id="Baidu">百度</a>
                         <a href="https://bing.com/" i18n-id="Bing">Bing</a>
                         <a href="https://www.mozilla.org/firefox/new/">Firefox</a>
                         <br>
-                        <p>Mozilla Firefox (or simply Firefox) is a free and open-source web browser developed by the Mozilla Foundation and its subsidiary the Mozilla Corporation.</p>
+                        <p>The quick brown fox jumps over the lazy dog</p>
                         <br>
-                        <img src="./../image/logo.png" alt="Firefox" style="background-color: rgb(147, 147, 147);border-radius: 4px;">
+                        <a href="blank.html">
+                            <image src="../Drag.png" style="width: 128px;height:128px"></image>
+                        </a>
                         <br>
                         <br>
+                        <image src="../Drag.png" style="width: 64px;height:64px;background-color:aliceblue"></image>
                         <textarea id="logArea" rows="10" cols="80"></textarea>
                     </div>
                 </li>
-                <li class="tab-content tab-active" id="content-1"></li>
-                <li class="tab-content" id="content-2">
-                    <p i18n-id="PlaceholderTip">用 %s 替代链接里的关键词</p>
+                <li class="tab-content tab-active"></li>
+                <li class="tab-content">
+                    <p i18n-id="PlaceholderTip">用 %s 替代链接里的关键词，输入栏不能为空，名称不应该重复</p>
+                    <div id="builtin-engine">
+                        <span i18n-id="BuiltinEngineHelperText">这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：</span>
+                        <select style="display:inline-block">
+                            <option selected value="https://www.google.com/search?q=%s">Google Search</option>
+                            <option value="https://www.bing.com/search?q=%s">Bing Search</option>
+                            <option value="https://search.yahoo.com/search;?p=%s">Yahoo Search</option>
+                            <option value="https://duckduckgo.com/?q=%s&ia=web">DuckDuckGo Search</option>
+                            <option value="https://www.qwant.com/?q=%s&t=all">Qwant Search</option>
+                            <option value="https://www.amazon.com/s/ref=nb_sb_noss?field-keywords=%s">Amazon Search</option>
+                            <option value="https://www.youtube.com/results?search_query=%s">Youtube Search</option>
+                            <option value="https://www.yandex.com/search/?text=%s">Yandex Search</option>
+                            <option value="https://zh.wikipedia.org/wiki/%s">wikipedia</option>
+                            <option value="https://www.baidu.com/baidu?wd=%s">百度搜索</option>
+                            <option value="https://www.so.com/s?q=%s">360搜索</option>
+                            <option value="http://www.acfun.cn/search/#query=%s">Acfun搜索</option>
+                            <option value="https://search.bilibili.com/all?keyword=%s">哔哩哔哩搜索</option>
+                            <option value="http://www.soku.com/search_video/q_%s">优酷搜索</option>
+                            <option value="https://www.zhihu.com/search?q=%s">知乎搜索</option>
+                            <option value="https://music.163.com/#/search/m/?s=%s">网易云音乐搜索</option>
+                        </select>
+                    </div>
+                    <div id="browser-engine" style="display:none">
+                        <span i18n-id="">这些是浏览器自身的搜索引擎：</span>
+                        <select style="display:inline-block">
+                             <option value="">000</option>
+                        </select>
+                    </div>
+                    <br>
                     <div id="engine-buttons">
                         <button i18n-id="RefreshbtnOnEngines">刷新</button>
                         <button i18n-id="AddbtnOnEngines">添加</button>
                     </div>
+                    <br>
                     <div id="engine-items"></div>
                 </li>
-                <li class="tab-content" id="content-3">
-                    <input type="checkbox" id="enablePrompt"><label for="enablePrompt" i18n-id="ShowActionTip">显示动作提示</label>
+                <li class="tab-content" id="tab-general">
+                    <input type="checkbox" id="enablePrompt">
+                    <label for="enablePrompt" i18n-id="ShowActionTip">显示动作提示</label>
                     <br>
-                    <input type="checkbox" id="enableIndicator"><label for="enableIndicator" i18n-id="EnableDistanceTip">启用距离指示</label>
+                    <input type="checkbox" id="enableIndicator">
+                    <label for="enableIndicator" i18n-id="EnableDistanceTip">启用距离指示</label>
                     <br>
-                    <input type="checkbox" id="enableStyle"><label for="enableStyle" i18n-id="EnableStyle">允许使用自定义样式></label>
+                    <label for="triggeredDistance" i18n-id="DistancePx">触发距离（px）</label>
+                    <input type="text" id="triggeredDistance">
                     <br>
-                    <label for="triggeredDistance" i18n-id="DistancePx">触发距离（px）</label><input type="text" id="triggeredDistance">
+                    <input type="checkbox" id="enableTimeoutCancel">
+                    <label for="enableTimeoutCancel" i18n-id="EnableTimeoutCancel">启用超时取消></label>
+                    <br>
+                    <label for="timeoutCancel" i18n-id="TimeoutCancel">超时取消时间（ms）</label>
+                    <input type="text" id="timeoutCancel">
                 </li>
-                <li class="tab-content" id="content-4">
-                    <textarea id="styleContent" ></textarea>
+                <li class="tab-content" id="tab-download">
+                    <button i18n-id="ShowDefaultDownloadDirectory" id="showDefaultDownloadDirectory">打开浏览器的默认下载目录</button>
+                    <h4 i18n-id="SettingDownloadDirectory">设置下载目录</h4>
+                    <p i18n-id="SettingDownloadDirectoryHelperText">
+                    </p>
+                    <!--8个  -->
+                    <template id="template-for-directory-entry">
+                        <div class="directory-entry" entry-index="0">
+                            <input type="text" disabled></input>
+                            <input type="text"></input>
+                            <a href="#" >&#10003</a>
+                        </div>
+                    </template>
+
+                </li>
+                <li class="tab-content" id="tab-style">
+
+                    <input type="checkbox" id="enableStyle">
+                    <label for="enableStyle" i18n-id="EnableStyle">允许使用自定义样式></label>
+                    <br>
+                    <textarea id="styleContent"></textarea>
                     <button id="saveStyle" i18n-id="SaveStyle"></button>
                 </li>
             </ul>

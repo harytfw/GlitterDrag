@@ -99,6 +99,10 @@
         "message": "Lower Right",
         "description": "Direction"
     },
+    "DIR_OUTER": {
+        "message": "Outer",
+        "description": "Direction"
+    },
     "textType": {
         "message": "Text",
         "description": "An section of Options"
@@ -110,6 +114,10 @@
     "imageType": {
         "message": "Images",
         "description": "An section of Options"
+    },
+    "TAB_CUR": {
+        "message": "Current",
+        "description": "Position of tab opened."
     },
     "TAB_LAST": {
         "message": "Last",
@@ -135,8 +143,25 @@
         "message": "Background",
         "description": "The tab opened in background."
     },
+    "OPEN_LINK": {
+        "message": "Link",
+        "description": ""
+    },
+    "OPEN_IMAGE": {
+        "message": "Image",
+        "description": ""
+    },
+    "OPEN_IMAGE_LINK": {
+        "message": "Image's link",
+        "description": ""
+    },
     "SEARCH_LINK": {
         "message": "Link",
+        "description": "Search action"
+    },
+
+    "SEARCH_IMAGE_LINK": {
+        "message": "Image's link",
         "description": "Search action"
     },
     "SEARCH_TEXT": {
@@ -155,8 +180,36 @@
         "message": "Link",
         "description": "Copy action"
     },
+    "COPY_IMAGE_LINK": {
+        "message": "Image's link",
+        "description": ""
+    },
     "COPY_IMAGE": {
         "message": "Image",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_TEXT": {
+        "message": "Text",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_LINK": {
+        "message": "Link",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE_LINK": {
+        "message": "Image's link",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE": {
+        "message": "Image",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_SAVEAS_YES": {
+        "message": "Save as",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_SAVEAS_NO": {
+        "message": "Don't save as",
         "description": "Copy action"
     },
     "option_page_title": {
@@ -180,16 +233,32 @@
         "message": "Call the search engine, the default call Google",
         "description": "tooltip on option"
     },
+    "option_tooltip_open_type": {
+        "message": "Specifies how to open a link. While Image's link is not available, it will convert to normal link automatically",
+        "description": "tooltip on option"
+    },
     "option_tooltip_search_type": {
         "message": "Need to search for something, like text, link, etc.",
         "description": "tooltip on option"
     },
     "option_tooltip_copy": {
-        "message": "Specifies what needs to be copied, like text, links, or images. Copying images may have a lot of problems, careful to use",
+        "message": "Specifies what needs to be copied, like text, links, or images. While Image's link is not available, it will convert to normal link automatically. Copying images may have a lot of problems, careful to use",
         "description": "tooltip on option"
     },
     "option_tooltip_allow": {
-        "message": "",
+        "message": "Limit direction to drag",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_download_type": {
+        "message": "Specifies what needs to be downloaded. While Image's link is not available, it will convert to normal link automatically",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_download_directory": {
+        "message": "Specifies the directory to which the file is saved",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_download_saveas": {
+        "message": "Needs to save the file as ... ?",
         "description": "tooltip on option"
     },
     "search_name_tooltip": {
@@ -211,6 +280,10 @@
     "elem_AddbtnOnEngines": {
         "message": "Add",
         "description": "Add button on Options - Search Template"
+    },
+    "elem_BuiltinEngineHelperText": {
+        "message": "The built-in search engines that provided by addon, you need to click save button yourself after select one of engines: ",
+        "description": "Helper text on Options - Search Template"
     },
     "elem_Backup": {
         "message": "Backup",
@@ -253,23 +326,61 @@
         "description": "Element on Options page"
     },
     "elem_ShowActionTip": {
-        "message": "Show Actions tip",
+        "message": "Show actions tip",
         "description": "Element on Options page"
     },
     "elem_EnableDistanceTip": {
-        "message": "Enable Distance tip",
+        "message": "Enable distance tip",
         "description": "Element on Options page"
     },
     "elem_DistancePx": {
         "message": "Trigger distance (px)",
         "description": "Element on Options page"
     },
-    "elem_Styles":{
-        "message":"Styles",
+    "elem_EnableTimeoutCancel": {
+        "message": "Enable timeout cancel",
+        "description": "Element on Options page"
+    },
+    "elem_TimeoutCancel": {
+        "message": "Time to cancel: ",
+        "description": "Element on Options page"
+    },
+    "elem_EnableStyle": {
+        "message": "Enable customize style",
+        "description": "Element on Options page"
+    },
+    "elem_Download": {
+        "message": "Download",
+        "description": "Element on Options page"
+    },
+    "elem_ShowDefaultDownloadDirectory": {
+        "message": "Show default download directory",
+        "description": "Element on Options page"
+    },
+    "elem_SettingDownloadDirectory": {
+        "message": "Setting download directory",
+        "description": "Element on Options page"
+    },
+    "DownloadDirectory": {
+        "message": "DL Dir $NUM$",
+        "description": "Element on Options page",
+        "placeholders": {
+            "num": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
+    },
+    "elem_SettingDownloadDirectoryHelperText": {
+        "message": "The set directory can only be used as the subdirectory of the <b> browser's default download directory </b>, and cannot use the absolute path. The second column is the directory you can set. For example: \"<br> image/\" said the final download directory \"<b>default download directory</b>/image/\". Blank is <b> the default download directory </b>. second-level directory need to manually create",
+        "description": "Element on Options page"
+    },
+    "elem_Style": {
+        "message": "Style",
         "description": "Element on Options page"
     },
     "elem_SaveStyle": {
-        "message": "Save Style",
+        "message": "Save style",
         "descripttion": "Element on Options page"
     }
 }

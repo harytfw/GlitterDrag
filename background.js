@@ -1,4 +1,15 @@
 var supportCopyImage = false;
+
+function createBlobObjectURLForText(text = "") {
+    let blob = new window.Blob([text], {
+        type: "text/plain"
+    });
+    let url = window.URL.createObjectURL(blob);
+    setTimeout((u) => window.URL.revokeObjectURL(u), 10000, url);
+    return url;
+}
+
+
 class ExecutorClass {
     constructor() {
         this.data = {
@@ -10,9 +21,6 @@ class ExecutorClass {
         this.action = {
 
         };
-
-        //TODO: switch to the old tab when  closing the tab that created via openTab(). 
-        // this.idOfTab = null;
 
     }
     DO(m) {
@@ -26,27 +34,72 @@ class ExecutorClass {
         }
         switch (this.action.act_name) {
             case commons.ACT_OPEN:
-                this.openURL(this.data.selection);
+                if (this.data.actionType === "linkAction" && this.action.open_type === commons.OPEN_IMAGE_LINK && this.data.imageLink !== "") {
+                    this.openURL(this.data.imageLink)
+                }
+                else {
+                    this.openURL(this.data.selection)
+                }
                 break;
             case commons.ACT_COPY:
-                this.copy();
+                switch (this.action.copy_type) {
+                    case commons.COPY_IMAGE_LINK:
+                        if (this.data.actionType === "linkAction" && this.data.imageLink !== "") {
+                            this.copy(this.data.imageLink);
+                        }
+                        else {
+                            this.copy(this.data.selection);
+                        }
+                        break;
+                    case commons.COPY_IMAGE:
+                        if (this.data.actionType === "linkAction" && this.data.imageLink !== "") {
+                            sendImageToNativeBySrc(this.data.imageLink);
+                        }
+                        else {
+                            sendImageToNativeBySrc(this.data.selection);
+                        }
+                        break;
+                    case commons.COPY_TEXT:
+                        this.copy(this.data.textSelection);
+                        break;
+                    case commons.COPY_LINK:
+                        this.copy(this.data.selection)
+                        break;
+                }
                 break;
             case commons.ACT_SEARCH:
-                if (this.action.search_type === commons.SEARCH_LINK) {
-                    this.searchText(this.data.selection);
+                if (this.data.actionType === "linkAction") {
+                    if (this.action.search_type === commons.SEARCH_IMAGE_LINK && this.data.imageLink !== "") {
+                        this.searchText(this.data.imageLink);
+                    }
+                    else if (this.action.search_type === commons.SEARCH_TEXT && this.data.textSelection !== "") {
+                        this.searchText(this.data.textSelection);
+                    }
+                    else {
+                        this.searchText(this.data.selection);
+                    }
                 }
-                // this.data.selection is image's url
-                // TODO: how to get the ALT attribute or event.
-                /*else if (this.action.search_type === commons.SEARCH_IMAGE) {
-                    console.dir(e);
-                }*/
-                else {
+                else if (this.action.search_type === commons.SEARCH_TEXT) {
                     this.searchText(this.data.textSelection);
+                }
+                else {
+                    this.searchText(this.data.selection);
                 }
                 break;
             case commons.ACT_DL:
-                this.downloadImage(this.data.selection);
+                if (this.data.actionType === "linkAction" && this.action.download_type === commons.DOWNLOAD_IMAGE_LINK && this.data.imageLink !== "") {
+                    this.download(this.data.imageLink);
+                }
+                else if (this.action.download_type === commons.DOWNLOAD_TEXT) {
+                    const url = createBlobObjectURLForText(this.data.textSelection);
+                    const date = new Date();
+                    this.download(url, `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.txt`);
+                }
+                else {
+                    this.download(this.data.selection);
+                }
                 break;
+
             case commons.ACT_TRANS:
                 break;
         }
@@ -76,7 +129,9 @@ class ExecutorClass {
         browser.tabs.query({}).then(tabs => {
             for (let tab of tabs) {
                 if (tab.active === true) {
-                    if (this.action.tab_pos == commons.TAB_CUR) browser.tabs.update(tab.id, { url: url });
+                    if (this.action.tab_pos == commons.TAB_CUR) browser.tabs.update(tab.id, {
+                        url: url
+                    });
                     else {
                         browser.tabs.create({
                             active: this.action.tab_active,
@@ -117,12 +172,21 @@ class ExecutorClass {
         }
     }
 
-    copy() {
+    copy(data) {
         //发送给指定的tab
-        const sended = { command: "copy", copy_type: this.action.copy_type };
+        const sended = {
+            command: "copy",
+            copy_type: this.action.copy_type,
+            data,
+        };
         let portName = this.data.sendToOptions ? "sendToOptions" : "sendToContentScript";
-        browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
-            let port = browser.tabs.connect(tabs[0].id, { name: portName });
+        browser.tabs.query({
+            currentWindow: true,
+            active: true
+        }, (tabs) => {
+            let port = browser.tabs.connect(tabs[0].id, {
+                name: portName
+            });
             port.postMessage(sended);
         });
     }
@@ -142,6 +206,38 @@ class ExecutorClass {
         });
     }
 
+
+    randomString(length = 8) {
+        //https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
+        const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let result = '';
+        for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+        return result;
+    }
+    download(url, filename = "") {
+        let opt = {
+            url,
+            saveAs: this.action.download_saveas
+        };
+        const directories = config.get("downloadDirectories");
+        if (this.action.download_type !== commons.DOWNLOAD_TEXT) {
+
+            let pathname = new URL(url).pathname;
+            let parts = pathname.split("/");
+            if (parts[parts.length - 1] === "" && filename === "") {
+                //把文件名赋值为8个随机字符
+                //扩展名一定是html吗？
+                filename = this.randomString() + ".html";
+            }
+            else if (filename === "") {
+                filename = parts[parts.length - 1];
+            }
+        }
+        opt.filename = directories[this.action.download_directory] + filename;
+
+        console.log(opt.filename);
+        browser.downloads.download(opt);
+    }
     translateText(text) {}
 
 }
@@ -154,10 +250,12 @@ class ConfigClass {
         this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
     }
     clear(callback) {
-        this.storageArea.clear().then(callback, () => {}, (e) => { console.error(e) });
+        this.storageArea.clear().then(callback, () => {}, (e) => {
+            console.error(e)
+        });
     }
     save() {
-        this.storageArea.set(this);
+        this.storageArea.set(JSON.parse(JSON.stringify(this)));
     }
     load(callback) {
         let promise = this.storageArea.get();
@@ -178,7 +276,9 @@ class ConfigClass {
                     this[key1] = DEFAULT_CONFIG[key1];
                 }
             }
-        }, (e) => { console.error(e) });
+        }, (e) => {
+            console.error(e)
+        });
     }
     get(key, callback) {
         if (this[key] === undefined) this[key] = DEFAULT_CONFIG[key];
@@ -195,14 +295,14 @@ class ConfigClass {
         this[key] = val;
     }
     getAct(type, dir) {
-        const r = this.Actions[type][dir];
-        return r ? r : DEFAULT_CONFIG.Actions[type][dir];
-    }
-    // setAct(type, dir, act) {
-    //     if (act instanceof ActClass) {
-    //         this.Actions[type][dir] = act;
-    //     }
-    // }
+            const r = this.Actions[type][dir];
+            return r ? r : DEFAULT_CONFIG.Actions[type][dir];
+        }
+        // setAct(type, dir, act) {
+        //     if (act instanceof ActClass) {
+        //         this.Actions[type][dir] = act;
+        //     }
+        // }
     getSearchURL(name) {
         let defaultUrl = browser.i18n.getMessage('default_search_url');
         if (defaultUrl === "" || defaultUrl === "??") {
@@ -308,7 +408,9 @@ function connected(port) {
         port.postMessage(JSON.stringify(config));
         //自定义样式
         if (config.get("enableStyle") === true) {
-            browser.tabs.insertCSS({ code: config.get("style") });
+            browser.tabs.insertCSS({
+                code: config.get("style")
+            });
         }
     }
 }

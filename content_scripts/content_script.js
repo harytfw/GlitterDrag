@@ -78,6 +78,36 @@ class Indicator {
         this.box.style.display = "none";
     }
 }
+
+// class CaptureZone {
+//     constructor() {
+//         this.textarea = document.createElement("textarea");
+//         this.textarea.setAttribute("style", `
+//             border: none;
+//             width: 0px;
+//             height: 0px;
+//             position: fixed;
+//             left: 0px;
+//             top: 0px;
+//             z-index: 9999;
+//             opacity: 0;
+//         `);
+//         document.body.appendChild(this.textarea);
+
+//     }
+//     maximization() {
+//         this.textarea.style.width = "100%";
+//         this.textarea.style.height = "100%";
+//     }
+//     minimize() {
+//         this.textarea.style.width = "0px";
+//         this.textarea.style.height = "0px";
+//     }
+//     getText() {
+//         return this.textarea.value;
+//     }
+// }
+
 class DragClass {
     constructor(elem) {
 
@@ -99,10 +129,15 @@ class DragClass {
 
 
         this.selection = "";
+        this.imageLink = "";
+
         this.targetElem = null;
+        this.originalTargetElem = null;
+
         this.targetType = commons.TYPE_UNKNOWN;
         this.actionType = "textAction";
         this.direction = commons.DIR_U;
+
         this.distance = 0;
         this.startPos = {
             x: 0,
@@ -112,14 +147,22 @@ class DragClass {
             x: 0,
             y: 0
         };
+        this.timeoutId = 0;
         this.promptBox = null;
         this.indicatorBox = null;
+
+        // this.captureZone = new CaptureZone();
+        this.isFromOuter = false;
+
         this.isFirstRender = true;
+
+
     }
 
     post() {
         let sel = ""; //选中的数据,文本，链接
         let text = ""; //选中的文本，跟上面的可能相同可能不同
+        let imageLink = ""; //当图像是超链接保存超链接
         switch (this.targetType) {
             case commons.TYPE_TEXT:
             case commons.TYPE_TEXT_URL:
@@ -133,6 +176,11 @@ class DragClass {
                 sel = this.targetElem.href;
                 text = this.targetElem.textContent;
                 break;
+            case commons.TYPE_ELEM_A_IMG:
+                sel = this.targetElem.href;
+                text = this.targetElem.textContent;
+                imageLink = this.originalTargetElem.src;
+                break;
             case commons.TYPE_ELEM_IMG:
                 sel = this.targetElem.src;
                 break;
@@ -142,13 +190,15 @@ class DragClass {
             default:
                 break;
         }
-        this.selection = sel;
+        this.selection = sel.trim();
+        this.imageLink = imageLink.trim();
         //sendMessage只能传递字符串化后（类似json）的数据
         //不能传递具体对象
         let sended = {
             direction: this.direction,
             selection: sel,
-            textSelection: text,
+            textSelection: text.trim(),
+            imageLink: imageLink,
             actionType: this.actionType,
             sendToOptions: false
         }
@@ -159,6 +209,12 @@ class DragClass {
         }
         else browser.runtime.sendMessage(sended);
     }
+    cancel() {
+        clearTimeout(this.timeoutId);
+        this.running = false;
+        this.promptBox && this.promptBox.stopRender();
+        this.indicatorBox && this.indicatorBox.hide();
+    }
     dragstart(evt) {
         if (bgConfig.enableIndicator) {
             if (this.indicatorBox === null) this.indicatorBox = new Indicator();
@@ -168,15 +224,28 @@ class DragClass {
         if (bgConfig.enablePrompt) {
             if (this.promptBox === null) this.promptBox = new Prompt();
         }
+        if (bgConfig.enableTimeoutCancel) {
+            this.timeoutId = setTimeout(() => this.cancel(), bgConfig.timeoutCancel);
+        }
+
         this.targetElem = evt.target;
         this.selection = document.getSelection().toString().trim();
 
-        this.targetType = typeUtil.checkDragTargetType(this.selection, this.targetElem);
+
+        if (evt.target.tagName && evt.originalTarget.tagName === "A" && evt.explicitOriginalTarget.tagName === "IMG" && evt.explicitOriginalTarget !== evt.originalTarget) {
+            this.targetType = commons.TYPE_ELEM_A_IMG;
+            this.originalTargetElem = evt.explicitOriginalTarget;
+        }
+        else {
+            this.targetType = typeUtil.checkDragTargetType(this.selection, this.targetElem);
+        }
         this.actionType = typeUtil.getActionType(this.targetType);
         this.startPos.x = evt.screenX;
         this.startPos.y = evt.screenY;
     }
     dragend(evt) {
+        clearTimeout(this.timeoutId);
+
         if (this.promptBox) { // may be null if viewing an image
             this.promptBox.stopRender();
         }
@@ -221,11 +290,13 @@ class DragClass {
         //TODO:把拖拽的数据放在event里传递
         switch (type) {
             case "dragstart":
-                if (evt.target.tagName === "A" &&
+                if (evt.target.tagName && evt.target.tagName === "A" &&
                     (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
                     return;
                 }
-
+                if (evt.target.tagName && evt.target.tagName === "TEXTAREA") {
+                    return;
+                }
                 // 如果target没有设置draggable属性，那么才处理
                 if (evt.target.nodeName === "#text" || (evt.target.getAttribute && evt.target.getAttribute("draggable") === null)) {
                     this.running = true;
@@ -247,17 +318,42 @@ class DragClass {
                 if (this.running) {
                     evt.preventDefault();
                 }
+                if (this.isFromOuter) {
+                    // evt.preventDefault();
+                    //文字
+                    // if (evt.dataTransfer === null) {
+                    //     // this.captureZone.minimize();
+                    //     this.selection = this.captureZone.getText();
+                    //     this.targetElem = null;
+                    //     this.targetType = typeUtil.checkDragTargetType(this.selection, null);
+                    //     this.actionType = typeUtil.getActionType(this.targetType);
+                    //     this.post();
+                    // }
+                    // else {
+                    //     void(0);
+                    // }
+                }
                 break;
             case "dragover":
                 //如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
-                //判断脚本有没有处在运行阶段，否则不处理
+
                 if (this.running) {
                     this.dragover(evt);
                     evt.preventDefault();
                 }
+                else {
+                    //可能是从浏览器外部拖进来
+                    this.isFromOuter = true;
+
+                    // if (evt.dataTransfer === null) {
+                    //     this.captureZone.maximization();
+                    // }
+                }
                 break;
         }
     }
+
+
 
     getDirection() {
         function BETW(a, b) {
@@ -266,6 +362,7 @@ class DragClass {
         }
 
         let d = {
+            one: commons.DIR_U,
             normal: commons.DIR_D, //普通的四个方向
             horizontal: commons.DIR_L, //水平方向,只有左右
             vertical: commons.DIR_D, //竖直方向，只有上下
@@ -318,7 +415,7 @@ class DragClass {
             case commons.ALLOW_V:
                 return d.vertical;
             case commons.ALLOW_ONE:
-                return d.normal;
+                return d.one;
             default:
                 return d.normal;
         }
@@ -346,6 +443,7 @@ const clipboard = {
         this.storage = document.createElement("textarea");
         this.storage.style.width = "0px";
         this.storage.style.height = "0px";
+        this.storage.value = content;
         this.parent.appendChild(this.storage);
         this.storage.focus();
         this.storage.setSelectionRange(0, this.storage.value.length);
@@ -383,39 +481,14 @@ const clipboard = new Clipboard();
 
 
 function CSlistener(msg) {
-    let elem = mydrag.targetElem;
-
-    if (elem instanceof HTMLAnchorElement) {
-        switch (msg.copy_type) {
-            case commons.COPY_LINK:
-                clipboard.write(elem.parentElement, elem.href);
-                break;
-            case commons.COPY_TEXT:
-                clipboard.write(elem.parentElement, elem.textContent);
-                break;
-            case commons.COPY_IMAGE:
-                if ((mydrag.targetElem = elem.querySelector("img")) != null) {
-                    CSlistener(msg); //可能有更好的办法
-                }
-        }
-        return;
-
-    }
-    else if (elem instanceof HTMLImageElement) {
-        if (msg.command === "copy") {
-            switch (msg.copy_type) {
-                case commons.COPY_LINK:
-                    clipboard.write(elem.parentElement, elem.src);
-                    break;
-                case commons.COPY_IMAGE:
-                    browser.runtime.sendMessage({ imageSrc: elem.src });
-                    // getImageBase64(elem.src, (s) => {
-                    //     browser.runtime.sendMessage({ imageBase64: s });
-                    // })
-                    break;
-            }
-        }
-    }
+    clipboard.write(mydrag.targetElem.parentElement, msg.data);
+    // case commons.COPY_IMAGE:
+    //     browser.runtime.sendMessage({
+    //         imageSrc: elem.src
+    //     });
+    // getImageBase64(elem.src, (s) => {
+    //     browser.runtime.sendMessage({ imageBase64: s });
+    // })
 }
 
 browser.runtime.onConnect.addListener(port => {
@@ -423,7 +496,9 @@ browser.runtime.onConnect.addListener(port => {
         port.onMessage.addListener(CSlistener);
     }
 });
-let bgPort = browser.runtime.connect({ name: "getConfig" });
+let bgPort = browser.runtime.connect({
+    name: "getConfig"
+});
 let bgConfig = null;
 let mydrag = null;
 bgPort.onMessage.addListener((c) => {
@@ -434,7 +509,9 @@ bgPort.onMessage.addListener((c) => {
                 mydrag = new DragClass(document);
             }
 
-        }, { once: true });
+        }, {
+            once: true
+        });
     }
     else {
         mydrag = new DragClass(document);

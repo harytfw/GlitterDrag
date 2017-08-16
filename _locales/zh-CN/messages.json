@@ -99,6 +99,10 @@
         "message": "右下",
         "description": "Direction"
     },
+    "DIR_OUTER": {
+        "message": "外部",
+        "description": "Direction"
+    },
     "textType": {
         "message": "文本",
         "description": "An section of Options"
@@ -110,6 +114,10 @@
     "imageType": {
         "message": "图像",
         "description": "An section of Options"
+    },
+    "TAB_CUR": {
+        "message": "当前",
+        "description": "Position of tab opened."
     },
     "TAB_LAST": {
         "message": "尾",
@@ -135,9 +143,25 @@
         "message": "后台",
         "description": "The tab opened in background."
     },
+    "OPEN_LINK": {
+        "message": "链接",
+        "description": ""
+    },
+    "OPEN_IMAGE": {
+        "message": "图像本身",
+        "description": ""
+    },
+    "OPEN_IMAGE_LINK": {
+        "message": "图像链接",
+        "description": ""
+    },
     "SEARCH_LINK": {
         "message": "链接",
         "description": "Search action"
+    },
+    "SEARCH_IMAGE_LINK": {
+        "message": "图像链接",
+        "description": ""
     },
     "SEARCH_TEXT": {
         "message": "文本",
@@ -155,8 +179,36 @@
         "message": "链接",
         "description": "Copy action"
     },
+    "COPY_IMAGE_LINK": {
+        "message": "图像链接",
+        "description": ""
+    },
     "COPY_IMAGE": {
         "message": "图像",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_TEXT": {
+        "message": "文本",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_LINK": {
+        "message": "链接",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE_LINK": {
+        "message": "图像链接",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE": {
+        "message": "图像",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_SAVEAS_YES": {
+        "message": "另存为",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_SAVEAS_NO": {
+        "message": "不另存为",
         "description": "Copy action"
     },
     "option_page_title": {
@@ -179,21 +231,37 @@
         "message": "调用的搜索引擎，默认调用百度",
         "description": "tooltip on option"
     },
+    "option_tooltip_open_type": {
+        "message": "指定如何打开链接。图像链接 不可用时，会自动转换为 普通链接",
+        "description": "tooltip on option"
+    },
     "option_tooltip_search_type": {
         "message": "需要搜索的东西，文本、链接",
         "description": "tooltip on option"
     },
     "option_tooltip_copy": {
-        "message": "指定需要复制的东西，文本、链接或图像。复制图像可能会有很多问题，谨慎使用",
+        "message": "指定需要复制的东西，文本、链接或图像。图像链接 不可用时，会自动转换为 普通链接。复制图像可能会有很多问题，谨慎使用。",
         "description": "tooltip on option"
     },
     "option_tooltip_allow": {
         "message": "限制允许拖拽的方向",
         "description": "tooltip on option"
     },
+    "option_tooltip_download_type": {
+        "message": "指定需要下载的类型。图像链接 不可用时，会自动转换为 普通链接",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_download_directory": {
+        "message": "指定文件保存的目录",
+        "description": "tooltip on option"
+    },
     "search_name_tooltip": {
         "message": "搜索引擎的名称",
         "description": "tooltip on Options - Search Template"
+    },
+    "option_tooltip_download_saveas": {
+        "message": "是否需要另存文件为... ?",
+        "description": "tooltip on option"
     },
     "search_url_tooltip": {
         "message": "调用的链接",
@@ -210,6 +278,10 @@
     "elem_AddbtnOnEngines": {
         "message": "添加",
         "description": "Add button on Options - Search Template"
+    },
+    "elem_BuiltinEngineHelperText": {
+        "message": "这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：",
+        "description": "Helper text on Options - Search Template"
     },
     "elem_Backup": {
         "message": "备份配置",
@@ -263,7 +335,45 @@
         "message": "触发距离（px）",
         "description": "Element on Options page"
     },
-    "elem_Styles": {
+    "elem_EnableTimeoutCancel": {
+        "message": "启用超时取消",
+        "description": "Element on Options page"
+    },
+    "elem_TimeoutCancel": {
+        "message": "超时取消时间：",
+        "description": "Element on Options page"
+    },
+    "elem_EnableStyle": {
+        "message": "启用自定义样式",
+        "description": "Element on Options page"
+    },
+    "elem_Download": {
+        "message": "下载",
+        "description": "Element on Options page"
+    },
+    "elem_ShowDefaultDownloadDirectory": {
+        "message": "打开浏览器的默认下载目录",
+        "description": "Element on Options page"
+    },
+    "elem_SettingDownloadDirectory": {
+        "message": "设置下载目录",
+        "description": "Element on Options page"
+    },
+    "DownloadDirectory": {
+        "message": "下载目录 $NUM$",
+        "description": "Element on Options page",
+        "placeholders": {
+            "num": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
+    },
+    "elem_SettingDownloadDirectoryHelperText": {
+        "message": "设定的目录只能作为 <b>浏览器的默认下载目录</b> 的子目录，同时也无法使用绝对路径。第二列是你可以设置的目录。<br>例如：“image/” 表示的最终下载目录是 “<b>默认下载目录</b>/image/” . 留空是 <b>默认下载目录</b>.  二级目录需要手动创建 ",
+        "description": "Element on Options page"
+    },
+    "elem_Style": {
         "message": "样式",
         "description": "Element on Options page"
     },

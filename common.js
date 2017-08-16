@@ -3,13 +3,16 @@ const commons = {
     //from superdrag   https://addons.mozilla.org/en-US/firefox/addon/super-drag/
     appName: "setClipboard",
 
+
     TYPE_UNKNOWN: -1, //未知类型
     TYPE_TEXT: 0, //文本,包含普通文本、链接
     TYPE_TEXT_URL: 1, //链接
     TYPE_TEXT_AREA: 5,
     TYPE_ELEM: 2, //元素，主要是没有选中文本，对元素进行了拖拽
     TYPE_ELEM_A: 3, //超链接，a元素
-    TYPE_ELEM_IMG: 4,
+    TYPE_ELEM_A_IMG: 6, //a元素里面包含图片，但把它当做图片处理
+    TYPE_ELEM_IMG: 4, //图片
+
 
     DIR_U: "DIR_U",
     DIR_D: "DIR_D",
@@ -19,6 +22,9 @@ const commons = {
     DIR_UP_R: "DIR_UP_R",
     DIR_LOW_L: "DIR_LOW_L",
     DIR_LOW_R: "DIR_LOW_R",
+    DIR_OUTER: "DIR_OUTER",
+
+    PLACE_HOLDER: "PLACE_HOLDER",
 
     ACT_NONE: "ACT_NONE", //无动作
     ACT_OPEN: "ACT_OPEN", //打开
@@ -27,13 +33,28 @@ const commons = {
     ACT_TRANS: "ACT_TRANS", //翻译
     ACT_DL: "ACT_DL", //下载
     ACT_QRCODE: "ACT_QRCODE", //二维码
+
+    OPEN_LINK: "OPEN_LINK",
+    OPEN_IMAGE: "OPEN_IMAGE",
+    OPEN_IMAGE_LINK: "OPEN_IMAGE_LINK",
+
     COPY_LINK: "COPY_LINK",
+    COPY_IMAGE_LINK: "COPY_IMAGE_LINK",
     COPY_TEXT: "COPY_TEXT",
     COPY_IMAGE: "COPY_IMAGE",
-    SEARCH_TEXT: "SEARCH_TEXT",
+
     SEARCH_LINK: "SEARCH_LINK",
+    SEARCH_IMAGE_LINK: "SEARCH_IMAGE_LINK",
+    SEARCH_TEXT: "SEARCH_TEXT",
     SEARCH_IMAGE: "SEARCH_IMAGE",
 
+    DOWNLOAD_TEXT: "DOWNLOAD_TEXT",
+    DOWNLOAD_LINK: "DOWNLOAD_LINK",
+    DOWNLOAD_IMAGE_LINK: "DOWNLOAD_IMAGE_LINK",
+    DOWNLOAD_IMAGE: "DOWNLOAD_IMAGE",
+
+    DOWNLOAD_SAVEAS_YES: true,
+    DOWNLOAD_SAVEAS_NO: false,
     // KEY_CTRL: 0,//ctrl键
     // KEY_SHIFT: 1,//shift键
 
@@ -47,13 +68,16 @@ const commons = {
     FORE_GROUND: true, //前台打开
     BACK_GROUND: false, //后台打开
 
+    DEFAULT_SEARCH_ENGINE: "DEFAULT_SEARCH_ENGINE",
+    DEFAULT_DOWNLOAD_DIRECTORY: "DEFAULT_DOWNLOAD_DIRECTORY",
+
     ALLOW_NORMAL: "ALLOW_NORMAL",
     ALLOW_H: "ALLOW_H",
     ALLOW_V: "ALLOW_V",
     ALLOW_ALL: "ALLOW_ALL",
     ALLOW_ONE: "ALLOW_ONE",
     //ALLOW_NOT:"ALLOW_NOT",
-    
+
     _DEBUG: true
 };
 //freezing them, avoid modify them in unconscious.
@@ -75,9 +99,10 @@ const typeUtil = {
             console.error("未知的拖拽目标类型！~");
             return;
         }
-        if (t === commons.TYPE_TEXT_URL || t == commons.TYPE_ELEM_A) return "linkAction";
+        if (t === commons.TYPE_TEXT_URL || t === commons.TYPE_ELEM_A || t === commons.TYPE_ELEM_A_IMG) return "linkAction";
         else if (t === commons.TYPE_TEXT || t === commons.TYPE_ELEM || t === commons.TYPE_TEXT_AREA) return "textAction";
         else if (t === commons.TYPE_ELEM_IMG) return "imageAction";
+        else alert("Not Support Type!");
     },
     checkDragTargetType: (selection, target) => {
         if (selection && selection.length !== 0) {

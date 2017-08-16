@@ -1,12 +1,25 @@
 //TODO:减少全局变量,修改变量名
-const ACTION_CONSTRUCTOR = (act = commons.ACT_OPEN, active = commons.BACK_GROUND, pos = commons.TAB_LAST, en = "", search_type = commons.SEARCH_TEXT, copy_type = commons.COPY_LINK) => {
+const ACTION_CONSTRUCTOR = (
+    act = "",
+    active = "",
+    pos = "", en = "",
+    open_type = "",
+    search_type = "",
+    copy_type = "",
+    download_type = "",
+    download_directory = "",
+    download_saveas = "",
+) => {
     return {
         act_name: act,
         tab_active: active,
         tab_pos: pos,
         engine_name: en,
-        copy_type: copy_type,
-        search_type: search_type,
+        open_type,
+        search_type,
+        download_type,
+        download_directory,
+        download_saveas,
     }
 }
 const GENERATE_DEFAULT_CONFIG = () => {
@@ -23,6 +36,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         DIR_UP_R: null,
         DIR_LOW_L: null,
         DIR_LOW_R: null,
+        DIR_OUTER: null
     };
     for (let k of Object.keys(tempAction)) {
         tempAction[k] = ACTION_CONSTRUCTOR();
@@ -32,6 +46,8 @@ const GENERATE_DEFAULT_CONFIG = () => {
         enableIndicator: false,
         enablePrompt: false,
         enableStyle: false,
+        enableTimeoutCancel: false,
+        timeoutCancel: 2000,
         triggeredDistance: 20, //px
         Actions: {
             textAction: clone(tempAction),
@@ -44,6 +60,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
             linkAction: commons.ALLOW_NORMAL,
             imageAction: commons.ALLOW_NORMAL
         },
+        downloadDirectories: ["", "", "", "", "", "", "", ""],
         style: "",
     };
 }
