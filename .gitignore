@@ -1,4 +1,5 @@
+node_modules
+web-ext-artifacts
 run-ext.ps1
 *.zip
 launch.json
-node_modules

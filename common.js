@@ -84,7 +84,12 @@ const commons = {
 Object.freeze(commons);
 
 const eventUtil = {
-    attachEventS: function(selector = "body", func = () => {}, eventName = "click") {
+    attachEventAll: function (selector = "body", func = () => { }, eventName = "click") {
+        for (let el of document.querySelectorAll(selector)) {
+            this.attachEventT(el, func, eventName);
+        }
+    },
+    attachEventS: function (selector = "body", func = () => { }, eventName = "click") {
         this.attachEventT($E(selector), func, eventName);
     },
     attachEventT: function(target = document, func = () => {}, eventName = "click") {
@@ -138,7 +143,7 @@ const $E = (s = "") => {
 
 const geti18nMessage = (strName = "") => {
     const message = browser.i18n.getMessage(strName);
-    if (message === "" || message === "??") {
+    if (message === "") {
         return strName;
     }
     return message;

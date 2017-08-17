@@ -129,14 +129,12 @@ class ExecutorClass {
         browser.tabs.query({}).then(tabs => {
             for (let tab of tabs) {
                 if (tab.active === true) {
-                    if (this.action.tab_pos == commons.TAB_CUR) browser.tabs.update(tab.id, {
-                        url: url
-                    });
+                    if (this.action.tab_pos == commons.TAB_CUR) browser.tabs.update(tab.id, { url });
                     else {
                         browser.tabs.create({
                             active: this.action.tab_active,
                             index: this.getTabIndex(tabs.length, tab.index),
-                            url: url
+                            url
                         });
                     }
                     break;
@@ -201,7 +199,7 @@ class ExecutorClass {
 
     downloadImage(url) {
         browser.downloads.download({
-            url: url,
+            url,
             saveAs: true
         });
     }

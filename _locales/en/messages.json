@@ -281,9 +281,21 @@
         "message": "Add",
         "description": "Add button on Options - Search Template"
     },
+    "elem_SavebtnOnEngines": {
+        "message": "Save",
+        "description": "Save button on Options - Search Template"
+    },
     "elem_BuiltinEngineHelperText": {
         "message": "The built-in search engines that provided by addon, you need to click save button yourself after select one of engines: ",
         "description": "Helper text on Options - Search Template"
+    },
+    "elem_SearchTemplateClasses_General": {
+        "message": "General",
+        "description": "Select box classes on Options - Search Template"
+    },
+    "elem_SearchTemplateClasses_Chinese": {
+        "message": "Chinese",
+        "description": "Select box classes on Options - Search Template"
     },
     "elem_Backup": {
         "message": "Backup",
@@ -381,6 +393,10 @@
     },
     "elem_SaveStyle": {
         "message": "Save style",
-        "descripttion": "Element on Options page"
+        "description": "Element on Options page"
+    },
+    "elem_SaveDone": {
+        "message": "Saved!",
+        "description": "Element on Options page"
     }
 }

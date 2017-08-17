@@ -20,12 +20,16 @@ input {
     box-shadow: 1px 1px 1px rgb(141, 141, 141);
 }
 
-input[type="text"].warning {
+#engine-items div:not(.saved) input[type="text"] {
+    background-color: yellow
+}
+
+#engine-items input[type="text"].warning {
     border-color: rgb(240, 50, 47);
     box-shadow: 0 0 0 2px rgba(250, 100, 100, 0.75);
 }
 
-input[type="text"].accept {
+#engine-items input[type="text"].accept {
     border-color: rgb(100, 240, 60);
     box-shadow: 0 0 0 2px rgba(110, 240, 170, 0.75);
 }
@@ -180,4 +184,19 @@ a:visited {
 
 #engine-items>div>a {
     margin-right: 1em;
+}
+
+#styleContent {
+    height: 50vh;
+    width: 80vw;
+}
+
+#engine-items {
+    width: 80%
+}
+#engine-items .search-name-input {
+    width: 20%
+}
+#engine-items .search-url-input {
+    width: 70%
 }

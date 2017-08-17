@@ -57,22 +57,28 @@
                     <div id="builtin-engine">
                         <span i18n-id="BuiltinEngineHelperText">这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：</span>
                         <select style="display:inline-block">
-                            <option selected value="https://www.google.com/search?q=%s">Google Search</option>
+                            <option selected disabled="disabled" i18n-id="SearchTemplateClasses_General">General</option>
+                            <option value="https://www.google.com/search?q=%s">Google Search</option>
                             <option value="https://www.bing.com/search?q=%s">Bing Search</option>
-                            <option value="https://search.yahoo.com/search;?p=%s">Yahoo Search</option>
                             <option value="https://duckduckgo.com/?q=%s&ia=web">DuckDuckGo Search</option>
-                            <option value="https://www.qwant.com/?q=%s&t=all">Qwant Search</option>
-                            <option value="https://www.amazon.com/s/ref=nb_sb_noss?field-keywords=%s">Amazon Search</option>
-                            <option value="https://www.youtube.com/results?search_query=%s">Youtube Search</option>
+                            <option value="https://search.yahoo.com/search;?p=%s">Yahoo Search</option>
                             <option value="https://www.yandex.com/search/?text=%s">Yandex Search</option>
-                            <option value="https://zh.wikipedia.org/wiki/%s">wikipedia</option>
+                            <option value="https://www.youtube.com/results?search_query=%s">Youtube Search</option>
+                            <option value="https://en.wikipedia.org/wiki/%s">Wikipedia (English)</option>
+                            <option value="https://www.amazon.com/s/?field-keywords=%s">Amazon Search</option>
+                            <option value="https://www.qwant.com/?q=%s&t=all">Qwant Search</option>
+                        </select>
+                        <select style="display:inline-block">
+                            <option selected disabled="disabled" i18n-id="SearchTemplateClasses_Chinese">Chinese</option>
                             <option value="https://www.baidu.com/baidu?wd=%s">百度搜索</option>
                             <option value="https://www.so.com/s?q=%s">360搜索</option>
                             <option value="http://www.acfun.cn/search/#query=%s">Acfun搜索</option>
                             <option value="https://search.bilibili.com/all?keyword=%s">哔哩哔哩搜索</option>
                             <option value="http://www.soku.com/search_video/q_%s">优酷搜索</option>
-                            <option value="https://www.zhihu.com/search?q=%s">知乎搜索</option>
                             <option value="https://music.163.com/#/search/m/?s=%s">网易云音乐搜索</option>
+                            <option value="https://www.douban.com/search?q=">豆瓣搜索</option>
+                            <option value="https://www.zhihu.com/search?q=%s">知乎搜索</option>
+                            <option value="https://zh.wikipedia.org/wiki/%s">中文维基百科</option>
                         </select>
                     </div>
                     <div id="browser-engine" style="display:none">
@@ -83,8 +89,9 @@
                     </div>
                     <br>
                     <div id="engine-buttons">
-                        <button i18n-id="RefreshbtnOnEngines">刷新</button>
-                        <button i18n-id="AddbtnOnEngines">添加</button>
+                        <button id="RefreshbtnOnEngines" i18n-id="RefreshbtnOnEngines">刷新</button>
+                        <button id="AddbtnOnEngines" i18n-id="AddbtnOnEngines">添加</button>
+                        <button id="SavebtnOnEngines" i18n-id="SavebtnOnEngines">保存</button>
                     </div>
                     <br>
                     <div id="engine-items"></div>
@@ -125,8 +132,9 @@
                     <input type="checkbox" id="enableStyle">
                     <label for="enableStyle" i18n-id="EnableStyle">允许使用自定义样式></label>
                     <br>
-                    <textarea id="styleContent"></textarea>
                     <button id="saveStyle" i18n-id="SaveStyle"></button>
+                    <textarea id="styleContent"></textarea>
+
                 </li>
             </ul>
 

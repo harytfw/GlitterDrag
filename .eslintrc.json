@@ -14,6 +14,7 @@
     "globals": {
         "commons": false,
         "geti18nMessage": false,
+        "checkDragTargetType": false,
         "DEFAULT_CONFIG":false,
         "eventUtil":false,
         "typeUtil":false,
