@@ -128,8 +128,12 @@ class DragClass {
         }, false);
 
 
-        this.selection = "";
-        this.imageLink = "";
+        this.selection = ""; //选中的数据,文本，链接
+        this.textSelection = ""; //选中的文本，跟上面的可能相同可能不同
+        this.imageLink = ""; //当图像是超链接保存图像文件链接
+        this.modifierKey = commons.KEY_NONE;
+
+        this.isTextNode = false;
 
         this.targetElem = null;
         this.originalTargetElem = null;
@@ -160,47 +164,17 @@ class DragClass {
     }
 
     post() {
-        let sel = ""; //选中的数据,文本，链接
-        let text = ""; //选中的文本，跟上面的可能相同可能不同
-        let imageLink = ""; //当图像是超链接保存超链接
-        switch (this.targetType) {
-            case commons.TYPE_TEXT:
-            case commons.TYPE_TEXT_URL:
-                text = sel = this.selection;
-                break;
-            case commons.TYPE_TEXT_AREA:
-                sel = this.targetElem.value;
-                text = sel = sel.substring(this.targetElem.selectionStart, this.targetElem.selectionEnd);
-                break;
-            case commons.TYPE_ELEM_A:
-                sel = this.targetElem.href;
-                text = this.targetElem.textContent;
-                break;
-            case commons.TYPE_ELEM_A_IMG:
-                sel = this.targetElem.href;
-                text = this.targetElem.textContent;
-                imageLink = this.originalTargetElem.src;
-                break;
-            case commons.TYPE_ELEM_IMG:
-                sel = this.targetElem.src;
-                break;
-            case commons.TYPE_ELEM:
-                sel = "";
-                break;
-            default:
-                break;
-        }
-        this.selection = sel.trim();
-        this.imageLink = imageLink.trim();
         //sendMessage只能传递字符串化后（类似json）的数据
         //不能传递具体对象
         let sended = {
             direction: this.direction,
-            selection: sel,
-            textSelection: text.trim(),
-            imageLink: imageLink,
+            selection: this.selection,
+            textSelection: this.textSelection,
+            imageLink: this.imageLink,
+            site: location.host,
             actionType: this.actionType,
-            sendToOptions: false
+            sendToOptions: false,
+            modifierKey: this.modifierKey
         }
 
         if (isRunInOptionsContext) {
@@ -215,6 +189,17 @@ class DragClass {
         this.promptBox && this.promptBox.stopRender();
         this.indicatorBox && this.indicatorBox.hide();
     }
+    updateModifierKey(evt) {
+        if (evt.ctrlKey) {
+            this.modifierKey = commons.KEY_CTRL;
+        }
+        else if (evt.shiftKey) {
+            this.modifierKey = commons.KEY_SHIFT;
+        }
+        else {
+            this.modifierKey = commons.KEY_NONE;
+        }
+    }
     dragstart(evt) {
         if (bgConfig.enableIndicator) {
             if (this.indicatorBox === null) this.indicatorBox = new Indicator();
@@ -228,23 +213,30 @@ class DragClass {
             this.timeoutId = setTimeout(() => this.cancel(), bgConfig.timeoutCancel);
         }
 
+        this.updateModifierKey(evt);
+
         this.targetElem = evt.target;
-        this.selection = document.getSelection().toString().trim();
-
-
-        if (evt.target.tagName && evt.originalTarget.tagName === "A" && evt.explicitOriginalTarget.tagName === "IMG" && evt.explicitOriginalTarget !== evt.originalTarget) {
-            this.targetType = commons.TYPE_ELEM_A_IMG;
-            this.originalTargetElem = evt.explicitOriginalTarget;
+        this.selection = evt.dataTransfer.getData("text/x-moz-url-data");
+        this.imageLink = evt.dataTransfer.getData("application/x-moz-file-promise-url");
+        this.textSelection = evt.dataTransfer.getData("text/plain");
+        if (this.selection === "") {
+            this.selection = this.textSelection;
         }
-        else {
-            this.targetType = typeUtil.checkDragTargetType(this.selection, this.targetElem);
+        this.targetType = typeUtil.checkDragTargetType(this.selection, this.textSelection, this.imageLink, this.targetElem);
+
+        if (commons.TYPE_TEXT_URL === this.targetType) {
+            this.selection = this.textSelection = typeUtil.fixupSchemer(this.selection);
         }
+
         this.actionType = typeUtil.getActionType(this.targetType);
         this.startPos.x = evt.screenX;
         this.startPos.y = evt.screenY;
     }
     dragend(evt) {
         clearTimeout(this.timeoutId);
+
+        // what should we do if user release ctrl or shift key while dragging?
+        this.modifierKey = commons.KEY_NONE;
 
         if (this.promptBox) { // may be null if viewing an image
             this.promptBox.stopRender();
@@ -257,14 +249,26 @@ class DragClass {
 
     }
     dragover(evt) {
+        this.updateModifierKey(evt);
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
         if (this.distance > bgConfig.triggeredDistance) {
             this.direction = this.getDirection();
             if (this.promptBox !== null) {
                 this.promptBox.display();
+                let actions = null;
+                if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
+                    actions = bgConfig.Actions_CtrlKey;
+                }
+                else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
+                    actions = bgConfig.Actions_ShiftKey;
+                }
+                else {
+                    actions = bgConfig.Actions;
+                }
+                // console.log(JSON.stringify(actions));
                 let message = ""
-                if (this.direction in bgConfig.Actions[this.actionType]) {
-                    message = geti18nMessage(bgConfig.Actions[this.actionType][this.direction]["act_name"]);
+                if (this.direction in actions[this.actionType]) {
+                    message = geti18nMessage(actions[this.actionType][this.direction]["act_name"]);
                 }
                 this.promptBox.render(this.direction, message);
             }
@@ -298,7 +302,8 @@ class DragClass {
                     return;
                 }
                 // 如果target没有设置draggable属性，那么才处理
-                if (evt.target.nodeName === "#text" || (evt.target.getAttribute && evt.target.getAttribute("draggable") === null)) {
+                this.isTextNode = evt.target.nodeName === "#text";
+                if (this.isTextNode || (evt.target.getAttribute && evt.target.getAttribute("draggable") === null)) {
                     this.running = true;
                     // evt.dataTransfer.effectAllowed = "move";
                     this.dragstart(evt);
@@ -309,34 +314,44 @@ class DragClass {
                     this.running = false;
                     this.dragend(evt);
                 }
+                // console.log(evt);
                 break;
             case "drop":
+
                 //如果是从浏览器外部外浏览器拽文件或其它东西，并且放下东西，那么这个事件会被触发，加一个判断
                 //判断脚本有没有处在运行阶段，否则不处理
                 //这样就不会和页面本身的拖拽功能重突
                 //drop发生在dragend之前
+                // console.log(evt.dataTransfer);
+                evt.stopPropagation();
                 if (this.running) {
                     evt.preventDefault();
                 }
-                if (this.isFromOuter) {
-                    // evt.preventDefault();
-                    //文字
-                    // if (evt.dataTransfer === null) {
-                    //     // this.captureZone.minimize();
-                    //     this.selection = this.captureZone.getText();
-                    //     this.targetElem = null;
-                    //     this.targetType = typeUtil.checkDragTargetType(this.selection, null);
-                    //     this.actionType = typeUtil.getActionType(this.targetType);
-                    //     this.post();
-                    // }
-                    // else {
-                    //     void(0);
-                    // }
+                else if (this.isFromOuter) {
+                    this.isFromOuter = false;
+                    //dataTransfer may be null,see https://bugzilla.mozilla.org/show_bug.cgi?id=1352974
+                    if (evt.dataTransfer) {
+                        console.log(evt.dataTransfer);
+                        evt.preventDefault();
+                        this.direction = commons.DIR_OUTER;
+                        this.selection = evt.dataTransfer.getData("text/x-moz-url-data");
+                        this.imageLink = evt.dataTransfer.getData("application/x-moz-file-promise-url");
+                        this.textSelection = evt.dataTransfer.getData("text/plain");
+                        if (this.selection === "") {
+                            this.selection = this.textSelection;
+                        }
+                        this.targetType = typeUtil.checkDragTargetType(this.selection, this.textSelection, this.imageLink, this.targetElem);
+
+                        if (commons.TYPE_TEXT_URL === this.targetType) {
+                            this.selection = this.textSelection = typeUtil.fixupSchemer(this.selection);
+                        }
+                        this.post();
+                    }
                 }
                 break;
             case "dragover":
                 //如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
-
+                evt.stopPropagation();
                 if (this.running) {
                     this.dragover(evt);
                     evt.preventDefault();
@@ -344,10 +359,6 @@ class DragClass {
                 else {
                     //可能是从浏览器外部拖进来
                     this.isFromOuter = true;
-
-                    // if (evt.dataTransfer === null) {
-                    //     this.captureZone.maximization();
-                    // }
                 }
                 break;
         }
@@ -366,7 +377,11 @@ class DragClass {
             normal: commons.DIR_D, //普通的四个方向
             horizontal: commons.DIR_L, //水平方向,只有左右
             vertical: commons.DIR_D, //竖直方向，只有上下
+            upperLeft: commons.DIR_UP_L,
+            lowerLeft: commons.DIR_LOW_L,
+            quadrant: commons.DIR_LOW_L,
             all: commons.DIR_D //达到了8个方向，绝对够用
+
         }
 
         let rad = Math.atan2(this.startPos.y - this.endPos.y, this.endPos.x - this.startPos.x);
@@ -384,15 +399,24 @@ class DragClass {
         //角度越过零，放在这里
         else d.normal = commons.DIR_R;
 
+        if (BETW(0, 2)) d.quadrant = commons.DIR_UP_R;
+        else if (BETW(2, 4)) d.quadrant = commons.DIR_UP_L;
+        else if (BETW(4, 6)) d.quadrant = commons.DIR_LOW_L;
+        else d.quadrant = commons.DIR_LOW_R;
+
         unit = 360 / 4;
         scale = degree / unit;
         if (BETW(1, 3)) d.horizontal = commons.DIR_L;
         else d.horizontal = commons.DIR_R;
 
-        unit = 360 / 4;
-        scale = degree / unit;
         if (BETW(0, 2)) d.vertical = commons.DIR_U;
         else d.vertical = commons.DIR_D;
+
+        if (BETW(0.5, 2.5)) d.upperLeft = commons.DIR_UP_L;
+        else d.upperLeft = commons.DIR_LOW_R;
+
+        if (BETW(1.5, 3.5)) d.lowerLeft = commons.DIR_LOW_L;
+        else d.lowerLeft = commons.DIR_UP_R;
 
         unit = 360 / 16;
         scale = degree / unit;
@@ -405,7 +429,17 @@ class DragClass {
         else if (BETW(13, 15)) d.all = commons.DIR_LOW_R;
         else d.all = commons.DIR_R;
         // return d.normal;
-        switch (bgConfig.directionControl[this.actionType]) {
+        let controlObject = null;
+        if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
+            controlObject = bgConfig.directionControl_CtrlKey;
+        }
+        else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
+            controlObject = bgConfig.directionControl_ShiftKey;
+        }
+        else {
+            controlObject = bgConfig.directionControl;
+        }
+        switch (controlObject[this.actionType]) {
             case commons.ALLOW_ALL:
                 return d.all;
             case commons.ALLOW_NORMAL:
@@ -416,6 +450,12 @@ class DragClass {
                 return d.vertical;
             case commons.ALLOW_ONE:
                 return d.one;
+            case commons.ALLOW_LOW_L_UP_R:
+                return d.lowerLeft;
+            case commons.ALLOW_UP_L_LOW_R:
+                return d.upperLeft;
+            case commons.ALLOW_QUADRANT:
+                return d.quadrant;
             default:
                 return d.normal;
         }
@@ -503,6 +543,7 @@ let bgConfig = null;
 let mydrag = null;
 bgPort.onMessage.addListener((c) => {
     bgConfig = JSON.parse(c);
+    console.log(bgConfig);
     if (["loading", "interactive"].includes(document.readyState)) {
         document.addEventListener("DOMContentLoaded", () => {
             if (mydrag === null) {

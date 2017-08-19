@@ -5,7 +5,7 @@ function createBlobObjectURLForText(text = "") {
         type: "text/plain"
     });
     let url = window.URL.createObjectURL(blob);
-    setTimeout((u) => window.URL.revokeObjectURL(u), 10000, url);
+    setTimeout((u) => window.URL.revokeObjectURL(u), 1000 * 60 * 5, url);
     return url;
 }
 
@@ -18,17 +18,31 @@ class ExecutorClass {
             sendToOptions: false,
             actionType: "textAction"
         };
-        this.action = {
+        this.action = {};
 
-        };
+        this.newTabId = browser.tabs.TAB_ID_NONE;
+        this.previousTabId = browser.tabs.TAB_ID_NONE;
 
+        browser.tabs.onRemoved.addListener((tabId) => {
+            if (config.get("enableAutoSelectPreviousTab") === true &&
+                this.newTabId !== browser.tabs.TAB_ID_NONE &&
+                this.previousTabId !== browser.tabs.TAB_ID_NONE &&
+                this.newTabId === tabId) {
+                browser.tabs.update(this.previousTabId, {
+                    active: commons.FORE_GROUND
+                });
+            }
+        })
     }
     DO(m) {
         this.data = m;
+        if (commons._DEBUG) {
+            console.table(this.data);
+        }
         this.execute();
     }
     execute() {
-        this.action = config.getAct(this.data.actionType, this.data.direction);
+        this.action = config.getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
         if (this.data.selection.length === 0) {
             return;
         }
@@ -126,15 +140,25 @@ class ExecutorClass {
     }
 
     openTab(url) {
+        this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
         browser.tabs.query({}).then(tabs => {
             for (let tab of tabs) {
                 if (tab.active === true) {
-                    if (this.action.tab_pos == commons.TAB_CUR) browser.tabs.update(tab.id, { url });
+                    this.previousTabId = tab.id;
+                    if (this.action.tab_pos === commons.TAB_CUR) browser.tabs.update(tab.id, {
+                        url
+                    });
                     else {
                         browser.tabs.create({
                             active: this.action.tab_active,
                             index: this.getTabIndex(tabs.length, tab.index),
                             url
+                        }).then((newTab) => {
+                            // 只有当在右边前台打开才记录标签页id
+
+                            if (this.action.tab_pos === commons.TAB_CRIGHT && this.action.tab_active === commons.FORE_GROUND) {
+                                this.newTabId = newTab.id;
+                            }
                         });
                     }
                     break;
@@ -190,7 +214,13 @@ class ExecutorClass {
     }
 
     searchText(keyword) {
-        this.openTab(config.getSearchURL(this.action.engine_name).replace("%s", keyword));
+        // const replaceTable = {
+        //     "%s":keyword,
+        //     "%x":`${keyword} site:${this.data.domain}`,
+        // }
+        this.openTab(
+            config.getSearchURL(this.action.engine_name).replace("%s", keyword).replace("%x", `site:${this.data.domain} ${keyword}`)
+        );
     }
 
     searchImage(url, keyword) { // unused
@@ -242,10 +272,8 @@ class ExecutorClass {
 
 class ConfigClass {
     constructor() {
-        // this.enableSync = false;
-        // this.Actions = {};
-        // this.Engines = [];
         this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
+        this.set("version", browser.runtime.getManifest().version);
     }
     clear(callback) {
         this.storageArea.clear().then(callback, () => {}, (e) => {
@@ -279,7 +307,15 @@ class ConfigClass {
         });
     }
     get(key, callback) {
-        if (this[key] === undefined) this[key] = DEFAULT_CONFIG[key];
+        if (this[key] === undefined) {
+            if (key in DEFAULT_CONFIG) {
+
+                this[key] = DEFAULT_CONFIG[key]
+            }
+            else {
+                throw "Unknow key: " + key;
+            }
+        }
         if (callback) callback(this[key]);
         return this[key];
     }
@@ -292,15 +328,25 @@ class ConfigClass {
         }
         this[key] = val;
     }
-    getAct(type, dir) {
-            const r = this.Actions[type][dir];
-            return r ? r : DEFAULT_CONFIG.Actions[type][dir];
+    getAct(type, dir, key) {
+        let r = null;
+        if (key === commons.KEY_CTRL) {
+            r = this.get("Actions_CtrlKey")[type][dir];
         }
-        // setAct(type, dir, act) {
-        //     if (act instanceof ActClass) {
-        //         this.Actions[type][dir] = act;
-        //     }
-        // }
+        else if (key === commons.KEY_SHIFT) {
+            r = this.get("Actions_ShiftKey")[type][dir];
+        }
+        else {
+            r = this.get("Actions")[type][dir];
+        }
+        return r ? r : DEFAULT_CONFIG.Actions[type][dir];
+    }
+
+    // setAct(type, dir, act) {
+    //     if (act instanceof ActClass) {
+    //         this.Actions[type][dir] = act;
+    //     }
+    // }
     getSearchURL(name) {
         let defaultUrl = browser.i18n.getMessage('default_search_url');
         if (defaultUrl === "" || defaultUrl === "??") {

@@ -33,6 +33,7 @@ const commons = {
     ACT_TRANS: "ACT_TRANS", //翻译
     ACT_DL: "ACT_DL", //下载
     ACT_QRCODE: "ACT_QRCODE", //二维码
+    // ACT_BOOKMARK: "ACT_BOOKMARK",
 
     OPEN_LINK: "OPEN_LINK",
     OPEN_IMAGE: "OPEN_IMAGE",
@@ -55,10 +56,9 @@ const commons = {
 
     DOWNLOAD_SAVEAS_YES: true,
     DOWNLOAD_SAVEAS_NO: false,
-    // KEY_CTRL: 0,//ctrl键
-    // KEY_SHIFT: 1,//shift键
 
-    NEW_WINDOW: "NEW_WINDOW", //新窗口打开?
+    TAB_NEW_WINDOW: "TAB_NEW_WINDOW", //新窗口打开
+    TAB_NEW_PRIVATE_WINDOW: "TAB_NEW_PRIVATE_WINDOW",
     TAB_CUR: "TAB_CUR", //当前标签页
     TAB_FIRST: "TAB_FIRST", //新建标签页在最左边
     TAB_LAST: "TAB_LAST", //最右边
@@ -72,24 +72,32 @@ const commons = {
     DEFAULT_DOWNLOAD_DIRECTORY: "DEFAULT_DOWNLOAD_DIRECTORY",
 
     ALLOW_NORMAL: "ALLOW_NORMAL",
+    ALLOW_QUADRANT: "ALLOW_QUADRANT",
     ALLOW_H: "ALLOW_H",
     ALLOW_V: "ALLOW_V",
+
+    ALLOW_LOW_L_UP_R: "ALLOW_LOW_L_UP_R",
+    ALLOW_UP_L_LOW_R: "ALLOW_UP_L_LOW_R",
+
     ALLOW_ALL: "ALLOW_ALL",
     ALLOW_ONE: "ALLOW_ONE",
+
     //ALLOW_NOT:"ALLOW_NOT",
 
-    _DEBUG: true
+    KEY_CTRL: 0, //ctrl键
+    KEY_SHIFT: 1, //shift键
+    KEY_NONE: -1,
 };
 //freezing them, avoid modify them in unconscious.
 Object.freeze(commons);
 
 const eventUtil = {
-    attachEventAll: function (selector = "body", func = () => { }, eventName = "click") {
+    attachEventAll: function(selector = "body", func = () => {}, eventName = "click") {
         for (let el of document.querySelectorAll(selector)) {
             this.attachEventT(el, func, eventName);
         }
     },
-    attachEventS: function (selector = "body", func = () => { }, eventName = "click") {
+    attachEventS: function(selector = "body", func = () => {}, eventName = "click") {
         this.attachEventT($E(selector), func, eventName);
     },
     attachEventT: function(target = document, func = () => {}, eventName = "click") {
@@ -109,26 +117,68 @@ const typeUtil = {
         else if (t === commons.TYPE_ELEM_IMG) return "imageAction";
         else alert("Not Support Type!");
     },
-    checkDragTargetType: (selection, target) => {
-        if (selection && selection.length !== 0) {
-            if (commons.urlPattern.test(selection)) {
+    checkDragTargetType: (selection, textSelection, imageLink, target) => {
+        if (!selection && selection.length === 0) {
+            return commons.TYPE_ELEM
+        }
+        if (["A", "#text"].includes(target.nodeName) && typeUtil.seemAsURL(selection)) {
+            if (target.nodeName === "#text") {
                 return commons.TYPE_TEXT_URL;
             }
-            return commons.TYPE_TEXT;
-        }
-        else if (target !== null) {
-            if (target instanceof HTMLAnchorElement) {
-                return commons.TYPE_ELEM_A;
+            else if (target instanceof HTMLAnchorElement) {
+                if (imageLink === "") {
+                    return commons.TYPE_ELEM_A;
+                }
+                else {
+                    return commons.TYPE_ELEM_A_IMG;
+                }
             }
             else if (target instanceof HTMLImageElement) {
                 return commons.TYPE_ELEM_IMG;
             }
-            else if (target instanceof HTMLTextAreaElement) {
-                return commons.TYPE_TEXT_AREA;
-            }
+        }
+        else if (target.nodeName === "IMG") {
+            return commons.TYPE_ELEM_IMG;
+        }
+        else if (target.nodeName === "#text") {
+            return commons.TYPE_TEXT;
+        }
+        else if (target.tagName === "TEXTAREA") {
+            return commons.TYPE_TEXT_AREA
+        }
+        else if (target instanceof Element) {
             return commons.TYPE_ELEM;
         }
+
         return commons.TYPE_UNKNOWN;
+    },
+    seemAsURL: (url) => {
+        // from dragtogo
+        const DomainName = /(\w+(\-+\w+)*\.)+\w{2,7}/;
+        const HasSpace = /\S\s+\S/;
+        const KnowNameOrSlash = /^(www|bbs|forum|blog)|\//;
+        const KnowTopDomain1 = /\.(com|net|org|gov|edu|info|mobi|mil|asia)$/;
+        const KnowTopDomain2 = /\.(de|uk|eu|nl|it|cn|be|us|br|jp|ch|fr|at|se|es|cz|pt|ca|ru|hk|tw|pl|me|tv|cc)$/;
+        const IsIpAddress = /^([1-2]?\d?\d\.){3}[1-2]?\d?\d/;
+        const seemAsURL = !HasSpace.test(url) && DomainName.test(url) && (KnowNameOrSlash.test(url) || KnowTopDomain1.test(url) || KnowTopDomain2.test(url) || IsIpAddress.test(url));
+        return seemAsURL;
+    },
+    fixupSchemer: (aURI) => {
+        // from dragtogo
+        var RegExpURL = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+        if (aURI.match(RegExpURL)) return aURI;
+
+        if (/^(?::\/\/|\/\/|\/)?(([1-2]?\d?\d\.){3}[1-2]?\d?\d(\/.*)?|[a-z]+[\-\w]+\.[\-\w\.]+(\/.*)?)$/i.test(aURI)) aURI = "http://" + RegExp.$1;
+        else {
+            let table = "ttp=>http,tp=>http,p=>http,ttps=>https,tps=>https,ps=>https,s=>https";
+            let regexp = new RegExp();
+            if (aURI.match(regexp.compile('^(' + table.replace(/=>[^,]+|=>[^,]+$/g, '').replace(/\s*,\s*/g, '|') + '):', 'g'))) {
+                var target = RegExp.$1;
+                table.match(regexp.compile('(,|^)' + target + '=>([^,]+)'));
+                aURI = aURI.replace(target, RegExp.$2);
+            }
+        }
+        return aURI;
     }
 }
 Object.freeze(typeUtil);
@@ -148,3 +198,43 @@ const geti18nMessage = (strName = "") => {
     }
     return message;
 }
+
+const testCheckDragTargetType = () => {
+        const assert = console.assert;
+        const fn = typeUtil.checkDragTargetType;
+        let selection = "hello world";
+        let textSelection = "hello world";
+        let imageLink = "";
+        let target = document.createTextNode("hello");
+
+        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_TEXT, "text");
+
+        selection = "http://www.example.com";
+        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_TEXT_URL, "text_url");
+
+        target = document.createElement("textarea");
+        selection = "http://www.example.com/example.jpg";
+        imageLink = "";
+        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_TEXT_AREA, "text_area");
+
+        target = document.createElement("a");
+        selection = "http://www.example.com";
+        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM_A, "elem_a");
+
+        target = document.createElement("a");
+        selection = "http://www.example.com";
+        imageLink = "http://www.example.com/example.jpg";
+        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM_A_IMG, "elem_a_img");
+
+        target = document.createElement("img");
+        selection = "http://www.example.com/example.jpg";
+        imageLink = "";
+        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM_IMG, "elem_img");
+
+
+        selection = "";
+        imageLink = "";
+        target = document.createElement("div");
+        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM, "elem");
+    }
+    // testCheckDragTargetType()

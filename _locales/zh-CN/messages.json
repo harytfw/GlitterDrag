@@ -23,12 +23,24 @@
         "message": "普通4个方向",
         "description": ""
     },
+    "ALLOW_QUADRANT": {
+        "message": "倾斜的4个方向",
+        "description": ""
+    },
     "ALLOW_H": {
         "message": "水平2个方向",
         "description": ""
     },
     "ALLOW_V": {
         "message": "垂直2个方向",
+        "description": ""
+    },
+    "ALLOW_LOW_L_UP_R": {
+        "message": "倾斜2个方向",
+        "description": ""
+    },
+    "ALLOW_UP_L_LOW_R": {
+        "message": "另外2个倾斜的方向",
         "description": ""
     },
     "ALLOW_ALL": {
@@ -65,6 +77,10 @@
     },
     "ACT_QRCODE": {
         "message": "二维码",
+        "description": "Action name"
+    },
+    "ACT_BOOKMARK": {
+        "message": "添加书签",
         "description": "Action name"
     },
     "DIR_U": {
@@ -114,6 +130,14 @@
     "imageType": {
         "message": "图像",
         "description": "An section of Options"
+    },
+    "TAB_NEW_WINDOW": {
+        "message": "新建窗口",
+        "description": "Position of tab opened."
+    },
+    "TAB_NEW_PRIVATE_WINDOW": {
+        "message": "隐私窗口",
+        "description": "Position of tab opened."
     },
     "TAB_CUR": {
         "message": "当前",
@@ -315,6 +339,14 @@
         "message": "动作",
         "description": "Element on Options page"
     },
+    "elem_ActionsCtrlKey": {
+        "message": "带Ctrl键的动作",
+        "description": "Element on Options page"
+    },
+    "elem_ActionsShiftKey": {
+        "message": "带Shift键的动作",
+        "description": "Element on Options page"
+    },
     "elem_SearchTemplate": {
         "message": "搜索模板",
         "description": "Element on Options page"
@@ -343,10 +375,23 @@
         "message": "启用距离指示",
         "description": "Element on Options page"
     },
+    "elem_EnableAutoSelectPreviousTab": {
+        "message": "自动选中上一个标签页（只有当在标签页右边前台打开时才有效）",
+        "description": "Element on Options page"
+    },
+    "elem_EnableCtrlKey": {
+        "message": "当按下 Ctrl 键时使用不同的动作",
+        "description": "Element on Options page"
+    },
+    "elem_EnableShiftKey": {
+        "message": "当按下 Shift 键时使用不同的动作",
+        "description": "Element on Options page"
+    },
     "elem_DistancePx": {
         "message": "触发距离（px）",
         "description": "Element on Options page"
     },
+
     "elem_EnableTimeoutCancel": {
         "message": "启用超时取消",
         "description": "Element on Options page"

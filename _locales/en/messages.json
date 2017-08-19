@@ -23,12 +23,24 @@
         "message": "Normal 4 directions ",
         "description": ""
     },
+    "ALLOW_QUADRANT": {
+        "message": "Inclined 4 directions",
+        "description": ""
+    },
     "ALLOW_H": {
-        "message": "Horizontal 2 direction",
+        "message": "Horizontal 2 directions",
         "description": ""
     },
     "ALLOW_V": {
-        "message": "Vertical 2 direction",
+        "message": "Vertical 2 directions",
+        "description": ""
+    },
+    "ALLOW_LOW_L_UP_R": {
+        "message": "Inclined 2 directions",
+        "description": ""
+    },
+    "ALLOW_UP_L_LOW_R": {
+        "message": "Another inclined 2 directions",
         "description": ""
     },
     "ALLOW_ALL": {
@@ -36,7 +48,7 @@
         "description": ""
     },
     "ALLOW_ONE": {
-        "message": "Only 1 direction",
+        "message": "Only 1 directions",
         "description": ""
     },
     "ACT_OPEN": {
@@ -65,6 +77,10 @@
     },
     "ACT_QRCODE": {
         "message": "QR code",
+        "description": "Action name"
+    },
+    "ACT_BOOKMARK": {
+        "message": "Bookmark it",
         "description": "Action name"
     },
     "DIR_U": {
@@ -114,6 +130,14 @@
     "imageType": {
         "message": "Images",
         "description": "An section of Options"
+    },
+    "TAB_NEW_WINDOW": {
+        "message": "New win",
+        "description": "Position of tab opened."
+    },
+    "TAB_NEW_PRIVATE_WINDOW": {
+        "message": "Private win",
+        "description": "Position of tab opened."
     },
     "TAB_CUR": {
         "message": "Current",
@@ -317,6 +341,14 @@
         "message": "Actions",
         "description": "Element on Options page"
     },
+    "elem_ActionsCtrlKey": {
+        "message": "Actions with Ctrl Key",
+        "description": "Element on Options page"
+    },
+    "elem_ActionsShiftKey": {
+        "message": "Actions with Shift Key",
+        "description": "Element on Options page"
+    },
     "elem_SearchTemplate": {
         "message": "Search template",
         "description": "Element on Options page"
@@ -343,6 +375,18 @@
     },
     "elem_EnableDistanceTip": {
         "message": "Enable distance tip",
+        "description": "Element on Options page"
+    },
+    "elem_EnableAutoSelectPreviousTab": {
+        "message": "Select previous tab automatically (Only work when you open a tab with foreground & right)",
+        "description": "Element on Options page"
+    },
+    "elem_EnableCtrlKey": {
+        "message": "Permit different actions when press Ctrl Key",
+        "description": "Element on Options page"
+    },
+    "elem_EnableShiftKey": {
+        "message": "Permit different actions when press Shift Key",
         "description": "Element on Options page"
     },
     "elem_DistancePx": {

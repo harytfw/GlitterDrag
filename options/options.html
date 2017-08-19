@@ -25,15 +25,17 @@
     <div id="container">
         <section id="tabs">
             <nav>
-                <a id="_debug" nav-id="1" i18n-id="Debug" style="color:crimson;display:none" class="nav-a" href="#">调试</a>
-                <a class="nav-a nav-active" nav-id="2" i18n-id="Actions" href="#">动作</a>
-                <a class="nav-a" nav-id="3" i18n-id="SearchTemplate" href="#">搜索模板</a>
-                <a class="nav-a" nav-id="4" i18n-id="General" href="#">常规</a>
-                <a class="nav-a" nav-id="5" i18n-id="Download" href="#">下载</a>
-                <a class="nav-a" nav-id="6" i18n-id="Style" href="#">样式</a>
+                <a id="_debug" toggle-target="#tab-debug" i18n-id="Debug" style="color:crimson;display:none" class="nav-a" href="#">调试</a>
+                <a class="nav-a nav-active" toggle-target="#tab-actions" i18n-id="Actions" href="#">动作</a>
+                <a class="nav-a" toggle-target="#tab-actions-ctrlkey" i18n-id="ActionsCtrlKey" href="#">动作ctrl</a>
+                <a class="nav-a" toggle-target="#tab-actions-shiftkey" i18n-id="ActionsShiftKey" href="#">动作shift</a>
+                <a class="nav-a" toggle-target="#tab-search-template" i18n-id="SearchTemplate" href="#">搜索模板</a>
+                <a class="nav-a" toggle-target="#tab-general" i18n-id="General" href="#">常规</a>
+                <a class="nav-a" toggle-target="#tab-download" i18n-id="Download" href="#">下载</a>
+                <a class="nav-a" toggle-target="#tab-style" i18n-id="Style" href="#">样式</a>
             </nav>
             <ul style="list-style:none">
-                <li class="tab-content">
+                <li class="tab-content" id="tab-debug">
                     <div>
                         <br>
                         <a href="https://baidu.com/" i18n-id="Baidu">百度</a>
@@ -51,8 +53,10 @@
                         <textarea id="logArea" rows="10" cols="80"></textarea>
                     </div>
                 </li>
-                <li class="tab-content tab-active"></li>
-                <li class="tab-content">
+                <li class="tab-content tab-active" id="tab-actions"></li>
+                <li class="tab-content" id="tab-actions-ctrlkey"></li>
+                <li class="tab-content" id="tab-actions-shiftkey"></li>
+                <li class="tab-content" id="tab-search-template">
                     <p i18n-id="PlaceholderTip">用 %s 替代链接里的关键词，输入栏不能为空，名称不应该重复</p>
                     <div id="builtin-engine">
                         <span i18n-id="BuiltinEngineHelperText">这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：</span>
@@ -103,9 +107,19 @@
                     <input type="checkbox" id="enableIndicator">
                     <label for="enableIndicator" i18n-id="EnableDistanceTip">启用距离指示</label>
                     <br>
+                    <input type="checkbox" id="enableAutoSelectPreviousTab">
+                    <label for="enableAutoSelectPreviousTab" i18n-id="EnableAutoSelectPreviousTab">显示动作提示</label>
+                    <br>
+                    <input type="checkbox" id="enableCtrlKey">
+                    <label for="enableCtrlKey" i18n-id="EnableCtrlKey">当按下Ctrl键时，使用不同的动作</label>
+                    <br>
+                    <input type="checkbox" id="enableShiftKey">
+                    <label for="enableShiftKey" i18n-id="EnableShiftKey">当按下Shift键时，使用不同的动作</label>
+                    <br>
                     <label for="triggeredDistance" i18n-id="DistancePx">触发距离（px）</label>
                     <input type="text" id="triggeredDistance">
                     <br>
+
                     <input type="checkbox" id="enableTimeoutCancel">
                     <label for="enableTimeoutCancel" i18n-id="EnableTimeoutCancel">启用超时取消></label>
                     <br>

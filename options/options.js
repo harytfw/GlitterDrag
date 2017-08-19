@@ -35,7 +35,9 @@ for (let item of Object.keys(commons)) {
     if (/^TYPE_/.test(item)) {
         continue;
     }
-
+    if (/^KEY_/.test(item)) {
+        continue;
+    }
     const obj = {
         text: geti18nMessage(item),
         value: commons[item]
@@ -47,7 +49,7 @@ for (let item of Object.keys(commons)) {
     else if (/^ACT_/.test(item)) {
         OPTION_TEXT_VALUE_TABLE.act.push(obj)
     }
-    else if (["TAB_FIRST", "TAB_LAST", "TAB_CLEFT", "TAB_CRIGHT", "TAB_CUR"].includes(item)) {
+    else if (/^TAB_/.test(item)) {
         OPTION_TEXT_VALUE_TABLE.pos.push(obj);
     }
     else if (["FORE_GROUND", "BACK_GROUND"].includes(item)) {
@@ -152,6 +154,21 @@ class _SelectWrapper {
         this.elem.value = v;
     }
 
+    updateViaOptList(optList) {
+        let oldValue = this.value;
+        let option = null;
+        while ((option = this.elem.firstChild) !== null) {
+            option.remove();
+        }
+        optList.forEach(opt => {
+            let option = document.createElement("option");
+            option.setAttribute("value", opt.value); //
+            option.textContent = opt.text;
+            this.elem.appendChild(option);
+        });
+        this.value = oldValue;
+    }
+
     //选项显示或隐藏控制的代码
     //the code about control options to show or hide.
     disableOpt(...opts) {
@@ -226,6 +243,13 @@ class PositionSelect extends _SelectWrapper {
 
 class EngineSelect extends _SelectWrapper {
     constructor(value) {
+        let optList = EngineSelect.createEnginesOptList();
+
+        super("engine_name", optList, value, TOOLTIP_TEXT_TABLE.search);
+        this.elem.classList.add("searchEngines");
+        this.elem.addEventListener("update", () => this.updateSearchEngines());
+    }
+    static createEnginesOptList() {
         let engines = backgroundPage.config.get("Engines");
 
         let optList = [{
@@ -240,8 +264,11 @@ class EngineSelect extends _SelectWrapper {
                 };
             });
         }
-
-        super("engine_name", optList, value, TOOLTIP_TEXT_TABLE.search)
+        return optList;
+    }
+    updateSearchEngines() {
+        // console.log("update");
+        this.updateViaOptList(EngineSelect.createEnginesOptList());
     }
 }
 
@@ -449,12 +476,13 @@ class DirWrapper {
 }
 
 class ControlWrapper {
-    constructor(value) {
+    constructor(initValue) {
         this.elem = document.createElement("div");
         this.elem.className = "direction";
         this.label = document.createElement("label");
         this.label.textContent = geti18nMessage("directionControl");
-        this.controlSelect = new ControlSelect(backgroundPage.config.get("directionControl")[value]);
+
+        this.controlSelect = new ControlSelect(initValue);
         this.elem.appendChild(this.label);
         this.controlSelect.appendTo(this.elem);
     }
@@ -473,14 +501,14 @@ class ControlWrapper {
 }
 
 class ChildWrapper {
-    constructor(labelString, typeInfo) {
+    constructor(labelString, typeInfo, valueOfControl) {
         this.elem = document.createElement("div");
         this.typeInfo = typeInfo;
         this.label = document.createElement("h3");
         this.label.textContent = labelString;
 
         this.elem.appendChild(this.label);
-        this.controlWrapper = new ControlWrapper(this.typeInfo);
+        this.controlWrapper = new ControlWrapper(valueOfControl);
         this.controlWrapper.appendTo(this.elem);
         this.dirWrappers = [];
         for (let key of Object.keys(DIR_TEXT_VALUE_TABLE)) {
@@ -529,48 +557,42 @@ class ChildWrapper {
     appendTo(parent) {
         parent.appendChild(this.elem);
     }
+    showDirections(re = /.*/) {
+        this.dirWrappers.forEach(w => {
+            w.enable();
+            if (re.test(w.dirValue) === false) {
+                w.disable();
+            }
+        });
+    }
     bindCallBack(callback) {
         const proxyCallback = (event) => {
             //如果发生修改了 “方向控制 ”的值，那么检测一下哪些方向需要启用和停用
             switch (event.target.value) {
                 case commons.ALLOW_ALL:
-                    this.dirWrappers.forEach(w => {
-                        w.enable();
-                    });
+                    this.showDirections(/^.*$/);
                     break;
                 case commons.ALLOW_NORMAL:
-                    this.dirWrappers.forEach(w => {
-                        w.enable();
-                        if (/^DIR_([UDLR]|OUTER)$/.test(w.dirValue) === false) {
-                            w.disable();
-                        }
-                    });
+                    this.showDirections(/^DIR_([UDLR]|OUTER)$/);
                     break;
                 case commons.ALLOW_H:
-                    this.dirWrappers.forEach(w => {
-                        w.enable();
-                        if (/^DIR_([LR]|OUTER)$/.test(w.dirValue) === false) {
-                            w.disable();
-                        }
-                    });
+                    this.showDirections(/^DIR_([LR]|OUTER)$/);
                     break;
                 case commons.ALLOW_V:
-                    this.dirWrappers.forEach(w => {
-                        w.enable();
-                        if (/^DIR_([UD]|OUTER)$/.test(w.dirValue) === false) {
-                            w.disable();
-                        }
-                    });
+                    this.showDirections(/^DIR_([UD]|OUTER)$/);
                     break;
                 case commons.ALLOW_ONE:
-                    this.dirWrappers.forEach(w => {
-                        w.enable();
-                        if (/^DIR_(U|OUTER)$/.test(w.dirValue) === false) {
-                            w.disable();
-                        }
-                    });
+                    this.showDirections(/^DIR_(U|OUTER)$/);
                     break;
-
+                case commons.ALLOW_LOW_L_UP_R:
+                    this.showDirections(/^DIR_(UP_R|LOW_L|OUTER)/);
+                    break;
+                case commons.ALLOW_UP_L_LOW_R:
+                    this.showDirections(/^DIR_(UP_L|LOW_R|OUTER)/);
+                    break;
+                case commons.ALLOW_QUADRANT:
+                    this.showDirections(/^DIR_(UP_L|LOW_R|UP_R|LOW_L|OUTER)/);
+                    break;
                 case commons.ALLOW_NONE: //备用，未来可能会添加“关闭所有方向”
                 default:
                     break;
@@ -595,13 +617,31 @@ class ChildWrapper {
 
 class Wrapper {
     constructor() {
+        this.init();
+    }
+    init(modifierKey) {
         this.DOSAVE = false; //指示是否需要保存
 
         this.callback = this.callback.bind(this);
         this.elem = document.createElement("div");
         this.elem.id = "actions";
 
-        this.child_text = new ChildWrapper(geti18nMessage('textType'), "textAction");
+        this.keyNameOfControl = "";
+        this.keyNameOfActions = ""
+        if (modifierKey === commons.KEY_CTRL) {
+            this.keyNameOfControl = "directionControl_CtrlKey";
+            this.keyNameOfActions = "Actions_CtrlKey";
+        }
+        else if (modifierKey === commons.KEY_SHIFT) {
+            this.keyNameOfControl = "directionControl_ShiftKey";
+            this.keyNameOfActions = "Actions_ShiftKey";
+        }
+        else {
+            this.keyNameOfControl = "directionControl";
+            this.keyNameOfActions = "Actions";
+        }
+        const valuesOfControl = backgroundPage.config.get(this.keyNameOfControl);
+        this.child_text = new ChildWrapper(geti18nMessage('textType'), "textAction", valuesOfControl.textAction);
         //顺序
         /*
         this.selectGroup = [
@@ -621,6 +661,7 @@ class Wrapper {
         )
         this.child_text.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW,
             commons.SEARCH_IMAGE, commons.SEARCH_LINK, commons.SEARCH_IMAGE_LINK,
             commons.COPY_LINK, commons.COPY_IMAGE, commons.COPY_IMAGE_LINK,
             commons.OPEN_IMAGE, commons.OPEN_IMAGE_LINK,
@@ -628,7 +669,7 @@ class Wrapper {
         );
         this.child_text.disableSelect("openTypeSelect", "copySelect", "searchTypeSelect");
 
-        this.child_image = new ChildWrapper(geti18nMessage('imageType'), "imageAction");
+        this.child_image = new ChildWrapper(geti18nMessage('imageType'), "imageAction", valuesOfControl.imageAction);
         this.child_image.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
@@ -638,6 +679,7 @@ class Wrapper {
         )
         this.child_image.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW,
             commons.SEARCH_IMAGE_LINK, commons.SEARCH_TEXT, commons.SEARCH_IMAGE,
             commons.OPEN_IMAGE_LINK,
             commons.COPY_TEXT, commons.COPY_IMAGE_LINK,
@@ -646,7 +688,7 @@ class Wrapper {
         this.child_image.disableSelect("openTypeSelect");
 
 
-        this.child_link = new ChildWrapper(geti18nMessage('linkType'), "linkAction");
+        this.child_link = new ChildWrapper(geti18nMessage('linkType'), "linkAction", valuesOfControl.linkAction);
         this.child_link.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
@@ -656,6 +698,7 @@ class Wrapper {
         )
         this.child_link.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW,
             commons.OPEN_IMAGE,
             commons.SEARCH_IMAGE,
             commons.DOWNLOAD_IMAGE,
@@ -694,8 +737,8 @@ class Wrapper {
         }
     }
     save() {
-        backgroundPage.config.set("Actions", this.collect());
-        backgroundPage.config.set("directionControl", this.collect1());
+        backgroundPage.config.set(this.keyNameOfActions, this.collect());
+        backgroundPage.config.set(this.keyNameOfControl, this.collect1());
         backgroundPage.config.save();
     }
     update() {
@@ -708,13 +751,24 @@ class Wrapper {
     }
 }
 
+class ActionsWithCtrlKeyWrapper extends Wrapper {
+    constructor() {
+        super();
+        this.init(commons.KEY_CTRL);
+    }
+}
+class ActionsWithShiftKeyWrapper extends Wrapper {
+    constructor() {
+        super();
+        this.init(commons.KEY_SHIFT)
+    }
+}
 class OuterActionsWrapper {
     constructor() {
         this.textActionSelect = new ActionSelect();
         this.linkActionSelect = new ActionSelect();
         this.imageActionSelect = new ActionSelect();
     }
-    save() {}
 }
 
 class EngineItemWrapper {
@@ -824,14 +878,15 @@ class EngineWrapper {
             this.items = this.items.filter((v) => v !== item);
             this.itemsDiv.removeChild(item.elem);
             // TODO: Leave a text line or allow undo, or highlight the save button
-        } else { // onSaveAllClick
+        }
+        else { // onSaveAllClick
             let hasError = false;
             for (let input of document.querySelectorAll('#engine-items input')) {
                 if (input.value.length > 0) {
                     /*input.classList.add("accept");
                     setTimeout(() => {
                         input.classList.remove("accept");
-                    }, 1200);*/  // May be misleading, it actually has not been saved if there is any error.
+                    }, 1200);*/ // May be misleading, it actually has not been saved if there is any error.
                 }
                 else {
                     input.classList.add("warning");
@@ -852,6 +907,9 @@ class EngineWrapper {
 
         backgroundPage.config.set("Engines", this.collect());
         backgroundPage.config.save(); // TODO: Promise
+        document.querySelectorAll(".searchEngines").forEach(select => {
+            select.dispatchEvent(new Event("update"));
+        })
     }
 
     onRefresh() {
@@ -953,7 +1011,9 @@ class styleWrapper {
         eventUtil.attachEventS("#saveStyle", () => {
             backgroundPage.config.set("style", styleArea.value); // TODO: promise?
             document.querySelector("#saveStyle").textContent = geti18nMessage('elem_SaveDone');
-            setTimeout(() => { document.querySelector("#saveStyle").textContent = geti18nMessage('elem_SaveStyle'); }, 2000);
+            setTimeout(() => {
+                document.querySelector("#saveStyle").textContent = geti18nMessage('elem_SaveStyle');
+            }, 2000);
         })
     }
 }
@@ -965,12 +1025,21 @@ const tabs = {
 
 
         let w = new Wrapper(backgroundPage.config.get("Actions"));
-        w.appendTo($E(`.tab-content:nth-child(2)`));
+        w.appendTo($E(`#tab-actions`));
+        this._tabs.push(w);
+
+        w = new ActionsWithCtrlKeyWrapper(backgroundPage.config.get("Actions_CtrlKey"));
+        w.appendTo($E(`#tab-actions-ctrlkey`));
+        this._tabs.push(w);
+
+        w = new ActionsWithShiftKeyWrapper(backgroundPage.config.get("Actions_ShiftKey"));
+        w.appendTo($E(`#tab-actions-shiftkey`));
         this._tabs.push(w);
 
         w = new EngineWrapper(backgroundPage.config.get("Engines"));
-        w.appendTo($E(`.tab-content:nth-child(3)`));
+        w.appendTo($E(`#tab-search-template`));
         this._tabs.push(w);
+
 
         w = new generalWrapper();
         this._tabs.push(w);
@@ -1024,7 +1093,7 @@ const tabs = {
         $E(".nav-active").classList.remove("nav-active");
         event.target.classList.add("nav-active");
         $E(".tab-active").classList.remove("tab-active");
-        $E(`.tab-content:nth-child(${event.target.getAttribute("nav-id")})`).classList.add("tab-active");
+        $E(`${event.target.getAttribute("toggle-target")}`).classList.add("tab-active");
     },
 }
 
@@ -1059,7 +1128,7 @@ browser.runtime.getBackgroundPage().then((page) => {
 
         setTimeout(() => {
             URL.revokeObjectURL(url)
-        }, 3000);
+        }, 1000 * 60 * 5);
     });
     eventUtil.attachEventS("#restore", () => {
         $E("#fileInput").click();

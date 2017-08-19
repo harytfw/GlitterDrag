@@ -47,6 +47,9 @@ const GENERATE_DEFAULT_CONFIG = () => {
         enablePrompt: false,
         enableStyle: false,
         enableTimeoutCancel: false,
+        enableAutoSelectPreviousTab: true,
+        enableCtrlKey: false,
+        enableShiftKey: false,
         timeoutCancel: 2000,
         triggeredDistance: 20, //px
         Actions: {
@@ -54,8 +57,28 @@ const GENERATE_DEFAULT_CONFIG = () => {
             linkAction: clone(tempAction),
             imageAction: clone(tempAction)
         },
+        Actions_ShiftKey: {
+            textAction: clone(tempAction),
+            linkAction: clone(tempAction),
+            imageAction: clone(tempAction)
+        },
+        Actions_CtrlKey: {
+            textAction: clone(tempAction),
+            linkAction: clone(tempAction),
+            imageAction: clone(tempAction)
+        },
         Engines: [],
         directionControl: {
+            textAction: commons.ALLOW_NORMAL,
+            linkAction: commons.ALLOW_NORMAL,
+            imageAction: commons.ALLOW_NORMAL
+        },
+        directionControl_CtrlKey: {
+            textAction: commons.ALLOW_NORMAL,
+            linkAction: commons.ALLOW_NORMAL,
+            imageAction: commons.ALLOW_NORMAL
+        },
+        directionControl_ShiftKey: {
             textAction: commons.ALLOW_NORMAL,
             linkAction: commons.ALLOW_NORMAL,
             imageAction: commons.ALLOW_NORMAL
