@@ -154,7 +154,7 @@ const typeUtil = {
     },
     seemAsURL: (url) => {
         // from dragtogo
-        const DomainName = /(\w+(\-+\w+)*\.)+\w{2,7}/;
+        const DomainName = /(\w+(-+\w+)*\.)+\w{2,7}/;
         const HasSpace = /\S\s+\S/;
         const KnowNameOrSlash = /^(www|bbs|forum|blog)|\//;
         const KnowTopDomain1 = /\.(com|net|org|gov|edu|info|mobi|mil|asia)$/;
@@ -165,10 +165,10 @@ const typeUtil = {
     },
     fixupSchemer: (aURI) => {
         // from dragtogo
-        var RegExpURL = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+        var RegExpURL = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
         if (aURI.match(RegExpURL)) return aURI;
 
-        if (/^(?::\/\/|\/\/|\/)?(([1-2]?\d?\d\.){3}[1-2]?\d?\d(\/.*)?|[a-z]+[\-\w]+\.[\-\w\.]+(\/.*)?)$/i.test(aURI)) aURI = "http://" + RegExp.$1;
+        if (/^(?::\/\/|\/\/|\/)?(([1-2]?\d?\d\.){3}[1-2]?\d?\d(\/.*)?|[a-z]+[-\w]+\.[-\w.]+(\/.*)?)$/i.test(aURI)) aURI = "http://" + RegExp.$1;
         else {
             let table = "ttp=>http,tp=>http,p=>http,ttps=>https,tps=>https,ps=>https,s=>https";
             let regexp = new RegExp();
@@ -191,7 +191,7 @@ const $E = (s = "") => {
     return r;
 }
 
-const geti18nMessage = (strName = "") => {
+const getI18nMessage = (strName = "") => {
     const message = browser.i18n.getMessage(strName);
     if (message === "") {
         return strName;

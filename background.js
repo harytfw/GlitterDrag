@@ -349,7 +349,7 @@ class ConfigClass {
     // }
     getSearchURL(name) {
         let defaultUrl = browser.i18n.getMessage('default_search_url');
-        if (defaultUrl === "" || defaultUrl === "??") {
+        if (defaultUrl === "") {
             console.warn('get default_search_url fail, fallback to Google.')
             defaultUrl = "https://www.google.com/search?q=%s";
         }
