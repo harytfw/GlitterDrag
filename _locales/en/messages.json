@@ -196,6 +196,14 @@
         "message": "Image",
         "description": "Search action"
     },
+    "SEARCH_ONSITE_YES": {
+        "message": "Search on site",
+        "description": "Search action"
+    },
+    "SEARCH_ONSITE_NO": {
+        "message": "Don't process",
+        "description": "Search action"
+    },
     "COPY_TEXT": {
         "message": "Text",
         "description": "Copy action"
@@ -263,6 +271,10 @@
     },
     "option_tooltip_search_type": {
         "message": "Need to search for something, like text, link, etc.",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_search_onsite": {
+        "message": "Replace keyword with site:domain keyword",
         "description": "tooltip on option"
     },
     "option_tooltip_copy": {

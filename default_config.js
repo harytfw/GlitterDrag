@@ -9,6 +9,7 @@ const ACTION_CONSTRUCTOR = (
     download_type = "",
     download_directory = "",
     download_saveas = "",
+    search_onsite = "",
 ) => {
     return {
         act_name: act,

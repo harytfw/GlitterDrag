@@ -7,7 +7,7 @@ document.title = getI18nMessage("option_page_title");
 
 const TOOLTIP_TEXT_TABLE = {};
 //TODO add allow_ tooltip
-["act", "active", "pos", "search", "search_type", "copy", "allow", "open_type", "download_type", "download_saveas", "download_directory"].forEach(
+["act", "active", "pos", "search", "search_type", "search_onsite", "copy", "allow", "open_type", "download_type", "download_saveas", "download_directory"].forEach(
     (name) => {
         TOOLTIP_TEXT_TABLE[name] = getI18nMessage("option_tooltip_" + name);
     }
@@ -20,6 +20,7 @@ const OPTION_TEXT_VALUE_TABLE = {
     pos: [],
     open: [],
     search: [],
+    search_onsite: [],
     copy: [],
     allow: [],
     download: [],
@@ -57,6 +58,9 @@ for (let item of Object.keys(commons)) {
     }
     else if (["SEARCH_LINK", "SEARCH_TEXT", "SEARCH_IMAGE", "SEARCH_IMAGE_LINK"].includes(item)) {
         OPTION_TEXT_VALUE_TABLE.search.push(obj);
+    }
+    else if (["SEARCH_ONSITE_YES", "SEARCH_ONSITE_NO"].includes(item)) {
+        OPTION_TEXT_VALUE_TABLE.search_onsite.push(obj);
     }
     else if (["OPEN_LINK", "OPEN_IMAGE", "OPEN_IMAGE_LINK"].includes(item)) {
         OPTION_TEXT_VALUE_TABLE.open.push(obj);
@@ -285,6 +289,11 @@ class SearchTypeSelect extends _SelectWrapper {
     }
 }
 
+class SearchOnSiteSelect extends _SelectWrapper {
+    constructor(value) {
+        super("search_onsite", OPTION_TEXT_VALUE_TABLE.search_onsite, value, TOOLTIP_TEXT_TABLE.search_onsite);
+    }
+}
 class CopySelect extends _SelectWrapper {
     constructor(value) {
         super("copy_type", OPTION_TEXT_VALUE_TABLE.copy, value, TOOLTIP_TEXT_TABLE.copy);
@@ -351,6 +360,7 @@ class DirWrapper {
         this.engineSelect = new EngineSelect(this.act.engine_name);
         this.openTypeSelect = new OpenTypeSelect(this.act.open_type);
         this.searchTypeSelect = new SearchTypeSelect(this.act.search_type);
+        this.searchOnSiteSelect = new SearchOnSiteSelect(this.act.search_onsite);
         this.downloadSelect = new DownloadlSelect(this.act.download_type);
         this.downloadDirectorySelect = new DownloadDirectoriesSelect(this.act.download_directory);
         this.downloadSaveasSelect = new DownloadSaveasSelect(this.act.download_saveas);
@@ -358,7 +368,7 @@ class DirWrapper {
         this.selectGroup = [
             this.actSelect, this.activationSelect,
             this.posSelect, this.engineSelect,
-            this.openTypeSelect, this.searchTypeSelect,
+            this.openTypeSelect, this.searchTypeSelect, this.searchOnSiteSelect,
             this.copySelect, this.downloadSelect,
             this.downloadDirectorySelect, this.downloadSaveasSelect,
         ];
@@ -377,7 +387,7 @@ class DirWrapper {
         //the code about control select show or hide.
         [this.activationSelect, this.posSelect,
             this.engineSelect, this.copySelect,
-            this.openTypeSelect, this.searchTypeSelect,
+            this.openTypeSelect, this.searchTypeSelect, this.searchOnSiteSelect,
             this.downloadSelect, this.downloadDirectorySelect,
             this.downloadSaveasSelect,
         ].forEach(s => {
@@ -392,9 +402,9 @@ class DirWrapper {
                 this.posSelect.show();
                 this.engineSelect.show();
                 this.searchTypeSelect.show();
+                this.searchOnSiteSelect.show();
                 break;
             case commons.ACT_OPEN:
-
                 this.activationSelect.show();
                 this.posSelect.show();
                 this.engineSelect.show();
@@ -655,7 +665,7 @@ class Wrapper {
         this.child_text.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
-            commons.PLACE_HOLDER, commons.SEARCH_TEXT,
+            commons.PLACE_HOLDER, commons.SEARCH_TEXT, commons.SEARCH_ONSITE_NO,
             commons.COPY_TEXT, commons.DOWNLOAD_TEXT,
             commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
         )
@@ -673,7 +683,7 @@ class Wrapper {
         this.child_image.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
-            commons.OPEN_LINK, commons.SEARCH_LINK,
+            commons.OPEN_LINK, commons.SEARCH_LINK, commons.SEARCH_ONSITE_NO,
             commons.COPY_LINK, commons.DOWNLOAD_LINK,
             commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
         )
@@ -685,14 +695,14 @@ class Wrapper {
             commons.COPY_TEXT, commons.COPY_IMAGE_LINK,
             commons.DOWNLOAD_TEXT, commons.DOWNLOAD_IMAGE_LINK, commons.DOWNLOAD_IMAGE
         );
-        this.child_image.disableSelect("openTypeSelect");
+        this.child_image.disableSelect("openTypeSelect", "searchOnSiteSelect", "searchTypeSelect");
 
 
         this.child_link = new ChildWrapper(getI18nMessage('linkType'), "linkAction", valuesOfControl.linkAction, modifierKey);
         this.child_link.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
-            commons.OPEN_LINK, commons.SEARCH_LINK,
+            commons.OPEN_LINK, commons.SEARCH_LINK, commons.SEARCH_ONSITE_NO,
             commons.COPY_LINK, commons.DOWNLOAD_LINK,
             commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
         )

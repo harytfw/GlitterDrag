@@ -195,6 +195,14 @@
         "message": "图像",
         "description": "Search action"
     },
+    "SEARCH_ONSITE_YES": {
+        "message": "站内搜索",
+        "description": "Search action"
+    },
+    "SEARCH_ONSITE_NO": {
+        "message": "不处理",
+        "description": "Search action"
+    },
     "COPY_TEXT": {
         "message": "文本",
         "description": "Copy action"
@@ -261,6 +269,10 @@
     },
     "option_tooltip_search_type": {
         "message": "需要搜索的东西，文本、链接",
+        "description": "tooltip on option"
+    },
+    "option_tooltip_search_onsite": {
+        "message": "将关键词 替换成 site:域名 关键词",
         "description": "tooltip on option"
     },
     "option_tooltip_copy": {

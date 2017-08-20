@@ -216,9 +216,9 @@ class DragClass {
         this.updateModifierKey(evt);
 
         this.targetElem = evt.target;
-        this.selection = evt.dataTransfer.getData("text/x-moz-url-data");
+        this.selection = evt.dataTransfer.getData("text/x-moz-url-data").trim();
         this.imageLink = evt.dataTransfer.getData("application/x-moz-file-promise-url");
-        this.textSelection = evt.dataTransfer.getData("text/plain");
+        this.textSelection = evt.dataTransfer.getData("text/plain").trim();
         if (this.selection === "") {
             this.selection = this.textSelection;
         }
@@ -236,7 +236,6 @@ class DragClass {
         clearTimeout(this.timeoutId);
 
         // what should we do if user release ctrl or shift key while dragging?
-        this.modifierKey = commons.KEY_NONE;
 
         if (this.promptBox) { // may be null if viewing an image
             this.promptBox.stopRender();
@@ -247,6 +246,8 @@ class DragClass {
             this.post();
         }
 
+
+        this.modifierKey = commons.KEY_NONE;
     }
     dragover(evt) {
         this.updateModifierKey(evt);

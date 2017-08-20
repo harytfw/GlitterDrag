@@ -230,8 +230,12 @@ class ExecutorClass {
         //     "%s":keyword,
         //     "%x":`${keyword} site:${this.data.domain}`,
         // }
+        let url = config.getSearchURL(this.action.engine_name)
+        if (this.action.search_onsite === commons.SEARCH_ONSITE_YES) {
+            url = url.replace("%s", "%x");
+        }
         this.openTab(
-            config.getSearchURL(this.action.engine_name).replace("%s", keyword).replace("%x", `site:${this.data.domain} ${keyword}`)
+            url.replace("%s", encodeURIComponent(keyword)).replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
         );
     }
 
