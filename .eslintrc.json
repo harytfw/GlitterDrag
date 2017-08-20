@@ -13,7 +13,7 @@
     ],
     "globals": {
         "commons": false,
-        "geti18nMessage": false,
+        "getI18nMessage": false,
         "checkDragTargetType": false,
         "DEFAULT_CONFIG":false,
         "eventUtil":false,

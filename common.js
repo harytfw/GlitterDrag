@@ -191,7 +191,7 @@ const $E = (s = "") => {
     return r;
 }
 
-const geti18nMessage = (strName = "") => {
+const getI18nMessage = (strName = "") => {
     const message = browser.i18n.getMessage(strName);
     if (message === "") {
         return strName;
