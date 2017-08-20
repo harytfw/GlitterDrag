@@ -26,13 +26,11 @@
         "no-this-before-super": "warn",
         "no-undef": "warn",
         "no-unreachable": "warn",
-        "no-unused-vars": "warn",
         "constructor-super": "warn",
         "valid-typeof": "warn",
         "arrow-spacing": ["warn"],
         "no-unused-vars": ["warn", { "vars": "all", "args": "all" } ],
         "no-proto": ["error"],
-        "no-undef": ["warn"],
         "prefer-arrow-callback": ["warn"],
         "prefer-spread": ["warn"]
      }
