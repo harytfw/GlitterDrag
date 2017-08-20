@@ -641,7 +641,7 @@ class Wrapper {
             this.keyNameOfActions = "Actions";
         }
         const valuesOfControl = backgroundPage.config.get(this.keyNameOfControl);
-        this.child_text = new ChildWrapper(geti18nMessage('textType'), "textAction", valuesOfControl.textAction, modifierKey);
+        this.child_text = new ChildWrapper(getI18nMessage('textType'), "textAction", valuesOfControl.textAction, modifierKey);
         //顺序
         /*
         this.selectGroup = [
@@ -669,12 +669,7 @@ class Wrapper {
         );
         this.child_text.disableSelect("openTypeSelect", "copySelect", "searchTypeSelect");
 
-        <<
-        << << < HEAD
-        this.child_image = new ChildWrapper(geti18nMessage('imageType'), "imageAction", valuesOfControl.imageAction, modifierKey); ===
-        === =
-        this.child_image = new ChildWrapper(getI18nMessage('imageType'), "imageAction", valuesOfControl.imageAction); >>>
-        >>> > 9631 d0c726453058856b0eaff12725149ea28788
+        this.child_image = new ChildWrapper(getI18nMessage('imageType'), "imageAction", valuesOfControl.imageAction, modifierKey);
         this.child_image.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
@@ -693,12 +688,7 @@ class Wrapper {
         this.child_image.disableSelect("openTypeSelect");
 
 
-        <<
-        << << < HEAD
-        this.child_link = new ChildWrapper(geti18nMessage('linkType'), "linkAction", valuesOfControl.linkAction, modifierKey); ===
-        === =
-        this.child_link = new ChildWrapper(getI18nMessage('linkType'), "linkAction", valuesOfControl.linkAction); >>>
-        >>> > 9631 d0c726453058856b0eaff12725149ea28788
+        this.child_link = new ChildWrapper(getI18nMessage('linkType'), "linkAction", valuesOfControl.linkAction, modifierKey);
         this.child_link.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
