@@ -428,7 +428,7 @@
         }
     },
     "elem_SettingDownloadDirectoryHelperText": {
-        "message": "The set directory can only be used as the subdirectory of the <b> browser's default download directory </b>, and cannot use the absolute path. The second column is the directory you can set. For example: \"<br> image/\" said the final download directory \"<b>default download directory</b>/image/\". Blank is <b> the default download directory </b>. second-level directory need to manually create",
+        "message": "The directory sets can only be used as the subdirectory of the browser's download directory, and cannot use the absolute path. The second column is the directory path you can set. For example: \"image/\" represent the download directory is \"download directory/image/\". Leave blank field will use the default download directory.",
         "description": "Element on Options page"
     },
     "elem_Style": {

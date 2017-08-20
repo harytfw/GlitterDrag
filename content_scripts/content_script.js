@@ -268,7 +268,7 @@ class DragClass {
                 // console.log(JSON.stringify(actions));
                 let message = ""
                 if (this.direction in actions[this.actionType]) {
-                    message = geti18nMessage(actions[this.actionType][this.direction]["act_name"]);
+                    message = getI18nMessage(actions[this.actionType][this.direction]["act_name"]);
                 }
                 this.promptBox.render(this.direction, message);
             }

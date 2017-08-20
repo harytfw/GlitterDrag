@@ -1,7 +1,7 @@
 //TODO:减少全局变量
-//TODO: 统一i18n-id的使用
+//TODO: 统一data-i18n的使用
 //TODO: auto reloading after restore from backup file.
-document.title = geti18nMessage("option_page_title");
+document.title = getI18nMessage("option_page_title");
 
 
 
@@ -9,7 +9,7 @@ const TOOLTIP_TEXT_TABLE = {};
 //TODO add allow_ tooltip
 ["act", "active", "pos", "search", "search_type", "copy", "allow", "open_type", "download_type", "download_saveas", "download_directory"].forEach(
     (name) => {
-        TOOLTIP_TEXT_TABLE[name] = geti18nMessage("option_tooltip_" + name);
+        TOOLTIP_TEXT_TABLE[name] = getI18nMessage("option_tooltip_" + name);
     }
 )
 
@@ -39,7 +39,7 @@ for (let item of Object.keys(commons)) {
         continue;
     }
     const obj = {
-        text: geti18nMessage(item),
+        text: getI18nMessage(item),
         value: commons[item]
     };
     if (/^DIR_/.test(item)) {
@@ -253,7 +253,7 @@ class EngineSelect extends _SelectWrapper {
         let engines = backgroundPage.config.get("Engines");
 
         let optList = [{
-            text: geti18nMessage("defaultText"),
+            text: getI18nMessage("defaultText"),
             value: "DEFAULT_SEARCH_ENGINE"
         }];
         if (engines.length !== 0) {
@@ -480,7 +480,7 @@ class ControlWrapper {
         this.elem = document.createElement("div");
         this.elem.className = "direction";
         this.label = document.createElement("label");
-        this.label.textContent = geti18nMessage("directionControl");
+        this.label.textContent = getI18nMessage("directionControl");
 
         this.controlSelect = new ControlSelect(initValue);
         this.elem.appendChild(this.label);
@@ -641,7 +641,11 @@ class Wrapper {
             this.keyNameOfActions = "Actions";
         }
         const valuesOfControl = backgroundPage.config.get(this.keyNameOfControl);
+<<<<<<< HEAD
         this.child_text = new ChildWrapper(geti18nMessage('textType'), "textAction", valuesOfControl.textAction, modifierKey);
+=======
+        this.child_text = new ChildWrapper(getI18nMessage('textType'), "textAction", valuesOfControl.textAction);
+>>>>>>> 9631d0c726453058856b0eaff12725149ea28788
         //顺序
         /*
         this.selectGroup = [
@@ -669,7 +673,11 @@ class Wrapper {
         );
         this.child_text.disableSelect("openTypeSelect", "copySelect", "searchTypeSelect");
 
+<<<<<<< HEAD
         this.child_image = new ChildWrapper(geti18nMessage('imageType'), "imageAction", valuesOfControl.imageAction, modifierKey);
+=======
+        this.child_image = new ChildWrapper(getI18nMessage('imageType'), "imageAction", valuesOfControl.imageAction);
+>>>>>>> 9631d0c726453058856b0eaff12725149ea28788
         this.child_image.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
@@ -688,7 +696,11 @@ class Wrapper {
         this.child_image.disableSelect("openTypeSelect");
 
 
+<<<<<<< HEAD
         this.child_link = new ChildWrapper(geti18nMessage('linkType'), "linkAction", valuesOfControl.linkAction, modifierKey);
+=======
+        this.child_link = new ChildWrapper(getI18nMessage('linkType'), "linkAction", valuesOfControl.linkAction);
+>>>>>>> 9631d0c726453058856b0eaff12725149ea28788
         this.child_link.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
@@ -781,13 +793,13 @@ class EngineItemWrapper {
             <input class="search-url-input" type="text"></input>
         `; // TODO: Better if create elements by JavaScript DOM?
         this.nameInput = this.elem.querySelector('.search-name-input');
-        this.nameInput.title = geti18nMessage("search_name_tooltip");
-        this.nameInput.placeholder = geti18nMessage("search_name_tooltip"); // Did not see the need for separate strings
+        this.nameInput.title = getI18nMessage("search_name_tooltip");
+        this.nameInput.placeholder = getI18nMessage("search_name_tooltip"); // Did not see the need for separate strings
         eventUtil.attachEventT(this.nameInput, this.onchange, "change");
 
         this.urlInput = this.elem.querySelector('.search-url-input');
-        this.urlInput.title = geti18nMessage("search_url_tooltip");
-        this.urlInput.placeholder = geti18nMessage("search_url_tooltip");
+        this.urlInput.title = getI18nMessage("search_url_tooltip");
+        this.urlInput.placeholder = getI18nMessage("search_url_tooltip");
         eventUtil.attachEventT(this.urlInput, this.onchange, "change");
 
         this.remove = this.elem.querySelector('.remove-button');
@@ -1008,9 +1020,9 @@ class styleWrapper {
 
         eventUtil.attachEventS("#saveStyle", () => {
             backgroundPage.config.set("style", styleArea.value); // TODO: promise?
-            document.querySelector("#saveStyle").textContent = geti18nMessage('elem_SaveDone');
+            document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveDone');
             setTimeout(() => {
-                document.querySelector("#saveStyle").textContent = geti18nMessage('elem_SaveStyle');
+                document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveStyle');
             }, 2000);
         })
     }
@@ -1067,8 +1079,8 @@ const tabs = {
         });
 
         //do with i18n
-        for (let elem of document.querySelectorAll("[i18n-id]")) {
-            elem.innerHTML = geti18nMessage('elem_' + elem.attributes['i18n-id'].value);
+        for (let elem of document.querySelectorAll("[data-i18n]")) {
+            elem.textContent = getI18nMessage(`elem_${elem.dataset['i18n']}`);
         }
 
         document.querySelectorAll("input[id]").forEach(elem => {

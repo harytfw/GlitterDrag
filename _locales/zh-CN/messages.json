@@ -427,7 +427,7 @@
         }
     },
     "elem_SettingDownloadDirectoryHelperText": {
-        "message": "设定的目录只能作为 <b>浏览器的默认下载目录</b> 的子目录，同时也无法使用绝对路径。第二列是你可以设置的目录。<br>例如：“image/” 表示的最终下载目录是 “<b>默认下载目录</b>/image/” . 留空是 <b>默认下载目录</b>.  二级目录需要手动创建 ",
+        "message": "设定的目录只能作为“浏览器的默认下载目录”的子目录，不支持绝对路径。第二列是你可以设置的目录路径。例如 image/ 表示最终下载目录是“默认下载目录/image/”。留空则表示使用“默认下载目录”。",
         "description": "Element on Options page"
     },
     "elem_Style": {
