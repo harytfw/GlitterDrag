@@ -23,8 +23,11 @@ class ExecutorClass {
         this.newTabId = browser.tabs.TAB_ID_NONE;
         this.previousTabId = browser.tabs.TAB_ID_NONE;
 
+        this.backgroundChildTabCount = 0;
+
         browser.tabs.onRemoved.addListener((tabId) => {
             if (config.get("enableAutoSelectPreviousTab") === true &&
+                this.backgroundChildTabCount === 0 &&
                 this.newTabId !== browser.tabs.TAB_ID_NONE &&
                 this.previousTabId !== browser.tabs.TAB_ID_NONE &&
                 this.newTabId === tabId) {
@@ -32,7 +35,11 @@ class ExecutorClass {
                     active: commons.FORE_GROUND
                 });
             }
-        })
+        });
+        browser.tabs.onActivated.addListener(() => {
+            this.backgroundChildTabCount = 0;
+        });
+
     }
     DO(m) {
         this.data = m;
@@ -120,12 +127,15 @@ class ExecutorClass {
     }
     getTabIndex(tabsLength = 0, currentTabIndex = 0) {
         let index = 0;
+        if (this.action.tab_active === commons.FORE_GROUND) {
+            this.backgroundChildTabCount = 0;
+        }
         switch (this.action.tab_pos) {
             case commons.TAB_CLEFT:
                 index = currentTabIndex;
                 break;
             case commons.TAB_CRIGHT:
-                index = currentTabIndex + 1;
+                index = currentTabIndex + this.backgroundChildTabCount + 1;
                 break;
             case commons.TAB_FIRST:
                 index = 0;
@@ -135,6 +145,9 @@ class ExecutorClass {
                 break;
             default:
                 break;
+        }
+        if (this.action.tab_active === commons.BACK_GROUND && this.action.tab_pos === commons.TAB_CRIGHT) {
+            this.backgroundChildTabCount += 1;
         }
         return index;
     }
@@ -155,7 +168,6 @@ class ExecutorClass {
                             url
                         }).then((newTab) => {
                             // 只有当在右边前台打开才记录标签页id
-
                             if (this.action.tab_pos === commons.TAB_CRIGHT && this.action.tab_active === commons.FORE_GROUND) {
                                 this.newTabId = newTab.id;
                             }

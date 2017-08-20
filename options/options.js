@@ -501,7 +501,7 @@ class ControlWrapper {
 }
 
 class ChildWrapper {
-    constructor(labelString, typeInfo, valueOfControl) {
+    constructor(labelString, typeInfo, valueOfControl, modifierKey) {
         this.elem = document.createElement("div");
         this.typeInfo = typeInfo;
         this.label = document.createElement("h3");
@@ -514,7 +514,7 @@ class ChildWrapper {
         for (let key of Object.keys(DIR_TEXT_VALUE_TABLE)) {
             this.dirWrappers.push(new DirWrapper(
                 DIR_TEXT_VALUE_TABLE[key].text, DIR_TEXT_VALUE_TABLE[key].value,
-                backgroundPage.config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[key].value)
+                backgroundPage.config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[key].value, modifierKey)
             ));
         }
 
@@ -549,10 +549,10 @@ class ChildWrapper {
         // for (let key of Object.keys(DIR_TEXT_VALUE_TABLE)) {
         //     this.dirWrappers.push(new DirWrapper(DIR_TEXT_VALUE_TABLE[key], backgroundPage.config.getAct(T, DIR_TEXT_VALUE_TABLE[key].value)));
         // }
-        const keys = Object.keys(DIR_TEXT_VALUE_TABLE);
-        this.dirWrappers.forEach((w, index) => {
-            w.update(backgroundPage.config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[keys[index]].value));
-        })
+        // const keys = Object.keys(DIR_TEXT_VALUE_TABLE);
+        // this.dirWrappers.forEach((w, index) => {
+        //     w.update(backgroundPage.config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[keys[index]].value));
+        // })
     }
     appendTo(parent) {
         parent.appendChild(this.elem);
@@ -616,8 +616,8 @@ class ChildWrapper {
 
 
 class Wrapper {
-    constructor() {
-        this.init();
+    constructor(modifierKey = commons.KEY_NONE) {
+        this.init(modifierKey);
     }
     init(modifierKey) {
         this.DOSAVE = false; //指示是否需要保存
@@ -641,7 +641,7 @@ class Wrapper {
             this.keyNameOfActions = "Actions";
         }
         const valuesOfControl = backgroundPage.config.get(this.keyNameOfControl);
-        this.child_text = new ChildWrapper(geti18nMessage('textType'), "textAction", valuesOfControl.textAction);
+        this.child_text = new ChildWrapper(geti18nMessage('textType'), "textAction", valuesOfControl.textAction, modifierKey);
         //顺序
         /*
         this.selectGroup = [
@@ -669,7 +669,7 @@ class Wrapper {
         );
         this.child_text.disableSelect("openTypeSelect", "copySelect", "searchTypeSelect");
 
-        this.child_image = new ChildWrapper(geti18nMessage('imageType'), "imageAction", valuesOfControl.imageAction);
+        this.child_image = new ChildWrapper(geti18nMessage('imageType'), "imageAction", valuesOfControl.imageAction, modifierKey);
         this.child_image.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
@@ -688,7 +688,7 @@ class Wrapper {
         this.child_image.disableSelect("openTypeSelect");
 
 
-        this.child_link = new ChildWrapper(geti18nMessage('linkType'), "linkAction", valuesOfControl.linkAction);
+        this.child_link = new ChildWrapper(geti18nMessage('linkType'), "linkAction", valuesOfControl.linkAction, modifierKey);
         this.child_link.setDefaultOpt(
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
@@ -753,14 +753,12 @@ class Wrapper {
 
 class ActionsWithCtrlKeyWrapper extends Wrapper {
     constructor() {
-        super();
-        this.init(commons.KEY_CTRL);
+        super(commons.KEY_CTRL);
     }
 }
 class ActionsWithShiftKeyWrapper extends Wrapper {
     constructor() {
-        super();
-        this.init(commons.KEY_SHIFT)
+        super(commons.KEY_SHIFT);
     }
 }
 class OuterActionsWrapper {
@@ -1024,15 +1022,15 @@ const tabs = {
     init: function() {
 
 
-        let w = new Wrapper(backgroundPage.config.get("Actions"));
+        let w = new Wrapper();
         w.appendTo($E(`#tab-actions`));
         this._tabs.push(w);
 
-        w = new ActionsWithCtrlKeyWrapper(backgroundPage.config.get("Actions_CtrlKey"));
+        w = new ActionsWithCtrlKeyWrapper();
         w.appendTo($E(`#tab-actions-ctrlkey`));
         this._tabs.push(w);
 
-        w = new ActionsWithShiftKeyWrapper(backgroundPage.config.get("Actions_ShiftKey"));
+        w = new ActionsWithShiftKeyWrapper();
         w.appendTo($E(`#tab-actions-shiftkey`));
         this._tabs.push(w);
 
