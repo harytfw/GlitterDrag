@@ -1,5 +1,5 @@
 //TODO:减少全局变量
-//TODO: 统一i18n-id的使用
+//TODO: 统一data-i18n的使用
 //TODO: auto reloading after restore from backup file.
 document.title = geti18nMessage("option_page_title");
 
@@ -1069,8 +1069,8 @@ const tabs = {
         });
 
         //do with i18n
-        for (let elem of document.querySelectorAll("[i18n-id]")) {
-            elem.innerHTML = geti18nMessage('elem_' + elem.attributes['i18n-id'].value);
+        for (let elem of document.querySelectorAll("[data-i18n]")) {
+            elem.innerHTML = geti18nMessage('elem_' + elem.dataset['i18n']);
         }
 
         document.querySelectorAll("input[id]").forEach(elem => {
