@@ -1,5 +1,7 @@
 var supportCopyImage = false;
 
+const TAB_ID_NONE = browser.tabs.TAB_ID_NONE;
+
 function createBlobObjectURLForText(text = "") {
     let blob = new window.Blob([text], {
         type: "text/plain"
@@ -20,8 +22,8 @@ class ExecutorClass {
         };
         this.action = {};
 
-        this.newTabId = browser.tabs.TAB_ID_NONE;
-        this.previousTabId = browser.tabs.TAB_ID_NONE;
+        this.newTabId = TAB_ID_NONE;
+        this.previousTabId = TAB_ID_NONE;
 
         this.backgroundChildTabCount = 0;
 
@@ -243,14 +245,39 @@ class ExecutorClass {
         this.openURL(this.searchTemplate.replace("%s", keyword));
     }
 
-    downloadImage(url) {
-        browser.downloads.download({
-            url,
-            saveAs: true
-        });
+    searchImageViaUploadImage(engineName, binary) {
+        const form = new FormData();
+        const image = new File(binary);
+        let server = "";
+        if (engineName === "baidu") {
+            server = "http://image.baidu.com/pcdutu/a_upload?fr=html5&target=pcSearchImage&needJson=true";
+            form.append("file", image);
+            fetch(server, {
+                method: "POST",
+                body: form
+            }).then(async(res) => {
+                return res.json();
+            }).then((json) => {
+                if (json.url) this.openTab(`http://image.baidu.com/n/pc_search?queryImageUrl=${json.url}`)
+            }).catch((error) => {
+                console.error(error);
+            })
+        }
+        else if (engineName === "google") {
+            server = "https://www.google.com/searchbyimage/upload";
+            form.append("encoded_image", image);
+            fetch(server, {
+                method: "POST",
+                body: form
+            }).then(async(res) => {
+                return res.json();
+            }).then((json) => {
+                if (json.url) this.openTab(json.url);
+            }).catch((error) => {
+                console.error(error);
+            })
+        }
     }
-
-
     randomString(length = 8) {
         //https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
         const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

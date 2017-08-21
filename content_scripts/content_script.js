@@ -1,4 +1,4 @@
-//TODO: 处理拖放区域为textArea,input@type=text
+//TODO: 处理拖放区域为 input@type=text
 
 "use strict";
 
@@ -324,31 +324,23 @@ class DragClass {
                 //这样就不会和页面本身的拖拽功能重突
                 //drop发生在dragend之前
                 // console.log(evt.dataTransfer);
+
+                evt.preventDefault();
                 evt.stopPropagation();
+                console.log(evt);
                 if (this.running) {
                     evt.preventDefault();
                 }
                 else if (this.isFromOuter) {
                     this.isFromOuter = false;
-                    //dataTransfer may be null,see https://bugzilla.mozilla.org/show_bug.cgi?id=1352974
+                    // dataTransfer may be null,see https://bugzilla.mozilla.org/show_bug.cgi?id=1352974
+                    // also see https://bugzilla.mozilla.org/show_bug.cgi?id=1352852
                     if (evt.dataTransfer) {
-                        console.log(evt.dataTransfer);
-                        evt.preventDefault();
-                        this.direction = commons.DIR_OUTER;
-                        this.selection = evt.dataTransfer.getData("text/x-moz-url-data");
-                        this.imageLink = evt.dataTransfer.getData("application/x-moz-file-promise-url");
-                        this.textSelection = evt.dataTransfer.getData("text/plain");
-                        if (this.selection === "") {
-                            this.selection = this.textSelection;
-                        }
-                        this.targetType = typeUtil.checkDragTargetType(this.selection, this.textSelection, this.imageLink, this.targetElem);
-
-                        if (commons.TYPE_TEXT_URL === this.targetType) {
-                            this.selection = this.textSelection = typeUtil.fixupSchemer(this.selection);
-                        }
-                        this.post();
+                        // this.post();
                     }
+
                 }
+
                 break;
             case "dragover":
                 //如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
