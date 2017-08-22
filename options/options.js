@@ -861,7 +861,6 @@ class EngineWrapper {
         this.items = [];
 
         // this.onAdd = this.onAdd.bind(this);
-        this.onButtonCallback = this.onButtonCallback.bind(this);
         this.onItemRemove = this.onItemRemove.bind(this);
 
         this.buttonsDiv = document.querySelector("#engine-buttons");
@@ -869,77 +868,17 @@ class EngineWrapper {
 
         let refreshbtn = this.buttonsDiv.querySelector("#RefreshbtnOnEngines");
         refreshbtn.onclick = () => this.onRefresh();
-        // refreshbtn.textContent = browser.i18n.getMessage('RefreshbtnOnEngines');
 
         let addbtn = this.buttonsDiv.querySelector("#AddbtnOnEngines");
         addbtn.onclick = () => this.onAdd();
-        // addbtn.textContent = browser.i18n.getMessage('AddbtnOnEngines');
 
         let savebtn = this.buttonsDiv.querySelector("#SavebtnOnEngines");
         savebtn.onclick = () => this.onSaveAll();
-        // savebtn.textContent = browser.i18n.getMessage('SavebtnOnEngines');
 
         this.refreshItems(engineList);
     }
-    onButtonCallback(isRemove, item) { // TODO: better name
-        if (isRemove) {
-            // console.log(item);
-            this.items = this.items.filter((v) => v !== item);
-            this.itemsDiv.removeChild(item.elem);
-            // TODO: Leave a text line or allow undo, or highlight the save button
-        }
-        else { // onSaveAllClick
-            let hasError = false;
-            for (let input of document.querySelectorAll('#engine-items input')) {
-                if (input.value.length > 0) {
-                    /*input.classList.add("accept");
-                    setTimeout(() => {
-                        input.classList.remove("accept");
-                    }, 1200);*/ // May be misleading, it actually has not been saved if there is any error.
-                }
-                else {
-                    input.classList.add("warning");
-                    setTimeout(() => {
-                        input.classList.remove("warning");
-                    }, 1200);
-                    hasError = true;
-                }
-            }
-            // TODO: checking in each saving
-            if (hasError) {
-                return;
-            }
-            for (let item of document.querySelectorAll('#engine-items>div')) {
-                item.classList.add("saved");
-            } // TODO: Only saves successfully, warnings wrong.
-        }
-
-        backgroundPage.config.set("Engines", this.collect());
-        backgroundPage.config.save().then(() => {
-            document.querySelectorAll(".searchEngines").forEach(select => {
-                select.dispatchEvent(new Event("update"));
-            })
-        });
-    }
 
     onSaveAll() {
-        // let hasError = false;
-        // for (let input of document.querySelectorAll('#engine-items input')) {
-        //     if (input.value.length > 0) {
-        //         backgroundPage.config.setSingleSearchEngine()
-        //             /*input.classList.add("accept");
-        //             setTimeout(() => {
-        //                 input.classList.remove("accept");
-        //             }, 1200);*/ // May be misleading, it actually has not been saved if there is any error.
-        //     }
-        //     else {
-        //         input.classList.add("warning");
-        //         setTimeout(() => {
-        //             input.classList.remove("warning");
-        //         }, 1200);
-        //         hasError = true;
-        //     }
-        // }
         const engines = [];
         const savedItems = [];
         const unSavedItems = [];
@@ -975,15 +914,6 @@ class EngineWrapper {
                 }, 1200)
             });
         });
-
-        // TODO: checking in each saving
-        // if (hasError) {
-        //     return;
-        // }
-        // for (let item of document.querySelectorAll('#engine-items>div')) {
-        //     item.classList.add("saved");
-        // }
-        // TODO: Only saves successfully, warnings wrong.
     }
     onItemRemove(item) {
         this.items = this.items.filter((v) => v !== item);
