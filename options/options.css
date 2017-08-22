@@ -29,7 +29,7 @@ input {
     box-shadow: 0 0 0 2px rgba(250, 100, 100, 0.75);
 }
 
-#engine-items input[type="text"].accept {
+#engine-items div.accept input[type="text"] {
     border-color: rgb(100, 240, 60);
     box-shadow: 0 0 0 2px rgba(110, 240, 170, 0.75);
 }
@@ -194,9 +194,11 @@ a:visited {
 #engine-items {
     width: 80%
 }
+
 #engine-items .search-name-input {
     width: 20%
 }
+
 #engine-items .search-url-input {
     width: 70%
 }
