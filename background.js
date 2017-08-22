@@ -318,26 +318,23 @@ class ConfigClass {
         this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
         this.set("version", browser.runtime.getManifest().version);
     }
-    clear(callback) {
-        this.storageArea.clear().then(callback, () => {}, (e) => {
-            console.error(e)
-        });
+    clear() {
+        return this.storageArea.clear();
     }
     save() {
-        this.storageArea.set(JSON.parse(JSON.stringify(this)));
+        return this.storageArea.set(JSON.parse(JSON.stringify(this)));
     }
-    load(callback) {
-        let promise = this.storageArea.get();
-        promise.then((result) => {
+    async load() {
+        return new Promise(async(resolve) => {
+            const result = await this.storageArea.get();
             let keys = Object.keys(result);
             if (keys.length === 0) {
-                this.loadDefault(callback);
+                await this.loadDefault();
             }
             else {
                 for (let key of keys) {
                     this.set(key, result[key]);
                 }
-                callback ? callback() : null;
             }
             //检查是否有新的选项出现在DEFAULT_CONFIG.js，有的话添加进来
             for (let key1 of Object.keys(DEFAULT_CONFIG)) {
@@ -345,9 +342,8 @@ class ConfigClass {
                     this[key1] = DEFAULT_CONFIG[key1];
                 }
             }
-        }, (e) => {
-            console.error(e)
-        });
+            resolve(true);
+        })
     }
     get(key, callback) {
         if (this[key] === undefined) {
@@ -406,13 +402,13 @@ class ConfigClass {
             this.set(key, parsed[key]);
         }
     }
-    loadDefault(callback) {
-        this.clear(() => {
+    async loadDefault() {
+        return new Promise(async(resolve) => {
+            await this.clear();
             for (let k of Object.keys(DEFAULT_CONFIG)) {
                 this.set(k, DEFAULT_CONFIG[k]);
             }
-            if (callback) callback();
-            return true;
+            resolve(true);
         });
     }
 }

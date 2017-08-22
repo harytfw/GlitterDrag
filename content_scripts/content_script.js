@@ -536,7 +536,7 @@ let bgConfig = null;
 let mydrag = null;
 bgPort.onMessage.addListener((c) => {
     bgConfig = JSON.parse(c);
-    console.log(bgConfig);
+    // console.log(bgConfig);
     if (["loading", "interactive"].includes(document.readyState)) {
         document.addEventListener("DOMContentLoaded", () => {
             if (mydrag === null) {

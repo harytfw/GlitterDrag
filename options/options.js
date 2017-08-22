@@ -739,7 +739,7 @@ class Wrapper {
             linkAction: this.child_link.collect()
         }
     }
-    collect1() { // TODO: better name
+    collectControlSelect() { // TODO: better name
         return {
             textAction: this.child_text.collectControlSelect(),
             imageAction: this.child_image.collectControlSelect(),
@@ -748,7 +748,7 @@ class Wrapper {
     }
     save() {
         backgroundPage.config.set(this.keyNameOfActions, this.collect());
-        backgroundPage.config.set(this.keyNameOfControl, this.collect1());
+        backgroundPage.config.set(this.keyNameOfControl, this.collectControlSelect());
         backgroundPage.config.save();
     }
     update() {
@@ -811,7 +811,7 @@ class EngineItemWrapper {
     }
 
     onRemoveClick() {
-        this.callback(true, this);
+        this.callback(this);
     }
 
     onchange() {
@@ -861,65 +861,64 @@ class EngineWrapper {
         this.items = [];
 
         // this.onAdd = this.onAdd.bind(this);
-        this.onButtonCallback = this.onButtonCallback.bind(this);
+        this.onItemRemove = this.onItemRemove.bind(this);
 
         this.buttonsDiv = document.querySelector("#engine-buttons");
         this.itemsDiv = document.querySelector("#engine-items");
 
         let refreshbtn = this.buttonsDiv.querySelector("#RefreshbtnOnEngines");
         refreshbtn.onclick = () => this.onRefresh();
-        // refreshbtn.textContent = browser.i18n.getMessage('RefreshbtnOnEngines');
 
         let addbtn = this.buttonsDiv.querySelector("#AddbtnOnEngines");
         addbtn.onclick = () => this.onAdd();
-        // addbtn.textContent = browser.i18n.getMessage('AddbtnOnEngines');
 
         let savebtn = this.buttonsDiv.querySelector("#SavebtnOnEngines");
-        savebtn.onclick = () => this.onButtonCallback();
-        // savebtn.textContent = browser.i18n.getMessage('SavebtnOnEngines');
+        savebtn.onclick = () => this.onSaveAll();
 
         this.refreshItems(engineList);
     }
-    onButtonCallback(isRemove, item) { // TODO: better name
-        if (isRemove) {
-            // console.log(item);
-            this.items = this.items.filter((v) => v !== item);
-            this.itemsDiv.removeChild(item.elem);
-            // TODO: Leave a text line or allow undo, or highlight the save button
-        }
-        else { // onSaveAllClick
-            let hasError = false;
-            for (let input of document.querySelectorAll('#engine-items input')) {
-                if (input.value.length > 0) {
-                    /*input.classList.add("accept");
-                    setTimeout(() => {
-                        input.classList.remove("accept");
-                    }, 1200);*/ // May be misleading, it actually has not been saved if there is any error.
-                }
-                else {
-                    input.classList.add("warning");
-                    setTimeout(() => {
-                        input.classList.remove("warning");
-                    }, 1200);
-                    hasError = true;
-                }
-            }
-            // TODO: checking in each saving
-            if (hasError) {
-                return;
-            }
-            for (let item of document.querySelectorAll('#engine-items>div')) {
-                item.classList.add("saved");
-            } // TODO: Only saves successfully, warnings wrong.
-        }
 
-        backgroundPage.config.set("Engines", this.collect());
-        backgroundPage.config.save(); // TODO: Promise
-        document.querySelectorAll(".searchEngines").forEach(select => {
-            select.dispatchEvent(new Event("update"));
-        })
+    onSaveAll() {
+        const engines = [];
+        const savedItems = [];
+        const unSavedItems = [];
+        for (let item of this.items) {
+            if (item.url.length > 0 && item.name.length > 0) {
+                savedItems.push(item);
+                engines.push({
+                    name: item.name,
+                    url: item.url
+                });
+            }
+            else {
+                unSavedItems.push(item);
+            }
+        }
+        if (engines.length > 0) {
+            backgroundPage.config.set("Engines", engines);
+        }
+        backgroundPage.config.save().then(() => {
+            savedItems.forEach(item => {
+                item.elem.classList.add("accept", "saved");
+                setTimeout(() => {
+                    item.elem.classList.remove("accept");
+                }, 1200)
+            });
+            unSavedItems.forEach(item => {
+                item.nameInput.classList.toggle("warning", item.name.length <= 0);
+                item.urlInput.classList.toggle("warning", item.url.length <= 0);
+                item.elem.classList.remove("saved");
+                setTimeout(() => {
+                    item.nameInput.classList.remove("warning");
+                    item.urlInput.classList.remove("warning");
+                }, 1200)
+            });
+        });
     }
-
+    onItemRemove(item) {
+        this.items = this.items.filter((v) => v !== item);
+        this.itemsDiv.removeChild(item.elem);
+    }
     onRefresh() {
         this.refreshItems(backgroundPage.config.get("Engines"));
     }
@@ -941,7 +940,7 @@ class EngineWrapper {
     }
 
     newItem(val, saved = false) {
-        let item = new EngineItemWrapper(val, this.onButtonCallback, saved);
+        let item = new EngineItemWrapper(val, this.onItemRemove, saved);
         this.items.push(item);
         item.appendTo(this.itemsDiv);
     }
@@ -1111,15 +1110,15 @@ browser.runtime.getBackgroundPage().then((page) => {
     backgroundPage = page;
 
     let fileReader = new FileReader();
-    fileReader.addEventListener("loadend", () => {
+    fileReader.addEventListener("loadend", async() => {
         try {
             backgroundPage.config.restore(fileReader.result);
-            backgroundPage.config.save();
+            await backgroundPage.config.save();
             location.reload();
         }
         catch (e) {
             console.error("Error when restore from backup", e);
-            alert("An error occurred!");
+            throw "An error occurred!";
         }
     });
     eventUtil.attachEventS("#backup", () => {
@@ -1200,6 +1199,13 @@ function messageListener(msg) {
         CSlistener(msg);
     }
 }
+document.addEventListener("beforeunload", () => {
+    backgroundPage.config.save().then(() => {
+        console.info("succeed to save config ");
+    }).catch(() => {
+        console.error("fail to save config");
+    });
+})
 browser.runtime.onConnect.addListener(port => {
     if (port.name === "sendToOptions") {
         port.onMessage.addListener(messageListener);
