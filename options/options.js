@@ -966,9 +966,9 @@ class EngineWrapper {
                 }, 1200)
             });
             unSavedItems.forEach(item => {
-                item.nameInput.classList.add("warning", item.name.length <= 0);
-                item.urlInput.classList.add("warning", item.name.length <= 0);
-                item.elem.classList.remove("saved")
+                item.nameInput.classList.toggle("warning", item.name.length <= 0);
+                item.urlInput.classList.toggle("warning", item.url.length <= 0);
+                item.elem.classList.remove("saved");
                 setTimeout(() => {
                     item.nameInput.classList.remove("warning");
                     item.urlInput.classList.remove("warning");
