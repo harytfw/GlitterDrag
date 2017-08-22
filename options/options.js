@@ -862,6 +862,7 @@ class EngineWrapper {
 
         // this.onAdd = this.onAdd.bind(this);
         this.onButtonCallback = this.onButtonCallback.bind(this);
+        this.onItemRemove = this.onItemRemove.bind(this);
 
         this.buttonsDiv = document.querySelector("#engine-buttons");
         this.itemsDiv = document.querySelector("#engine-items");
