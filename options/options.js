@@ -785,25 +785,30 @@ class EngineItemWrapper {
         this.onchange = this.onchange.bind(this);
 
         this.elem = document.createElement("div");
-        this.elem.innerHTML = `
-            <a class="remove-button" href="#">&#10007</a>
-            <input class="search-name-input" type="text"></input>
-            <input class="search-url-input" type="text"></input>
-        `; // TODO: Better if create elements by JavaScript DOM?
-        this.nameInput = this.elem.querySelector('.search-name-input');
+
+        this.removeBtn = document.createElement("a");
+        this.removeBtn.className = "remove-button";
+        this.removeBtn.href = "#";
+        this.removeBtn.textContent = "x";
+        eventUtil.attachEventT(this.removeBtn, () => this.onRemoveClick());
+
+        this.nameInput = document.createElement("input");
+        this.nameInput.className = "search-name-input";
+        this.nameInput.type = "text";
         this.nameInput.title = getI18nMessage("search_name_tooltip");
         this.nameInput.placeholder = getI18nMessage("search_name_tooltip"); // Did not see the need for separate strings
         eventUtil.attachEventT(this.nameInput, this.onchange, "change");
 
-        this.urlInput = this.elem.querySelector('.search-url-input');
+        this.urlInput = this.nameInput.cloneNode();
+        this.urlInput.className = "search-url-input";
         this.urlInput.title = getI18nMessage("search_url_tooltip");
         this.urlInput.placeholder = getI18nMessage("search_url_tooltip");
         eventUtil.attachEventT(this.urlInput, this.onchange, "change");
 
-        this.remove = this.elem.querySelector('.remove-button');
-        eventUtil.attachEventT(this.remove, () => this.onRemoveClick());
 
-        [this.remove, this.nameInput, this.urlInput].forEach(t => this.elem.appendChild(t));
+
+
+        [this.removeBtn, this.nameInput, this.urlInput].forEach(t => this.elem.appendChild(t));
         this.value = val;
         if (saved) {
             this.elem.classList.add("saved");
@@ -1057,19 +1062,6 @@ const tabs = {
         w = new styleWrapper();
         this._tabs.push(w);
 
-
-
-        document.addEventListener("keypress", (evt) => {
-            const char = evt.key.charAt(0);
-            if (char >= "1" && char <= "9" && evt.target.tagName !== "INPUT" && evt.target.tagName !== "TEXTAREA") {
-                try {
-                    $E(`a.nav-a:nth-child(${char})`).click();
-                }
-                catch (error) {
-                    // console.error(error);
-                }
-            }
-        });
 
         document.querySelectorAll(".nav-a").forEach(a => {
             a.addEventListener("click", this.navOnClick);
