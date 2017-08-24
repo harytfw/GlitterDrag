@@ -1,6 +1,5 @@
 //TODO:减少全局变量
 //TODO: 统一data-i18n的使用
-//TODO: auto reloading after restore from backup file.
 document.title = getI18nMessage("option_page_title");
 
 
@@ -671,7 +670,6 @@ class Wrapper {
         )
         this.child_text.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
-            commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW,
             commons.SEARCH_IMAGE, commons.SEARCH_LINK, commons.SEARCH_IMAGE_LINK,
             commons.COPY_LINK, commons.COPY_IMAGE, commons.COPY_IMAGE_LINK,
             commons.OPEN_IMAGE, commons.OPEN_IMAGE_LINK,
@@ -689,7 +687,6 @@ class Wrapper {
         )
         this.child_image.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
-            commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW,
             commons.SEARCH_IMAGE_LINK, commons.SEARCH_TEXT, commons.SEARCH_IMAGE,
             commons.OPEN_IMAGE_LINK,
             commons.COPY_TEXT, commons.COPY_IMAGE_LINK,
@@ -708,7 +705,6 @@ class Wrapper {
         )
         this.child_link.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE,
-            commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW,
             commons.OPEN_IMAGE,
             commons.SEARCH_IMAGE,
             commons.DOWNLOAD_IMAGE,

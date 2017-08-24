@@ -156,31 +156,40 @@ class ExecutorClass {
 
     openTab(url) {
         this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
-        browser.tabs.query({}).then(tabs => {
-            for (let tab of tabs) {
-                if (tab.active === true) {
-                    this.previousTabId = tab.id;
-                    if (this.action.tab_pos === commons.TAB_CUR) browser.tabs.update(tab.id, {
-                        url
-                    });
-                    else {
-                        browser.tabs.create({
-                            active: this.action.tab_active,
-                            index: this.getTabIndex(tabs.length, tab.index),
+        if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.action.tab_pos)) {
+            browser.windows.create({
+                // focused: this.action.tab_active,
+                incognito: this.action.tab_pos === "TAB_NEW_PRIVATE_WINDOW" ? true : false,
+                url,
+            }).catch(e => console.error(e));
+        }
+        else {
+            browser.tabs.query({}).then(tabs => {
+                for (let tab of tabs) {
+                    if (tab.active === true) {
+                        this.previousTabId = tab.id;
+                        if (this.action.tab_pos === commons.TAB_CUR) browser.tabs.update(tab.id, {
                             url
-                        }).then((newTab) => {
-                            // 只有当在右边前台打开才记录标签页id
-                            if (this.action.tab_pos === commons.TAB_CRIGHT && this.action.tab_active === commons.FORE_GROUND) {
-                                this.newTabId = newTab.id;
-                            }
                         });
+                        else {
+                            browser.tabs.create({
+                                active: this.action.tab_active,
+                                index: this.getTabIndex(tabs.length, tab.index),
+                                url
+                            }).then((newTab) => {
+                                // 只有当在右边前台打开才记录标签页id
+                                if (this.action.tab_pos === commons.TAB_CRIGHT && this.action.tab_active === commons.FORE_GROUND) {
+                                    this.newTabId = newTab.id;
+                                }
+                            });
+                        }
+                        break;
                     }
-                    break;
                 }
-            }
-        }, (error) => {
-            console.error(error);
-        });
+            }, (error) => {
+                console.error(error);
+            });
+        }
     }
 
 
