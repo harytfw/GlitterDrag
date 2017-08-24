@@ -51,8 +51,9 @@ const GENERATE_DEFAULT_CONFIG = () => {
         enableAutoSelectPreviousTab: true,
         enableCtrlKey: false,
         enableShiftKey: false,
-        timeoutCancel: 2000,
-        triggeredDistance: 20, //px
+        timeoutCancel: 2000, // ms
+        triggeredDistance: 20, // px
+        disableAdjustTabSequence: false,
         Actions: {
             textAction: clone(tempAction),
             linkAction: clone(tempAction),

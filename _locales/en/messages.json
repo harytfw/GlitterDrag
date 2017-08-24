@@ -393,6 +393,10 @@
         "message": "Select previous tab automatically (Only work when you open a tab with foreground & right)",
         "description": "Element on Options page"
     },
+    "elem_DisableAdjustTabSequence": {
+        "message": "Don't adjust tabs' open sequence",
+        "description": "Element on Options page"
+    },
     "elem_EnableCtrlKey": {
         "message": "Permit different actions when press Ctrl Key",
         "description": "Element on Options page"

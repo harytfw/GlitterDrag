@@ -391,6 +391,10 @@
         "message": "自动选中上一个标签页（只有当在标签页右边前台打开时才有效）",
         "description": "Element on Options page"
     },
+    "elem_DisableAdjustTabSequence": {
+        "message": "不调整标签页的打开顺序",
+        "description": "Element on Options page"
+    },
     "elem_EnableCtrlKey": {
         "message": "当按下 Ctrl 键时使用不同的动作",
         "description": "Element on Options page"

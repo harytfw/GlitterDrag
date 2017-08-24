@@ -129,7 +129,7 @@ class ExecutorClass {
     }
     getTabIndex(tabsLength = 0, currentTabIndex = 0) {
         let index = 0;
-        if (this.action.tab_active === commons.FORE_GROUND) {
+        if (config.get("disableAdjustTabSequence") || this.action.tab_active === commons.FORE_GROUND) {
             this.backgroundChildTabCount = 0;
         }
         switch (this.action.tab_pos) {
