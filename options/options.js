@@ -1079,12 +1079,14 @@ const tabs = {
             else elem.value = backgroundPage.config.get(elem.id);
 
             elem.addEventListener("change", (evt) => {
+                this.showOrHideNav();
                 if (evt.target.type === "checkbox") backgroundPage.config.set(evt.target.id, evt.target.checked);
                 else if (evt.target.type === "number") backgroundPage.config.set(evt.target.id, parseInt(evt.target.value));
                 else backgroundPage.config.set(evt.target.id, evt.target.value);
                 backgroundPage.config.save();
             });
         })
+        this.showOrHideNav();
 
     },
 
@@ -1094,6 +1096,24 @@ const tabs = {
         $E(".tab-active").classList.remove("tab-active");
         $E(`${event.target.getAttribute("toggle-target")}`).classList.add("tab-active");
     },
+
+    showOrHideNav: function() {
+        let classList = $E(`a[toggle-target="#tab-actions-ctrlkey"]`).classList;
+        if ($E("#enableCtrlKey").checked) {
+            classList.remove("hide")
+        }
+        else {
+            classList.add("hide");
+        }
+
+        classList = $E(`a[toggle-target="#tab-actions-shiftkey"]`).classList;
+        if ($E("#enableShiftKey").checked) {
+            classList.remove("hide")
+        }
+        else {
+            classList.add("hide");
+        }
+    }
 }
 
 

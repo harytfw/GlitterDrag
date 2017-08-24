@@ -20,6 +20,10 @@ input {
     box-shadow: 1px 1px 1px rgb(141, 141, 141);
 }
 
+.hide {
+    display: none;
+}
+
 #engine-items div:not(.saved) input[type="text"] {
     background-color: yellow
 }
