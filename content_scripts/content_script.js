@@ -179,9 +179,9 @@ class DragClass {
 
         if (isRunInOptionsContext) {
             sended.sendToOptions = true;
-            backgroundPage.executor.DO(sended);
+            // backgroundPage.executor.DO(sended);
         }
-        else browser.runtime.sendMessage(sended);
+        browser.runtime.sendMessage(sended);
     }
     cancel() {
         clearTimeout(this.timeoutId);

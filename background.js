@@ -385,7 +385,7 @@ function sendImageToNative(base64) {
 }
 
 browser.runtime.onMessage.addListener((m) => {
-    m.sendToOptions = false;
+    // m.sendToOptions = false;
     if (("imageBase64" in m || "imageSrc" in m) && supportCopyImage) {
         if (m.imageBase64) sendImageToNative(m.imageBase64);
         else if (m.imageSrc) sendImageToNativeBySrc(m.imageSrc);
