@@ -1,5 +1,6 @@
-//TODO:减少全局变量
-//TODO: 统一data-i18n的使用
+var supportCopyImage = false;
+var config = new ConfigClass();
+
 document.title = getI18nMessage("option_page_title");
 
 
@@ -253,7 +254,7 @@ class EngineSelect extends _SelectWrapper {
         this.elem.addEventListener("update", () => this.updateSearchEngines());
     }
     static createEnginesOptList() {
-        let engines = backgroundPage.config.get("Engines");
+        let engines = config.get("Engines");
 
         let optList = [{
             text: getI18nMessage("defaultText"),
@@ -307,7 +308,7 @@ class DownloadlSelect extends _SelectWrapper {
 
 class DownloadDirectoriesSelect extends _SelectWrapper {
     constructor(value) {
-        const directories = backgroundPage.config.get("downloadDirectories");
+        const directories = config.get("downloadDirectories");
         const optList = Array.from(directories, (directory, index) => {
             return {
                 text: browser.i18n.getMessage("DownloadDirectory", index),
@@ -523,7 +524,7 @@ class ChildWrapper {
         for (let key of Object.keys(DIR_TEXT_VALUE_TABLE)) {
             this.dirWrappers.push(new DirWrapper(
                 DIR_TEXT_VALUE_TABLE[key].text, DIR_TEXT_VALUE_TABLE[key].value,
-                backgroundPage.config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[key].value, modifierKey)
+                config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[key].value, modifierKey)
             ));
         }
 
@@ -556,11 +557,11 @@ class ChildWrapper {
     }
     update() {
         // for (let key of Object.keys(DIR_TEXT_VALUE_TABLE)) {
-        //     this.dirWrappers.push(new DirWrapper(DIR_TEXT_VALUE_TABLE[key], backgroundPage.config.getAct(T, DIR_TEXT_VALUE_TABLE[key].value)));
+        //     this.dirWrappers.push(new DirWrapper(DIR_TEXT_VALUE_TABLE[key], config.getAct(T, DIR_TEXT_VALUE_TABLE[key].value)));
         // }
         // const keys = Object.keys(DIR_TEXT_VALUE_TABLE);
         // this.dirWrappers.forEach((w, index) => {
-        //     w.update(backgroundPage.config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[keys[index]].value));
+        //     w.update(config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[keys[index]].value));
         // })
     }
     appendTo(parent) {
@@ -649,7 +650,7 @@ class Wrapper {
             this.keyNameOfControl = "directionControl";
             this.keyNameOfActions = "Actions";
         }
-        const valuesOfControl = backgroundPage.config.get(this.keyNameOfControl);
+        const valuesOfControl = config.get(this.keyNameOfControl);
         this.child_text = new ChildWrapper(getI18nMessage('textType'), "textAction", valuesOfControl.textAction, modifierKey);
         //顺序
         /*
@@ -711,7 +712,7 @@ class Wrapper {
         );
 
 
-        if (backgroundPage.supportCopyImage === false) {
+        if (supportCopyImage === false) {
             this.child_image.disableOpt(commons.COPY_IMAGE);
             this.child_link.disableOpt(commons.COPY_IMAGE);
         }
@@ -743,9 +744,9 @@ class Wrapper {
         }
     }
     save() {
-        backgroundPage.config.set(this.keyNameOfActions, this.collect());
-        backgroundPage.config.set(this.keyNameOfControl, this.collectControlSelect());
-        backgroundPage.config.save();
+        config.set(this.keyNameOfActions, this.collect());
+        config.set(this.keyNameOfControl, this.collectControlSelect());
+        // config.save();
     }
     update() {
         this.child_text.update();
@@ -896,32 +897,31 @@ class EngineWrapper {
             }
         }
         if (engines.length > 0) {
-            backgroundPage.config.set("Engines", engines);
+            config.set("Engines", engines).then(() => {
+                savedItems.forEach(item => {
+                    item.elem.classList.add("accept", "saved");
+                    setTimeout(() => {
+                        item.elem.classList.remove("accept");
+                    }, 1200)
+                });
+                unSavedItems.forEach(item => {
+                    item.nameInput.classList.toggle("warning", item.name.length <= 0);
+                    item.urlInput.classList.toggle("warning", item.url.length <= 0);
+                    item.elem.classList.remove("saved");
+                    setTimeout(() => {
+                        item.nameInput.classList.remove("warning");
+                        item.urlInput.classList.remove("warning");
+                    }, 1200)
+                });
+            });
         }
-        backgroundPage.config.save().then(() => {
-            savedItems.forEach(item => {
-                item.elem.classList.add("accept", "saved");
-                setTimeout(() => {
-                    item.elem.classList.remove("accept");
-                }, 1200)
-            });
-            unSavedItems.forEach(item => {
-                item.nameInput.classList.toggle("warning", item.name.length <= 0);
-                item.urlInput.classList.toggle("warning", item.url.length <= 0);
-                item.elem.classList.remove("saved");
-                setTimeout(() => {
-                    item.nameInput.classList.remove("warning");
-                    item.urlInput.classList.remove("warning");
-                }, 1200)
-            });
-        });
     }
     onItemRemove(item) {
         this.items = this.items.filter((v) => v !== item);
         this.itemsDiv.removeChild(item.elem);
     }
     onRefresh() {
-        this.refreshItems(backgroundPage.config.get("Engines"));
+        this.refreshItems(config.get("Engines"));
     }
     onAdd() {
         this.newItem({
@@ -969,7 +969,7 @@ class generalWrapper {
 class downloadWrapper {
     constructor() {
 
-        this.directories = backgroundPage.config.get("downloadDirectories");
+        this.directories = config.get("downloadDirectories");
 
         const tab = document.querySelector("#tab-download");
 
@@ -996,7 +996,7 @@ class downloadWrapper {
     onConfirmClick(event) {
         const index = event.target.getAttribute("index");
         this.directories[index] = event.target.previousElementSibling.value;
-        backgroundPage.config.set("downloadDirectories", this.directories);
+        config.set("downloadDirectories", this.directories);
     }
 }
 
@@ -1005,7 +1005,7 @@ class styleWrapper {
         let tab = document.querySelector("#tab-style");
 
         let styleArea = tab.querySelector("#styleContent");
-        let style = backgroundPage.config.get("style");
+        let style = config.get("style");
         if (style.length === 0) {
             let styleURL = browser.runtime.getURL("./../content_scripts/content_script.css");
             fetch(styleURL).then(
@@ -1017,7 +1017,7 @@ class styleWrapper {
         }
 
         eventUtil.attachEventS("#saveStyle", () => {
-            backgroundPage.config.set("style", styleArea.value); // TODO: promise?
+            config.set("style", styleArea.value); // TODO: promise?
             document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveDone');
             setTimeout(() => {
                 document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveStyle');
@@ -1044,7 +1044,7 @@ const tabs = {
         w.appendTo($E(`#tab-actions-shiftkey`));
         this._tabs.push(w);
 
-        w = new EngineWrapper(backgroundPage.config.get("Engines"));
+        w = new EngineWrapper(config.get("Engines"));
         w.appendTo($E(`#tab-search-template`));
         this._tabs.push(w);
 
@@ -1071,15 +1071,15 @@ const tabs = {
         document.querySelectorAll("input[id]").forEach(elem => {
             if (elem.type === "file") return;
 
-            if (elem.type === "checkbox") elem.checked = backgroundPage.config.get(elem.id);
-            else elem.value = backgroundPage.config.get(elem.id);
+            if (elem.type === "checkbox") elem.checked = config.get(elem.id);
+            else elem.value = config.get(elem.id);
 
             elem.addEventListener("change", (evt) => {
                 this.showOrHideNav();
-                if (evt.target.type === "checkbox") backgroundPage.config.set(evt.target.id, evt.target.checked);
-                else if (evt.target.type === "number") backgroundPage.config.set(evt.target.id, parseInt(evt.target.value));
-                else backgroundPage.config.set(evt.target.id, evt.target.value);
-                backgroundPage.config.save();
+                if (evt.target.type === "checkbox") config.set(evt.target.id, evt.target.checked);
+                else if (evt.target.type === "number") config.set(evt.target.id, parseInt(evt.target.value));
+                else config.set(evt.target.id, evt.target.value);
+                // config.save();
             });
         })
         this.showOrHideNav();
@@ -1114,14 +1114,14 @@ const tabs = {
 
 
 var backgroundPage = null;
-browser.runtime.getBackgroundPage().then((page) => {
-    backgroundPage = page;
+config.load().then((page) => {
+    // backgroundPage = page;
 
     let fileReader = new FileReader();
     fileReader.addEventListener("loadend", async() => {
         try {
-            backgroundPage.config.restore(fileReader.result);
-            await backgroundPage.config.save();
+            config.restore(fileReader.result);
+            await config.save();
             location.reload();
         }
         catch (e) {
@@ -1130,7 +1130,7 @@ browser.runtime.getBackgroundPage().then((page) => {
         }
     });
     eventUtil.attachEventS("#backup", () => {
-        const blob = new Blob([JSON.stringify(backgroundPage.config, null, 2)]);
+        const blob = new Blob([JSON.stringify(config, null, 2)]);
         const url = URL.createObjectURL(blob);
         const date = new Date();
 
@@ -1149,7 +1149,7 @@ browser.runtime.getBackgroundPage().then((page) => {
         $E("#fileInput").click();
     });
     eventUtil.attachEventS("#default", () => {
-        backgroundPage.config.loadDefault();
+        config.loadDefault();
         location.reload();
     });
     eventUtil.attachEventS("#fileInput", (event) => {
@@ -1208,7 +1208,7 @@ function messageListener(msg) {
     }
 }
 document.addEventListener("beforeunload", () => {
-    backgroundPage.config.save().then(() => {
+    config.save().then(() => {
         console.info("succeed to save config ");
     }).catch(() => {
         console.error("fail to save config");
