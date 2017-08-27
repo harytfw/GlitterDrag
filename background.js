@@ -399,7 +399,7 @@ browser.runtime.onMessage.addListener((m) => {
 
 function connected(port) {
     // console.log("port",port);
-    if (port.name === "getConfig") {
+    if (port.name === "initial") {
         port.postMessage(JSON.stringify(config));
         //自定义样式
         if (config.get("enableStyle") === true) {

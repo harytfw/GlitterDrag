@@ -124,14 +124,13 @@
                     <label for="enableShiftKey" data-i18n="EnableShiftKey">当按下Shift键时，使用不同的动作</label>
                     <br>
                     <label for="triggeredDistance" data-i18n="DistancePx">触发距离（px）</label>
-                    <input type="text" id="triggeredDistance">
+                    <input type="number" id="triggeredDistance" min=0 required>
                     <br>
-
                     <input type="checkbox" id="enableTimeoutCancel">
                     <label for="enableTimeoutCancel" data-i18n="EnableTimeoutCancel">启用超时取消></label>
                     <br>
                     <label for="timeoutCancel" data-i18n="TimeoutCancel">超时取消时间（ms）</label>
-                    <input type="text" id="timeoutCancel">
+                    <input type="number" id="timeoutCancel">
                 </li>
                 <li class="tab-content" id="tab-download">
                     <button data-i18n="ShowDefaultDownloadDirectory" id="showDefaultDownloadDirectory">打开浏览器的默认下载目录</button>

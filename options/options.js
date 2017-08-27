@@ -156,21 +156,31 @@ class _SelectWrapper {
     }
     set value(v) {
         this.elem.value = v;
+        this.elem.dispatchEvent(new Event("change"));
     }
 
     updateViaOptList(optList) {
         let oldValue = this.value;
+        let oldValueExistFlag = false;
         let option = null;
         while ((option = this.elem.firstChild) !== null) {
             option.remove();
         }
         optList.forEach(opt => {
+            if (oldValue === opt.value) {
+                oldValueExistFlag = true;
+            }
             let option = document.createElement("option");
             option.setAttribute("value", opt.value); //
             option.textContent = opt.text;
             this.elem.appendChild(option);
         });
-        this.value = oldValue;
+        if (oldValueExistFlag) {
+            this.value = oldValue;
+        }
+        else {
+            this.value = this.elem.firstElementChild.value;
+        }
     }
 
     //选项显示或隐藏控制的代码
@@ -192,8 +202,6 @@ class _SelectWrapper {
                 this.value = opt;
             }
         }
-        //触发change事件
-        this.elem.dispatchEvent(new Event("change", {}));
     }
     hide() {
         this.elem.style.display = "none";
@@ -213,13 +221,10 @@ class _SelectWrapper {
         parent.appendChild(this.elem);
     }
     bindCallBack(cb) {
-        this.elem.onchange = cb;
+        this.elem.addEventListener("change", e => cb(e));
         if (this.isInit) {
             this.isInit = false;
-            //call the callback function with fake Event object to complete initialization
-            cb({
-                target: this.elem
-            });
+            this.elem.dispatchEvent(new Event("change"));
         }
     }
 }
@@ -630,7 +635,7 @@ class Wrapper {
         this.init(modifierKey);
     }
     init(modifierKey) {
-        this.DOSAVE = false; //指示是否需要保存
+        this.DOSAVE = true; //指示是否需要保存
 
         this.callback = this.callback.bind(this);
         this.elem = document.createElement("div");
@@ -913,6 +918,12 @@ class EngineWrapper {
                         item.urlInput.classList.remove("warning");
                     }, 1200)
                 });
+                // dispatch event to a large number of element will slow the optioin page
+                setTimeout(() => {
+                    document.querySelectorAll(".searchEngines").forEach(el => {
+                        el.dispatchEvent(new Event("update"));
+                    });
+                }, 2500);
             });
         }
     }
@@ -1125,8 +1136,9 @@ config.load().then((page) => {
             location.reload();
         }
         catch (e) {
-            console.error("Error when restore from backup", e);
-            throw "An error occurred!";
+            const msg = "An error occured, please check backup file";
+            console.error(msg, e);
+            alert(msg);
         }
     });
     eventUtil.attachEventS("#backup", () => {
@@ -1148,8 +1160,8 @@ config.load().then((page) => {
     eventUtil.attachEventS("#restore", () => {
         $E("#fileInput").click();
     });
-    eventUtil.attachEventS("#default", () => {
-        config.loadDefault();
+    eventUtil.attachEventS("#default", async() => {
+        await config.loadDefault();
         location.reload();
     });
     eventUtil.attachEventS("#fileInput", (event) => {

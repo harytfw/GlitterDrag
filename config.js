@@ -1,27 +1,38 @@
 class ConfigClass {
     constructor() {
         this.onStorageChange = this.onStorageChange.bind(this);
-        this.storageArea = this.enableSync ? browser.storage.sync : browser.storage.local;
         this.set("version", browser.runtime.getManifest().version);
+        this.set("addon", "Glitter Drag");
         browser.storage.onChanged.addListener(this.onStorageChange);
-
-        this.is
-
     }
+
+    // sendConfigToActiveTab(config) {
+    //     browser.tabs.query({
+    //         currentWindow: true,
+    //         active: true
+    //     }, (tabs) => {
+    //         let port = browser.tabs.connect(tabs[0].id, {
+    //             name: "updateConfig"
+    //         });
+    //         port.postMessage(JSON.stringify(this));
+    //     });
+    // }
+
     onStorageChange(changes, area) {
         for (const key of Object.keys(changes)) {
             this[key] = changes[key].newValue;
         }
+        // this.sendConfigToActiveTab();
     }
     clear() {
-        return this.storageArea.clear();
+        return browser.storage.local.clear();
     }
     save() {
-        return this.storageArea.set(JSON.parse(JSON.stringify(this)));
+        return browser.storage.local.set(JSON.parse(JSON.stringify(this)));
     }
     async load() {
         return new Promise(async(resolve) => {
-            const result = await this.storageArea.get();
+            const result = await browser.storage.local.get();
             let keys = Object.keys(result);
             if (keys.length === 0) {
                 await this.loadDefault();
@@ -54,17 +65,17 @@ class ConfigClass {
         return this[key];
     }
     set(key, val) {
-        if (key === "storageArea") {
-            val = this.enableSync ? browser.storage.sync : browser.storage.local;
-            this[key] = val;
-            return new Promise(resolve => resolve(true));
-        }
-        else if (typeof val === "object") {
+        // if (key === "storageArea") {
+        //     val = this.enableSync ? browser.storage.sync : browser.storage.local;
+        //     this[key] = val;
+        //     return new Promise(resolve => resolve(true));
+        // }
+        if (typeof val === "object") {
             val = JSON.parse(JSON.stringify(val));
         }
         const toStored = {};
         toStored[key] = val;
-        return this.storageArea.set(toStored);
+        return browser.storage.local.set(toStored);
     }
     getAct(type, dir, key) {
         let r = null;
@@ -97,6 +108,9 @@ class ConfigClass {
     }
     restore(json) {
         const parsed = JSON.parse(json);
+        if (parsed.addon !== "Glitter Drag") {
+            throw "Invalid json";
+        }
         for (let key of Object.keys(parsed)) {
             this.set(key, parsed[key]);
         }
@@ -109,5 +123,8 @@ class ConfigClass {
             }
             resolve(true);
         });
+    }
+    synchronize() {
+        // TODO
     }
 }

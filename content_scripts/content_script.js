@@ -327,7 +327,7 @@ class DragClass {
 
                 evt.preventDefault();
                 evt.stopPropagation();
-                console.log(evt);
+                // console.log(evt);
                 if (this.running) {
                     evt.preventDefault();
                 }
@@ -524,31 +524,38 @@ function CSlistener(msg) {
     // })
 }
 
+function onGettingConfig(config) {
+    // TODO: debug;
+    bgConfig = JSON.parse(config);
+    // console.log(bgConfig);
+}
+
 browser.runtime.onConnect.addListener(port => {
     if (port.name === "sendToContentScript") {
         port.onMessage.addListener(CSlistener);
     }
+    else if (port.name === "updateConfig") {
+        port.onMessage.addListener(onGettingConfig);
+    }
 });
 let bgPort = browser.runtime.connect({
-    name: "getConfig"
+    name: "initial"
 });
 let bgConfig = null;
 let mydrag = null;
 bgPort.onMessage.addListener((c) => {
     bgConfig = JSON.parse(c);
     // console.log(bgConfig);
-    if (["loading", "interactive"].includes(document.readyState)) {
-        document.addEventListener("DOMContentLoaded", () => {
-            if (mydrag === null) {
+    if (mydrag === null) {
+        if (["loading", "interactive"].includes(document.readyState)) {
+            document.addEventListener("DOMContentLoaded", () => {
                 mydrag = new DragClass(document);
-            }
-
-        }, {
-            once: true
-        });
+            }, {
+                once: true
+            });
+        }
+        else {
+            mydrag = new DragClass(document);
+        }
     }
-    else {
-        mydrag = new DragClass(document);
-    }
-
 });
