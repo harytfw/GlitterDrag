@@ -315,7 +315,7 @@ class DragClass {
                     this.running = false;
                     this.dragend(evt);
                 }
-                console.log(evt);
+                // console.log(evt);
                 break;
             case "drop":
 
@@ -327,12 +327,12 @@ class DragClass {
 
                 evt.preventDefault();
                 evt.stopPropagation();
-                console.log(evt);
+                // console.log(evt);
                 if (this.running) {
                     evt.preventDefault();
                 }
                 else if (this.isFromOuter) {
-                    console.log(evt.dataTransfer.files)
+                    // console.log(evt.dataTransfer.files)
                     this.isFromOuter = false;
                     // dataTransfer may be null,see https://bugzilla.mozilla.org/show_bug.cgi?id=1352974
                     // also see https://bugzilla.mozilla.org/show_bug.cgi?id=1352852
@@ -344,10 +344,10 @@ class DragClass {
 
                 break;
             case "dragover":
-                //如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
+                // 如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
                 // evt.stopPropagation();
                 // evt.dataTransfer.setData("TEXT", "asdijsdf");
-                console.log(evt)
+                // console.log(evt)
                 if (this.running) {
                     this.dragover(evt);
                     evt.preventDefault();

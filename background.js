@@ -372,7 +372,7 @@ class ExecutorClass {
         }
         opt.filename = directories[this.action.download_directory] + filename;
 
-        console.log(opt.filename);
+        // console.log(opt.filename);
         browser.downloads.download(opt);
     }
     translateText(text) {}
