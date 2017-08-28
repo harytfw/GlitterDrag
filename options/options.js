@@ -83,53 +83,6 @@ for (let item of Object.keys(commons)) {
     }
 }
 
-// class SelectWrapper {
-//     //              选项      值      提示    回调
-//     constructor(optList = [], value, tooltip, cb) {
-//         this.elem = document.createElement("select");
-//         this.elem.setAttribute("title", tooltip);
-//         optList.every(opt => {
-//             let option = document.createElement("option");
-//             option.setAttribute("value", opt.value); //
-//             option.textContent = opt.text;
-//             this.elem.appendChild(option);
-//             return 1;
-//         });
-//         this.onchange = this.onchange.bind(this);
-//         this.elem.onchange = this.onchange;
-//         this.callback = cb;
-//         this.value = value;
-//     }
-//     hide() {
-//         this.elem.style.display = "none";
-//     }
-//     show() {
-//         this.elem.style.display = "";
-//     }
-//     get value() {
-//         if (this.elem.value === "false") return false;
-//         else if (this.elem.value === "true") return true;
-//         return this.elem.value;
-//     }
-//     set value(v) {
-//         this.elem.value = v;
-//     }
-//     onchange() {
-//         this.callback();
-//     }
-//     disableOpt(...opts) {
-//         opts.forEach(opt => {
-//             Array.from(this.elem.children, child => {
-//                 if (opt === child.value) {
-//                     child.setAttribute("disabled", "disabled");
-//                 }
-//             })
-//         })
-//     }
-//     appendTo(parent) {
-//         parent.appendChild(this.elem);
-//     }
-// }
 class _SelectWrapper {
     //                         选项      值      提示    
     constructor(name = "", optList = [], value, tooltip = "") {
@@ -423,6 +376,8 @@ class DirWrapper {
                 this.downloadSelect.show();
                 this.downloadDirectorySelect.show();
                 this.downloadSaveasSelect.show();
+                break;
+            case commons.ACT_FIND:
                 break;
             default:
                 break;
@@ -834,11 +789,8 @@ class EngineItemWrapper {
         return this.urlInput.value;
     }
     set url(s) {
-            return this.urlInput.value = s;
-        }
-        // valid() {
-        //     return name.length !== 0 && url.length !== 0;
-        // }
+        return this.urlInput.value = s;
+    }
     get value() {
         return {
             name: this.name,

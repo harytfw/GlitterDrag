@@ -11,6 +11,51 @@ function createBlobObjectURLForText(text = "") {
     return url;
 }
 
+const tabsRelation = {
+    _parent: TAB_ID_NONE,
+    children: [],
+    check: function(pid, cid = TAB_ID_NONE) {
+        if (this.parent === pid) {
+            if (cid !== TAB_ID_NONE) {
+                this.children.push(cid);
+            }
+            return true;
+        }
+        else {
+            this.parent = pid;
+            return false;
+        }
+    },
+    switchToParent: function(id) {
+        if (this.parent === id) {
+            this.parent = TAB_ID_NONE;
+        }
+        else {
+            this.children = this.children.filter(v => {
+                return v !== id
+            });
+        }
+        if (this.parent !== TAB_ID_NONE && this.children.length === 0) {
+            return true;
+        }
+        return false;
+    }
+}
+
+Object.defineProperty(tabsRelation, "parent", {
+    set: function(value) {
+        if (value !== this._parent || value === TAB_ID_NONE) {
+            this._parent = value;
+            this.children = [];
+        }
+        else {
+            this._parent = value;
+        }
+    },
+    get: function() {
+        return this._parent;
+    }
+});
 
 class ExecutorClass {
     constructor() {
@@ -29,11 +74,17 @@ class ExecutorClass {
 
         browser.tabs.onRemoved.addListener((tabId) => {
             if (config.get("enableAutoSelectPreviousTab") === true &&
+                config.get("switchToParentTab") !== true &&
                 this.backgroundChildTabCount === 0 &&
                 this.newTabId !== browser.tabs.TAB_ID_NONE &&
                 this.previousTabId !== browser.tabs.TAB_ID_NONE &&
                 this.newTabId === tabId) {
                 browser.tabs.update(this.previousTabId, {
+                    active: commons.FORE_GROUND
+                });
+            }
+            if (config.get("switchToParentTab") === true && tabsRelation.switchToParent(tabId)) {
+                browser.tabs.update(tabsRelation.parent, {
                     active: commons.FORE_GROUND
                 });
             }
@@ -122,7 +173,8 @@ class ExecutorClass {
                     this.download(this.data.selection);
                 }
                 break;
-
+            case commons.ACT_FIND:
+                break;
             case commons.ACT_TRANS:
                 break;
         }
@@ -169,6 +221,7 @@ class ExecutorClass {
             browser.tabs.query({}).then(tabs => {
                 for (let tab of tabs) {
                     if (tab.active === true) {
+                        tabsRelation.check(tab.id);
                         this.previousTabId = tab.id;
                         if (this.action.tab_pos === commons.TAB_CUR) browser.tabs.update(tab.id, {
                             url
@@ -183,6 +236,8 @@ class ExecutorClass {
                                 if (this.action.tab_pos === commons.TAB_CRIGHT && this.action.tab_active === commons.FORE_GROUND) {
                                     this.newTabId = newTab.id;
                                 }
+
+                                tabsRelation.check(tab.id, newTab.id);
                             });
                         }
                         break;

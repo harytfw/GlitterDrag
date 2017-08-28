@@ -26,13 +26,14 @@ const commons = {
 
     PLACE_HOLDER: "PLACE_HOLDER",
 
-    ACT_NONE: "ACT_NONE", //无动作
-    ACT_OPEN: "ACT_OPEN", //打开
-    ACT_COPY: "ACT_COPY", //复制
-    ACT_SEARCH: "ACT_SEARCH", //搜索
-    ACT_TRANS: "ACT_TRANS", //翻译
-    ACT_DL: "ACT_DL", //下载
-    ACT_QRCODE: "ACT_QRCODE", //二维码
+    ACT_NONE: "ACT_NONE", // 无动作
+    ACT_OPEN: "ACT_OPEN", // 打开
+    ACT_COPY: "ACT_COPY", // 复制
+    ACT_SEARCH: "ACT_SEARCH", // 搜索
+    ACT_TRANS: "ACT_TRANS", // 翻译
+    ACT_DL: "ACT_DL", // 下载
+    ACT_QRCODE: "ACT_QRCODE", // 二维码
+    ACT_FIND: "ACT_FIND", // 查找
     // ACT_BOOKMARK: "ACT_BOOKMARK",
 
     OPEN_LINK: "OPEN_LINK",
@@ -203,41 +204,42 @@ const getI18nMessage = (strName = "") => {
 }
 
 const testCheckDragTargetType = () => {
-        const assert = console.assert;
-        const fn = typeUtil.checkDragTargetType;
-        let selection = "hello world";
-        let textSelection = "hello world";
-        let imageLink = "";
-        let target = document.createTextNode("hello");
+    const assert = console.assert;
+    const fn = typeUtil.checkDragTargetType;
+    let selection = "hello world";
+    let textSelection = "hello world";
+    let imageLink = "";
+    let target = document.createTextNode("hello");
 
-        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_TEXT, "text");
+    assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_TEXT, "text");
 
-        selection = "http://www.example.com";
-        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_TEXT_URL, "text_url");
+    selection = "http://www.example.com";
+    assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_TEXT_URL, "text_url");
 
-        target = document.createElement("textarea");
-        selection = "http://www.example.com/example.jpg";
-        imageLink = "";
-        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_TEXT_AREA, "text_area");
+    target = document.createElement("textarea");
+    selection = "http://www.example.com/example.jpg";
+    imageLink = "";
+    assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_TEXT_AREA, "text_area");
 
-        target = document.createElement("a");
-        selection = "http://www.example.com";
-        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM_A, "elem_a");
+    target = document.createElement("a");
+    selection = "http://www.example.com";
+    assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM_A, "elem_a");
 
-        target = document.createElement("a");
-        selection = "http://www.example.com";
-        imageLink = "http://www.example.com/example.jpg";
-        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM_A_IMG, "elem_a_img");
+    target = document.createElement("a");
+    selection = "http://www.example.com";
+    imageLink = "http://www.example.com/example.jpg";
+    assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM_A_IMG, "elem_a_img");
 
-        target = document.createElement("img");
-        selection = "http://www.example.com/example.jpg";
-        imageLink = "";
-        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM_IMG, "elem_img");
+    target = document.createElement("img");
+    selection = "http://www.example.com/example.jpg";
+    imageLink = "";
+    assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM_IMG, "elem_img");
 
 
-        selection = "";
-        imageLink = "";
-        target = document.createElement("div");
-        assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM, "elem");
-    }
-    // testCheckDragTargetType()
+    selection = "";
+    imageLink = "";
+    target = document.createElement("div");
+    assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM, "elem");
+}
+
+// testCheckDragTargetType()

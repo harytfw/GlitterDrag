@@ -393,6 +393,10 @@
         "message": "Select previous tab automatically (Only work when you open a tab with foreground & right)",
         "description": "Element on Options page"
     },
+    "elem_SwitchToParentTab": {
+        "message": "After closing all children tabs，switch to parent tab. (It will override previous option) ",
+        "description": "Element on Options page"
+    },
     "elem_DisableAdjustTabSequence": {
         "message": "Don't adjust tabs' open sequence",
         "description": "Element on Options page"

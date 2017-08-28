@@ -21,6 +21,8 @@ const ACTION_CONSTRUCTOR = (
         download_type,
         download_directory,
         download_saveas,
+        copy_type,
+        search_onsite,
     }
 }
 const GENERATE_DEFAULT_CONFIG = () => {
@@ -54,6 +56,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         timeoutCancel: 2000, // ms
         triggeredDistance: 20, // px
         disableAdjustTabSequence: false,
+        switchToParentTab: false,
         Actions: {
             textAction: clone(tempAction),
             linkAction: clone(tempAction),
