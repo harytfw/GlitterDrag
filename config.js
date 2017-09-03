@@ -29,7 +29,7 @@ class ConfigClass {
     }
     save() {
         const temp = JSON.parse(JSON.stringify(this));
-        if (this.syncFirefoxAccount && browser.storage.sync) {
+        if (this.enableSync && browser.storage.sync) {
             browser.storage.sync.set(temp);
         }
         return browser.storage.local.set(temp);
