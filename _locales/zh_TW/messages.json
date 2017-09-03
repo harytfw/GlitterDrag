@@ -183,10 +183,6 @@
         "message": "鏈結",
         "description": "Search action"
     },
-    "SEARCH_IMAGE_LINK": {
-        "message": "圖像鏈結",
-        "description": ""
-    },
     "SEARCH_TEXT": {
         "message": "文字",
         "description": "Search action"
@@ -194,6 +190,10 @@
     "SEARCH_IMAGE": {
         "message": "圖像",
         "description": "Search action"
+    },
+    "SEARCH_IMAGE_LINK": {
+        "message": "圖像鏈結",
+        "description": ""
     },
     "SEARCH_ONSITE_YES": {
         "message": "站內搜尋",
@@ -211,13 +211,13 @@
         "message": "鏈結",
         "description": "Copy action"
     },
-    "COPY_IMAGE_LINK": {
-        "message": "圖像鏈結",
-        "description": ""
-    },
     "COPY_IMAGE": {
         "message": "圖像",
         "description": "Copy action"
+    },
+    "COPY_IMAGE_LINK": {
+        "message": "圖像鏈結",
+        "description": ""
     },
     "DOWNLOAD_TEXT": {
         "message": "文字",
@@ -227,12 +227,12 @@
         "message": "鏈結",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE_LINK": {
-        "message": "圖像鏈結",
-        "description": "Copy action"
-    },
     "DOWNLOAD_IMAGE": {
         "message": "圖像",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE_LINK": {
+        "message": "圖像鏈結",
         "description": "Copy action"
     },
     "DOWNLOAD_SAVEAS_YES": {

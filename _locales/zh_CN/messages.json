@@ -83,6 +83,10 @@
         "message": "添加书签",
         "description": "Action name"
     },
+    "ACT_FIND": {
+        "message": "查找",
+        "description": "Action name"
+    },
     "DIR_U": {
         "message": "上",
         "description": "Direction"
@@ -176,16 +180,12 @@
         "description": ""
     },
     "OPEN_IMAGE_LINK": {
-        "message": "图像链接",
+        "message": "图像地址优先",
         "description": ""
     },
     "SEARCH_LINK": {
         "message": "链接",
         "description": "Search action"
-    },
-    "SEARCH_IMAGE_LINK": {
-        "message": "图像链接",
-        "description": ""
     },
     "SEARCH_TEXT": {
         "message": "文本",
@@ -194,6 +194,10 @@
     "SEARCH_IMAGE": {
         "message": "图像",
         "description": "Search action"
+    },
+    "SEARCH_IMAGE_LINK": {
+        "message": "图像地址优先",
+        "description": ""
     },
     "SEARCH_ONSITE_YES": {
         "message": "站内搜索",
@@ -211,13 +215,13 @@
         "message": "链接",
         "description": "Copy action"
     },
-    "COPY_IMAGE_LINK": {
-        "message": "图像链接",
-        "description": ""
-    },
     "COPY_IMAGE": {
         "message": "图像",
         "description": "Copy action"
+    },
+    "COPY_IMAGE_LINK": {
+        "message": "图像地址优先",
+        "description": ""
     },
     "DOWNLOAD_TEXT": {
         "message": "文本",
@@ -227,12 +231,12 @@
         "message": "链接",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE_LINK": {
-        "message": "图像链接",
-        "description": "Copy action"
-    },
     "DOWNLOAD_IMAGE": {
         "message": "图像",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE_LINK": {
+        "message": "图像地址优先",
         "description": "Copy action"
     },
     "DOWNLOAD_SAVEAS_YES": {
@@ -264,11 +268,11 @@
         "description": "tooltip on option"
     },
     "option_tooltip_open_type": {
-        "message": "指定如何打开链接。图像链接 不可用时，会自动转换为 普通链接",
+        "message": "指定如何打开链接。当 图像地址 不可用时，会自动转换为 一般链接",
         "description": "tooltip on option"
     },
     "option_tooltip_search_type": {
-        "message": "需要搜索的东西，文本、链接",
+        "message": "需要搜索的东西，文本、链接。当 图像地址 不可用时，会自动转换为 一般链接",
         "description": "tooltip on option"
     },
     "option_tooltip_search_onsite": {
@@ -276,7 +280,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_copy": {
-        "message": "指定需要复制的东西，文本、链接或图像。图像链接 不可用时，会自动转换为 普通链接。复制图像可能会有很多问题，谨慎使用。",
+        "message": "指定需要复制的东西，文本、链接或图像。当 图像地址 不可用时，会自动转换为 一般链接。复制图像可能会有很多问题，谨慎使用。",
         "description": "tooltip on option"
     },
     "option_tooltip_allow": {
@@ -284,7 +288,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_download_type": {
-        "message": "指定需要下载的类型。图像链接 不可用时，会自动转换为 普通链接",
+        "message": "指定需要下载的类型。当 图像地址 不可用时，会自动转换为 一般链接",
         "description": "tooltip on option"
     },
     "option_tooltip_download_directory": {
@@ -408,7 +412,7 @@
         "description": "Element on Options page"
     },
     "elem_DistancePx": {
-        "message": "触发距离（px）",
+        "message": "触发距离 (px)",
         "description": "Element on Options page"
     },
 
@@ -417,7 +421,11 @@
         "description": "Element on Options page"
     },
     "elem_TimeoutCancel": {
-        "message": "超时取消时间：",
+        "message": "超时取消时间 (ms)：",
+        "description": "Element on Options page"
+    },
+    "elem_EnableSync": {
+        "message": "同步到Firefox账户 (v53+)",
         "description": "Element on Options page"
     },
     "elem_EnableStyle": {
@@ -448,6 +456,10 @@
     },
     "elem_SettingDownloadDirectoryHelperText": {
         "message": "设定的目录只能作为“浏览器的默认下载目录”的子目录，不支持绝对路径。第二列是你可以设置的目录路径。例如 image/ 表示最终下载目录是“默认下载目录/image/”。留空则表示使用“默认下载目录”。",
+        "description": "Element on Options page"
+    },
+    "elem_SavebtnOnDownloadDirectories": {
+        "message": "保存",
         "description": "Element on Options page"
     },
     "elem_Style": {

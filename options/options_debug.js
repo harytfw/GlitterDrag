@@ -1,6 +1,8 @@
 if (localStorage.getItem("_DEBUG") === "true") {
     document.querySelector("#_debug").style.display = "initial";
-
+    document.querySelector("#reload").addEventListener("click", () => {
+        browser.runtime.reload();
+    })
     document.addEventListener("keypress", (evt) => {
         const char = evt.key.charAt(0);
         if (char >= "1" && char <= "9" && evt.target.tagName !== "INPUT" && evt.target.tagName !== "TEXTAREA") {

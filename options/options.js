@@ -1,6 +1,11 @@
 var supportCopyImage = false;
 var config = new ConfigClass();
+var majorVersion = 52; // depend on manifesion.json
 
+browser.runtime.getBrowserInfo().then(info => {
+    majorVersion = info.version.split(".")[0];
+    majorVersion = parseInt(majorVersion);
+})
 document.title = getI18nMessage("option_page_title");
 
 
@@ -543,25 +548,25 @@ class ChildWrapper {
                     this.showDirections(/^.*$/);
                     break;
                 case commons.ALLOW_NORMAL:
-                    this.showDirections(/^DIR_([UDLR]|OUTER)$/);
+                    this.showDirections(/^DIR_([UDLR])$/);
                     break;
                 case commons.ALLOW_H:
-                    this.showDirections(/^DIR_([LR]|OUTER)$/);
+                    this.showDirections(/^DIR_([LR])$/);
                     break;
                 case commons.ALLOW_V:
-                    this.showDirections(/^DIR_([UD]|OUTER)$/);
+                    this.showDirections(/^DIR_([UD])$/);
                     break;
                 case commons.ALLOW_ONE:
-                    this.showDirections(/^DIR_(U|OUTER)$/);
+                    this.showDirections(/^DIR_(U)$/);
                     break;
                 case commons.ALLOW_LOW_L_UP_R:
-                    this.showDirections(/^DIR_(UP_R|LOW_L|OUTER)/);
+                    this.showDirections(/^DIR_(UP_R|LOW_L)/);
                     break;
                 case commons.ALLOW_UP_L_LOW_R:
-                    this.showDirections(/^DIR_(UP_L|LOW_R|OUTER)/);
+                    this.showDirections(/^DIR_(UP_L|LOW_R)/);
                     break;
                 case commons.ALLOW_QUADRANT:
-                    this.showDirections(/^DIR_(UP_L|LOW_R|UP_R|LOW_L|OUTER)/);
+                    this.showDirections(/^DIR_(UP_L|LOW_R|UP_R|LOW_L)/);
                     break;
                 case commons.ALLOW_NONE: //备用，未来可能会添加“关闭所有方向”
                 default:
@@ -630,7 +635,7 @@ class Wrapper {
             commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
         )
         this.child_text.disableOpt(
-            commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.ACT_TRANS, commons.ACT_QRCODE, commons.ACT_FIND,
             commons.SEARCH_IMAGE, commons.SEARCH_LINK, commons.SEARCH_IMAGE_LINK,
             commons.COPY_LINK, commons.COPY_IMAGE, commons.COPY_IMAGE_LINK,
             commons.OPEN_IMAGE, commons.OPEN_IMAGE_LINK,
@@ -647,7 +652,7 @@ class Wrapper {
             commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
         )
         this.child_image.disableOpt(
-            commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.ACT_TRANS, commons.ACT_QRCODE, commons.ACT_FIND,
             commons.SEARCH_IMAGE_LINK, commons.SEARCH_TEXT, commons.SEARCH_IMAGE,
             commons.OPEN_IMAGE_LINK,
             commons.COPY_TEXT, commons.COPY_IMAGE_LINK,
@@ -665,7 +670,7 @@ class Wrapper {
             commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
         )
         this.child_link.disableOpt(
-            commons.ACT_TRANS, commons.ACT_QRCODE,
+            commons.ACT_TRANS, commons.ACT_QRCODE, commons.ACT_FIND,
             commons.OPEN_IMAGE,
             commons.SEARCH_IMAGE,
             commons.DOWNLOAD_IMAGE,
@@ -925,12 +930,15 @@ class EngineWrapper {
 
 class generalWrapper {
     constructor() {
-
+        if (majorVersion >= 53) {
+            $E("#enableSync").removeAttribute("disabled");
+        }
     }
 }
 
 class downloadWrapper {
     constructor() {
+        const dirCount = 8;
 
         this.directories = config.get("downloadDirectories");
 
@@ -939,27 +947,37 @@ class downloadWrapper {
         eventUtil.attachEventS("#showDefaultDownloadDirectory", () => {
             browser.downloads.showDefaultFolder();
         })
-
+        eventUtil.attachEventS("#SavebtnOnDownloadDirectories", (e) => {
+            document.querySelectorAll(".directory-entry>input:nth-child(2)").forEach((el, index) => {
+                this.directories[index] = el.value;
+            });
+            config.set("downloadDirectories", this.directories);
+            // e.target.setAttribute("disabled", "true");
+        })
         const node = document.importNode(document.querySelector("#template-for-directory-entry").content, true);
         const entry = node.querySelector(".directory-entry");
 
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < dirCount; i++) {
             const cloned = entry.cloneNode(true);
 
-            const a = cloned.querySelector("a");
-            a.setAttribute("index", i);
-            a.addEventListener("click", (event) => this.onConfirmClick(event));
+            // const a = cloned.querySelector("a");
+            // a.setAttribute("index", i);
+            // a.addEventListener("click", (event) => this.onConfirmClick(event));
 
             cloned.querySelector("input:nth-child(1)").value = browser.i18n.getMessage("DownloadDirectory", i);
             cloned.querySelector("input:nth-child(2)").value = this.directories[i] || "";
+            // cloned.querySelector("input:nth-child(2)").addEventListener("change", (e) => this.onChange(e));
             tab.appendChild(cloned);
         }
 
     }
-    onConfirmClick(event) {
-        const index = event.target.getAttribute("index");
-        this.directories[index] = event.target.previousElementSibling.value;
-        config.set("downloadDirectories", this.directories);
+    onChange() {
+        $E("#SavebtnOnDownloadDirectories").removeAttribute("disabled");
+    }
+    onSaveBtnClick(event) {
+        // const index = event.target.getAttribute("index");
+        // this.directories[index] = event.target.previousElementSibling.value;
+        // config.set("downloadDirectories", this.directories);
     }
 }
 
@@ -1083,8 +1101,8 @@ config.load().then((page) => {
     let fileReader = new FileReader();
     fileReader.addEventListener("loadend", async() => {
         try {
-            config.restore(fileReader.result);
-            await config.save();
+            await config.restore(fileReader.result);
+            // await config.save();
             location.reload();
         }
         catch (e) {

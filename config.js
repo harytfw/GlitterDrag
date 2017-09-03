@@ -28,14 +28,25 @@ class ConfigClass {
         return browser.storage.local.clear();
     }
     save() {
-        return browser.storage.local.set(JSON.parse(JSON.stringify(this)));
+        const temp = JSON.parse(JSON.stringify(this));
+        if (this.syncFirefoxAccount && browser.storage.sync) {
+            browser.storage.sync.set(temp);
+        }
+        return browser.storage.local.set(temp);
     }
     async load() {
         return new Promise(async(resolve) => {
-            const result = await browser.storage.local.get();
+            let result = await browser.storage.local.get();
+            if (browser.storage.sync) {
+                let syncedResult = await browser.storage.sync.get();
+                if (syncedResult["enableSync"]) {
+                    result = syncedResult;
+                }
+            }
             let keys = Object.keys(result);
             if (keys.length === 0) {
                 await this.loadDefault();
+                // await this.save();
             }
             else {
                 for (let key of keys) {
@@ -70,11 +81,14 @@ class ConfigClass {
         //     this[key] = val;
         //     return new Promise(resolve => resolve(true));
         // }
-        if (typeof val === "object") {
-            val = JSON.parse(JSON.stringify(val));
-        }
+        // if (typeof val === "object") {
+        //     val = JSON.parse(JSON.stringify(val));
+        // }
         const toStored = {};
         toStored[key] = val;
+        if (browser.storage.sync) {
+            browser.storage.sync.set(toStored);
+        }
         return browser.storage.local.set(toStored);
     }
     getAct(type, dir, key) {
@@ -108,12 +122,15 @@ class ConfigClass {
     }
     restore(json) {
         const parsed = JSON.parse(json);
-        if (parsed.addon !== "Glitter Drag") {
-            throw "Invalid json";
-        }
-        for (let key of Object.keys(parsed)) {
-            this.set(key, parsed[key]);
-        }
+        // if (parsed.addon !== "Glitter Drag") {
+        //     throw "Invalid json";
+        // }
+        return new Promise((resolve) => {
+            for (let key of Object.keys(parsed)) {
+                this.set(key, parsed[key]);
+            }
+            resolve(true);
+        })
     }
     async loadDefault() {
         return new Promise(async(resolve) => {
