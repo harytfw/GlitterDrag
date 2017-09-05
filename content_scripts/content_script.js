@@ -11,6 +11,7 @@ const MIME_TYPE = {
     ".png": "image/png",
     ".bmp": "image/bmp",
     ".txt": "text/plain",
+    "Files": "Files"
 }
 
 
@@ -79,54 +80,32 @@ class Indicator {
     }
 }
 
-// class CaptureZone {
-//     constructor() {
-//         this.textarea = document.createElement("textarea");
-//         this.textarea.setAttribute("style", `
-//             border: none;
-//             width: 0px;
-//             height: 0px;
-//             position: fixed;
-//             left: 0px;
-//             top: 0px;
-//             z-index: 9999;
-//             opacity: 0;
-//         `);
-//         document.body.appendChild(this.textarea);
-
-//     }
-//     maximization() {
-//         this.textarea.style.width = "100%";
-//         this.textarea.style.height = "100%";
-//     }
-//     minimize() {
-//         this.textarea.style.width = "0px";
-//         this.textarea.style.height = "0px";
-//     }
-//     getText() {
-//         return this.textarea.value;
-//     }
-// }
-
 class DragClass {
     constructor(elem) {
 
-        this.running = false;
+        this.running = false; // happend in browser
+        this.accepting = false; // happend between browser and outer
 
         this.dragged = elem;
         this.handler = this.handler.bind(this);
-        ["dragstart", "dragend", "dragover", "drop"].forEach(name =>
+        ["dragstart", "dragend", "dragover", "dragenter", "drop"].forEach(name =>
             //这里是capture阶段
             this.dragged.addEventListener(name, evt => this.handler(evt), true)
         );
         //添加在冒泡阶段
         //网页如果自己添加了dragstart事件并使用preventDefault，会阻止浏览器的拖拽功能
         //这里取消preventDefault的作用
-        document.addEventListener("dragstart", (event) => {
+        this.dragged.addEventListener("dragstart", (event) => {
             // console.log(event);
-            event.returnValue = true;
+            return true;
         }, false);
-
+        this.dragged.addEventListener("drop", (event) => {
+            // console.log(event);
+            if (this.cancelDropFlag) {
+                event.preventDefault();
+                return false;
+            }
+        }, false);
 
         this.selection = ""; //选中的数据,文本，链接
         this.textSelection = ""; //选中的文本，跟上面的可能相同可能不同
@@ -155,18 +134,15 @@ class DragClass {
         this.promptBox = null;
         this.indicatorBox = null;
 
-        // this.captureZone = new CaptureZone();
-        this.isFromOuter = false;
-
         this.isFirstRender = true;
 
-
+        this.cancelDropFlag = true;
     }
 
-    post() {
+    post(extraOption = {}) {
         //sendMessage只能传递字符串化后（类似json）的数据
         //不能传递具体对象
-        let sended = {
+        let sended = Object.assign({
             direction: this.direction,
             selection: this.selection,
             textSelection: this.textSelection,
@@ -174,8 +150,8 @@ class DragClass {
             site: location.host,
             actionType: this.actionType,
             sendToOptions: false,
-            modifierKey: this.modifierKey
-        }
+            modifierKey: this.modifierKey,
+        }, extraOption);
 
         if (isRunInOptionsContext) {
             sended.sendToOptions = true;
@@ -185,7 +161,7 @@ class DragClass {
     }
     cancel() {
         clearTimeout(this.timeoutId);
-        this.running = false;
+        this.accepting = this.running = false;
         this.promptBox && this.promptBox.stopRender();
         this.indicatorBox && this.indicatorBox.hide();
     }
@@ -243,7 +219,20 @@ class DragClass {
         this.indicatorBox && this.indicatorBox.hide();
         // this.selection = String.prototype.trim(this.selection);
         if (this.distance >= bgConfig.triggeredDistance) {
-            this.post();
+            if (this.actionType === "imageAction") {
+                // this regex is from: https://stackoverflow.com/questions/14473180/regex-to-get-a-filename-from-a-url
+                // but I make small changes to get extension of file
+                const [name, ext] = this.selection.match(/[^/\\&?]+(\.\w{3,4})(?=([?&].*$|$))/);
+                this.post({
+                    fileInfo: {
+                        mime: MIME_TYPE[ext],
+                        name,
+                    }
+                })
+            }
+            else {
+                this.post();
+            }
         }
 
 
@@ -252,9 +241,10 @@ class DragClass {
     dragover(evt) {
         this.updateModifierKey(evt);
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
-        if (this.distance > bgConfig.triggeredDistance) {
-            this.direction = this.getDirection();
+        this.direction = this.getDirection();
+        if (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER) {
             if (this.promptBox !== null) {
+                console.log("prompt");
                 this.promptBox.display();
                 let actions = null;
                 if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
@@ -268,9 +258,9 @@ class DragClass {
                 }
                 // console.log(JSON.stringify(actions));
                 let message = ""
-                if (this.direction in actions[this.actionType]) {
-                    message = getI18nMessage(actions[this.actionType][this.direction]["act_name"]);
-                }
+                    // if (this.direction in actions[this.actionType]) {
+                message = getI18nMessage(actions[this.actionType][this.direction]["act_name"]);
+                // }
                 this.promptBox.render(this.direction, message);
             }
         }
@@ -280,15 +270,88 @@ class DragClass {
             }
         }
     }
+    dragenter(evt) {
+        const dt = evt.dataTransfer;
+        let fakeNode = null;
+        if (dt.types.includes("text/plain")) {
+            fakeNode = document.createTextNode("");
+        }
+        else if (dt.types.includes("Files")) {
+            fakeNode = document.createElement("img");
+        }
+        else {
+            console.log("No here!!!");
+            return;
+        }
+        this.selection = this.textSelection = "If you see it, please report to the author of GlitterDrag"; // temporary
+        this.targetType = typeUtil.checkDragTargetType(this.selection, this.textSelection, this.imageLink, fakeNode);
+
+        this.actionType = typeUtil.getActionType(this.targetType);
+    }
+    drop(evt) {
+
+        const dt = evt.dataTransfer;
+        this.selection = dt.getData("text/plain").trim();
+        if (commons.TYPE_TEXT_URL === this.targetType) {
+            this.selection = this.textSelection = typeUtil.fixupSchemer(this.selection);
+        }
+        // console.log(dt.files);
+        const sended = {
+            textSelection: "",
+            hasImageBinary: false,
+            fileInfo: {
+                mime: "",
+                name: ""
+            }
+        };
+        const fileReader = new FileReader();
+        let file = dt.files[0];
+        fileReader.addEventListener("loadend", () => {
+            let bin = new Uint8Array(fileReader.result);
+            // console.log(bin, bin.length);
+            sended.selection = bin.toString(); // convert ArrayBuffer to string
+            sended.hasImageBinary = true;
+            sended.fileInfo.name = file.name;
+            sended.fileInfo.mime = file.type;
+            this.post(sended);
+        });
+        if (["textAction", "linkAction"].includes(this.actionType)) {
+            this.post();
+        }
+        else {
+            let action = null;
+            if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
+                action = bgConfig.Actions_CtrlKey.imageAction.DIR_OUTER;
+            }
+            else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
+                action = bgConfig.Actions_ShiftKey.imageAction.DIR_OUTER;
+            }
+            else {
+                action = bgConfig.Actions.imageAction.DIR_OUTER;
+            }
+            if (action.act_name === commons.ACT_NONE) { // nothing happen
+                return;
+            }
+            else if (action.act_name === commons.ACT_OPEN && action.tab_pos === commons.TAB_CUR) {
+                this.cancelDropFlag = false; // don't use evt.preventDefault() and the browser will open uri like file:///...
+                return;
+            }
+            sended.textSelection = file.name; // name of image file
+            fileReader.readAsArrayBuffer(file);
+        }
+    }
+
     handler(evt) {
         //dragstart target是拖拽的东西
         //dragend   同上
         //dragover  target是document
         //drop      同上
 
-        //document 无getAttribute
-        //
-
+        if (["INPUT", "TEXTAREA"].includes(evt.target.tagName)) {
+            this.promptBox && this.promptBox.stopRender();
+            this.indicatorBox && this.indicatorBox.hide();
+            return;
+        }
         const type = evt.type;
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
@@ -297,9 +360,6 @@ class DragClass {
             case "dragstart":
                 if (evt.target.tagName && evt.target.tagName === "A" &&
                     (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
-                    return;
-                }
-                if (evt.target.tagName && evt.target.tagName === "TEXTAREA") {
                     return;
                 }
                 // 如果target没有设置draggable属性，那么才处理
@@ -317,45 +377,43 @@ class DragClass {
                 }
                 // console.log(evt);
                 break;
-            case "drop":
-
-                //如果是从浏览器外部外浏览器拽文件或其它东西，并且放下东西，那么这个事件会被触发，加一个判断
-                //判断脚本有没有处在运行阶段，否则不处理
-                //这样就不会和页面本身的拖拽功能重突
-                //drop发生在dragend之前
-                // console.log(evt.dataTransfer);
-
-                evt.preventDefault();
-                evt.stopPropagation();
-                // console.log(evt);
-                if (this.running) {
-                    evt.preventDefault();
-                }
-                else if (this.isFromOuter) {
-                    // console.log(evt.dataTransfer.files)
-                    this.isFromOuter = false;
-                    // dataTransfer may be null,see https://bugzilla.mozilla.org/show_bug.cgi?id=1352974
-                    // also see https://bugzilla.mozilla.org/show_bug.cgi?id=1352852
-                    if (evt.dataTransfer) {
-                        // this.post();
+            case "dragenter":
+                this.accepting = false;
+                if (evt.dataTransfer && !this.running) {
+                    for (const mime of Object.values(MIME_TYPE)) {
+                        if (evt.dataTransfer.types.includes(mime)) {
+                            evt.preventDefault();
+                            this.accepting = true;
+                            this.dragenter(evt);
+                            break;
+                        }
                     }
-
                 }
-
+                break;
+            case "drop":
+                // 如果是从浏览器外部外浏览器拽文件或其它东西，并且放下东西，那么这个事件会被触发，加一个判断
+                // 判断脚本有没有处在运行阶段，否则不处理
+                // 这样就不会和页面本身的拖拽功能重突
+                // drop发生在dragend之前
+                this.cancelDropFlag = false;
+                if (evt.dataTransfer && !this.running && this.accepting) {
+                    this.cancelDropFlag = true;
+                    this.accepting = false;
+                    this.drop(evt);
+                }
+                else if (this.running) {
+                    this.cancelDropFlag = true;
+                }
                 break;
             case "dragover":
                 // 如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
-                // evt.stopPropagation();
-                // evt.dataTransfer.setData("TEXT", "asdijsdf");
-                // console.log(evt)
-                if (this.running) {
-                    this.dragover(evt);
+                this.cancelDropFlag = false;
+                if (this.running || this.accepting) {
                     evt.preventDefault();
+                    this.dragover(evt);
                 }
-                else {
-                    //可能是从浏览器外部拖进来
-                    this.isFromOuter = true;
-                }
+                break;
+            default:
                 break;
         }
     }
@@ -367,7 +425,7 @@ class DragClass {
             if (a < 0 || b < 0 || a > 360 || b > 360) alert("范围错误");
             return a < b && a <= scale && scale < b;
         }
-
+        if (this.accepting) return commons.DIR_OUTER;
         let d = {
             one: commons.DIR_U,
             normal: commons.DIR_D, //普通的四个方向
@@ -517,7 +575,8 @@ const clipboard = new Clipboard();
 
 
 function CSlistener(msg) {
-    clipboard.write(mydrag.targetElem.parentElement, msg.data);
+    let node = mydrag.targetElem && mydrag.targetElem.parentElement ? mydrag.targetElem.parentElement : document.body.firstChild;
+    clipboard.write(node, msg.data);
     // case commons.COPY_IMAGE:
     //     browser.runtime.sendMessage({
     //         imageSrc: elem.src

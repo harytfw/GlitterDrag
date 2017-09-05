@@ -548,25 +548,25 @@ class ChildWrapper {
                     this.showDirections(/^.*$/);
                     break;
                 case commons.ALLOW_NORMAL:
-                    this.showDirections(/^DIR_([UDLR])$/);
+                    this.showDirections(/^DIR_([UDLR]|OUTER)$/);
                     break;
                 case commons.ALLOW_H:
-                    this.showDirections(/^DIR_([LR])$/);
+                    this.showDirections(/^DIR_([LR]|OUTER)$/);
                     break;
                 case commons.ALLOW_V:
-                    this.showDirections(/^DIR_([UD])$/);
+                    this.showDirections(/^DIR_([UD]|OUTER)$/);
                     break;
                 case commons.ALLOW_ONE:
-                    this.showDirections(/^DIR_(U)$/);
+                    this.showDirections(/^DIR_(U|OUTER)$/);
                     break;
                 case commons.ALLOW_LOW_L_UP_R:
-                    this.showDirections(/^DIR_(UP_R|LOW_L)/);
+                    this.showDirections(/^DIR_(UP_R|LOW_L|OUTER)/);
                     break;
                 case commons.ALLOW_UP_L_LOW_R:
-                    this.showDirections(/^DIR_(UP_L|LOW_R)/);
+                    this.showDirections(/^DIR_(UP_L|LOW_R|OUTER)/);
                     break;
                 case commons.ALLOW_QUADRANT:
-                    this.showDirections(/^DIR_(UP_L|LOW_R|UP_R|LOW_L)/);
+                    this.showDirections(/^DIR_(UP_L|LOW_R|UP_R|LOW_L|OUTER)/);
                     break;
                 case commons.ALLOW_NONE: //备用，未来可能会添加“关闭所有方向”
                 default:
@@ -653,12 +653,12 @@ class Wrapper {
         )
         this.child_image.disableOpt(
             commons.ACT_TRANS, commons.ACT_QRCODE, commons.ACT_FIND,
-            commons.SEARCH_IMAGE_LINK, commons.SEARCH_TEXT, commons.SEARCH_IMAGE,
+            commons.SEARCH_IMAGE_LINK, commons.SEARCH_TEXT,
             commons.OPEN_IMAGE_LINK,
             commons.COPY_TEXT, commons.COPY_IMAGE_LINK,
             commons.DOWNLOAD_TEXT, commons.DOWNLOAD_IMAGE_LINK, commons.DOWNLOAD_IMAGE
         );
-        this.child_image.disableSelect("openTypeSelect", "searchOnSiteSelect", "searchTypeSelect");
+        this.child_image.disableSelect("openTypeSelect", "searchOnSiteSelect");
 
 
         this.child_link = new ChildWrapper(getI18nMessage('linkType'), "linkAction", valuesOfControl.linkAction, modifierKey);

@@ -2,13 +2,17 @@ var supportCopyImage = false;
 
 const TAB_ID_NONE = browser.tabs.TAB_ID_NONE;
 
+function createObjectURL(blob = new Blob(), removeTime = 1000 * 60 * 5) {
+    const url = window.URL.createObjectURL(blob);
+    setTimeout(u => window.URL.revokeObjectURL(u), removeTime, url); // auto revoke
+    return url
+}
+
 function createBlobObjectURLForText(text = "") {
     let blob = new window.Blob([text], {
         type: "text/plain"
     });
-    let url = window.URL.createObjectURL(blob);
-    setTimeout((u) => window.URL.revokeObjectURL(u), 1000 * 60 * 5, url);
-    return url;
+    return createObjectURL(blob);
 }
 
 const tabsRelation = {
@@ -103,13 +107,27 @@ class ExecutorClass {
     }
     execute() {
         this.action = config.getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
+        let imageFile = null;
         if (this.data.selection.length === 0) {
             return;
+        }
+        if (this.data.hasImageBinary) {
+            let array = new Uint8Array(this.data.selection.split(","));
+            imageFile = new File([array], this.data.fileInfo.name, {
+                type: this.data.fileInfo.mime
+            });
+            this.data.selection = createObjectURL(imageFile);
         }
         switch (this.action.act_name) {
             case commons.ACT_OPEN:
                 if (this.data.actionType === "linkAction" && this.action.open_type === commons.OPEN_IMAGE_LINK && this.data.imageLink !== "") {
                     this.openURL(this.data.imageLink)
+                }
+                else if (this.data.selection.startsWith("blob:")) { // blob url
+                    this.redirector({
+                        url: this.data.selection,
+                        cmd: "open"
+                    })
                 }
                 else {
                     this.openURL(this.data.selection)
@@ -155,6 +173,9 @@ class ExecutorClass {
                 }
                 else if (this.action.search_type === commons.SEARCH_TEXT) {
                     this.searchText(this.data.textSelection);
+                }
+                else if (this.action.search_type === commons.SEARCH_IMAGE) {
+                    this.searchImage(this.data.selection);
                 }
                 else {
                     this.searchText(this.data.selection);
@@ -206,7 +227,7 @@ class ExecutorClass {
         return index;
     }
 
-    openTab(url) {
+    openTab(url = "") {
         this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
         if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.action.tab_pos)) {
             browser.windows.create({
@@ -307,43 +328,23 @@ class ExecutorClass {
         );
     }
 
-    searchImage(url, keyword) { // unused
-        this.openURL(this.searchTemplate.replace("%s", keyword));
+    searchImage(url) {
+        this.redirector({
+            url,
+            cmd: "search",
+            engineName: "baidu",
+            type: this.data.fileInfo.mime
+        })
     }
 
-    searchImageViaUploadImage(engineName, binary) {
-        const form = new FormData();
-        const image = new File(binary);
-        let server = "";
-        if (engineName === "baidu") {
-            server = "http://image.baidu.com/pcdutu/a_upload?fr=html5&target=pcSearchImage&needJson=true";
-            form.append("file", image);
-            fetch(server, {
-                method: "POST",
-                body: form
-            }).then(async(res) => {
-                return res.json();
-            }).then((json) => {
-                if (json.url) this.openTab(`http://image.baidu.com/n/pc_search?queryImageUrl=${json.url}`)
-            }).catch((error) => {
-                console.error(error);
-            })
+    redirector(params = {}) {
+        const url = new URL(browser.runtime.getURL(`redirect/redirect.html`));
+        for (const key of Object.keys(params)) {
+            url.searchParams.append(key, params[key]);
         }
-        else if (engineName === "google") {
-            server = "https://www.google.com/searchbyimage/upload";
-            form.append("encoded_image", image);
-            fetch(server, {
-                method: "POST",
-                body: form
-            }).then(async(res) => {
-                return res.json();
-            }).then((json) => {
-                if (json.url) this.openTab(json.url);
-            }).catch((error) => {
-                console.error(error);
-            })
-        }
+        this.openTab(url.toString());
     }
+
     randomString(length = 8) {
         // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
         const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -351,12 +352,15 @@ class ExecutorClass {
         for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
         return result;
     }
-    download(url, filename = "") {
+    download(url = "", filename = "") {
         let opt = {
             url,
             saveAs: this.action.download_saveas
         };
         const directories = config.get("downloadDirectories");
+        if (url.startsWith("blob:") && this.data.fileInfo) {
+            filename = this.data.fileInfo.name || "file.dat";
+        }
         if (this.action.download_type !== commons.DOWNLOAD_TEXT) {
 
             let pathname = new URL(url).pathname;
