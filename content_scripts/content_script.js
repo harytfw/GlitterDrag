@@ -13,7 +13,16 @@ const MIME_TYPE = {
     ".txt": "text/plain",
     "Files": "Files"
 }
+Object.freeze(MIME_TYPE);
 
+// https://developer.mozilla.org/en-US/docs/Web/API/Event/eventPhase
+const EVENT_PAHSE = {
+    NONE: 0,
+    CAPTURING_PHASE: 1,
+    AT_TARGET: 2,
+    BUBBLING_PHASE: 3,
+}
+Object.freeze(EVENT_PAHSE);
 
 class Prompt {
     constructor() {
@@ -73,7 +82,7 @@ class Indicator {
         this.box.style.borderRadius = `${w}  ${h}`;
     }
     display() {
-        this.box.style.display = "initial";
+        if (this.box.style.display === "none") this.box.style.display = "initial";
     }
     hide() {
         this.box.style.display = "none";
@@ -88,39 +97,37 @@ class DragClass {
 
         this.dragged = elem;
         this.handler = this.handler.bind(this);
-        ["dragstart", "dragend", "dragover", "dragenter", "drop"].forEach(name =>
-            //这里是capture阶段
-            this.dragged.addEventListener(name, evt => this.handler(evt), true)
+        ["dragstart", "dragover", "dragenter", "dragend"].forEach(name =>
+            this.dragged.addEventListener(name, evt => {
+                this.handler(evt)
+                return true;
+            }, true)
         );
-        //添加在冒泡阶段
-        //网页如果自己添加了dragstart事件并使用preventDefault，会阻止浏览器的拖拽功能
-        //这里取消preventDefault的作用
-        this.dragged.addEventListener("dragstart", (event) => {
-            // console.log(event);
-            return true;
-        }, false);
-        this.dragged.addEventListener("drop", (event) => {
-            // console.log(event);
-            if (this.cancelDropFlag) {
-                event.preventDefault();
-                return false;
-            }
+        ["dragover", "drop", "dragend"].forEach(name =>
+            this.dragged.addEventListener(name, evt => {
+                this.handler(evt);
+            }, false)
+        );
+        this.dragged.addEventListener("dragstart", (e) => {
+            e.returnValue = true; // no effect
+            return true; // no effect
         }, false);
 
-        this.selection = ""; //选中的数据,文本，链接
-        this.textSelection = ""; //选中的文本，跟上面的可能相同可能不同
-        this.imageLink = ""; //当图像是超链接保存图像文件链接
+        // start: properties to post
+        this.selection = ""; // any data, such as text, link
+        this.textSelection = ""; // text you select.
+        this.imageLink = ""; // image file location
         this.modifierKey = commons.KEY_NONE;
-
-        this.isTextNode = false;
-
-        this.targetElem = null;
-        this.originalTargetElem = null;
-
-        this.targetType = commons.TYPE_UNKNOWN;
         this.actionType = "textAction";
         this.direction = commons.DIR_U;
+        // end: properties to post
 
+        // start: variable to identify type of action
+        this.targetElem = null;
+        this.targetType = commons.TYPE_UNKNOWN;
+        // end: variable to identify type of action
+
+        // start: number that can be use in UI process
         this.distance = 0;
         this.startPos = {
             x: 0,
@@ -130,13 +137,18 @@ class DragClass {
             x: 0,
             y: 0
         };
-        this.timeoutId = 0;
+        // end: number that can be use in UI process
+
+        // start: UI componment
         this.promptBox = null;
         this.indicatorBox = null;
+        // end: UI componment
 
-        this.isFirstRender = true;
+        this.timeoutId = 0; // the value that setTimeout return.Storing it for clear purpose.
 
-        this.cancelDropFlag = true;
+        this.doDropPreventDefault = false; // flag that indicate whether call event.preventDefault or not in drop event.
+        this.dropIsTouched = true; // flag that indicate whether the event object has been calling event.preventDefault or event.stopPropagation . 
+        // if the site register drop event and use event.stopPropagation , this event won't bubble up as default. So assumeing it is true until we can catch.
     }
 
     post(extraOption = {}) {
@@ -177,6 +189,7 @@ class DragClass {
         }
     }
     dragstart(evt) {
+        this.DATATRANSFER = evt.dataTransfer;
         if (bgConfig.enableIndicator) {
             if (this.indicatorBox === null) this.indicatorBox = new Indicator();
             this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
@@ -240,11 +253,11 @@ class DragClass {
     }
     dragover(evt) {
         this.updateModifierKey(evt);
+
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
         this.direction = this.getDirection();
         if (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER) {
             if (this.promptBox !== null) {
-                console.log("prompt");
                 this.promptBox.display();
                 let actions = null;
                 if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
@@ -256,9 +269,7 @@ class DragClass {
                 else {
                     actions = bgConfig.Actions;
                 }
-                // console.log(JSON.stringify(actions));
                 let message = ""
-                    // if (this.direction in actions[this.actionType]) {
                 message = getI18nMessage(actions[this.actionType][this.direction]["act_name"]);
                 // }
                 this.promptBox.render(this.direction, message);
@@ -280,7 +291,7 @@ class DragClass {
             fakeNode = document.createElement("img");
         }
         else {
-            console.log("No here!!!");
+            console.log("Not here!!!");
             return;
         }
         this.selection = this.textSelection = "If you see it, please report to the author of GlitterDrag"; // temporary
@@ -333,49 +344,50 @@ class DragClass {
                 return;
             }
             else if (action.act_name === commons.ACT_OPEN && action.tab_pos === commons.TAB_CUR) {
-                this.cancelDropFlag = false; // don't use evt.preventDefault() and the browser will open uri like file:///...
+                this.doDropPreventDefault = false;
                 return;
             }
             sended.textSelection = file.name; // name of image file
             fileReader.readAsArrayBuffer(file);
         }
     }
-
-    handler(evt) {
-        //dragstart target是拖拽的东西
-        //dragend   同上
-        //dragover  target是document
-        //drop      同上
-
-        if (["INPUT", "TEXTAREA"].includes(evt.target.tagName)) {
-            this.promptBox && this.promptBox.stopRender();
-            this.indicatorBox && this.indicatorBox.hide();
-            return;
+    isNotAcceptable(evt) {
+        // if the acceptable area is Input or Textarea, bypass it.
+        if (["INPUT", "TEXTAREA"].includes(evt.target.nodeName)) {
+            return true;
         }
+        return false;
+
+    }
+    handler(evt) {
+        // dragstart target是拖拽的东西
+        // dragend   同上
+        // dragover  target是拖放的目标区域
+        // drop      同上
+        // dragenter 同上
+
+
         const type = evt.type;
+        // if (["dragend", "drop"].includes(type)) {
+        //     console.log(`type:${type} phase:${evt.eventPhase} prevent:${evt.defaultPrevented} touched:${this.dropIsTouched}`)
+        // }
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
-        //TODO:把拖拽的数据放在event里传递
+
         switch (type) {
             case "dragstart":
-                if (evt.target.tagName && evt.target.tagName === "A" &&
+                if (this.isNotAcceptable(evt)) {
+                    return
+                }
+                if (evt.target.nodeName === "A" &&
                     (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
                     return;
                 }
-                // 如果target没有设置draggable属性，那么才处理
-                this.isTextNode = evt.target.nodeName === "#text";
-                if (this.isTextNode || (evt.target.getAttribute && evt.target.getAttribute("draggable") === null)) {
+                // don't process it if the node has set attribute "draggable" 
+                if (evt.target.nodeName === "#text" || (evt.target.getAttribute && evt.target.getAttribute("draggable") === null)) {
                     this.running = true;
-                    // evt.dataTransfer.effectAllowed = "move";
                     this.dragstart(evt);
                 }
-                break;
-            case "dragend":
-                if (this.running) {
-                    this.running = false;
-                    this.dragend(evt);
-                }
-                // console.log(evt);
                 break;
             case "dragenter":
                 this.accepting = false;
@@ -389,28 +401,67 @@ class DragClass {
                         }
                     }
                 }
+                else if (this.running) {
+                    evt.preventDefault();
+                }
                 break;
-            case "drop":
-                // 如果是从浏览器外部外浏览器拽文件或其它东西，并且放下东西，那么这个事件会被触发，加一个判断
-                // 判断脚本有没有处在运行阶段，否则不处理
-                // 这样就不会和页面本身的拖拽功能重突
-                // drop发生在dragend之前
-                this.cancelDropFlag = false;
+            case "dragover": // Capturing or Bubbling
+                if (this.isNotAcceptable(evt)) {
+                    this.promptBox && this.promptBox.hide();
+                    return;
+                }
+
+                this.dropIsTouched = true;
+                if (evt.eventPhase === EVENT_PAHSE.CAPTURING_PHASE) {
+                    if (this.running || this.accepting) {
+                        this.dragover(evt);
+                    }
+                }
+                else {
+                    if (evt.defaultPrevented) {
+                        this.promptBox && this.promptBox.hide();
+                    }
+                    evt.preventDefault();
+                }
+                break;
+            case "drop": // Bubbling
+                if (this.isNotAcceptable(evt)) {
+                    return
+                }
+                /*
+                 * Without using this addon, browser will open this image with URL like file:///... normally.
+                 * WebExtension has ability to match  file:/// and run under file:///... page . However , due to the security restriction, WE can not get this kind of url : file:///
+                 * In order to not influence browser default behavior when action  is "open" and position of tab is "current", I  decide not to call event.preventDefault 
+                 * Because after calling event.preventDefault , we have no method to cancel it.
+                 * For this reason, using doDropPreventDefault to indicate whether use event.preventDefault or not.
+                 */
+                this.doDropPreventDefault = false;
+                this.dropIsTouched = false;
+
+                if (evt.defaultPrevented) {
+                    this.dropIsTouched = true;
+                }
+
                 if (evt.dataTransfer && !this.running && this.accepting) {
-                    this.cancelDropFlag = true;
                     this.accepting = false;
                     this.drop(evt);
                 }
                 else if (this.running) {
-                    this.cancelDropFlag = true;
+                    this.doDropPreventDefault = true;
+                }
+                if (this.doDropPreventDefault) {
+                    evt.preventDefault();
                 }
                 break;
-            case "dragover":
-                // 如果是从浏览器外部外浏览器拽文件或其它东西，经过页面，那么这个事件会被触发，加一个判断
-                this.cancelDropFlag = false;
-                if (this.running || this.accepting) {
-                    evt.preventDefault();
-                    this.dragover(evt);
+            case "dragend": // Capturing
+                if (this.isNotAcceptable(evt)) {
+                    return
+                }
+                if (evt.eventPhase === EVENT_PAHSE.BUBBLING_PHASE) {
+                    if (this.running && !this.dropIsTouched) {
+                        this.running = false;
+                        this.dragend(evt);
+                    }
                 }
                 break;
             default:

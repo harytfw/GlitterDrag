@@ -147,7 +147,7 @@ const typeUtil = {
         else if (target.nodeName === "#text") {
             return commons.TYPE_TEXT;
         }
-        else if (target.tagName === "TEXTAREA") {
+        else if (target.nodeName === "TEXTAREA") {
             return commons.TYPE_TEXT_AREA
         }
         else if (target instanceof Element) {

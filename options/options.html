@@ -35,7 +35,7 @@
                 <a class="nav-a" toggle-target="#tab-style" data-i18n="Style" href="#">样式</a>
             </nav>
             <ul style="list-style:none">
-                <li class="tab-content" id="tab-debug">
+                <li class="tab-content" id="tab-debug" style="margin-left:12em">
                     <button id="reload">Reload</button>
                     <br>
                     <div>
@@ -46,13 +46,18 @@
                         <br>
                         <p>The quick brown fox jumps over the lazy dog</p>
                         <br>
+
+                        <div id="drop" style="width:64px;height:64px;background-color:bisque;">
+                        </div>
                         <a href="blank.html">
                             <image src="../Drag.png" style="width: 128px;height:128px"></image>
                         </a>
                         <br>
                         <br>
-                        <image src="../Drag.png" style="width: 64px;height:64px;background-color:aliceblue"></image>
+                        <image id="example" src="../Drag.png" style="width: 64px;height:64px;background-color:aliceblue"></image>
+                        <br>
                         <textarea id="logArea" rows="10" cols="80"></textarea>
+                        <br>
                     </div>
                 </li>
                 <li class="tab-content tab-active" id="tab-actions"></li>
@@ -171,8 +176,8 @@
     <script src="./../default_config.js"></script>
     <script src="./../config.js"></script>
     <script src="options.js"></script>
-    <script src="options_debug.js"></script>
     <script src="./../content_scripts/content_script.js"></script>
+    <script src="options_debug.js"></script>
 </body>
 
 </html>
