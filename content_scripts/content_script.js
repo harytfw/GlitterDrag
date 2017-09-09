@@ -94,10 +94,11 @@ class DragClass {
 
         this.running = false; // happend in browser
         this.accepting = false; // happend between browser and outer
+        this.notAccepting = false;
 
         this.dragged = elem;
         this.handler = this.handler.bind(this);
-        ["dragstart", "dragover", "dragenter"].forEach(name =>
+        ["dragstart", "dragover", "dragenter", "dragend"].forEach(name =>
             this.dragged.addEventListener(name, evt => {
                 this.handler(evt)
                 return true;
@@ -149,6 +150,7 @@ class DragClass {
         this.doDropPreventDefault = false; // flag that indicate whether call event.preventDefault or not in drop event.
         this.isDropTouched = true; // flag that indicate whether the event object has been calling event.preventDefault or event.stopPropagation . 
         // if the site register drop event and use event.stopPropagation , this event won't bubble up as default. So assumeing it is true until we can catch.
+        this.isInputArea = false;
     }
 
     post(extraOption = {}) {
@@ -376,9 +378,11 @@ class DragClass {
 
         switch (type) {
             case "dragstart":
-                if (this.isNotAcceptable(evt)) {
-                    return
-                }
+                this.notAccepting = true;
+                this.isInputArea = false;
+                // if (this.isNotAcceptable(evt)) {
+                //     return;
+                // }
                 if (evt.target.nodeName === "A" &&
                     (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
                     return;
@@ -391,6 +395,13 @@ class DragClass {
                 break;
             case "dragenter":
                 this.accepting = false;
+                if (this.isNotAcceptable(evt)) {
+                    return;
+                }
+                if (this.notAccepting) {
+                    this.notAccepting = false;
+                    return;
+                }
                 if (evt.dataTransfer && !this.running) {
                     for (const mime of Object.values(MIME_TYPE)) {
                         if (evt.dataTransfer.types.includes(mime)) {
@@ -425,7 +436,8 @@ class DragClass {
                 }
                 break;
             case "drop": // Bubbling
-                if (this.isNotAcceptable(evt)) {
+                this.isInputArea = this.isNotAcceptable(evt);
+                if (this.isInputArea) {
                     return
                 }
                 /*
@@ -455,9 +467,13 @@ class DragClass {
                 }
                 break;
             case "dragend": // Bubbling
-                if (this.isNotAcceptable(evt)) {
+                this.indicatorBox && this.indicatorBox.hide();
+                if (this.isInputArea) {
                     return
                 }
+                // else if (this.isNotAcceptable(evt)) {
+                //     return
+                // }
                 if (evt.eventPhase === EVENT_PAHSE.BUBBLING_PHASE) {
                     if (this.running && !this.isDropTouched) {
                         this.running = false;
