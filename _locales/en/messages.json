@@ -336,6 +336,10 @@
         "message": "Chinese",
         "description": "Select box classes on Options - Search Template"
     },
+    "elem_SearchTemplateClasses_ImageSearch": {
+        "message": "Image(upload file)",
+        "description": "Select box classes on Options - Search Template"
+    },
     "elem_Backup": {
         "message": "Backup",
         "description": "Element on Options page"
