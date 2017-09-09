@@ -35,7 +35,7 @@ const DIR_TEXT_VALUE_TABLE = {};
 for (let item of Object.keys(commons)) {
 
     //排除
-    if (["urlPattern", "appName", "PLACE_HOLDER", "NEW_WINDOW", "DEFAULT_SEARCH_ENGINE", "DEFAULT_DOWNLOAD_DIRECTORY", "_DEBUG", ].includes(item)) {
+    if (["urlPattern", "fileExtension", "appName", "PLACE_HOLDER", "NEW_WINDOW", "DEFAULT_SEARCH_ENGINE", "DEFAULT_DOWNLOAD_DIRECTORY", "_DEBUG", ].includes(item)) {
         continue;
     }
     if (/^TYPE_/.test(item)) {
@@ -179,7 +179,9 @@ class _SelectWrapper {
         parent.appendChild(this.elem);
     }
     bindCallBack(cb) {
-        this.elem.addEventListener("change", e => cb(e));
+        this.elem.addEventListener("change", e => {
+            cb(e)
+        });
         if (this.isInit) {
             this.isInit = false;
             this.elem.dispatchEvent(new Event("change"));
@@ -337,7 +339,6 @@ class DirWrapper {
         ];
         this.selectGroup.forEach(s => {
             s.appendTo(this.elem);
-            s.bindCallBack(this.onchange);
         });
         // this.onchange();
     }
@@ -505,11 +506,11 @@ class ChildWrapper {
         this.dirWrappers.forEach(w => w.setDefaultOpt(...opts))
     }
     disableSelect(...selects) {
-            this.dirWrappers.forEach(s => s.disableSelect(...selects));
-        }
-        // disableSpecificSelect(actionName, ...selects) {
-        //     this.dirWrappers.forEach(s => s.disableSpecificSelect(actionName, ...selects))
-        // }
+        this.dirWrappers.forEach(s => s.disableSelect(...selects));
+    }
+    // disableSpecificSelect(actionName, ...selects) {
+    //     this.dirWrappers.forEach(s => s.disableSpecificSelect(actionName, ...selects))
+    // }
     collect() {
         let obj = {};
         this.dirWrappers.forEach(w => {
@@ -595,7 +596,7 @@ class Wrapper {
         this.init(modifierKey);
     }
     init(modifierKey) {
-        this.DOSAVE = true; //指示是否需要保存
+        this.DOSAVE = false; //指示是否需要保存
 
         this.callback = this.callback.bind(this);
         this.elem = document.createElement("div");

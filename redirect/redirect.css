@@ -1,6 +1,15 @@
+@keyframes revolve {
+    from {
+        transform: scale(0.5) rotate(0deg);
+    }
+    to {
+        transform: scale(0.5) rotate(360deg);
+    }
+}
+
 body>div {
     text-align: center;
-    margin-top: 12em;
+    margin-top: 8em;
 }
 
 body>div>* {
@@ -14,4 +23,17 @@ img {
     right: 0;
     bottom: 0;
     left: 0;
+}
+
+#uploading {
+    background-image: url("uploading.png");
+    height: 128px;
+    width: 128px;
+    background-repeat: no-repeat;
+    animation-name: revolve;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    left: 50%;
+    position: relative;
 }

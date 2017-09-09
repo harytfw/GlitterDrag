@@ -18,6 +18,7 @@
         <button class="default" data-i18n="Backup" id="backup" href="#" target="window" download="GlitterDrag-time.json">备份配置</button>
         <button class="default" data-i18n="Restore" id="restore" href="#">恢复配置 </button>
         <button class="default" data-i18n="Default" id="default" href="#">恢复默认 </button>
+        <button class="default" style="display:none" data-i18n="LoadSync" id="loadSync" href="#">加载Firefox同步的配置</button>
         <input type="file" id="fileInput" accept=".json" style="display:none">
     </div>
     <br>
@@ -94,6 +95,13 @@
                             <option value="https://www.zhihu.com/search?q=%s">知乎搜索</option>
                             <option value="https://zh.wikipedia.org/wiki/%s">中文维基百科</option>
                             <option value="http://image.baidu.com/n/pc_search?queryImageUrl=%s">百度图片</option>
+                        </select>
+                        <select style="display:inline-block">
+                            <option selected disabled="disabled" ata-i18n="SearchTemplateClasses_ImageSearch">Image Search(via upload)</option>
+                            <option value="{redirect.html}?cmd=search&url={url}&engineName=google">Google Image(upload) </option>
+                            <option value="{redirect.html}?cmd=search&url={url}&engineName=tineye">Tineye(upload)</option> 
+                            <option value="{redirect.html}?cmd=search&url={url}&engineName=yandex">Yandex(upload)</option> 
+                            <option value="{redirect.html}?cmd=search&url={url}&engineName=baidu">百度图片(上传)</option> 
                         </select>
                     </div>
                     <div id="browser-engine" style="display:none">

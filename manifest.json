@@ -24,8 +24,7 @@
         "tabs",
         "<all_urls>",
         "clipboardWrite",
-        "downloads",
-        "nativeMessaging"
+        "downloads"
     ],
     "background": {
         "scripts": [

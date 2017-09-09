@@ -1,10 +1,11 @@
 var supportCopyImage = false;
 
 const TAB_ID_NONE = browser.tabs.TAB_ID_NONE;
+const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
 
-function createObjectURL(blob = new Blob(), removeTime = 1000 * 60 * 5) {
+function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 5) {
     const url = window.URL.createObjectURL(blob);
-    setTimeout(u => window.URL.revokeObjectURL(u), removeTime, url); // auto revoke
+    setTimeout(u => window.URL.revokeObjectURL(u), revokeTime, url); // auto revoke
     return url
 }
 
@@ -114,7 +115,7 @@ class ExecutorClass {
         if (this.data.hasImageBinary) {
             let array = new Uint8Array(this.data.selection.split(","));
             imageFile = new File([array], this.data.fileInfo.name, {
-                type: this.data.fileInfo.mime
+                type: this.data.fileInfo.type
             });
             this.data.selection = createObjectURL(imageFile);
         }
@@ -129,6 +130,12 @@ class ExecutorClass {
                         cmd: "open"
                     })
                 }
+                // else if (this.data.selection.startsWith("file:///") && typeUtil.seemAsURL(this.data.selection)) {
+                //     this.redirector({
+                //         cmd: "open",
+                //         url: this.data.selection
+                //     })
+                // }
                 else {
                     this.openURL(this.data.selection)
                 }
@@ -328,21 +335,29 @@ class ExecutorClass {
         );
     }
 
-    searchImage(url) {
-        this.redirector({
-            url,
-            cmd: "search",
-            engineName: "baidu",
-            type: this.data.fileInfo.mime
-        })
+    searchImage(imageFileURL) {
+        let url = config.getSearchURL(this.action.engine_name);
+        if (url.startsWith("{redirect.html}")) {
+            let params = url.replace("{redirect.html}", "").replace("{url}", encodeURIComponent(imageFileURL));
+            // pass string of params.
+            this.openRedirectPage(params)
+        }
+        else {
+            this.searchText(this.data.selection);
+        }
     }
 
-    redirector(params = {}) {
-        const url = new URL(browser.runtime.getURL(`redirect/redirect.html`));
-        for (const key of Object.keys(params)) {
-            url.searchParams.append(key, params[key]);
+    openRedirectPage(params) {
+        if (typeof params === "string") {
+            this.openTab(REDIRECT_URL + params + `&fileName=${this.data.fileInfo.name}&fileType=${this.data.fileInfo.type}`);
         }
-        this.openTab(url.toString());
+        else {
+            const url = new URL(REDIRECT_URL);
+            for (const key of params) {
+                url.searchParams.append(key, params[key]);
+            }
+            this.openTab(url.toString());
+        }
     }
 
     randomString(length = 8) {
@@ -391,13 +406,13 @@ browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
 });
 
-browser.runtime.sendNativeMessage(commons.appName, "test").then(
-    response => {
-        // console.log("From native app:" + response);
-        supportCopyImage = true;
-    },
-    error => supportCopyImage = false
-);
+// browser.runtime.sendNativeMessage(commons.appName, "test").then(
+//     response => {
+//         // console.log("From native app:" + response);
+//         supportCopyImage = true;
+//     },
+//     error => supportCopyImage = false
+// );
 
 function convertImageSrcToBase64(src) {
     const request = new Request(src);

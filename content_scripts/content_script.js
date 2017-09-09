@@ -97,7 +97,7 @@ class DragClass {
 
         this.dragged = elem;
         this.handler = this.handler.bind(this);
-        ["dragstart", "dragover", "dragenter", "dragend"].forEach(name =>
+        ["dragstart", "dragover", "dragenter"].forEach(name =>
             this.dragged.addEventListener(name, evt => {
                 this.handler(evt)
                 return true;
@@ -147,7 +147,7 @@ class DragClass {
         this.timeoutId = 0; // the value that setTimeout return.Storing it for clear purpose.
 
         this.doDropPreventDefault = false; // flag that indicate whether call event.preventDefault or not in drop event.
-        this.dropIsTouched = true; // flag that indicate whether the event object has been calling event.preventDefault or event.stopPropagation . 
+        this.isDropTouched = true; // flag that indicate whether the event object has been calling event.preventDefault or event.stopPropagation . 
         // if the site register drop event and use event.stopPropagation , this event won't bubble up as default. So assumeing it is true until we can catch.
     }
 
@@ -233,12 +233,12 @@ class DragClass {
         // this.selection = String.prototype.trim(this.selection);
         if (this.distance >= bgConfig.triggeredDistance) {
             if (this.actionType === "imageAction") {
-                // this regex is from: https://stackoverflow.com/questions/14473180/regex-to-get-a-filename-from-a-url
-                // but I make small changes to get extension of file
-                const [name, ext] = this.selection.match(/[^/\\&?]+(\.\w{3,4})(?=([?&].*$|$))/);
+                const result = this.selection.match(commons.fileExtension);
+                const [name, ext] = result || ["image.jpg", ".jpg"];
+
                 this.post({
                     fileInfo: {
-                        mime: MIME_TYPE[ext],
+                        type: MIME_TYPE[ext],
                         name,
                     }
                 })
@@ -311,7 +311,7 @@ class DragClass {
             textSelection: "",
             hasImageBinary: false,
             fileInfo: {
-                mime: "",
+                type: "",
                 name: ""
             }
         };
@@ -323,7 +323,7 @@ class DragClass {
             sended.selection = bin.toString(); // convert ArrayBuffer to string
             sended.hasImageBinary = true;
             sended.fileInfo.name = file.name;
-            sended.fileInfo.mime = file.type;
+            sended.fileInfo.type = file.type;
             this.post(sended);
         });
         if (["textAction", "linkAction"].includes(this.actionType)) {
@@ -369,7 +369,7 @@ class DragClass {
 
         const type = evt.type;
         // if (["dragend", "drop"].includes(type)) {
-        //     console.log(`type:${type} phase:${evt.eventPhase} prevent:${evt.defaultPrevented} touched:${this.dropIsTouched}`)
+        //     console.log(`type:${type} phase:${evt.eventPhase} prevent:${evt.defaultPrevented} touched:${this.isDropTouched}`)
         // }
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
@@ -411,7 +411,7 @@ class DragClass {
                     return;
                 }
 
-                this.dropIsTouched = true;
+                this.isDropTouched = true;
                 if (evt.eventPhase === EVENT_PAHSE.CAPTURING_PHASE) {
                     if (this.running || this.accepting) {
                         this.dragover(evt);
@@ -436,13 +436,14 @@ class DragClass {
                  * For this reason, using doDropPreventDefault to indicate whether use event.preventDefault or not.
                  */
                 this.doDropPreventDefault = false;
-                this.dropIsTouched = false;
+                this.isDropTouched = false;
 
                 if (evt.defaultPrevented) {
-                    this.dropIsTouched = true;
+                    this.isDropTouched = true;
                 }
 
                 if (evt.dataTransfer && !this.running && this.accepting) {
+                    this.doDropPreventDefault = true;
                     this.accepting = false;
                     this.drop(evt);
                 }
@@ -453,12 +454,12 @@ class DragClass {
                     evt.preventDefault();
                 }
                 break;
-            case "dragend": // Capturing
+            case "dragend": // Bubbling
                 if (this.isNotAcceptable(evt)) {
                     return
                 }
                 if (evt.eventPhase === EVENT_PAHSE.BUBBLING_PHASE) {
-                    if (this.running && !this.dropIsTouched) {
+                    if (this.running && !this.isDropTouched) {
                         this.running = false;
                         this.dragend(evt);
                     }
@@ -656,19 +657,24 @@ let bgPort = browser.runtime.connect({
 });
 let bgConfig = null;
 let mydrag = null;
-bgPort.onMessage.addListener((c) => {
-    bgConfig = JSON.parse(c);
-    // console.log(bgConfig);
-    if (mydrag === null) {
-        if (["loading", "interactive"].includes(document.readyState)) {
-            document.addEventListener("DOMContentLoaded", () => {
+
+function main() {
+    bgPort.onMessage.addListener((c) => {
+        bgConfig = JSON.parse(c);
+        // console.log(bgConfig);
+        if (mydrag === null) {
+            if (["loading", "interactive"].includes(document.readyState)) {
+                document.addEventListener("DOMContentLoaded", () => {
+                    mydrag = new DragClass(document);
+                }, {
+                    once: true
+                });
+            }
+            else {
                 mydrag = new DragClass(document);
-            }, {
-                once: true
-            });
+            }
         }
-        else {
-            mydrag = new DragClass(document);
-        }
-    }
-});
+    })
+}
+main();
+setTimeout(main, 2000);

@@ -34,14 +34,14 @@ class ConfigClass {
         }
         return browser.storage.local.set(temp);
     }
-    async load() {
+    async load(sync = false) {
         return new Promise(async(resolve) => {
-            let result = await browser.storage.local.get();
-            if (browser.storage.sync) {
-                let syncedResult = await browser.storage.sync.get();
-                if (syncedResult["enableSync"]) {
-                    result = syncedResult;
-                }
+            let result = null;
+            if (sync && browser.storage.sync) {
+                result = await browser.storage.sync.get();
+            }
+            else {
+                result = await browser.storage.local.get();
             }
             let keys = Object.keys(result);
             if (keys.length === 0) {
@@ -141,7 +141,8 @@ class ConfigClass {
             resolve(true);
         });
     }
-    synchronize() {
-        // TODO
+    loadSync() {
+        return this.load(true);
     }
+
 }
