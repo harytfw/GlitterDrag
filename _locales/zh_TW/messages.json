@@ -183,6 +183,10 @@
         "message": "鏈結",
         "description": "Search action"
     },
+    "SEARCH_IMAGE_LINK": {
+        "message": "圖像鏈結",
+        "description": ""
+    },
     "SEARCH_TEXT": {
         "message": "文字",
         "description": "Search action"
@@ -190,10 +194,6 @@
     "SEARCH_IMAGE": {
         "message": "圖像",
         "description": "Search action"
-    },
-    "SEARCH_IMAGE_LINK": {
-        "message": "圖像鏈結",
-        "description": ""
     },
     "SEARCH_ONSITE_YES": {
         "message": "站內搜尋",
@@ -211,13 +211,13 @@
         "message": "鏈結",
         "description": "Copy action"
     },
-    "COPY_IMAGE": {
-        "message": "圖像",
-        "description": "Copy action"
-    },
     "COPY_IMAGE_LINK": {
         "message": "圖像鏈結",
         "description": ""
+    },
+    "COPY_IMAGE": {
+        "message": "圖像",
+        "description": "Copy action"
     },
     "DOWNLOAD_TEXT": {
         "message": "文字",
@@ -227,12 +227,12 @@
         "message": "鏈結",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE": {
-        "message": "圖像",
-        "description": "Copy action"
-    },
     "DOWNLOAD_IMAGE_LINK": {
         "message": "圖像鏈結",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE": {
+        "message": "圖像",
         "description": "Copy action"
     },
     "DOWNLOAD_SAVEAS_YES": {
@@ -443,7 +443,7 @@
         }
     },
     "elem_SettingDownloadDirectoryHelperText": {
-        "message": "設定的目錄只能作為 <b>瀏覽器的預設下載目錄<\/b> 的子目錄，同時也無法使用絕對路徑。第二列是你可以設定的目錄。<br>例如：“image\/” 表示的最終下載目錄是 “<b>預設下載目錄<\/b>\/image\/” . 留空是 <b>預設下載目錄<\/b>.  二級目錄需要手動建立 ",
+        "message": "設定的目錄只能作為 瀏覽器的預設下載目錄的子目錄，同時也無法使用絕對路徑。第二列是你可以設定的目錄。例如：“image/” 表示的最終下載目錄是 “預設下載目錄/image/” . 留空是預設下載目錄.  二級目錄需要手動建立 ",
         "description": "Element on Options page"
     },
     "elem_Style": {
@@ -459,3 +459,4 @@
         "description": "Element on Options page"
     }
 }
+
