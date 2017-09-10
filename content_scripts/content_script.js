@@ -191,7 +191,6 @@ class DragClass {
         }
     }
     dragstart(evt) {
-        this.DATATRANSFER = evt.dataTransfer;
         if (bgConfig.enableIndicator) {
             if (this.indicatorBox === null) this.indicatorBox = new Indicator();
             this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
@@ -272,6 +271,7 @@ class DragClass {
                     actions = bgConfig.Actions;
                 }
                 let message = ""
+                // TODO: buffer i18n message to run faster
                 message = getI18nMessage(actions[this.actionType][this.direction]["act_name"]);
                 // }
                 this.promptBox.render(this.direction, message);
@@ -674,23 +674,19 @@ let bgPort = browser.runtime.connect({
 let bgConfig = null;
 let mydrag = null;
 
-function main() {
-    bgPort.onMessage.addListener((c) => {
-        bgConfig = JSON.parse(c);
-        // console.log(bgConfig);
-        if (mydrag === null) {
-            if (["loading", "interactive"].includes(document.readyState)) {
-                document.addEventListener("DOMContentLoaded", () => {
-                    mydrag = new DragClass(document);
-                }, {
-                    once: true
-                });
-            }
-            else {
+bgPort.onMessage.addListener((c) => {
+    bgConfig = JSON.parse(c);
+    // console.log(bgConfig);
+    if (mydrag === null) {
+        if (["loading", "interactive"].includes(document.readyState)) {
+            document.addEventListener("DOMContentLoaded", () => {
                 mydrag = new DragClass(document);
-            }
+            }, {
+                once: true
+            });
         }
-    })
-}
-main();
-setTimeout(main, 2000);
+        else {
+            mydrag = new DragClass(document);
+        }
+    }
+})

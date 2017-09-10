@@ -1,8 +1,8 @@
 class ConfigClass {
     constructor() {
         this.onStorageChange = this.onStorageChange.bind(this);
-        this.set("version", browser.runtime.getManifest().version);
-        this.set("addon", "Glitter Drag");
+        this["version"] = browser.runtime.getManifest().version;
+        this["addon"] = "Glitter Drag";
         browser.storage.onChanged.addListener(this.onStorageChange);
     }
 
