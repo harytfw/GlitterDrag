@@ -296,7 +296,7 @@ class DragClass {
             console.log("Not here!!!");
             return;
         }
-        this.selection = this.textSelection = "If you see it, please report to the author of GlitterDrag"; // temporary
+        this.selection = this.textSelection = "If you see this message, please report to the author of GlitterDrag"; // temporary
         this.targetType = typeUtil.checkDragTargetType(this.selection, this.textSelection, this.imageLink, fakeNode);
 
         this.actionType = typeUtil.getActionType(this.targetType);
