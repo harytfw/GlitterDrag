@@ -391,6 +391,10 @@
         "message": "显示动作提示",
         "description": "Element on Options page"
     },
+    "elem_TipsContentUsage": {
+        "message": "使用方法",
+        "description": "Element on Options page"
+    },
     "elem_EnableDistanceTip": {
         "message": "启用距离指示",
         "description": "Element on Options page"

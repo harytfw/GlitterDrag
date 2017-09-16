@@ -392,6 +392,10 @@
         "message": "Show actions tip",
         "description": "Element on Options page"
     },
+    "elem_TipsContentUsage": {
+        "message": "Usage",
+        "description": "Element on Options page"
+    },
     "elem_EnableDistanceTip": {
         "message": "Enable distance tip",
         "description": "Element on Options page"
