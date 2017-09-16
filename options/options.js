@@ -948,7 +948,8 @@ class generalWrapper {
             el.appendChild(option);
         });
         input.addEventListener("change", ({ target }) => {
-            content[target.getAttribute("data-id")] = target.value;
+            let val = target.value.replace(/\\n/g, "\n");
+            content[target.getAttribute("data-id")] = val;
             config.set("tipsContent", content);
         });
         el.addEventListener("change", (e) => {
