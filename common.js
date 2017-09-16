@@ -71,6 +71,7 @@ const commons = {
     TAB_LAST: "TAB_LAST", //最右边
     TAB_CLEFT: "TAB_CLEFT", //新建的标签页在当前标签页的左边
     TAB_CRIGHT: "TAB_CRIGHT", //右边
+    // TAB_UNSPECIFIED:"TAB_UNSPECIFIED",
 
     FORE_GROUND: true, //前台打开
     BACK_GROUND: false, //后台打开

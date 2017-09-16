@@ -400,7 +400,42 @@ class ExecutorClass {
 
 var executor = new ExecutorClass();
 var config = new ConfigClass();
-config.load();
+var promptString = {
+    "%a": {}, // action
+    "%g": {}, // background foreground
+    "%t": {}, // tabs position
+    "%d": {}, // download directory
+    "%s": null, // selection
+    "%e": null, // engines' name
+    "%y": {}, // type of action.
+};
+
+function updatePromptString() {
+    for (const key of Object.keys(commons)) {
+        if (/^ACT_/.test(key)) {
+            promptString["%a"][key] = getI18nMessage(key);
+        }
+        else if (/^(FORE|BACK)_GROUND/.test(key)) {
+            promptString["%g"][key] = getI18nMessage(key);
+        }
+        else if (/^TAB_/.test(key)) {
+            promptString["%t"][key] = getI18nMessage(key);
+        }
+    }
+    for (let i = 0; i < 8; i++) {
+        promptString["%d"][i.toString()] = browser.i18n.getMessage("DownloadDirectory", i);
+    }
+    promptString["%y"] = {
+        "textAction": browser.i18n.getMessage("textType"),
+        "imageAction": browser.i18n.getMessage("imageType"),
+        "linkAction": browser.i18n.getMessage("linkType"),
+    }
+}
+
+
+config.loadSync().then(() => {
+    updatePromptString();
+});
 
 browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
@@ -474,7 +509,10 @@ browser.runtime.onMessage.addListener((m) => {
 function connected(port) {
     // console.log("port",port);
     if (port.name === "initial") {
-        port.postMessage(JSON.stringify(config));
+        port.postMessage({
+            config: JSON.stringify(config.storage),
+            promptString,
+        });
         //自定义样式
         if (config.get("enableStyle") === true) {
             browser.tabs.insertCSS({

@@ -18,7 +18,6 @@
         <button class="default" data-i18n="Backup" id="backup" href="#" target="window" download="GlitterDrag-time.json">备份配置</button>
         <button class="default" data-i18n="Restore" id="restore" href="#">恢复配置 </button>
         <button class="default" data-i18n="Default" id="default" href="#">恢复默认 </button>
-        <button class="default" style="display:none" ata-i18n="LoadSync" id="loadSync" href="#">加载Firefox同步的配置</button>
         <input type="file" id="fileInput" accept=".json" style="display:none">
     </div>
     <br>
@@ -126,6 +125,12 @@
                     <input type="checkbox" id="enablePrompt">
                     <label for="enablePrompt" data-i18n="ShowActionTip">显示动作提示</label>
                     <br>
+                    <label data-i18>修改提示的内容: </label>
+                    <select id="tipsContentSelect">
+                    </select>
+                    <input id="tipsContentInput" type="text" not-config></input><a style="font:caption" href="https://github.com/harytfw/GlitterDrag/wiki/Usage-for-Content-of-Tips">说明</a>
+                    <!-- <span>可以使用的占位符: %a - 动作名称; %s - 选中的东西; %g - 标签页激活状态; %t - 标签页位置; %e - 引擎名称;  %d - 下载目录名称; %y - 执行的动作类型;</span> -->
+                    <br>
                     <input type="checkbox" id="enableIndicator">
                     <label for="enableIndicator" data-i18n="EnableDistanceTip">启用距离指示</label>
                     <br>
@@ -150,8 +155,8 @@
                     <label for="timeoutCancel" data-i18n="TimeoutCancel">超时取消时间（ms）</label>
                     <input type="number" id="timeoutCancel">
                     <br>
-                    <!-- <input disabled type="checkbox" id="enableSync"> -->
-                    <!-- <label for="enableSync" data-i18n="EnableSync">同步到Firefox账户(v53+)</label> -->
+                    <input disabled type="checkbox" id="enableSync">
+                    <label for="enableSync" data-i18n="EnableSync">同步到Firefox账户(v53+)</label>
                 </li>
                 <li class="tab-content" id="tab-download">
                     <button data-i18n="ShowDefaultDownloadDirectory" id="showDefaultDownloadDirectory">打开浏览器的默认下载目录</button>

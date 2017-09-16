@@ -57,6 +57,16 @@ const GENERATE_DEFAULT_CONFIG = () => {
         triggeredDistance: 20, // px
         disableAdjustTabSequence: false,
         switchToParentTab: false,
+        tipsContent: {
+            ACT_NONE: "%a",
+            ACT_OPEN: "%a",
+            ACT_COPY: "%a",
+            ACT_SEARCH: "%a",
+            ACT_TRANS: "%a",
+            ACT_DL: "%a",
+            ACT_QRCODE: "%a",
+            ACT_FIND: "%a",
+        },
         Actions: {
             textAction: clone(tempAction),
             linkAction: clone(tempAction),
