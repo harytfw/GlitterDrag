@@ -1,8 +1,9 @@
 class ConfigClass {
     constructor() {
         this.onStorageChange = this.onStorageChange.bind(this);
-        this["version"] = browser.runtime.getManifest().version;
-        this["addon"] = "Glitter Drag";
+        this.storage = {};
+        this.storage["version"] = browser.runtime.getManifest().version;
+        this.storage["addon"] = "Glitter Drag";
         browser.storage.onChanged.addListener(this.onStorageChange);
     }
 
@@ -19,17 +20,19 @@ class ConfigClass {
     // }
 
     onStorageChange(changes, area) {
+        if (area === "sync") return;
         for (const key of Object.keys(changes)) {
-            this[key] = changes[key].newValue;
+            this.storage[key] = changes[key].newValue;
         }
         // this.sendConfigToActiveTab();
     }
     clear() {
+        this.storage = {};
         return browser.storage.local.clear();
     }
     save() {
-        const temp = JSON.parse(JSON.stringify(this));
-        if (this.enableSync && browser.storage.sync) {
+        const temp = JSON.parse(JSON.stringify(this.storage));
+        if (this.storage["enableSync"] && browser.storage.sync) {
             browser.storage.sync.set(temp);
         }
         return browser.storage.local.set(temp);
@@ -39,6 +42,9 @@ class ConfigClass {
             let result = null;
             if (sync && browser.storage.sync) {
                 result = await browser.storage.sync.get();
+                if (!Object.keys(result).length) {
+                    result = await browser.storage.local.get();
+                }
             }
             else {
                 result = await browser.storage.local.get();
@@ -50,30 +56,30 @@ class ConfigClass {
             }
             else {
                 for (let key of keys) {
-                    this[key] = result[key];
+                    this.storage[key] = result[key];
                 }
             }
             //检查是否有新的选项出现在DEFAULT_CONFIG.js，有的话添加进来
             for (let key1 of Object.keys(DEFAULT_CONFIG)) {
-                if (this[key1] === undefined) {
-                    this[key1] = DEFAULT_CONFIG[key1];
+                if (this.storage[key1] === undefined) {
+                    this.storage[key1] = DEFAULT_CONFIG[key1];
                 }
             }
             resolve(true);
         })
     }
     get(key, callback) {
-        if (this[key] === undefined) {
+        if (this.storage[key] === undefined) {
             if (key in DEFAULT_CONFIG) {
 
-                this[key] = DEFAULT_CONFIG[key]
+                this.storage[key] = DEFAULT_CONFIG[key]
             }
             else {
                 throw "Unknow key: " + key;
             }
         }
-        if (callback) callback(this[key]);
-        return this[key];
+        if (callback) callback(this.storage[key]);
+        return this.storage[key];
     }
     set(key, val) {
         // if (key === "storageArea") {
@@ -86,10 +92,11 @@ class ConfigClass {
         // }
         const toStored = {};
         toStored[key] = val;
-        if (browser.storage.sync) {
+        const p = browser.storage.local.set(toStored);
+        if (this.get("enableSync") === true && browser.storage.sync) {
             browser.storage.sync.set(toStored);
         }
-        return browser.storage.local.set(toStored);
+        return p;
     }
     getAct(type, dir, key) {
         let r = null;
@@ -125,24 +132,29 @@ class ConfigClass {
         // if (parsed.addon !== "Glitter Drag") {
         //     throw "Invalid json";
         // }
-        return new Promise((resolve) => {
-            for (let key of Object.keys(parsed)) {
-                this.set(key, parsed[key]);
+        return new Promise(async(resolve, reject) => {
+            // for (let key of Object.keys(parsed)) {
+            //     this.set(key, parsed[key]);
+            // }
+            if ("Actions" in parsed) {
+                await browser.storage.local.set(parsed);
+                resolve(true);
             }
-            resolve(true);
+            else {
+                reject("Invalid config file");
+            }
         })
     }
     async loadDefault() {
         return new Promise(async(resolve) => {
             await this.clear();
-            for (let k of Object.keys(DEFAULT_CONFIG)) {
-                this.set(k, DEFAULT_CONFIG[k]);
-            }
+            await browser.storage.local.set(DEFAULT_CONFIG);
             resolve(true);
         });
     }
-    loadSync() {
-        return this.load(true);
+    async loadSync() {
+        let enableSync = (await browser.storage.local.get("enableSync")).enableSync;
+        return this.load(enableSync ? true : false);
     }
 
 }
