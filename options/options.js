@@ -1,7 +1,7 @@
 var supportCopyImage = false;
 var config = new ConfigClass();
 var majorVersion = 52; // depend on manifesion.json
-
+var DOSAVE = false;
 browser.runtime.getBrowserInfo().then(info => {
     majorVersion = info.version.split(".")[0];
     majorVersion = parseInt(majorVersion);
@@ -590,13 +590,13 @@ class ChildWrapper {
 
 //使用bindCallBack要小心this的指向
 
-
+DOSAVE = false;
 class Wrapper {
     constructor(modifierKey = commons.KEY_NONE) {
         this.init(modifierKey);
     }
     init(modifierKey) {
-        this.DOSAVE = false; //指示是否需要保存
+        DOSAVE = false; //指示是否需要保存
 
         this.callback = this.callback.bind(this);
         this.elem = document.createElement("div");
@@ -687,13 +687,13 @@ class Wrapper {
             c.bindCallBack(this.callback); //这里会调用到下面的callback;
             c.appendTo(this.elem);
         });
-        this.DOSAVE = true;
+        DOSAVE = true;
     }
     callback() {
         //当这个类第一初始化时，会调用回调完成第一次赋值，但是我们不想让数据又保存一次，
         //那么使用this.DOSAVE来表明是否需要保存
         //TODO: 新增选项：选项发生修改时自动保存
-        if (this.DOSAVE) this.save();
+        if (DOSAVE) this.save();
     }
     collect() {
         return {
@@ -878,7 +878,11 @@ class EngineWrapper {
                 });
                 // dispatch event to a large number of element will slow the optioin page
                 setTimeout(() => {
-                    document.querySelectorAll(".searchEngines").forEach(el => {
+                    DOSAVE = false;
+                    document.querySelectorAll(".searchEngines").forEach((el, i, list) => {
+                        if (i === list.length - 1) {
+                            DOSAVE = true;
+                        }
                         el.dispatchEvent(new Event("update"));
                     });
                 }, 2500);
@@ -934,6 +938,24 @@ class generalWrapper {
         if (majorVersion >= 53) {
             $E("#enableSync").removeAttribute("disabled");
         }
+        const el = $E("#tipsContentSelect");
+        const input = $E("#tipsContentInput");
+        const content = config.get("tipsContent");
+        OPTION_TEXT_VALUE_TABLE.act.forEach(item => {
+            const option = document.createElement("option");
+            option.value = item.value;
+            option.textContent = item.text;
+            el.appendChild(option);
+        });
+        input.addEventListener("change", ({ target }) => {
+            content[target.getAttribute("data-id")] = target.value;
+            config.set("tipsContent", content);
+        });
+        el.addEventListener("change", (e) => {
+            input.value = content[e.target.value];
+            input.setAttribute("data-id", e.target.value);
+        });
+        el.selectedIndex = 1;
     }
 }
 
@@ -1051,6 +1073,8 @@ const tabs = {
         }
 
         document.querySelectorAll("input[id]").forEach(elem => {
+            if ("not-config" in elem.attributes) return;
+
             if (elem.type === "file") return;
 
             if (elem.type === "checkbox") elem.checked = config.get(elem.id);
@@ -1095,9 +1119,8 @@ const tabs = {
 }
 
 
-var backgroundPage = null;
-config.load().then((page) => {
-    // backgroundPage = page;
+// var backgroundPage = null;
+config.loadSync().then(() => {
 
     let fileReader = new FileReader();
     fileReader.addEventListener("loadend", async() => {
