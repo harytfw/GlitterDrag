@@ -123,6 +123,8 @@ class DragClass {
         this.direction = commons.DIR_U;
         // end: properties to post
 
+        this.lastDirection = null;
+
         // start: variable to identify type of action
         this.targetElem = null;
         this.targetType = commons.TYPE_UNKNOWN;
@@ -176,6 +178,7 @@ class DragClass {
     cancel() {
         clearTimeout(this.timeoutId);
         this.accepting = this.running = false;
+        this.notAccepting = true;
         this.promptBox && this.promptBox.stopRender();
         this.indicatorBox && this.indicatorBox.hide();
     }
@@ -191,7 +194,6 @@ class DragClass {
         }
     }
     dragstart(evt) {
-        this.DATATRANSFER = evt.dataTransfer;
         if (bgConfig.enableIndicator) {
             if (this.indicatorBox === null) this.indicatorBox = new Indicator();
             this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
@@ -225,15 +227,10 @@ class DragClass {
     }
     dragend(evt) {
         clearTimeout(this.timeoutId);
-
         // what should we do if user release ctrl or shift key while dragging?
 
-        if (this.promptBox) { // may be null if viewing an image
-            this.promptBox.stopRender();
-        }
-        this.indicatorBox && this.indicatorBox.hide();
-        // this.selection = String.prototype.trim(this.selection);
         if (this.distance >= bgConfig.triggeredDistance) {
+            this.direction = this.getDirection();
             if (this.actionType === "imageAction") {
                 const result = this.selection.match(commons.fileExtension);
                 const [name, ext] = result || ["image.jpg", ".jpg"];
@@ -257,9 +254,15 @@ class DragClass {
         this.updateModifierKey(evt);
 
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
-        this.direction = this.getDirection();
-        if (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER) {
+        if (bgConfig.enablePrompt && (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
             if (this.promptBox !== null) {
+                this.direction = this.getDirection();
+                if (this.direction === this.lastDirection) {
+                    // this.lastDirection = this.direction;
+                    return;
+                }
+                // console.log(`cur dir:${this.direction} , last dir:${this.lastDirection}`);
+                this.lastDirection = this.direction;
                 this.promptBox.display();
                 let actions = null;
                 if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
@@ -271,9 +274,16 @@ class DragClass {
                 else {
                     actions = bgConfig.Actions;
                 }
-                let message = ""
-                message = getI18nMessage(actions[this.actionType][this.direction]["act_name"]);
-                // }
+                let property = actions[this.actionType][this.direction]
+                let message = bgConfig.tipsContent[property["act_name"]];
+                message = message
+                    .replace("%a", promptString["%a"][property["act_name"]])
+                    .replace("%t", promptString["%t"][property["tab_pos"]])
+                    .replace("%g", promptString["%g"][property["tab_active"] === true ? "FORE_GROUND" : "BACK_GROUND"])
+                    .replace("%d", promptString["%g"][property["download_directory"]] || "")
+                    .replace("%e", property["engine_name"])
+                    .replace("%y", promptString["%y"][this.actionType])
+                    .replace("%s", this.selection)
                 this.promptBox.render(this.direction, message);
             }
         }
@@ -296,7 +306,7 @@ class DragClass {
             console.log("Not here!!!");
             return;
         }
-        this.selection = this.textSelection = "If you see it, please report to the author of GlitterDrag"; // temporary
+        this.selection = this.textSelection = "If you see this message, please report to the author of GlitterDrag"; // temporary
         this.targetType = typeUtil.checkDragTargetType(this.selection, this.textSelection, this.imageLink, fakeNode);
 
         this.actionType = typeUtil.getActionType(this.targetType);
@@ -370,8 +380,8 @@ class DragClass {
 
 
         const type = evt.type;
-        // if (["dragend", "drop"].includes(type)) {
-        //     console.log(`type:${type} phase:${evt.eventPhase} prevent:${evt.defaultPrevented} touched:${this.isDropTouched}`)
+        // if (["dragover"].includes(type)) {
+        //     console.log(`type:${type} phase:${evt.eventPhase} prevent:${evt.defaultPrevented} touched:${this.isDropTouched} running:${this.running} accepting:${this.accepting}}`)
         // }
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
@@ -380,6 +390,7 @@ class DragClass {
             case "dragstart":
                 this.notAccepting = true;
                 this.isInputArea = false;
+                this.lastDirection = null;
                 // if (this.isNotAcceptable(evt)) {
                 //     return;
                 // }
@@ -403,7 +414,9 @@ class DragClass {
                     return;
                 }
                 if (evt.dataTransfer && !this.running) {
-                    for (const mime of Object.values(MIME_TYPE)) {
+                    const mimes = Object.values(MIME_TYPE);
+                    for (let i = 0; i < mimes.length; i++) {
+                        const mime = mimes[i];
                         if (evt.dataTransfer.types.includes(mime)) {
                             evt.preventDefault();
                             this.accepting = true;
@@ -422,17 +435,22 @@ class DragClass {
                     return;
                 }
 
-                this.isDropTouched = true;
+                this.isDropTouched = true; // assume it was tocuhed.
                 if (evt.eventPhase === EVENT_PAHSE.CAPTURING_PHASE) {
                     if (this.running || this.accepting) {
                         this.dragover(evt);
+                    }
+                    else {
+                        this.notAccepting = true;
                     }
                 }
                 else {
                     if (evt.defaultPrevented) {
                         this.promptBox && this.promptBox.hide();
                     }
-                    evt.preventDefault();
+                    if (this.running || this.accepting) {
+                        evt.preventDefault();
+                    }
                 }
                 break;
             case "drop": // Bubbling
@@ -468,6 +486,8 @@ class DragClass {
                 break;
             case "dragend": // Bubbling
                 this.indicatorBox && this.indicatorBox.hide();
+                this.promptBox && this.promptBox.stopRender();
+                this.lastDirection = null;
                 if (this.isInputArea) {
                     return
                 }
@@ -484,6 +504,9 @@ class DragClass {
             default:
                 break;
         }
+        // if (["dragover"].includes(type)) {
+        //     console.log(`type:${type} phase:${evt.eventPhase} prevent:${evt.defaultPrevented} touched:${this.isDropTouched} running:${this.running} accepting:${this.accepting}}`)
+        // }
     }
 
 
@@ -673,24 +696,22 @@ let bgPort = browser.runtime.connect({
 });
 let bgConfig = null;
 let mydrag = null;
+let promptString = null;
 
-function main() {
-    bgPort.onMessage.addListener((c) => {
-        bgConfig = JSON.parse(c);
-        // console.log(bgConfig);
-        if (mydrag === null) {
-            if (["loading", "interactive"].includes(document.readyState)) {
-                document.addEventListener("DOMContentLoaded", () => {
-                    mydrag = new DragClass(document);
-                }, {
-                    once: true
-                });
-            }
-            else {
+bgPort.onMessage.addListener((response) => {
+    bgConfig = JSON.parse(response.config);
+    promptString = response.promptString;
+    // console.log(bgConfig);
+    if (mydrag === null) {
+        if (["loading", "interactive"].includes(document.readyState)) {
+            document.addEventListener("DOMContentLoaded", () => {
                 mydrag = new DragClass(document);
-            }
+            }, {
+                once: true
+            });
         }
-    })
-}
-main();
-setTimeout(main, 2000);
+        else {
+            mydrag = new DragClass(document);
+        }
+    }
+})

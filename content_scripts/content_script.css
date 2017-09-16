@@ -1,5 +1,5 @@
 :root {
-    --prompt-height: 100px;
+    /* --prompt-height: 100px; */
     --prompt-width: 200px;
 }
 
@@ -24,12 +24,17 @@
     text-align: center !important;
     left: 40%;
     top: 40%;
-    height: var(--prompt-height);
+    /* height: var(--prompt-height); */
     width: var(--prompt-width);
+    padding-bottom: 10px;
 }
 
 #GDPrompt>* {
     text-align: inherit;
+}
+
+#GDPrompt>div {
+    white-space: pre-line;
 }
 
 #GDArrow {
