@@ -392,6 +392,10 @@
         "message": "Show actions tip",
         "description": "Element on Options page"
     },
+    "elem_ModifyTipsContent": {
+        "message": "Modify Tips Content: ",
+        "description": "Element on Options page"
+    },
     "elem_TipsContentUsage": {
         "message": "Usage",
         "description": "Element on Options page"
