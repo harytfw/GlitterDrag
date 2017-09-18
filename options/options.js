@@ -957,6 +957,7 @@ class generalWrapper {
             input.setAttribute("data-id", e.target.value);
         });
         el.selectedIndex = 1;
+        el.dispatchEvent(new Event("change"));
     }
 }
 
