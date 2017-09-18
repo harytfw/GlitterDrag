@@ -339,7 +339,7 @@ class DragClass {
             this.post(sended);
         });
         if (["textAction", "linkAction"].includes(this.actionType)) {
-            this.post();
+            this.post({ direction: commons.DIR_OUTER });
         }
         else {
             let action = null;
