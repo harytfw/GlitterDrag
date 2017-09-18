@@ -125,13 +125,13 @@ class ExecutorClass {
                     this.openURL(this.data.imageLink)
                 }
                 else if (this.data.selection.startsWith("blob:")) { // blob url
-                    this.redirector({
+                    this.openRedirectPage({
                         url: this.data.selection,
                         cmd: "open"
                     })
                 }
                 // else if (this.data.selection.startsWith("file:///") && typeUtil.seemAsURL(this.data.selection)) {
-                //     this.redirector({
+                //     this.openRedirectPage({
                 //         cmd: "open",
                 //         url: this.data.selection
                 //     })
@@ -353,7 +353,7 @@ class ExecutorClass {
         }
         else {
             const url = new URL(REDIRECT_URL);
-            for (const key of params) {
+            for (const key of Object.keys(params)) {
                 url.searchParams.append(key, params[key]);
             }
             this.openTab(url.toString());

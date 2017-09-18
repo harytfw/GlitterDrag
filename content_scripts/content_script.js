@@ -312,7 +312,6 @@ class DragClass {
         this.actionType = typeUtil.getActionType(this.targetType);
     }
     drop(evt) {
-
         const dt = evt.dataTransfer;
         this.selection = dt.getData("text/plain").trim();
         if (commons.TYPE_TEXT_URL === this.targetType) {
@@ -320,6 +319,7 @@ class DragClass {
         }
         // console.log(dt.files);
         const sended = {
+            direction: commons.DIR_OUTER,
             textSelection: "",
             hasImageBinary: false,
             fileInfo: {
