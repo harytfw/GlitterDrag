@@ -1138,7 +1138,7 @@ config.loadSync().then(() => {
         }
     });
     eventUtil.attachEventS("#backup", () => {
-        const blob = new Blob([JSON.stringify(config, null, 2)]);
+        const blob = new Blob([JSON.stringify(config.storage, null, 2)]);
         const url = URL.createObjectURL(blob);
         const date = new Date();
 
