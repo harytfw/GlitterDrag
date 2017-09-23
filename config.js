@@ -93,8 +93,10 @@ class ConfigClass {
         const toStored = {};
         toStored[key] = val;
         const p = browser.storage.local.set(toStored);
-        if (this.get("enableSync") === true && browser.storage.sync) {
-            browser.storage.sync.set(toStored);
+        if (browser.storage.sync) {
+            if (this.get("enableSync") === true || (key === "enableSync" && val === true)) {
+                browser.storage.sync.set(toStored);
+            }
         }
         return p;
     }
