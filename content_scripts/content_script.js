@@ -24,6 +24,10 @@ const EVENT_PAHSE = {
 }
 Object.freeze(EVENT_PAHSE);
 
+const exclusiveSite = [
+    "vk.com"
+]
+
 class Prompt {
     constructor() {
         this.container = document.createElement("div");
@@ -495,7 +499,7 @@ class DragClass {
                 //     return
                 // }
                 if (evt.eventPhase === EVENT_PAHSE.BUBBLING_PHASE) {
-                    if (this.running && !this.isDropTouched) {
+                    if (this.running && (this.isDropTouched === false || exclusiveSite.includes(location.host))) {
                         this.running = false;
                         this.dragend(evt);
                     }
