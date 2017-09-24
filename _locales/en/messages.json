@@ -120,7 +120,7 @@
         "description": "Direction"
     },
     "DIR_OUTER": {
-        "message": "Outer",
+        "message": "From external",
         "description": "Direction"
     },
     "textType": {

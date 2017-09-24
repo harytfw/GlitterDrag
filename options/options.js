@@ -299,9 +299,8 @@ class ControlSelect extends _SelectWrapper {
 
 
 class DirWrapper {
-    constructor(labelString, dirValue, conf, ) {
+    constructor(labelString, dirValue, conf, typeInfo) {
         this.onchange = this.onchange.bind(this);
-
         this.elem = document.createElement("div");
         this.elem.className = "direction";
         this.label = document.createElement("label");
@@ -311,6 +310,7 @@ class DirWrapper {
         this.dirValue = dirValue;
 
         this.act = conf;
+        this.typeInfo = typeInfo;
         // this.act = {
         //     act_name: conf.act_name,
         //     tab_active: conf.tab_active,
@@ -371,7 +371,7 @@ class DirWrapper {
             case commons.ACT_OPEN:
                 this.activationSelect.show();
                 this.posSelect.show();
-                this.engineSelect.show();
+                if (this.typeInfo === "textAction") this.engineSelect.show();
                 this.openTypeSelect.show();
                 break;
             case commons.ACT_QRCODE:
@@ -490,7 +490,7 @@ class ChildWrapper {
         for (let key of Object.keys(DIR_TEXT_VALUE_TABLE)) {
             this.dirWrappers.push(new DirWrapper(
                 DIR_TEXT_VALUE_TABLE[key].text, DIR_TEXT_VALUE_TABLE[key].value,
-                config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[key].value, modifierKey)
+                config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[key].value, modifierKey),this.typeInfo
             ));
         }
 
