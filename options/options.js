@@ -813,7 +813,9 @@ class EngineItemWrapper {
 }
 class EngineWrapper {
     constructor(engineList) {
-
+        document.querySelectorAll("#builtin-engine>select>option:nth-child(1)").forEach(el=>{
+            el.selected = true;
+        })
         eventUtil.attachEventAll("#builtin-engine>select", (event) => {
             this.newItem({
                 name: event.target.selectedOptions[0].textContent,
@@ -1122,7 +1124,7 @@ const tabs = {
 
 
 // var backgroundPage = null;
-config.loadSync().then(() => {
+config.load().then(() => {
 
     let fileReader = new FileReader();
     fileReader.addEventListener("loadend", async() => {

@@ -1,29 +1,6 @@
 //TODO:减少全局变量,修改变量名
-const ACTION_CONSTRUCTOR = (
-    act = "",
-    active = "",
-    pos = "", en = "",
-    open_type = "",
-    search_type = "",
-    copy_type = "",
-    download_type = "",
-    download_directory = "",
-    download_saveas = "",
-    search_onsite = "",
-) => {
-    return {
-        act_name: act,
-        tab_active: active,
-        tab_pos: pos,
-        engine_name: en,
-        open_type,
-        search_type,
-        download_type,
-        download_directory,
-        download_saveas,
-        copy_type,
-        search_onsite,
-    }
+const ACTION_CONSTRUCTOR = (parameter = {}) => {
+    return Object.assign({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND, tab_pos: commons.TAB_LAST, engine_name: "", open_type: "", search_type: "", copy_type: "", download_type: "", download_directory: [], download_saveas: commons.DOWNLOAD_SAVEAS_YES, search_onsite: commons.SEARCH_ONSITE_YES }, parameter)
 }
 const GENERATE_DEFAULT_CONFIG = () => {
 
@@ -86,7 +63,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         directionControl: {
             textAction: commons.ALLOW_NORMAL,
             linkAction: commons.ALLOW_NORMAL,
-            imageAction: commons.ALLOW_NORMAL
+            imageAction: commons.ALLOW_V,
         },
         directionControl_CtrlKey: {
             textAction: commons.ALLOW_NORMAL,
@@ -104,28 +81,34 @@ const GENERATE_DEFAULT_CONFIG = () => {
 }
 
 
-const DEFAULT_CONFIG = GENERATE_DEFAULT_CONFIG();
-const DEFAULT_CONFIG_A = () => {
-    let a = DEFAULT_CONFIG;
+
+
+const DEFAULT_CONFIG_A = (() => {
+    let a = GENERATE_DEFAULT_CONFIG();
 
     Object.assign(a.Actions.textAction, {
-        DIR_U: ACTION_CONSTRUCTOR(commons.ACT_OPEN, commons.FORGE_GROUND, commons.TAB_CLEFT),
-        DIR_D: ACTION_CONSTRUCTOR(commons.ACT_OPEN, commons.BACK_GROUND, commons.TAB_CLEFT),
+        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND }),
+        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND }),
+        DIR_L: ACTION_CONSTRUCTOR({ act_name: commons.ACT_COPY }),
+        DIR_R: ACTION_CONSTRUCTOR({ act_name: commons.ACT_SEARCH }),
     });
     Object.assign(a.Actions.linkAction, {
-        DIR_U: ACTION_CONSTRUCTOR(commons.ACT_OPEN, commons.FORGE_GROUND, commons.TAB_CLEFT),
-        DIR_D: ACTION_CONSTRUCTOR(commons.ACT_OPEN, commons.BACK_GROUND, commons.TAB_CLEFT),
+        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND }),
+        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND }),
+        DIR_L: ACTION_CONSTRUCTOR({ act_name: commons.ACT_COPY, copy_type: commons.COPY_LINK }),
+        DIR_R: ACTION_CONSTRUCTOR({ act_name: commons.ACT_SEARCH, search_type: commons.SEARCH_TEXT }),
     });
     Object.assign(a.Actions.imageAction, {
-        DIR_U: ACTION_CONSTRUCTOR(commons.ACT_OPEN, commons.FORGE_GROUND, commons.TAB_CLEFT),
-        DIR_D: ACTION_CONSTRUCTOR(commons.ACT_OPEN, commons.BACK_GROUND, commons.TAB_CLEFT),
+        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND }),
+        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND }),
     });
     return a;
-}
+})();
 const DEFAULT_CONFIG_B = () => {
     return DEFAULT_CONFIG_A;
 }
 
+const DEFAULT_CONFIG = DEFAULT_CONFIG_A;
 Object.freeze(DEFAULT_CONFIG);
 
 //TODO: user can select built-in configuration
