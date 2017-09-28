@@ -467,7 +467,7 @@
         }
     },
     "elem_SettingDownloadDirectoryHelperText": {
-        "message": "設定的目錄只能作為 瀏覽器的預設下載目錄的子目錄，同時也無法使用絕對路徑。第二列是你可以設定的目錄。例如：“image\/” 表示的最終下載目錄是 “預設下載目錄\/image\/” . 留空是預設下載目錄.  二級目錄需要手動建立 ",
+        "message": "設定的目錄只能作為“瀏覽器的預設下載目錄”的子目錄，不支援絕對路徑。第二列是你可以設定的目錄路徑。例如 image\/ 表示最終下載目錄是“預設下載目錄\/image\/”。留空則表示使用“預設下載目錄”。",
         "description": "Element on Options page"
     },
     "elem_SavebtnOnDownloadDirectories": {
