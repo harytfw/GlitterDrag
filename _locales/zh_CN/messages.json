@@ -120,7 +120,7 @@
         "description": "Direction"
     },
     "DIR_OUTER": {
-        "message": "外部",
+        "message": "从外部",
         "description": "Direction"
     },
     "textType": {
@@ -333,6 +333,10 @@
     },
     "elem_SearchTemplateClasses_Chinese": {
         "message": "中文",
+        "description": "Select box classes on Options - Search Template"
+    },
+    "elem_SearchTemplateClasses_Image": {
+        "message": "图片",
         "description": "Select box classes on Options - Search Template"
     },
     "elem_SearchTemplateClasses_ImageSearch": {

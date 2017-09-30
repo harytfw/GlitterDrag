@@ -1,10 +1,10 @@
-class ConfigClass {
+class _ConfigClass {
     constructor() {
         this.onStorageChange = this.onStorageChange.bind(this);
         this.storage = {};
         this.storage["version"] = browser.runtime.getManifest().version;
         this.storage["addon"] = "Glitter Drag";
-        browser.storage.onChanged.addListener(this.onStorageChange);
+
     }
 
     // sendConfigToActiveTab(config) {
@@ -71,7 +71,6 @@ class ConfigClass {
     get(key, callback) {
         if (this.storage[key] === undefined) {
             if (key in DEFAULT_CONFIG) {
-
                 this.storage[key] = DEFAULT_CONFIG[key]
             }
             else {
@@ -82,19 +81,13 @@ class ConfigClass {
         return this.storage[key];
     }
     set(key, val) {
-        // if (key === "storageArea") {
-        //     val = this.enableSync ? browser.storage.sync : browser.storage.local;
-        //     this[key] = val;
-        //     return new Promise(resolve => resolve(true));
-        // }
-        // if (typeof val === "object") {
-        //     val = JSON.parse(JSON.stringify(val));
-        // }
         const toStored = {};
         toStored[key] = val;
         const p = browser.storage.local.set(toStored);
-        if (this.get("enableSync") === true && browser.storage.sync) {
-            browser.storage.sync.set(toStored);
+        if (browser.storage.sync) {
+            if (this.get("enableSync") === true || (key === "enableSync" && val === true)) {
+                browser.storage.sync.set(toStored);
+            }
         }
         return p;
     }
@@ -157,4 +150,101 @@ class ConfigClass {
         return this.load(enableSync ? true : false);
     }
 
+}
+
+class ConfigClass {
+    constructor() {
+        this.storage = {};
+        this.defaultURL = browser.i18n.getMessage('default_search_url');
+
+        if (this.defaultURL === "") {
+            console.warn('get default_search_url fail, fallback to Google.')
+            this.defaultURL = "https://www.google.com/search?q=%s";
+        }
+        browser.storage.onChanged.addListener((changes, area) => {
+            if (area === "sync") return;
+            for (const key of Object.keys(changes)) {
+                this.storage[key] = changes[key].newValue;
+            }
+        });
+    }
+
+    set(key, val) {
+        this.storage[key] = val;
+        const stored = {};
+        stored[key] = val;
+        if (this.storage["enableSync"] === true && "sync" in browser.storage) {
+            if (key === "enableSync") {
+                browser.storage.sync.set(this.storage);
+            }
+            else {
+                browser.storage.sync.set(stored);
+            }
+        }
+        return browser.storage.local.set(stored);
+    }
+    get(key) {
+        // console.table(r);
+        if (key in this.storage) {
+            return this.storage[key];
+        }
+        return DEFAULT_CONFIG[key];
+    }
+    restore(json) {
+
+        const parsed = JSON.parse(json);
+        // if (parsed.addon !== "Glitter Drag") {
+        //     throw "Invalid json";
+        // }
+        if("Actions" in parsed === false){
+            throw "Invalid JSON File";
+        }
+        for (const key of Object.keys(parsed)) {
+            if (key in DEFAULT_CONFIG === false) {
+                // throw "Invalid JSON File";
+            }
+        }
+        return browser.storage.local.set(parsed);
+    }
+
+    async clear() {
+        await browser.storage.local.clear();
+        await browser.storage.sync.clear();
+        return Promise.resolve();
+    }
+    async load() {
+        let syncFlag = (await browser.storage.local.get("enableSync"))["enableSync"] ? true : false;
+        if (syncFlag) {
+            Object.assign(this.storage, await browser.storage.sync.get());
+        }
+        else {
+            Object.assign(this.storage, await browser.storage.local.get());
+        }
+        return Promise.resolve();
+    }
+    loadSync() {
+        return this.load(true);
+    }
+    async loadDefault() {
+
+        return browser.storage.local.set(DEFAULT_CONFIG);
+    }
+    getAct(type, dir, key) {
+        let r = null;
+        if (key === commons.KEY_CTRL) {
+            r = this.get("Actions_CtrlKey")[type][dir];
+        }
+        else if (key === commons.KEY_SHIFT) {
+            r = this.get("Actions_ShiftKey")[type][dir];
+        }
+        else {
+            r = this.get("Actions")[type][dir];
+        }
+        return r ? r : DEFAULT_CONFIG.Actions[type][dir];
+    }
+    getSearchURL(name) {
+        let searchUrl = this.defaultURL;
+        this.get("Engines").every(engine => engine.name === name ? (searchUrl = engine.url, false) : true);
+        return searchUrl;
+    }
 }

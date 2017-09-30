@@ -32,6 +32,7 @@ const tabsRelation = {
         }
     },
     switchToParent: function(id) {
+        let isLastChildTab = this.children.length === 1 && this.children[0] === id;
         if (this.parent === id) {
             this.parent = TAB_ID_NONE;
         }
@@ -40,7 +41,11 @@ const tabsRelation = {
                 return v !== id
             });
         }
-        if (this.parent !== TAB_ID_NONE && this.children.length === 0) {
+        // 切换到父标签页的条件：
+        // 1. 父标签页id不为TAB_ID_NONE
+        // 2. 所有子标签页已被全部关闭
+        // 3. 子标签页只剩下唯一一个
+        if (this.parent !== TAB_ID_NONE && this.children.length === 0 && isLastChildTab) {
             return true;
         }
         return false;
@@ -93,6 +98,7 @@ class ExecutorClass {
                     active: commons.FORE_GROUND
                 });
             }
+            this.backgroundChildTabCount = 0;
         });
         browser.tabs.onActivated.addListener(() => {
             this.backgroundChildTabCount = 0;
@@ -167,6 +173,7 @@ class ExecutorClass {
                 }
                 break;
             case commons.ACT_SEARCH:
+
                 if (this.data.actionType === "linkAction") {
                     if (this.action.search_type === commons.SEARCH_IMAGE_LINK && this.data.imageLink !== "") {
                         this.searchText(this.data.imageLink);
@@ -177,6 +184,9 @@ class ExecutorClass {
                     else {
                         this.searchText(this.data.selection);
                     }
+                }
+                else if (this.data.actionType === "imageAction") {
+                    this.searchImage(this.data.selection);
                 }
                 else if (this.action.search_type === commons.SEARCH_TEXT) {
                     this.searchText(this.data.textSelection);
@@ -327,7 +337,11 @@ class ExecutorClass {
         //     "%x":`${keyword} site:${this.data.domain}`,
         // }
         let url = config.getSearchURL(this.action.engine_name)
-        if (this.action.search_onsite === commons.SEARCH_ONSITE_YES) {
+        if (url.startsWith("{redirect.html}")) {
+            this.searchImage(keyword);
+            return;
+        }
+        if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
             url = url.replace("%s", "%x");
         }
         this.openTab(
@@ -348,6 +362,12 @@ class ExecutorClass {
     }
 
     openRedirectPage(params) {
+        if ("fileInfo" in this.data === false) {
+            this.data.fileInfo = {
+                name: "example.jpg",
+                type: "image/jpeg",
+            }
+        }
         if (typeof params === "string") {
             this.openTab(REDIRECT_URL + params + `&fileName=${this.data.fileInfo.name}&fileType=${this.data.fileInfo.type}`);
         }
@@ -433,7 +453,7 @@ function updatePromptString() {
 }
 
 
-config.loadSync().then(() => {
+config.load().then(() => {
     updatePromptString();
 });
 

@@ -83,6 +83,10 @@
         "message": "加入書籤",
         "description": "Action name"
     },
+    "ACT_FIND": {
+        "message": "尋找",
+        "description": "Action name"
+    },
     "DIR_U": {
         "message": "上",
         "description": "Direction"
@@ -183,10 +187,6 @@
         "message": "鏈結",
         "description": "Search action"
     },
-    "SEARCH_IMAGE_LINK": {
-        "message": "圖像鏈結",
-        "description": ""
-    },
     "SEARCH_TEXT": {
         "message": "文字",
         "description": "Search action"
@@ -194,6 +194,10 @@
     "SEARCH_IMAGE": {
         "message": "圖像",
         "description": "Search action"
+    },
+    "SEARCH_IMAGE_LINK": {
+        "message": "圖像鏈結",
+        "description": ""
     },
     "SEARCH_ONSITE_YES": {
         "message": "站內搜尋",
@@ -211,13 +215,13 @@
         "message": "鏈結",
         "description": "Copy action"
     },
-    "COPY_IMAGE_LINK": {
-        "message": "圖像鏈結",
-        "description": ""
-    },
     "COPY_IMAGE": {
         "message": "圖像",
         "description": "Copy action"
+    },
+    "COPY_IMAGE_LINK": {
+        "message": "圖像鏈結",
+        "description": ""
     },
     "DOWNLOAD_TEXT": {
         "message": "文字",
@@ -227,12 +231,12 @@
         "message": "鏈結",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE_LINK": {
-        "message": "圖像鏈結",
-        "description": "Copy action"
-    },
     "DOWNLOAD_IMAGE": {
         "message": "圖像",
+        "description": "Copy action"
+    },
+    "DOWNLOAD_IMAGE_LINK": {
+        "message": "圖像鏈結",
         "description": "Copy action"
     },
     "DOWNLOAD_SAVEAS_YES": {
@@ -272,7 +276,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_search_onsite": {
-        "message": "將關鍵詞 取代成 site:域名 關鍵詞",
+        "message": "將關鍵字 取代成 site:域名 關鍵字",
         "description": "tooltip on option"
     },
     "option_tooltip_copy": {
@@ -331,6 +335,14 @@
         "message": "中文",
         "description": "Select box classes on Options - Search Template"
     },
+    "elem_SearchTemplateClasses_Image": {
+        "message": "圖片",
+        "description": "Select box classes on Options - Search Template"
+    },
+    "elem_SearchTemplateClasses_ImageSearch": {
+        "message": "圖片(上傳檔案)",
+        "description": "Select box classes on Options - Search Template"
+    },
     "elem_Backup": {
         "message": "備份設定",
         "description": "Element on Options page"
@@ -376,11 +388,19 @@
         "description": "Element on Options page"
     },
     "elem_PlaceholderTip": {
-        "message": "用 %s 取代鏈結裡的關鍵詞",
+        "message": "用 %s 取代鏈結裡的關鍵字",
         "description": "Element on Options page"
     },
     "elem_ShowActionTip": {
         "message": "顯示動作提示",
+        "description": "Element on Options page"
+    },
+    "elem_ModifyTipsContent": {
+        "message": "變更提示的內容: ",
+        "description": "Element on Options page"
+    },
+    "elem_TipsContentUsage": {
+        "message": "使用方法",
         "description": "Element on Options page"
     },
     "elem_EnableDistanceTip": {
@@ -389,6 +409,10 @@
     },
     "elem_EnableAutoSelectPreviousTab": {
         "message": "自動選取上一個分頁（只有當在分頁右邊前景開啟時才有效）",
+        "description": "Element on Options page"
+    },
+    "elem_SwitchToParentTab": {
+        "message": "在關閉所有子分頁後，切換至父分頁. (會覆寫上面的選項) ",
         "description": "Element on Options page"
     },
     "elem_DisableAdjustTabSequence": {
@@ -414,6 +438,10 @@
     },
     "elem_TimeoutCancel": {
         "message": "逾時取消時間：",
+        "description": "Element on Options page"
+    },
+    "elem_EnableSync": {
+        "message": "同步至 Firefox 帳號 (v53+)",
         "description": "Element on Options page"
     },
     "elem_EnableStyle": {
@@ -443,7 +471,11 @@
         }
     },
     "elem_SettingDownloadDirectoryHelperText": {
-        "message": "設定的目錄只能作為 瀏覽器的預設下載目錄的子目錄，同時也無法使用絕對路徑。第二列是你可以設定的目錄。例如：“image/” 表示的最終下載目錄是 “預設下載目錄/image/” . 留空是預設下載目錄.  二級目錄需要手動建立 ",
+        "message": "設定的目錄只能作為“瀏覽器的預設下載目錄”的子目錄，不支援絕對路徑。第二列是你可以設定的目錄路徑。例如 image\/ 表示最終下載目錄是“預設下載目錄\/image\/”。留空則表示使用“預設下載目錄”。",
+        "description": "Element on Options page"
+    },
+    "elem_SavebtnOnDownloadDirectories": {
+        "message": "儲存",
         "description": "Element on Options page"
     },
     "elem_Style": {
@@ -459,4 +491,3 @@
         "description": "Element on Options page"
     }
 }
-

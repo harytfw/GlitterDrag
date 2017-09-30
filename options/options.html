@@ -68,7 +68,7 @@
                     <div id="builtin-engine">
                         <span data-i18n="BuiltinEngineHelperText">这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：</span>
                         <select style="display:inline-block">
-                            <option selected disabled="disabled" data-i18n="SearchTemplateClasses_General">General</option>
+                            <option selected="selected" disabled="disabled" data-i18n="SearchTemplateClasses_General">General</option>
                             <option value="https://www.google.com/search?q=%s">Google Search</option>
                             <option value="https://www.bing.com/search?q=%s">Bing Search</option>
                             <option value="https://duckduckgo.com/?q=%s&ia=web">DuckDuckGo Search</option>
@@ -78,12 +78,9 @@
                             <option value="https://en.wikipedia.org/wiki/%s">Wikipedia (English)</option>
                             <option value="https://www.amazon.com/s/?field-keywords=%s">Amazon Search</option>
                             <option value="https://www.qwant.com/?q=%s&t=all">Qwant Search</option>
-                            <option value="https://www.google.com/searchbyimage?image_url=%s">Google Image</option>
-                            <option value="https://tineye.com/search/?url=%s">Tineye</option>
-                            <option value="https://www.yandex.com/images/search?url=%s&rpt=imageview">Yandex Image</option>
                         </select>
                         <select style="display:inline-block">
-                            <option selected disabled="disabled" data-i18n="SearchTemplateClasses_Chinese">Chinese</option>
+                            <option selected="selected" disabled="disabled" data-i18n="SearchTemplateClasses_Chinese">Chinese</option>
                             <option value="https://www.baidu.com/baidu?wd=%s">百度搜索</option>
                             <option value="https://www.so.com/s?q=%s">360搜索</option>
                             <option value="http://www.acfun.cn/search/#query=%s">Acfun搜索</option>
@@ -93,10 +90,16 @@
                             <option value="https://www.douban.com/search?q=">豆瓣搜索</option>
                             <option value="https://www.zhihu.com/search?q=%s">知乎搜索</option>
                             <option value="https://zh.wikipedia.org/wiki/%s">中文维基百科</option>
+                        </select>
+                        <select style="display:inline-block">
+                            <option selected="selected" disabled="disabled" data-i18n="SearchTemplateClasses_Image">Image</option>
+                            <option value="https://www.google.com/searchbyimage?image_url=%s">Google Image</option>
+                            <option value="https://tineye.com/search/?url=%s">Tineye</option>
+                            <option value="https://www.yandex.com/images/search?url=%s&rpt=imageview">Yandex Image</option>
                             <option value="http://image.baidu.com/n/pc_search?queryImageUrl=%s">百度图片</option>
                         </select>
                         <select style="display:inline-block">
-                            <option selected disabled="disabled" data-i18n="SearchTemplateClasses_ImageSearch">Image Search(via upload)</option>
+                            <option selected="selected" disabled="disabled" data-i18n="SearchTemplateClasses_ImageSearch">Image Search(via upload)</option>
                             <option value="{redirect.html}?cmd=search&url={url}&engineName=google">Google Image(upload) </option>
                             <option value="{redirect.html}?cmd=search&url={url}&engineName=tineye">Tineye(upload)</option> 
                             <option value="{redirect.html}?cmd=search&url={url}&engineName=yandex">Yandex(upload)</option> 
