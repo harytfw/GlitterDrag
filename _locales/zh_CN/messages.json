@@ -335,6 +335,10 @@
         "message": "中文",
         "description": "Select box classes on Options - Search Template"
     },
+    "elem_SearchTemplateClasses_Image": {
+        "message": "图片",
+        "description": "Select box classes on Options - Search Template"
+    },
     "elem_SearchTemplateClasses_ImageSearch": {
         "message": "图片(上传文件)",
         "description": "Select box classes on Options - Search Template"

@@ -2,7 +2,7 @@
     "description": "__MSG_extensionDescription__",
     "manifest_version": 2,
     "name": "__MSG_extensionName__",
-    "version": "1.52.0b2",
+    "version": "1.52.0",
     "homepage_url": "https://github.com/harytfw/GlitterDrag",
     "icons": {
         "48": "Drag.png",

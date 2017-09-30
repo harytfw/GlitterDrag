@@ -173,6 +173,7 @@ class ExecutorClass {
                 }
                 break;
             case commons.ACT_SEARCH:
+
                 if (this.data.actionType === "linkAction") {
                     if (this.action.search_type === commons.SEARCH_IMAGE_LINK && this.data.imageLink !== "") {
                         this.searchText(this.data.imageLink);
@@ -183,6 +184,9 @@ class ExecutorClass {
                     else {
                         this.searchText(this.data.selection);
                     }
+                }
+                else if (this.data.actionType === "imageAction") {
+                    this.searchImage(this.data.selection);
                 }
                 else if (this.action.search_type === commons.SEARCH_TEXT) {
                     this.searchText(this.data.textSelection);
@@ -333,7 +337,11 @@ class ExecutorClass {
         //     "%x":`${keyword} site:${this.data.domain}`,
         // }
         let url = config.getSearchURL(this.action.engine_name)
-        if (this.action.search_onsite === commons.SEARCH_ONSITE_YES) {
+        if (url.startsWith("{redirect.html}")) {
+            this.searchImage(keyword);
+            return;
+        }
+        if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
             url = url.replace("%s", "%x");
         }
         this.openTab(
@@ -354,6 +362,12 @@ class ExecutorClass {
     }
 
     openRedirectPage(params) {
+        if ("fileInfo" in this.data === false) {
+            this.data.fileInfo = {
+                name: "example.jpg",
+                type: "image/jpeg",
+            }
+        }
         if (typeof params === "string") {
             this.openTab(REDIRECT_URL + params + `&fileName=${this.data.fileInfo.name}&fileType=${this.data.fileInfo.type}`);
         }
