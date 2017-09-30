@@ -16,8 +16,8 @@ input {
     margin-bottom: 5px;
     margin-top: 5px;
     font-size: var(--font-size);
-    border-radius: 3px;
-    box-shadow: 1px 1px 1px rgb(141, 141, 141);
+    /* border-radius: 3px; */
+    /* box-shadow: 1px 1px 1px rgb(141, 141, 141); */
 }
 
 .hide {

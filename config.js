@@ -196,7 +196,7 @@ class ConfigClass {
         // if (parsed.addon !== "Glitter Drag") {
         //     throw "Invalid json";
         // }
-        if("Actions" in parsed === false){
+        if ("Actions" in parsed === false) {
             throw "Invalid JSON File";
         }
         for (const key of Object.keys(parsed)) {
@@ -219,6 +219,11 @@ class ConfigClass {
         }
         else {
             Object.assign(this.storage, await browser.storage.local.get());
+        }
+        for (let key1 of Object.keys(DEFAULT_CONFIG)) {
+            if (this.storage[key1] === undefined) {
+                this.storage[key1] = DEFAULT_CONFIG[key1];
+            }
         }
         return Promise.resolve();
     }
