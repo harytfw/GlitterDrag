@@ -24,7 +24,7 @@
         "description": ""
     },
     "ALLOW_QUADRANT": {
-        "message": "倾斜的4个方向",
+        "message": "斜向4个方向",
         "description": ""
     },
     "ALLOW_H": {
@@ -36,19 +36,19 @@
         "description": ""
     },
     "ALLOW_LOW_L_UP_R": {
-        "message": "倾斜2个方向",
+        "message": "斜向2个方向",
         "description": ""
     },
     "ALLOW_UP_L_LOW_R": {
-        "message": "另外2个倾斜的方向",
+        "message": "另2个斜向方向",
         "description": ""
     },
     "ALLOW_ALL": {
-        "message": "无意义的8个方向",
+        "message": "狂热8个方向",
         "description": ""
     },
     "ALLOW_ONE": {
-        "message": "只有单方向",
+        "message": "只有1个方向",
         "description": ""
     },
     "ACT_OPEN": {
