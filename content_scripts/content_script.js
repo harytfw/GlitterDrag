@@ -219,6 +219,9 @@ class DragClass {
         if (this.selection === "") {
             this.selection = this.textSelection;
         }
+        if (this.targetElem.nodeName === "A") {
+            this.textSelection = this.targetElem.textContent;
+        }
         this.targetType = typeUtil.checkDragTargetType(this.selection, this.textSelection, this.imageLink, this.targetElem);
 
         if (commons.TYPE_TEXT_URL === this.targetType) {
@@ -231,6 +234,7 @@ class DragClass {
     }
     dragend(evt) {
         clearTimeout(this.timeoutId);
+        this.direction = this.getDirection();
         // what should we do if user release ctrl or shift key while dragging?
 
         if (this.distance >= bgConfig.triggeredDistance) {
@@ -389,7 +393,10 @@ class DragClass {
         // }
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
+        if (this.endPos.x == 0 || this.endPos.y == 0) {
 
+            console.log(evt);
+        }
         switch (type) {
             case "dragstart":
                 this.notAccepting = true;
