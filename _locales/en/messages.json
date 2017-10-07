@@ -336,12 +336,12 @@
         "message": "Chinese",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_Image": {
-        "message": "Image",
+    "elem_SearchTemplateClasses_ImageUrl": {
+        "message": "Image Search(via url)",
         "description": "Select box classes on Options - Search Template"
     },
     "elem_SearchTemplateClasses_ImageSearch": {
-        "message": "Image(upload file)",
+        "message": "Image Search(via upload)",
         "description": "Select box classes on Options - Search Template"
     },
     "elem_Backup": {

@@ -92,18 +92,21 @@
                             <option value="https://zh.wikipedia.org/wiki/%s">中文维基百科</option>
                         </select>
                         <select style="display:inline-block">
-                            <option selected="selected" disabled="disabled" data-i18n="SearchTemplateClasses_Image">Image</option>
+                            <option selected="selected" disabled="disabled" data-i18n="SearchTemplateClasses_ImageUrl">Image Search(via url)</option>
+                            <option value="https://image.baidu.com/n/pc_search?queryImageUrl=%s">Baidu Image</option>
+                            <option value="https://www.bing.com/images/searchbyimage?FORM=IRSBIQ&cbir=sbi&imgurl=%s">Bing Image</option>
                             <option value="https://www.google.com/searchbyimage?image_url=%s">Google Image</option>
-                            <option value="https://tineye.com/search/?url=%s">Tineye</option>
+                            <option value="https://iqdb.org/?url=%s">IQDB</option>
+                            <option value="https://saucenao.com/search.php?db=999&url=%s">SauceNAO</option>
+                            <option value="https://pic.sogou.com/ris?query=%s&flag=1">Sogou Image</option>
                             <option value="https://www.yandex.com/images/search?url=%s&rpt=imageview">Yandex Image</option>
-                            <option value="http://image.baidu.com/n/pc_search?queryImageUrl=%s">百度图片</option>
                         </select>
                         <select style="display:inline-block">
                             <option selected="selected" disabled="disabled" data-i18n="SearchTemplateClasses_ImageSearch">Image Search(via upload)</option>
-                            <option value="{redirect.html}?cmd=search&url={url}&engineName=google">Google Image(upload) </option>
-                            <option value="{redirect.html}?cmd=search&url={url}&engineName=tineye">Tineye(upload)</option> 
-                            <option value="{redirect.html}?cmd=search&url={url}&engineName=yandex">Yandex(upload)</option> 
-                            <option value="{redirect.html}?cmd=search&url={url}&engineName=baidu">百度图片(上传)</option> 
+                            <option value="{redirect.html}?cmd=search&url={url}&engineName=baidu">Baidu Image</option>
+                            <option value="{redirect.html}?cmd=search&url={url}&engineName=google">Google Image</option>
+                            <option value="{redirect.html}?cmd=search&url={url}&engineName=tineye">Tineye</option>
+                            <option value="{redirect.html}?cmd=search&url={url}&engineName=yandex">Yandex</option>
                         </select>
                     </div>
                     <div id="browser-engine" style="display:none">

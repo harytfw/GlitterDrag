@@ -335,12 +335,12 @@
         "message": "中文",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_Image": {
-        "message": "圖片",
+    "elem_SearchTemplateClasses_ImageUrl": {
+        "message": "圖片搜索(憑藉位址)",
         "description": "Select box classes on Options - Search Template"
     },
     "elem_SearchTemplateClasses_ImageSearch": {
-        "message": "圖片(上傳檔案)",
+        "message": "圖片搜索(憑藉上傳)",
         "description": "Select box classes on Options - Search Template"
     },
     "elem_Backup": {
