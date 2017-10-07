@@ -393,9 +393,10 @@ class DragClass {
         // }
         this.endPos.x = evt.screenX;
         this.endPos.y = evt.screenY;
-        if (this.endPos.x == 0 || this.endPos.y == 0) {
-
-            console.log(evt);
+        if (type === "dragend") {
+            // https://github.com/harytfw/GlitterDrag/issues/38
+            this.endPos.x /= devicePixelRatio;
+            this.endPos.y /= devicePixelRatio;
         }
         switch (type) {
             case "dragstart":
