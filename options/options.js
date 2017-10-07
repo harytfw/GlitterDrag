@@ -543,7 +543,7 @@ class ChildWrapper {
     }
     bindCallBack(callback) {
         const proxyCallback = (event) => {
-            //如果发生修改了 “方向控制 ”的值，那么检测一下哪些方向需要启用和停用
+            //如果“方向控制”被修改，检测需要启用和停用哪些方向
             switch (event.target.value) {
                 case commons.ALLOW_ALL:
                     this.showDirections(/^.*$/);
@@ -558,6 +558,7 @@ class ChildWrapper {
                     this.showDirections(/^DIR_([UD]|OUTER)$/);
                     break;
                 case commons.ALLOW_ONE:
+                    // TODO: 显示为“上”，实际为该动作允许任何方向触发
                     this.showDirections(/^DIR_(U|OUTER)$/);
                     break;
                 case commons.ALLOW_LOW_L_UP_R:
