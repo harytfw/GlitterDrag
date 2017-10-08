@@ -234,7 +234,7 @@ class DragClass {
     }
     dragend(evt) {
         clearTimeout(this.timeoutId);
-        this.direction = this.getDirection();
+        // this.direction = this.getDirection();
         // what should we do if user release ctrl or shift key while dragging?
 
         if (this.distance >= bgConfig.triggeredDistance) {
@@ -391,13 +391,17 @@ class DragClass {
         // if (["dragover"].includes(type)) {
         //     console.log(`type:${type} phase:${evt.eventPhase} prevent:${evt.defaultPrevented} touched:${this.isDropTouched} running:${this.running} accepting:${this.accepting}}`)
         // }
-        this.endPos.x = evt.screenX;
-        this.endPos.y = evt.screenY;
-        if (type === "dragend") {
+        if (type === "dragover" || type === "dragstart") {
+            // only store screenX in dragover and dragstart.
+            this.endPos.x = evt.screenX;
+            this.endPos.y = evt.screenY;
+        }
+        else if (type === "dragend") {
             // https://github.com/harytfw/GlitterDrag/issues/38
             this.endPos.x /= devicePixelRatio;
             this.endPos.y /= devicePixelRatio;
         }
+
         switch (type) {
             case "dragstart":
                 this.notAccepting = true;
