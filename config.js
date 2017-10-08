@@ -185,10 +185,10 @@ class ConfigClass {
     }
     get(key) {
         // console.table(r);
-        if (key in this.storage) {
-            return this.storage[key];
+        if (key in this.storage === false) {
+            this.storage[key] = DEFAULT_CONFIG[key];
         }
-        return DEFAULT_CONFIG[key];
+        return this.storage[key];
     }
     restore(json) {
 

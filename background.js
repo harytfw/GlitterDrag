@@ -461,72 +461,11 @@ browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
 });
 
-// browser.runtime.sendNativeMessage(commons.appName, "test").then(
-//     response => {
-//         // console.log("From native app:" + response);
-//         supportCopyImage = true;
-//     },
-//     error => supportCopyImage = false
-// );
-
-function convertImageSrcToBase64(src) {
-    const request = new Request(src);
-    return fetch(request)
-        .then(response => {
-            return response.blob();
-        })
-        .then(blob => {
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            return new Promise(resolve => {
-                reader.onloadend = () => {
-                    resolve(reader.result.split(",")[1]);
-                }
-            });
-        })
-        .then(base64 => {
-            return new Promise(resolve => {
-                resolve(base64);
-            });
-        });
-}
-
-function sendImageToNativeBySrc(src) {
-    convertImageSrcToBase64(src)
-        .then(base64 => {
-            return browser.runtime.sendNativeMessage(commons.appName, base64);
-        })
-        .then(rec => {
-            console.log("Receive: ", rec);
-        })
-        .catch(error => {
-            console.log("Error:" + error);
-        });
-}
-
-function sendImageToNative(base64) {
-    const sending = browser.runtime.sendNativeMessage(commons.appName, base64);
-    sending.then((response) => {
-        console.log("Receive:" + response);
-    }, (error) => {
-        console.log("Error:" + error);
-    });
-}
-
 browser.runtime.onMessage.addListener((m) => {
-    // m.sendToOptions = false;
-    if (("imageBase64" in m || "imageSrc" in m) && supportCopyImage) {
-        if (m.imageBase64) sendImageToNative(m.imageBase64);
-        else if (m.imageSrc) sendImageToNativeBySrc(m.imageSrc);
-    }
-    else executor.DO(m);
+    executor.DO(m);
 });
 
-
-// var myPort;
-// 
-
-function connected(port) {
+browser.runtime.onConnect.addListener((port) => {
     // console.log("port",port);
     if (port.name === "initial") {
         port.postMessage({
@@ -540,5 +479,4 @@ function connected(port) {
             });
         }
     }
-}
-browser.runtime.onConnect.addListener(connected);
+});
