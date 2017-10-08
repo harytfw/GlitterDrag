@@ -395,11 +395,12 @@ class DragClass {
             // only store screenX in dragover and dragstart.
             this.endPos.x = evt.screenX;
             this.endPos.y = evt.screenY;
+
         }
         else if (type === "dragend") {
             // https://github.com/harytfw/GlitterDrag/issues/38
-            this.endPos.x /= devicePixelRatio;
-            this.endPos.y /= devicePixelRatio;
+            // this.endPos.x /= devicePixelRatio;
+            // this.endPos.y /= devicePixelRatio;
         }
 
         switch (type) {
