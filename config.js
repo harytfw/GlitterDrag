@@ -190,6 +190,16 @@ class ConfigClass {
         }
         return this.storage[key];
     }
+    async force_get(key = ""){
+        
+        let obj = await browser.storage.get(key);
+        let val = obj[key];
+        if(!val){
+            val = DEFAULT_CONFIG[key];
+        }
+        return Promise.resolve(val);
+        
+    }
     restore(json) {
 
         const parsed = JSON.parse(json);
