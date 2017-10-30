@@ -3,6 +3,7 @@
 "use strict";
 
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
+let IS_TOP_WINDOW = window.top === window;
 
 const MIME_TYPE = {
     ".gif": "image/gif",
@@ -203,8 +204,8 @@ class DragClass {
             this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
             this.indicatorBox.display();
         }
-        if (bgConfig.enablePrompt) {
-            if (this.promptBox === null) this.promptBox = new Prompt();
+        if (bgConfig.enablePrompt && this.promptBox === null) {
+            this.promptBox = new Prompt();
         }
         if (bgConfig.enableTimeoutCancel) {
             this.timeoutId = setTimeout(() => this.cancel(), bgConfig.timeoutCancel);
@@ -263,7 +264,7 @@ class DragClass {
 
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
         if (bgConfig.enablePrompt && (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
-            if (this.promptBox !== null) {
+            if (this.promptBox !== null && IS_TOP_WINDOW) {
                 this.direction = this.getDirection();
                 if (this.direction === this.lastDirection) {
                     // this.lastDirection = this.direction;
@@ -388,8 +389,9 @@ class DragClass {
 
 
         const type = evt.type;
-        // if (["dragover"].includes(type)) {
-        //     console.log(`type:${type} phase:${evt.eventPhase} prevent:${evt.defaultPrevented} touched:${this.isDropTouched} running:${this.running} accepting:${this.accepting}}`)
+        // if (1) {
+        //     // console.log(`type:${type} phase:${evt.eventPhase} prevent:${evt.defaultPrevented} touched:${this.isDropTouched} running:${this.running} accepting:${this.accepting}}`)
+        //     console.log(`${type}, ${this.endPos.x}, ${this.endPos.y}, ${isTopWindow}`);
         // }
         if (type === "dragover" || type === "dragstart") {
             // only store screenX in dragover and dragstart.
@@ -714,8 +716,9 @@ let bgPort = browser.runtime.connect({
 let bgConfig = null;
 let mydrag = null;
 let promptString = null;
-
+console.info("Glitter Drag: Prepare addListener");
 bgPort.onMessage.addListener((response) => {
+    console.info("Glitter Drag: Receive response from background");
     bgConfig = JSON.parse(response.config);
     promptString = response.promptString;
     // console.log(bgConfig);
