@@ -409,7 +409,7 @@
         "description": "Element on Options page"
     },
     "elem_EnableAutoSelectPreviousTab": {
-        "message": "Select previous tab automatically (Only work when you open a tab with foreground & right)",
+        "message": "After closing current tab, select previous tab automatically (Only work when you open a tab with foreground & right)",
         "description": "Element on Options page"
     },
     "elem_SwitchToParentTab": {

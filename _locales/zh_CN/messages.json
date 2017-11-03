@@ -408,7 +408,7 @@
         "description": "Element on Options page"
     },
     "elem_EnableAutoSelectPreviousTab": {
-        "message": "自动选中上一个标签页（只有当在标签页右边前台打开时才有效）",
+        "message": "在关闭当前标签页后，自动选中之前的标签页（只有当在标签页右边前台打开时才有效）",
         "description": "Element on Options page"
     },
     "elem_SwitchToParentTab": {
