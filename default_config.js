@@ -87,10 +87,10 @@ const DEFAULT_CONFIG_A = (() => {
     let a = GENERATE_DEFAULT_CONFIG();
 
     Object.assign(a.Actions.textAction, {
-        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND }),
-        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND }),
-        DIR_L: ACTION_CONSTRUCTOR({ act_name: commons.ACT_COPY }),
-        DIR_R: ACTION_CONSTRUCTOR({ act_name: commons.ACT_SEARCH }),
+        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND, open_type: commons.OPEN_TEXT, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_TEXT, }),
+        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND, open_type: commons.OPEN_TEXT, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_TEXT, }),
+        DIR_L: ACTION_CONSTRUCTOR({ act_name: commons.ACT_COPY, open_type: commons.OPEN_TEXT, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_TEXT, }),
+        DIR_R: ACTION_CONSTRUCTOR({ act_name: commons.ACT_SEARCH, open_type: commons.OPEN_TEXT, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_TEXT, }),
     });
     Object.assign(a.Actions.linkAction, {
         DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND }),

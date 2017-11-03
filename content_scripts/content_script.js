@@ -285,11 +285,12 @@ class DragClass {
                 }
                 let property = actions[this.actionType][this.direction]
                 let message = bgConfig.tipsContent[property["act_name"]];
+                console.log(promptString["%g"][property["download_directory"]]);
                 message = message
                     .replace("%a", promptString["%a"][property["act_name"]])
                     .replace("%t", promptString["%t"][property["tab_pos"]])
                     .replace("%g", promptString["%g"][property["tab_active"] === true ? "FORE_GROUND" : "BACK_GROUND"])
-                    .replace("%d", promptString["%g"][property["download_directory"]] || "")
+                    .replace("%d", promptString["%d"][property["download_directory"]] || "")
                     .replace("%e", property["engine_name"])
                     .replace("%y", promptString["%y"][this.actionType])
                     .replace("%s", this.selection)
