@@ -212,6 +212,7 @@ class ExecutorClass {
                 }
                 break;
             case commons.ACT_FIND:
+                this.findText(this.data.textSelection);
                 break;
             case commons.ACT_TRANS:
                 break;
@@ -360,7 +361,14 @@ class ExecutorClass {
             this.searchText(this.data.selection);
         }
     }
-
+    findText(text) {
+        if (text.length == 0 && browser.find) return;
+        browser.find.find(text).then((result) => {
+            if (result.count > 0) {
+                browser.find.highlightResults();
+            }
+        });
+    }
     openRedirectPage(params) {
         if ("fileInfo" in this.data === false) {
             this.data.fileInfo = {
@@ -462,7 +470,12 @@ browser.browserAction.onClicked.addListener(() => {
 });
 
 browser.runtime.onMessage.addListener((m) => {
-    executor.DO(m);
+    if (m.cmd && m.cmd === "removeHighlighting") {
+        browser.find.removeHighlighting();
+    }
+    else {
+        executor.DO(m);
+    }
 });
 
 browser.runtime.onConnect.addListener((port) => {

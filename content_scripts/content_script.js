@@ -29,6 +29,13 @@ const exclusiveSite = [
     "vk.com"
 ]
 
+//remove highlighting when Escape is pressed
+document.addEventListener("keypress", (e) => {
+    if (e.key === "Escape" && bgPort != null) {
+        browser.runtime.sendMessage({ cmd: "removeHighlighting" });
+    }
+})
+
 class Prompt {
     constructor() {
         this.container = document.createElement("div");

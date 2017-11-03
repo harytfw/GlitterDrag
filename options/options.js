@@ -1,10 +1,10 @@
 var supportCopyImage = false;
 var config = new ConfigClass();
-var majorVersion = 52; // depend on manifesion.json
+var browserMajorVersion = 52;
 var DOSAVE = false;
 browser.runtime.getBrowserInfo().then(info => {
-    majorVersion = info.version.split(".")[0];
-    majorVersion = parseInt(majorVersion);
+    browserMajorVersion = info.version.split(".")[0];
+    browserMajorVersion = parseInt(browserMajorVersion);
 })
 document.title = getI18nMessage("option_page_title");
 
@@ -490,7 +490,7 @@ class ChildWrapper {
         for (let key of Object.keys(DIR_TEXT_VALUE_TABLE)) {
             this.dirWrappers.push(new DirWrapper(
                 DIR_TEXT_VALUE_TABLE[key].text, DIR_TEXT_VALUE_TABLE[key].value,
-                config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[key].value, modifierKey),this.typeInfo
+                config.getAct(this.typeInfo, DIR_TEXT_VALUE_TABLE[key].value, modifierKey), this.typeInfo
             ));
         }
 
@@ -637,7 +637,7 @@ class Wrapper {
             commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
         )
         this.child_text.disableOpt(
-            commons.ACT_TRANS, commons.ACT_QRCODE, commons.ACT_FIND,
+            commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.SEARCH_IMAGE, commons.SEARCH_LINK, commons.SEARCH_IMAGE_LINK,
             commons.COPY_LINK, commons.COPY_IMAGE, commons.COPY_IMAGE_LINK,
             commons.OPEN_IMAGE, commons.OPEN_IMAGE_LINK,
@@ -672,12 +672,16 @@ class Wrapper {
             commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
         )
         this.child_link.disableOpt(
-            commons.ACT_TRANS, commons.ACT_QRCODE, commons.ACT_FIND,
+            commons.ACT_TRANS, commons.ACT_QRCODE,
             commons.OPEN_IMAGE,
             commons.SEARCH_IMAGE,
             commons.DOWNLOAD_IMAGE,
         );
 
+        if (browserMajorVersion < 57) {
+            this.child_text.disableOpt(commons.ACT_FIND);
+            this.child_link.disableOpt(commons.ACT_FIND);
+        }
 
         if (supportCopyImage === false) {
             this.child_image.disableOpt(commons.COPY_IMAGE);
@@ -814,7 +818,7 @@ class EngineItemWrapper {
 }
 class EngineWrapper {
     constructor(engineList) {
-        document.querySelectorAll("#builtin-engine>select>option:nth-child(1)").forEach(el=>{
+        document.querySelectorAll("#builtin-engine>select>option:nth-child(1)").forEach(el => {
             el.selected = true;
         })
         eventUtil.attachEventAll("#builtin-engine>select", (event) => {
@@ -938,7 +942,7 @@ class EngineWrapper {
 
 class generalWrapper {
     constructor() {
-        if (majorVersion >= 53) {
+        if (browserMajorVersion >= 53) {
             $E("#enableSync").removeAttribute("disabled");
         }
         const el = $E("#tipsContentSelect");

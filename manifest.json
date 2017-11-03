@@ -24,7 +24,8 @@
         "tabs",
         "<all_urls>",
         "clipboardWrite",
-        "downloads"
+        "downloads",
+        "find"
     ],
     "background": {
         "scripts": [
