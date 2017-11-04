@@ -87,11 +87,12 @@ const DEFAULT_CONFIG_A = (() => {
     let a = GENERATE_DEFAULT_CONFIG();
 
     Object.assign(a.Actions.textAction, {
-        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND, open_type: commons.OPEN_TEXT, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_TEXT, }),
-        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND, open_type: commons.OPEN_TEXT, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_TEXT, }),
-        DIR_L: ACTION_CONSTRUCTOR({ act_name: commons.ACT_COPY, open_type: commons.OPEN_TEXT, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_TEXT, }),
-        DIR_R: ACTION_CONSTRUCTOR({ act_name: commons.ACT_SEARCH, open_type: commons.OPEN_TEXT, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_TEXT, }),
+        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND, }),
+        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND, }),
+        DIR_L: ACTION_CONSTRUCTOR({ act_name: commons.ACT_COPY, open_type: commons.OPEN_TEXT, }),
+        DIR_R: ACTION_CONSTRUCTOR({ act_name: commons.ACT_SEARCH, open_type: commons.OPEN_TEXT, }),
     });
+
     Object.assign(a.Actions.linkAction, {
         DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND }),
         DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND }),
@@ -99,9 +100,20 @@ const DEFAULT_CONFIG_A = (() => {
         DIR_R: ACTION_CONSTRUCTOR({ act_name: commons.ACT_SEARCH, search_type: commons.SEARCH_TEXT }),
     });
     Object.assign(a.Actions.imageAction, {
-        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND }),
-        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND }),
+        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORGE_GROUND, }),
+        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND, }),
     });
+
+    for (const p of Object.keys(a.Actions)) {
+        for (const k of ["DIR_U", "DIR_D", "DIR_L", "DIR_R", "DIR_LOW_L", "DIR_LOW_R", "DIR_UP_L", "DIR_UP_R", "DIR_OUTER", ]) {
+            if (p === "textAction") {
+                Object.assign(a.Actions[p][k], { open_type: commons.OPEN_TEXT, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_TEXT, })
+            }
+            else if (p === "imageAction") {
+                Object.assign(a.Actions[p][k], { open_type: commons.OPEN_IMAGE, search_type: commons.SEARCH_LINK, copy_type: commons.COPY_IMAGE, download_type: commons.DOWNLOAD_IMAGE, })
+            }
+        }
+    }
     return a;
 })();
 const DEFAULT_CONFIG_B = () => {

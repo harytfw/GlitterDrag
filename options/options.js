@@ -5,6 +5,7 @@ var DOSAVE = false;
 browser.runtime.getBrowserInfo().then(info => {
     browserMajorVersion = info.version.split(".")[0];
     browserMajorVersion = parseInt(browserMajorVersion);
+    // browserMajorVersion = 56;
 })
 document.title = getI18nMessage("option_page_title");
 
@@ -668,7 +669,7 @@ class Wrapper {
             commons.ACT_OPEN, commons.FORE_GROUND,
             commons.TAB_LAST, commons.DEFAULT_SEARCH_ENGINE,
             commons.OPEN_LINK, commons.SEARCH_LINK, commons.SEARCH_ONSITE_NO,
-            commons.COPY_LINK, commons.DOWNLOAD_LINK,
+            commons.COPY_LINK, commons.DOWNLOAD_LINK, commons.COPY_IMAGE_LINK, commons.COPY_IMAGE,
             commons.DEFAULT_DOWNLOAD_DIRECTORY, commons.DOWNLOAD_SAVEAS_YES
         )
         this.child_link.disableOpt(
@@ -679,14 +680,15 @@ class Wrapper {
         );
 
         if (browserMajorVersion < 57) {
-            this.child_text.disableOpt(commons.ACT_FIND);
-            this.child_link.disableOpt(commons.ACT_FIND);
+            this.child_text.disableOpt(commons.ACT_FIND, );
+            this.child_link.disableOpt(commons.ACT_FIND, );
+            this.child_image.disableOpt(commons.COPY_IMAGE);
         }
 
-        if (supportCopyImage === false) {
-            this.child_image.disableOpt(commons.COPY_IMAGE);
-            this.child_link.disableOpt(commons.COPY_IMAGE);
-        }
+        // if (supportCopyImage === false) {
+        //     this.child_image.disableOpt(commons.COPY_IMAGE);
+        //     this.child_link.disableOpt(commons.COPY_IMAGE);
+        // }
 
         [this.child_text, this.child_link, this.child_image].forEach(c => {
             c.bindCallBack(this.callback); //这里会调用到下面的callback;

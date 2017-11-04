@@ -115,15 +115,19 @@ class ExecutorClass {
     execute() {
         this.action = config.getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
         let imageFile = null;
-        if (this.data.selection.length === 0) {
+        if (this.data.selection && this.data.selection.length === 0) {
             return;
         }
         if (this.data.hasImageBinary) {
-            let array = new Uint8Array(this.data.selection.split(","));
+            let array = new Uint8Array(this.data.imageData.split(","));
+            this.data.imageData = array;
             imageFile = new File([array], this.data.fileInfo.name, {
                 type: this.data.fileInfo.type
             });
-            this.data.selection = createObjectURL(imageFile);
+
+            if (this.data.selection === null) {
+                this.data.selection = createObjectURL(imageFile);
+            }
         }
         switch (this.action.act_name) {
             case commons.ACT_OPEN:
@@ -157,12 +161,7 @@ class ExecutorClass {
                         }
                         break;
                     case commons.COPY_IMAGE:
-                        if (this.data.actionType === "linkAction" && this.data.imageLink !== "") {
-                            sendImageToNativeBySrc(this.data.imageLink);
-                        }
-                        else {
-                            sendImageToNativeBySrc(this.data.selection);
-                        }
+                        this.copy(this.data.imageData);
                         break;
                     case commons.COPY_TEXT:
                         this.copy(this.data.textSelection);
@@ -315,6 +314,15 @@ class ExecutorClass {
 
     copy(data) {
         //发送给指定的tab
+        if (data instanceof Uint8Array) {
+            const len = "image/".length;
+            const ext = this.data.fileInfo.type.substring(len, len + 4);
+            console.log(ext);
+            if (browser.clipboard && ["png", "jpeg"].includes(ext)) {
+                browser.clipboard.setImageData(data.buffer, ext);
+            }
+            return;
+        }
         const sended = {
             command: "copy",
             copy_type: this.action.copy_type,
@@ -330,6 +338,7 @@ class ExecutorClass {
             });
             port.postMessage(sended);
         });
+
     }
 
     searchText(keyword) {

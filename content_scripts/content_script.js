@@ -181,6 +181,7 @@ class DragClass {
             modifierKey: this.modifierKey,
         }, extraOption);
 
+        console.info(sended);
         if (isRunInOptionsContext) {
             sended.sendToOptions = true;
             // backgroundPage.executor.DO(sended);
@@ -250,12 +251,16 @@ class DragClass {
             if (this.actionType === "imageAction") {
                 const result = this.selection.match(commons.fileExtension);
                 const [name, ext] = result || ["image.jpg", ".jpg"];
-
-                this.post({
-                    fileInfo: {
-                        type: MIME_TYPE[ext],
-                        name,
-                    }
+                fetch(this.imageLink).then(res => res.arrayBuffer()).then(buf => {
+                    const bin = new Uint8Array(buf);
+                    this.post({
+                        imageData: bin.toString(),
+                        fileInfo: {
+                            type: MIME_TYPE[ext],
+                            name,
+                        },
+                        hasImageBinary: true,
+                    })
                 })
             }
             else {
@@ -336,6 +341,7 @@ class DragClass {
         }
         // console.log(dt.files);
         const sended = {
+            selection:null,
             direction: commons.DIR_OUTER,
             textSelection: "",
             hasImageBinary: false,
@@ -349,7 +355,7 @@ class DragClass {
         fileReader.addEventListener("loadend", () => {
             let bin = new Uint8Array(fileReader.result);
             // console.log(bin, bin.length);
-            sended.selection = bin.toString(); // convert ArrayBuffer to string
+            sended.imageData = bin.toString(); // convert ArrayBuffer to string
             sended.hasImageBinary = true;
             sended.fileInfo.name = file.name;
             sended.fileInfo.type = file.type;
