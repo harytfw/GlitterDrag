@@ -75,8 +75,22 @@ const GENERATE_DEFAULT_CONFIG = () => {
             linkAction: commons.ALLOW_NORMAL,
             imageAction: commons.ALLOW_NORMAL
         },
+        /*
+        CMDPanel_textAction: [
+            ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
+        ],
+        CMDPanel_linkAction: [
+            ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
+        ],
+        CMDPanel_imageAction: [
+            ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
+        ],*/
         downloadDirectories: ["", "", "", "", "", "", "", ""],
         style: "",
+        /*
+        specialSites:[], // ignore drag&drop detection on these site.
+        specialExts:[], // don't process the file with these extensions.
+        */
     };
 }
 

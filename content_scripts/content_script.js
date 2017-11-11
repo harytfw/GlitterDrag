@@ -1,7 +1,6 @@
 //TODO: 处理拖放区域为 input@type=text
-
+console.info("Glitter Drag: Content script is injected by browser successfully");
 "use strict";
-
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 let IS_TOP_WINDOW = window.top === window;
 
@@ -25,16 +24,34 @@ const EVENT_PAHSE = {
 }
 Object.freeze(EVENT_PAHSE);
 
-const exclusiveSite = [
+let specialSites = [
     "vk.com"
+]
+let specialExts = [
+    ".html"
 ]
 
 //remove highlighting when Escape is pressed
 document.addEventListener("keypress", (e) => {
-    if (e.key === "Escape" && bgPort != null) {
+    if (e.key === "Escape") {
         browser.runtime.sendMessage({ cmd: "removeHighlighting" });
     }
 })
+
+
+function getAct(type, dir, key) {
+    let r = null;
+    if (key === commons.KEY_CTRL) {
+        r = bgConfig["Actions_CtrlKey"][type][dir];
+    }
+    else if (key === commons.KEY_SHIFT) {
+        r = bgConfig["Actions_ShiftKey"][type][dir];
+    }
+    else {
+        r = bgConfig["Actions"][type][dir];
+    }
+    return r;
+}
 
 class Prompt {
     constructor() {
@@ -101,6 +118,78 @@ class Indicator {
     }
 }
 
+const CMDPANEL_HTML_CONTENT =
+    `<div id="GDCMDPanel">
+    <div class="GDRowContainer" id="GDTextRow">
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+    </div>
+    <div class="GDRowContainer" id="GDLinkRow">
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+    </div>
+    <div class="GDRowContainer" id="GDImageRow">
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+        <div class="GDCMDBox">
+            <span> <img src=""/></span>
+        </div>
+    </div>
+    <div class="GDRowContainer">
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+        <div class="GDCMDBox">
+            <span><img src=""/></span>
+        </div>
+    </div>
+</div>`;
+
+class CMDPanel {
+    constructor(listener1, listener2) {
+        this.el = document.createElement("div");
+        this.el.outerHTML = CMDPANEL_HTML_CONTENT;
+        this.leaveListener = listener1
+        this.dropListener = listener2;
+        this.el.addEventListener("drop", this.dropListener)
+        this.el.addEventListener("dragleave", this.leaveListener);
+        this.running = false;
+
+
+    }
+    place() {
+
+    }
+    display() {
+
+    }
+    hide() {
+
+    }
+
+}
+
 class DragClass {
     constructor(elem) {
 
@@ -157,6 +246,8 @@ class DragClass {
         // start: UI componment
         this.promptBox = null;
         this.indicatorBox = null;
+        this.CMDPanel = new CMDPanel(this.drop4panel);
+
         // end: UI componment
 
         this.timeoutId = 0; // the value that setTimeout return.Storing it for clear purpose.
@@ -248,6 +339,7 @@ class DragClass {
 
         if (this.distance >= bgConfig.triggeredDistance) {
             this.direction = this.getDirection();
+
             if (this.actionType === "imageAction") {
                 const result = this.selection.match(commons.fileExtension);
                 const [name, ext] = result || ["image.jpg", ".jpg"];
@@ -307,6 +399,16 @@ class DragClass {
                     .replace("%y", promptString["%y"][this.actionType])
                     .replace("%s", this.selection)
                 this.promptBox.render(this.direction, message);
+
+                //----
+                /*
+                let ma = getAct(this.actionType, this.direction, this.modifierKey);
+                if (ma && ma.act_name === commons.ACT_PANEL) {
+                    this.CMDPanel.place();
+                    this.CMDPanel.display();
+                }*/
+                //----
+
             }
         }
         else {
@@ -334,6 +436,7 @@ class DragClass {
         this.actionType = typeUtil.getActionType(this.targetType);
     }
     drop(evt) {
+        console.info("Glitter Drag: An external dragging behavior is detected");
         const dt = evt.dataTransfer;
         this.selection = dt.getData("text/plain").trim();
         if (commons.TYPE_TEXT_URL === this.targetType) {
@@ -341,7 +444,7 @@ class DragClass {
         }
         // console.log(dt.files);
         const sended = {
-            selection:null,
+            selection: null,
             direction: commons.DIR_OUTER,
             textSelection: "",
             hasImageBinary: false,
@@ -385,6 +488,15 @@ class DragClass {
             sended.textSelection = file.name; // name of image file
             fileReader.readAsArrayBuffer(file);
         }
+    }
+
+    drop4panel(e) {
+
+        this.post();
+        e.preventDefault(); //important!
+    }
+    dragleave4panel(e) {
+
     }
     isNotAcceptable(evt) {
         // if the acceptable area is Input or Textarea, bypass it.
@@ -487,9 +599,10 @@ class DragClass {
                 }
                 break;
             case "drop": // Bubbling
+                // drop's target is the area we can put something, so calling this.isNotAcceptable to update this.isInputArea status.
                 this.isInputArea = this.isNotAcceptable(evt);
                 if (this.isInputArea) {
-                    return
+                    return;
                 }
                 /*
                  * Without using this addon, browser will open this image with URL like file:///... normally.
@@ -506,13 +619,19 @@ class DragClass {
                 }
 
                 if (evt.dataTransfer && !this.running && this.accepting) {
-                    this.doDropPreventDefault = true;
-                    this.accepting = false;
-                    this.drop(evt);
+                    if (evt.dataTransfer.files[0].type === "text/html") { // A html file is dragged into browser.
+                        //DO NOTHING
+                    }
+                    else {
+                        this.doDropPreventDefault = true;
+                        this.accepting = false;
+                        this.drop(evt);
+                    }
                 }
                 else if (this.running) {
                     this.doDropPreventDefault = true;
                 }
+
                 if (this.doDropPreventDefault) {
                     evt.preventDefault();
                 }
@@ -521,14 +640,16 @@ class DragClass {
                 this.indicatorBox && this.indicatorBox.hide();
                 this.promptBox && this.promptBox.stopRender();
                 this.lastDirection = null;
+                //dragend's target is things we are dragging, calling this.isNotAcceptable has not effect. However we have updated this.isInputArea in drop event, just use it.
                 if (this.isInputArea) {
-                    return
+                    return;
                 }
                 // else if (this.isNotAcceptable(evt)) {
                 //     return
                 // }
                 if (evt.eventPhase === EVENT_PAHSE.BUBBLING_PHASE) {
-                    if (this.running && (this.isDropTouched === false || exclusiveSite.includes(location.host))) {
+                    // when the site is an exclusiveSite, ignore this.isDropTouched
+                    if (this.running && (this.isDropTouched === false || specialSites.includes(location.host))) {
                         this.running = false;
                         this.dragend(evt);
                     }

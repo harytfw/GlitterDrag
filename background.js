@@ -20,6 +20,8 @@ const tabsRelation = {
     _parent: TAB_ID_NONE,
     children: [],
     check: function(pid, cid = TAB_ID_NONE) {
+        //pid: id of parent tab.
+        //cid: id of child tab.
         if (this.parent === pid) {
             if (cid !== TAB_ID_NONE) {
                 this.children.push(cid);
@@ -34,9 +36,11 @@ const tabsRelation = {
     switchToParent: function(id) {
         let isLastChildTab = this.children.length === 1 && this.children[0] === id;
         if (this.parent === id) {
+            //父标签页被关闭，那么重置this.parent
             this.parent = TAB_ID_NONE;
         }
         else {
+            //把被关闭的标签页id从children中删除
             this.children = this.children.filter(v => {
                 return v !== id
             });
@@ -44,11 +48,11 @@ const tabsRelation = {
         // 切换到父标签页的条件：
         // 1. 父标签页id不为TAB_ID_NONE
         // 2. 所有子标签页已被全部关闭
-        // 3. 子标签页只剩下唯一一个
+        // 3. 先前关闭的标签页是最后一个子标签页
         if (this.parent !== TAB_ID_NONE && this.children.length === 0 && isLastChildTab) {
-            return true;
+            return true;//需要切换到父标签页
         }
-        return false;
+        return false;//不需要切换
     }
 }
 
@@ -114,10 +118,13 @@ class ExecutorClass {
     }
     execute() {
         this.action = config.getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
+
         let imageFile = null;
+
         if (this.data.selection && this.data.selection.length === 0) {
             return;
         }
+
         if (this.data.hasImageBinary) {
             let array = new Uint8Array(this.data.imageData.split(","));
             this.data.imageData = array;
@@ -125,9 +132,9 @@ class ExecutorClass {
                 type: this.data.fileInfo.type
             });
 
-            if (this.data.selection === null) {
-                this.data.selection = createObjectURL(imageFile);
-            }
+            // if (this.data.selection === null) {
+            //     this.data.selection = createObjectURL(imageFile);
+            // }
         }
         switch (this.action.act_name) {
             case commons.ACT_OPEN:
@@ -138,7 +145,7 @@ class ExecutorClass {
                     this.openRedirectPage({
                         url: this.data.selection,
                         cmd: "open"
-                    })
+                    });
                 }
                 // else if (this.data.selection.startsWith("file:///") && typeUtil.seemAsURL(this.data.selection)) {
                 //     this.openRedirectPage({
@@ -172,7 +179,6 @@ class ExecutorClass {
                 }
                 break;
             case commons.ACT_SEARCH:
-
                 if (this.data.actionType === "linkAction") {
                     if (this.action.search_type === commons.SEARCH_IMAGE_LINK && this.data.imageLink !== "") {
                         this.searchText(this.data.imageLink);
@@ -248,7 +254,7 @@ class ExecutorClass {
         this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
         if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.action.tab_pos)) {
             browser.windows.create({
-                // focused: this.action.tab_active,
+                // *focused: this.action.tab_active,*
                 // firefox don't support focused property yet;
                 // so it has no effect to use.
                 incognito: this.action.tab_pos === "TAB_NEW_PRIVATE_WINDOW" ? true : false,
@@ -313,11 +319,10 @@ class ExecutorClass {
     }
 
     copy(data) {
-        //发送给指定的tab
         if (data instanceof Uint8Array) {
             const len = "image/".length;
             const ext = this.data.fileInfo.type.substring(len, len + 4);
-            console.log(ext);
+            // console.log(ext);
             if (browser.clipboard && ["png", "jpeg"].includes(ext)) {
                 browser.clipboard.setImageData(data.buffer, ext);
             }
