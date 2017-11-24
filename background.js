@@ -71,6 +71,8 @@ Object.defineProperty(tabsRelation, "parent", {
     }
 });
 
+
+
 class ExecutorClass {
     constructor() {
         this.data = {
@@ -114,15 +116,20 @@ class ExecutorClass {
         if (commons._DEBUG) {
             console.table(this.data);
         }
-        this.execute();
-    }
-    execute() {
         if (this.data.direction === commons.DIR_P) {
             this.action = this.data.panel;
+            this.execute();
         }
         else {
-            this.action = config.getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
+            config.async_getAct(this.data.actionType, this.data.direction, this.data.modifierKey).then(a => {
+                this.action = a;
+                this.execute();
+            });
         }
+
+    }
+    execute() {
+
 
         let imageFile = null;
 
