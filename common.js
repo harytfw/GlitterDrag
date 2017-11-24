@@ -16,6 +16,9 @@ const commons = {
     TYPE_ELEM_A_IMG: 6, //a元素里面包含图片，但把它当做图片处理
     TYPE_ELEM_IMG: 4, //图片
 
+    textAction: "textAction",
+    linkAction: "linkAction",
+    imageAction: "imageAction",
 
     DIR_P: "DIR_P", //PANEL
     DIR_U: "DIR_U",
@@ -193,11 +196,19 @@ const typeUtil = {
 }
 Object.freeze(typeUtil);
 
-const $E = (s = "") => {
-    let r = document.querySelector(s);
+const $E = (s = "", context = document) => {
+    let r = context.querySelector(s);
     if (!r) {
         console.trace("No Result: document.querySelector", s)
     }
+    return r;
+}
+
+const $A = (s = "", context = document) => {
+    let r = context.querySelectorAll(s);
+    // if (!r.length) {
+    //     console.trace("No Result: document.querySelectorAll", s)
+    // }
     return r;
 }
 
@@ -249,3 +260,44 @@ const testCheckDragTargetType = () => {
 }
 
 // testCheckDragTargetType()
+
+
+const ENGINES = [{
+    groupName: "General",
+    "Google Search": " https://www.google.com/search?q=%s",
+    "Bing Search": "https://www.bing.com/search?q=%s",
+    "DuckDuckGo Search": "https://duckduckgo.com/?q=%s&ia=web",
+    "Yahoo Search": "https://search.yahoo.com/search;?p=%s",
+    "Yandex Search": "https://www.yandex.com/search/?text=%s",
+    "Youtube Search": "https://www.youtube.com/results?search_query=%s",
+    "Wikipedia(English)": "https://en.wikipedia.org/wiki/%s",
+    "Amazon Search": "https://www.amazon.com/s/?field-keywords=%s",
+    "Qwant Search": "https://www.qwant.com/?q=%s&t=all",
+
+}, {
+    groupName: "Chinese",
+    "百度搜索": "https://www.baidu.com/baidu?wd=%s",
+    "360 搜索": "https://www.so.com/s?q=%s",
+    "Acfun搜索": "http://www.acfun.cn/search/#query=%s",
+    "哔哩哔哩搜索": "https://search.bilibili.com/all?keyword=%s",
+    "优酷搜索": "http://www.soku.com/search_video/q_%s",
+    "网易云音乐搜索": "https://music.163.com/#/search/m/?s=%s",
+    "豆瓣搜索": "https://www.douban.com/search?q=",
+    "知乎搜索": "https://www.zhihu.com/search?q=%s",
+    "中文维基百科": "https://zh.wikipedia.org/wiki/%s",
+}, {
+    groupName: "Image Search",
+    "Baidu Image": "https://image.baidu.com/n/pc_search?queryImageUrl=%s",
+    "Bing Image": "https://www.bing.com/images/searchbyimage?FORM=IRSBIQ&cbir=sbi&imgurl=%s",
+    "Google Image": "https://www.google.com/searchbyimage?image_url=%s",
+    "IQDB": "https://iqdb.org/?url=%s",
+    "SauceNAO": "https://saucenao.com/search.php?db=999&url=%s",
+    "Sogou Image": "https://pic.sogou.com/ris?query=%s&flag=1",
+    "Yandex": "https://www.yandex.com/images/search?url=%s&rpt=imageview",
+}, {
+    groupName: "Image Search(via upload)",
+    "Baidu Image": "{redirect.html}?cmd=search&url={url}&engineName=baidu",
+    "Google Image": "{redirect.html}?cmd=search&url={url}&engineName=google",
+    "Tineye": "{redirect.html}?cmd=search&url={url}&engineName=tineye",
+    "Yandex": "{redirect.html}?cmd=search&url={url}&engineName=yandex",
+}];
