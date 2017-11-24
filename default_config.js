@@ -75,7 +75,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
             linkAction: commons.ALLOW_NORMAL,
             imageAction: commons.ALLOW_NORMAL
         },
-        /*
+
         CMDPanel_textAction: [
             ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
         ],
@@ -84,7 +84,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         ],
         CMDPanel_imageAction: [
             ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
-        ],*/
+        ],
         downloadDirectories: ["", "", "", "", "", "", "", ""],
         style: "",
         /*

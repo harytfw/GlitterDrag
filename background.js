@@ -50,9 +50,9 @@ const tabsRelation = {
         // 2. 所有子标签页已被全部关闭
         // 3. 先前关闭的标签页是最后一个子标签页
         if (this.parent !== TAB_ID_NONE && this.children.length === 0 && isLastChildTab) {
-            return true;//需要切换到父标签页
+            return true; //需要切换到父标签页
         }
-        return false;//不需要切换
+        return false; //不需要切换
     }
 }
 
@@ -117,7 +117,12 @@ class ExecutorClass {
         this.execute();
     }
     execute() {
-        this.action = config.getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
+        if (this.data.direction === commons.DIR_P) {
+            this.action = this.data.panel;
+        }
+        else {
+            this.action = config.getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
+        }
 
         let imageFile = null;
 

@@ -118,76 +118,118 @@ class Indicator {
     }
 }
 
-const CMDPANEL_HTML_CONTENT =
-    `<div id="GDCMDPanel">
-    <div class="GDRowContainer" id="GDTextRow">
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-    </div>
-    <div class="GDRowContainer" id="GDLinkRow">
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-    </div>
-    <div class="GDRowContainer" id="GDImageRow">
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-        <div class="GDCMDBox">
-            <span> <img src=""/></span>
-        </div>
-    </div>
-    <div class="GDRowContainer">
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-        <div class="GDCMDBox">
-            <span><img src=""/></span>
-        </div>
-    </div>
-</div>`;
+const CMDPANEL_HTML_CONTENT = `
+<table id="GDPanel">
+    <tr class="GDHead">
+        <th colspan=3>
+            动作
+        </th>
+    </tr>
+    <tr class="GDLabelRow" id="GDPanel-text">
+        <td class="GDPanel-label">文本</td>
+        <td class="GDPanel-content" colspan=2>中国最强</td>
+    </tr>
+    <tr class="GDRow" id="GDRow-text">
+        <td class="GDCell" align="center">
+            <div class="GDCell-open"></div>
+        </td>
+        <td class="GDCell" align="center">
+            <div class="GDCell-open"></div>
+        </td>
+        <td class="GDCell" align="center">
+            <div class="GDCell-open"></div>
+        </td>
+    </tr>
+    <tr class="GDLabelRow" id="GDPanel-link">
+        <td class="GDPanel-label">链接</td>
+        <td class="GDPanel-content"  colspan=2>https://www.gov.cn</td></tr>
+    <tr class="GDRow" id="GDRow-link">
+        <td class="GDCell" align="center">
+            <div class="GDCell-open"></div>
+        </td>
+        <td class="GDCell" align="center">
+            <div class="GDCell-open"></div>
+        </td>
+        <td class="GDCell" align="center">
+            <div class="GDCell-open"></div>
+        </td>
+    </tr>
+    <tr class="GDLabelRow" id="GDPanel-image">
+        <td class="GDPanel-label">图片</td>
+        <td class="GDPanel-content" colspan=2>https://www.example.com/example.jpg</td>
+    </tr>
+    <tr class="GDRow" id="GDRow-image">
+        <td class="GDCell" align="center">
+            <div class="GDCell-open"></div>
+        </td>
+        <td class="GDCell" align="center">
+            <div class="GDCell-open"></div>
+        </td>
+        <td class="GDCell" align="center">
+            <div class="GDCell-open"></div>
+        </td>
+    </tr>
+    
+</table>`;
 
 class CMDPanel {
-    constructor(listener1, listener2) {
+    constructor(enterlistener, leaveListener, dropListener) {
         this.el = document.createElement("div");
-        this.el.outerHTML = CMDPANEL_HTML_CONTENT;
-        this.leaveListener = listener1
-        this.dropListener = listener2;
-        this.el.addEventListener("drop", this.dropListener)
-        this.el.addEventListener("dragleave", this.leaveListener);
-        this.running = false;
+        this.el.style.display = "none";
+        this.el.id = "GDPanel-wrapper";
+        this.el.innerHTML = CMDPANEL_HTML_CONTENT;
 
+        let target = this.el.querySelector("#GDRow-text");
+        bgConfig.CMDPanel_textAction.forEach((obj, i) => {
+            for (const k of Object.keys(obj)) {
+                if (target.children[i]) { target.children[i].dataset[k] = obj[k]; }
+            }
+        });
+
+        target = this.el.querySelector("#GDRow-link");
+        bgConfig.CMDPanel_linkAction.forEach((obj, i) => {
+            for (const k of Object.keys(obj)) {
+                if (target.children[i]) { target.children[i].dataset[k] = obj[k]; }
+            }
+        });
+
+        target = this.el.querySelector("#GDRow-image");
+        bgConfig.CMDPanel_imageAction.forEach((obj, i) => {
+            for (const k of Object.keys(obj)) {
+                if (target.children[i]) { target.children[i].dataset[k] = obj[k]; }
+            }
+        });
+        this.el.addEventListener("drop", dropListener)
+        // this.el.addEventListener("dragover", e => {
+        //     e.stopPropagation();
+        //     e.preventDefault(); 
+        //     console.log("over", e);
+        // })
+        this.el.addEventListener("dragenter", enterlistener)
+        this.el.addEventListener("dragleave", leaveListener);
+
+        // this.el.querySelectorAll("div").forEach(div => {
+        //     div.addEventListener("dragenter", e => this.dragenter(e));
+        // })
+        this.displayFlag = false;
+        document.body.appendChild(this.el);
 
     }
-    place() {
 
+
+    place(x = 0, y = 0) {
+        this.el.style.left = x + "px";
+        this.el.style.top = y + "px";
     }
     display() {
-
+        this.el.style.display = "block";
     }
     hide() {
-
+        this.el.style.display = "none";
     }
-
+    dragenter(e) {
+        e.target.setAttribute("style", "background-color:red");
+    }
 }
 
 class DragClass {
@@ -231,7 +273,7 @@ class DragClass {
         this.targetType = commons.TYPE_UNKNOWN;
         // end: variable to identify type of action
 
-        // start: number that can be use in UI process
+        // start: value that can be use in UI process
         this.distance = 0;
         this.startPos = {
             x: 0,
@@ -241,16 +283,22 @@ class DragClass {
             x: 0,
             y: 0
         };
-        // end: number that can be use in UI process
+        this.isPanelArea = false;
+        // end: value that can be use in UI process
 
         // start: UI componment
         this.promptBox = null;
         this.indicatorBox = null;
-        this.CMDPanel = new CMDPanel(this.drop4panel);
+
+        this.dragenter4panel = this.dragenter4panel.bind(this);
+        this.dragleave4panel = this.dragleave4panel.bind(this);
+        this.drop4panel = this.drop4panel.bind(this);
+
+        this.CMDPanel = new CMDPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel);
 
         // end: UI componment
 
-        this.timeoutId = 0; // the value that setTimeout return.Storing it for clear purpose.
+        this.timeoutId = 0; // used for clearTimeout
 
         this.doDropPreventDefault = false; // flag that indicate whether call event.preventDefault or not in drop event.
         this.isDropTouched = true; // flag that indicate whether the event object has been calling event.preventDefault or event.stopPropagation . 
@@ -272,7 +320,7 @@ class DragClass {
             modifierKey: this.modifierKey,
         }, extraOption);
 
-        console.info(sended);
+        // console.info(sended);
         if (isRunInOptionsContext) {
             sended.sendToOptions = true;
             // backgroundPage.executor.DO(sended);
@@ -365,51 +413,53 @@ class DragClass {
     }
     dragover(evt) {
         this.updateModifierKey(evt);
-
+        if (this.isPanelArea) {
+            return;
+        }
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
-        if (bgConfig.enablePrompt && (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
-            if (this.promptBox !== null && IS_TOP_WINDOW) {
-                this.direction = this.getDirection();
-                if (this.direction === this.lastDirection) {
-                    // this.lastDirection = this.direction;
-                    return;
-                }
-                // console.log(`cur dir:${this.direction} , last dir:${this.lastDirection}`);
-                this.lastDirection = this.direction;
+        if (IS_TOP_WINDOW && (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
+            this.direction = this.getDirection();
+            if (this.direction === this.lastDirection) {
+                // this.lastDirection = this.direction;
+                return;
+            }
+            // console.log(`cur dir:${this.direction} , last dir:${this.lastDirection}`);
+            this.lastDirection = this.direction;
+            let actions = null;
+            if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
+                actions = bgConfig.Actions_CtrlKey;
+            }
+            else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
+                actions = bgConfig.Actions_ShiftKey;
+            }
+            else {
+                actions = bgConfig.Actions;
+            }
+
+            let property = actions[this.actionType][this.direction]
+            if (bgConfig.enablePrompt && this.promptBox !== null) {
                 this.promptBox.display();
-                let actions = null;
-                if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
-                    actions = bgConfig.Actions_CtrlKey;
-                }
-                else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
-                    actions = bgConfig.Actions_ShiftKey;
-                }
-                else {
-                    actions = bgConfig.Actions;
-                }
-                let property = actions[this.actionType][this.direction]
                 let message = bgConfig.tipsContent[property["act_name"]];
-                console.log(promptString["%g"][property["download_directory"]]);
-                message = message
+                // console.log(promptString["%g"][property["download_directory"]]);
+                message = message ? message
                     .replace("%a", promptString["%a"][property["act_name"]])
                     .replace("%t", promptString["%t"][property["tab_pos"]])
                     .replace("%g", promptString["%g"][property["tab_active"] === true ? "FORE_GROUND" : "BACK_GROUND"])
                     .replace("%d", promptString["%d"][property["download_directory"]] || "")
                     .replace("%e", property["engine_name"])
                     .replace("%y", promptString["%y"][this.actionType])
-                    .replace("%s", this.selection)
+                    .replace("%s", this.selection) : "";
                 this.promptBox.render(this.direction, message);
-
-                //----
-                /*
-                let ma = getAct(this.actionType, this.direction, this.modifierKey);
-                if (ma && ma.act_name === commons.ACT_PANEL) {
-                    this.CMDPanel.place();
-                    this.CMDPanel.display();
-                }*/
-                //----
-
             }
+            //----
+
+            this.CMDPanel.hide();
+            if (property["act_name"] === commons.ACT_PANEL) {
+                this.CMDPanel.place(evt.pageX, evt.pageY, this.direction);
+                this.CMDPanel.display();
+            }
+            //----
+
         }
         else {
             if (this.promptBox) { // may be null if viewing an image
@@ -490,13 +540,24 @@ class DragClass {
         }
     }
 
-    drop4panel(e) {
+    dragenter4panel(e) {
 
-        this.post();
-        e.preventDefault(); //important!
+        this.isPanelArea = true; // it is changed in this.handler("enter");
+        console.info("enter panel");
     }
-    dragleave4panel(e) {
 
+    dragleave4panel(e) {
+        // console.log(e);
+        // this.isPanelArea = false;
+    }
+    drop4panel(e) {
+        // console.info(e.);
+        console.info(e.originalTarget.parentElement.dataset);
+        const obj = Object.assign({}, e.originalTarget.parentElement.dataset)
+        obj.tab_active = obj.tab_active === "true" ? true : false;
+        obj.search_onsite = obj.search_onsite === "true" ? true : false;
+        this.post({ direction: commons.DIR_P, panel: obj });
+        e.preventDefault(); //note!
     }
     isNotAcceptable(evt) {
         // if the acceptable area is Input or Textarea, bypass it.
@@ -551,6 +612,7 @@ class DragClass {
                 break;
             case "dragenter":
                 this.accepting = false;
+                this.isPanelArea = false;
                 if (this.isNotAcceptable(evt)) {
                     return;
                 }
@@ -619,14 +681,14 @@ class DragClass {
                 }
 
                 if (evt.dataTransfer && !this.running && this.accepting) {
-                    if (evt.dataTransfer.files[0].type === "text/html") { // A html file is dragged into browser.
-                        //DO NOTHING
-                    }
-                    else {
-                        this.doDropPreventDefault = true;
-                        this.accepting = false;
-                        this.drop(evt);
-                    }
+                    // if (evt.dataTransfer.files[0].type === "text/html") { // A html file is dragged into browser.
+                    //     //DO NOTHING
+                    // }
+                    // else {
+                    this.doDropPreventDefault = true;
+                    this.accepting = false;
+                    this.drop(evt);
+                    // }
                 }
                 else if (this.running) {
                     this.doDropPreventDefault = true;

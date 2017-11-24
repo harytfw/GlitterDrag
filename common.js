@@ -17,6 +17,7 @@ const commons = {
     TYPE_ELEM_IMG: 4, //图片
 
 
+    DIR_P: "DIR_P", //PANEL
     DIR_U: "DIR_U",
     DIR_D: "DIR_D",
     DIR_L: "DIR_L",
@@ -37,7 +38,7 @@ const commons = {
     ACT_DL: "ACT_DL", // 下载
     ACT_QRCODE: "ACT_QRCODE", // 二维码
     ACT_FIND: "ACT_FIND", // 查找
-    ACT_PANEL:"ACT_PANEL",//面板
+    ACT_PANEL: "ACT_PANEL", //面板
     // ACT_BOOKMARK: "ACT_BOOKMARK",
 
     OPEN_LINK: "OPEN_LINK",

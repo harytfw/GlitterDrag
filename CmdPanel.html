@@ -7,27 +7,43 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-        #GDCMDPanel {
-            background: white;
+        #GDPanel {
+            background: rgba(185, 168, 9, 0.671);
             width: 450px;
+            text-align: center;
         }
 
-        .GDRowContainer {
-            margin-bottom: 15px;
-        }
-
-        .GDCMDBox {
-            display: inline-block;
-            background: yellowgreen;
+        .GDCell {
             width: 128px;
             height: 128px;
-            margin-right: 5px;
-            transition: background ease-in-out 1s;
+            background-color: white;
         }
 
-        .GDCMDBox:hover {
-            background: green;
+        .GDCell div::before {
+            height: 48px;
+            width: 48px;
+            display: block;
+            margin-bottom: 8px;
+            content: "";
         }
+
+        #GDCell-open {}
+
+        #GDCell-open::before {
+            background-image: url("open_in_browser_48px.png");
+        }
+
+        #GDCell-search {}
+
+        #GDCell-search::before {}
+
+        #GDCell-copy {}
+
+        #GDCell-copy::before {}
+
+        #GDCell-download {}
+
+        #GDCell-find {}
     </style>
 </head>
 
@@ -55,61 +71,54 @@
         /*在面板里面不检测方向的改变*/
         /*在方向不改变的时候不隐藏面板*/
         /**/
-        
     </script>
-    <div id="GDCMDPanel">
-        <div class="GDRowContainer" id="GDTextRow">
-            <div class="GDCMDBox">
-                <span><img src=""/></span>
-            </div>
-            <div class="GDCMDBox">
-                <span><img src=""/></span>
-            </div>
-            <div class="GDCMDBox">
-                <span>
-                    <img src=""/>
-                </span>
-            </div>
-        </div>
-        <div class="GDRowContainer" id="GDLinkRow">
-            <div class="GDCMDBox">
-                <span><img src=""/></span>
-            </div>
-            <div class="GDCMDBox">
-                <span><img src=""/></span>
-            </div>
-            <div class="GDCMDBox">
-                <span>
-                        <img src=""/>
-                    </span>
-            </div>
-        </div>
-        <div class="GDRowContainer" id="GDImageRow">
-            <div class="GDCMDBox">
-                <span><img src=""/></span>
-            </div>
-            <div class="GDCMDBox">
-                <span><img src=""/></span>
-            </div>
-            <div class="GDCMDBox">
-                <span>
-                            <img src=""/>
-                        </span>
-            </div>
-        </div>
-        <div class="GDRowContainer">
-            <div class="GDCMDBox">
-                <span><img src=""/></span>
-            </div>
-            <div class="GDCMDBox">
-                <span><img src=""/></span>
-            </div>
-            <div class="GDCMDBox">
-                <span>
-                    <img src=""/>
-                </span>
-            </div>
-        </div>
+    <div>
+        <table id="GDPanel">
+            <tr class="GDRow">
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+            </tr>
+            <tr class="GDRow">
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+            </tr>
+            <tr class="GDRow">
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+            </tr>
+            <tr class="GDRow">
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+                <td class="GDCell" align="center">
+                    <div id="GDCell-open" class="GDCell-div">打开</div>
+                </td>
+            </tr>
+        </table>
     </div>
 
 </body>

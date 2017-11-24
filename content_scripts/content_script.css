@@ -119,3 +119,61 @@
                         v
     */
 }
+
+#GDPanel-wrapper {
+    position: absolute;
+    height: auto;
+    z-index: 9999;
+    /* background-color: rgba(135, 143, 235, 0.34); */
+    /* padding: 6px; */
+}
+
+#GDPanel {
+    background: rgba(181, 115, 235, 0.671);
+    width: 310px;
+    table-layout: fixed;
+}
+
+.GDPanel-label{
+
+}
+.GDPanel-content{
+    white-space: nowrap;
+    overflow: hidden;
+}
+.GDCell {
+    height: 90px;
+    background-color: white;
+}
+
+.GDCell div {
+    /* height: 100%; */
+    text-align: -moz-center !important;
+    text-align: -webkit-center !important;
+}
+
+.GDCell div::before {
+    height: 48px;
+    width: 48px;
+    display: block;
+    margin-bottom: 8px;
+    content: "";
+}
+
+.GDCell-open {}
+
+.GDCell-open::before {
+    background-image: url("icon/open_in_browser_48px.png");
+}
+
+.GDCell-search {}
+
+.GDCell-search::before {}
+
+.GDCell-copy {}
+
+.GDCell-copy::before {}
+
+.GDCell-download {}
+
+.GDCell-find {}
