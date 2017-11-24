@@ -1,7 +1,0 @@
-{
-  "name": "setClipboard",
-  "description": "Example host for native messaging",
-  "path": ".\\setClipboard.bat",
-  "type": "stdio",
-  "allowed_extensions": ["glitterdrag@harytfw"]
-}
