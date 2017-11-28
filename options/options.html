@@ -51,18 +51,157 @@
                         <div id="drop" style="width:64px;height:64px;background-color:bisque;">
                         </div>
                         <a href="blank.html">
-                            <image src="../Drag.png" style="width: 128px;height:128px"></image>
+                            <image src="/icon/drag.png" style="width: 128px;height:128px"></image>
                         </a>
                         <br>
                         <br>
-                        <image id="example" src="../Drag.png" style="width: 64px;height:64px;background-color:aliceblue"></image>
+                        <image id="example" src="/icon/drag.png" style="width: 64px;height:64px;background-color:aliceblue"></image>
                         <br>
                         <textarea id="logArea" rows="10" cols="80"></textarea>
                         <br>
                     </div>
                 </li>
                 <li class="tab-content" id="tab-panel">
-                    
+                    <div id="panel-buttons">
+
+                        <h5>文本</h5>
+
+                        <button class="panel-text-cmd" index=0>命令1</button>
+                        <button class="panel-text-cmd" index=1>命令2</button>
+                        <button class="panel-text-cmd" index=1>命令3</button>
+
+                        <h5>链接</h5>
+
+                        <button class="panel-link-cmd" index=0>命令1</button>
+                        <button class="panel-link-cmd" index=1>命令2</button>
+                        <button class="panel-link-cmd" index=2>命令3</button>
+
+                        <h5>图像</h5>
+                        <button class="panel-image-cmd" index=0>命令1</button>
+                        <button class="panel-image-cmd" index=1>命令2</button>
+                        <button class="panel-image-cmd" index=2>命令3</button>
+
+                    </div>
+                    <div id="panel-actions">
+                        <div id="panel-actions-category">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>执行的动作</td>
+                                        <td>
+                                            <select class="action-name" title="要执行的动作">
+                                                        <option value="ACT_NONE">无动作</option>
+                                                        <option value="ACT_OPEN">打开</option>
+                                                        <option value="ACT_COPY">复制</option>
+                                                        <option value="ACT_SEARCH">搜索</option>
+                                                        <option value="ACT_DL">下载</option>
+                                                        <option value="ACT_TRANS" disabled>翻译</option>
+                                                        <option value="ACT_QRCODE" disabled>二维码</option>
+                                                        <option value="ACT_FIND" disabled>查找</option>
+                                                    </select>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>标签页状态</td>
+                                        <td>
+                                            <input class="foreground" value="true" type="radio" name="tab_active"><label for="foreground">前台</label>
+                                            <input class="background" value="false" type="radio" name="tab_active"><label for="background">后台</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>标签页位置</td>
+                                        <td>
+                                            <select title="标签页的位置" style="" class="tab-pos">
+                                                <option value="TAB_NEW_WINDOW">新建窗口</option>
+                                                <option value="TAB_NEW_PRIVATE_WINDOW">隐私窗口</option>
+                                                <option value="TAB_CUR">当前</option>
+                                                <option value="TAB_FIRST">首</option><option value="TAB_LAST">尾</option>
+                                                <option value="TAB_CLEFT">前</option><option value="TAB_CRIGHT">后</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>引擎选择</td>
+                                        <td>
+                                            <div class="search-engine-select-group"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>引擎预览</td>
+                                        <td><input class="search-engine-name" type="text"><input class="search-engine-url" type="text" style="width:500px;" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>打开类型</td>
+                                        <td>
+                                            <input class="open-text open-type" name="open-type" value="OPEN_TEXT" type="radio"><label for="open-text">文本</label>
+                                            <input class="open-link open-type" name="open-type"  value="OPEN_LINK" type="radio"><label for="open-link">链接</label>
+                                            <input class="open-image-link open-type" name="open-type" value="OPEN_IMAGE_LINK" type="radio"><label for="open-image-link">优先图像链接</label>
+                                            <input class="open-image open-type" name="open-type" value="OPEN_IMAGE" type="radio"><label for="open-image">图像</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>搜索类型</td>
+                                        <td>
+                                            <input class="search-text search-type" name="search-type" value="SEARCH_TEXT" type="radio"><label for="search-text">文本</label>
+                                            <input class="search-link search-type" name="search-type" value="SEARCH_LINk" type="radio"><label for="search-link">链接</label>
+                                            <input class="search-image-link search-type" name="search-type" value="SEARCH_IMAGE_LINK" type="radio"><label for="search-image-link">优先图像链接</label>
+                                            <input class="search-image search-type" name="search-type" value="SEARCH_IMAGE" type="radio"><label for="search-image">图像</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>复制类型</td>
+                                        <td>
+                                            <input class="copy-text copy-type" name="copy-type"  value="COPY_TEXT" type="radio"><label for="copy-text">文本</label>
+                                            <input class="copy-link copy-type" name="copy-type" value="COPY_LINK" type="radio"><label for="copy-link">链接</label>
+                                            <input class="copy-image-link copy-type" name="copy-type" value="COPY_IMAGE_LINK" type="radio"><label for="copy-image-link">优先图像链接</label>
+                                            <input class="copy-image copy-type" name="copy-type" value="COPY_IMAGE" type="radio"><label for="copy-image">图像</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>下载类型</td>
+                                        <td>
+                                            <input class="download-text download-type" name="download-type" value="DOWNLOAD_TEXT" type="radio"><label for="download-text">文本</label>
+                                            <input class="download-link download-type" name="download-type" value="DOWNLOAD_LINK" type="radio"><label for="download-link">链接</label>
+                                            <input class="download-image-link download-type" name="download-type" value="DOWNLOAD_IMAGE_LINK" type="radio"><label for="download-image-link">优先图像链接</label>
+                                            <input class="download-image download-type" name="download-type" value="DOWNLOAD_IMAGE" type="radio"><label for="download-image">图像</label>
+                                        </td>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>下载另存为...</td>
+                                        <td>
+                                            <input class="download-saveas-yes download-saveas" name="download-saveas" value="true" type="radio"><label for="download-saveas-yes">是</label>
+                                            <input class="download-saveas-no download-saveas" name="download-saveas" value="false" type="radio"><label for="download-saveas-no">否</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>下载目录</td>
+                                        <td>
+                                            <select class="download-directory" title="指定文件保存的目录" style="">
+                                                        <option value="0">下载目录 0</option>
+                                                        <option value="1">下载目录 1</option>
+                                                        <option value="2">下载目录 2</option>
+                                                        <option value="3">下载目录 3</option>
+                                                        <option value="4">下载目录 4</option>
+                                                        <option value="5">下载目录 5</option>
+                                                        <option value="6">下载目录 6</option>
+                                                        <option value="7">下载目录 7</option>
+                                                    </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>是否在站内搜索</td>
+                                        <td>
+                                            <input class="search-onsite-yes search-onsite" name="search-onsite" value="SEARCH_ONSITE_YES" type="radio"><label for="search-onsite-yes">是</label>
+                                            <input class="search-onsite-no search-onsite" name="search-onsite" value="SEARCH_ONSITE_NO" type="radio"><label for="search-onsite-no">否</label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
                 </li>
                 <li class="tab-content tab-active" id="tab-actions"></li>
                 <li class="tab-content" id="tab-actions-ctrlkey"></li>

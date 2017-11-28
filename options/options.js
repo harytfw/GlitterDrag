@@ -970,6 +970,269 @@ class generalWrapper {
     }
 }
 
+class ActionsCategory {
+    constructor(parent, actionTypeGetter) {
+        this.actionTypeGetter = actionTypeGetter;
+        this.parent = parent;
+
+        this.parent.addEventListener("click", e => {
+            if (e.target.nodeName === "LABEL") {
+                const t = this.$E("." + e.target.getAttribute("for"));
+                if (t && t.type === "radio") {
+                    t.checked = !t.checked;
+                }
+            }
+        })
+        this.$E(".action-name").addEventListener("change", (e) => {
+            this.onActionBehaviorChange(e);
+        });
+
+        this.initALl();
+    }
+    $E(str, context = this.parent) {
+        return $E(str, context);
+    }
+    async preLoad() {
+        // this.storage = (await (browser.storage.local.get(this.actionsKeyName)))[this.actionsKeyName];
+        // this.storage4Control = (await (browser.storage.local.get("directionControl")))["directionControl"];
+        // this.engines = (await (browser.storage.local.get("Engines")))["Engines"];
+        // return Promise.resolve();
+    }
+
+    initALl() {
+        //初始化搜索引擎
+        const selectProtype = document.createElement("select");
+        const optProtype = document.createElement("option");
+        for (const g of ENGINES) {
+            let select = selectProtype.cloneNode();
+            let opt = optProtype.cloneNode();
+            opt.textContent = g.groupName;
+            opt.disabled = 1;
+            
+            select.appendChild(opt);
+            for (const name of Object.keys(g)) {
+                if (name === "groupName") continue;
+                opt = optProtype.cloneNode();
+                opt.textContent = name;
+                opt.value = g[name];
+                select.appendChild(opt);
+            }
+            this.$E(".search-engine-select-group").appendChild(select);
+            select.selectedIndex = 0;
+        }
+        this.$E(".search-engine-select-group").addEventListener("change", e => this.onEngineChange(e))
+    }
+
+    onEngineChange(e) {
+        const el = e.target;
+        this.$E(".search-engine-name").value = el.children[el.selectedIndex].textContent;
+        this.$E(".search-engine-url").value = el.children[el.selectedIndex].value;
+
+        el.selectedIndex = 0;
+    }
+
+    onActionBehaviorChange(e) {
+
+        const hideTR = (...s) => {
+            for (const x of s) {
+                this.$E(x).parentElement.parentElement.style.display = "none";
+            }
+        }
+
+        const showTR = (...s) => {
+            for (const x of s) {
+                this.$E(x).parentElement.parentElement.style.display = "table-row";
+            }
+        }
+
+        const hideRadios = (...s) => {
+            for (const x of s) {
+                this.$E(x).disabled = true;
+            }
+        }
+
+        $A("input[type='radio']:disabled", this.parent).forEach(e => {
+            e.removeAttribute("disabled");
+        });
+        showTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".copy-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
+        switch (e.target.value) {
+            case commons.ACT_NONE:
+                // hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".copy-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
+                break;
+            case commons.ACT_OPEN:
+                hideTR(".copy-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
+
+                if (this.actionType === "linkAction") {
+                    hideTR(".search-text", ".search-onsite-yes");
+                    hideRadios(".open-text", ".open-image");
+                }
+                else if (this.actionType === "imageAction") {
+                    hideTR(".search-text", ".search-onsite-yes");
+                    hideRadios(".open-text", ".open-image-link");
+                }
+                else {
+                    hideTR(".open-text");
+                }
+                break
+            case commons.ACT_SEARCH:
+                hideTR(".open-text", ".copy-text", ".download-text", ".download-saveas-yes", ".download-directory");
+                if (this.actionType === "imageAction") {
+                    hideTR(".open-text", ".search-onsite-yes");
+                    hideRadios(".search-text", ".search-image-link", ".open-image-link");
+                }
+                else if (this.actionType === "textAction") {
+                    hideTR(".search-text");
+                }
+                break;
+            case commons.ACT_DL:
+                hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".copy-text", ".search-onsite-yes");
+                if (this.actionType === "imageAction") {
+                    hideTR(".download-text");
+                }
+                break;
+            case commons.ACT_COPY:
+                hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
+                if (this.actionType === "textAction") {
+                    hideTR(".copy-text");
+                }
+                break
+            case commons.ACT_FIND:
+                break;
+            case commons.ACT_QRCODE:
+                break
+        }
+
+    }
+    get actionType() {
+        return this.actionTypeGetter();
+    }
+    get setting() {
+        const getRadioValue = (name) => {
+            let radios = $A(name, this.parent)
+            for (let i = 0; i < radios.length; i++) {
+                if (radios[i].checked) return radios[i].value;
+            }
+        }
+        let temp = {};
+        Object.assign(temp, {
+            act_name: this.$E(".action-name").value,
+            tab_pos: this.$E(".tab-pos").value,
+            engine_name: this.$E(".search-engine-name").value,
+            engine_url: this.$E(".search-engine-url").value,
+            download_directory: this.$E(".download-directory").value,
+            tab_active: getRadioValue(".tab-active") === "true" ? true : false,
+            open_type: getRadioValue(".open-type"),
+            search_type: getRadioValue(".search-type"),
+            copy_type: getRadioValue(".copy-type"),
+            download_type: getRadioValue(".download-type"),
+            download_saveas: getRadioValue(".download-saveas") === "true" ? true : false,
+            search_onsite: getRadioValue(".search-onsite") === "true" ? true : false,
+        });
+        return temp;
+    }
+
+    set setting(data) {
+        const actSetting = data;
+        if (actSetting["tab_active"] === commons.FORE_GROUND) {
+            this.$E(".foreground").checked = true;
+        }
+        else {
+            this.$E(".background").checked = true;
+        }
+
+        if (actSetting["search_onsite"] === commons.SEARCH_ONSITE_YES) {
+            this.$E(".search-onsite-yes").checked = true;
+        }
+        else {
+            this.$E(".search-onsite-no").checked = true;
+        }
+        if (actSetting["download_saveas"] === commons.DOWNLOAD_SAVEAS_YES) {
+            this.$E(".download-saveas-yes").checked = true;
+        }
+        else {
+            this.$E(".download-saveas-no").checked = true;
+        }
+
+        this.$E(".action-name").value = actSetting["act_name"];
+        this.$E(".tab-pos").value = actSetting["tab_pos"];
+
+        this.$E(".search-engine-name").value = actSetting["engine_name"];
+        let searchUrl;
+        if ("engine_url" in actSetting && actSetting["engine_url"].length != 0) {
+            searchUrl = actSetting["engine_url"];
+        }
+        else {
+            this.$E(".search-engine-name").value = "Google Search";
+            searchUrl = "https://www.google.com/search&q=%s";
+            // searchUrl = config.getSearchURL(actSetting["engine_name"]);
+        }
+        this.$E(".search-engine-url").value = searchUrl;
+
+        this.$E(".download-directory").value = actSetting["download_directory"];
+        for (const name of [".search-type", ".download-type", ".copy-type", ".open-type"]) {
+            let radios = $A(name, this.parent);
+            let defaultFlag = true;
+            for (let i = 0; i < radios.length; i++) {
+                if (radios[i].value === actSetting[name]) {
+                    radios[i].checked = true;
+                    defaultFlag = false;
+                    break;
+                }
+            }
+            if (defaultFlag) radios[0].checked = true;
+        }
+
+        this.$E(".action-name").dispatchEvent(new Event("change"));
+    }
+}
+
+class PanelWrapper {
+    constructor() {
+        this.btns = $E("#panel-buttons");
+        this.cmdType = null;
+        this.cmdIndex = null;
+        this.btns.addEventListener("click", e => {
+            if (e.target.nodeName === "BUTTON") {
+                this.load(e);
+            }
+        });
+
+        this.actionTypeGetter = this.actionTypeGetter.bind(this);
+
+        this.category = new ActionsCategory(this.btns.nextElementSibling, this.actionTypeGetter);
+        this.btns.nextElementSibling.addEventListener("change", e => this.onchange(e));
+        this.category.parent.style.display = "none";
+    }
+    actionTypeGetter() {
+        return this.cmdType.split("_")[1];
+    }
+    async load(e) {
+        this.category.parent.style.display = "none";
+        if (e.target.className.indexOf("text") >= 0) {
+            this.cmdType = "CMDPanel_textAction";
+        }
+        else if (e.target.className.indexOf("link") >= 0) {
+            this.cmdType = "CMDPanel_linkAction";
+        }
+        else {
+            this.cmdType = "CMDPanel_imageAction";
+        }
+        this.cmdIndex = e.target.getAttribute("index");
+        config.async_get(this.cmdType).then((r) => {
+            this.category.setting = r[this.cmdIndex];
+            this.category.parent.style.display = "block";
+        })
+    }
+    onchange(e) {
+        //先获取再保存
+        config.async_get(this.cmdType).then(r => {
+            r[this.cmdIndex] = this.category.setting;
+            config.set(this.cmdType, r);
+        });
+    }
+}
+
+
 class downloadWrapper {
     constructor() {
         const dirCount = 8;
@@ -1073,6 +1336,7 @@ const tabs = {
         w = new styleWrapper();
         this._tabs.push(w);
 
+        w = new PanelWrapper();
 
         document.querySelectorAll(".nav-a").forEach(a => {
             a.addEventListener("click", this.navOnClick);
@@ -1181,48 +1445,7 @@ config.load().then(() => {
 
 
 function messageListener(msg) {
-    function log(message) {
-        logArea.value = `${logArea.value}\n${new Date().toTimeString()} --- ${message}`
-    }
-    let elem = mydrag.targetElem;
-    let logArea = document.querySelector("#logArea");
-    if (elem instanceof HTMLImageElement && msg.command === "copy" && msg.copy_type === commons.COPY_IMAGE) {
-        log("1. Handshake to script");
-        browser.runtime.sendNativeMessage(commons.appName, "test").then((r) => {
-            log("2.1. The script reply：" + r);
-        }, (e) => {
-            log("2.2. Test no response:" + e);
-        });
-        log("3. Copy image behavior is detected.");
-
-        fetch(elem.src)
-            .then(response => {
-                log("4. Get the blob of image");
-                return response.blob();
-
-            })
-            .then(blob => {
-                let reader = new FileReader();
-                reader.readAsDataURL(blob);
-                return new Promise(resolve => {
-                    reader.onloadend = () => {
-                        log("5. Convert blob to base64");
-                        resolve(reader.result.split(",")[1]);
-                    }
-                });
-            })
-            .then(base64 => {
-                log("6. Send image to script");
-                return browser.runtime.sendNativeMessage(commons.appName, base64);
-            })
-            .catch(error => {
-                console.log(error)
-                log("An error occurred: " + error);
-            });
-    }
-    else {
-        CSlistener(msg);
-    }
+    CSlistener(msg);
 }
 document.addEventListener("beforeunload", () => {
     config.save().then(() => {

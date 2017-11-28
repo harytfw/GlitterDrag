@@ -24,6 +24,14 @@ const EVENT_PAHSE = {
 }
 Object.freeze(EVENT_PAHSE);
 
+const ICONS = {
+    "download": browser.runtime.getURL("icon/download.png"),
+    "empty_trash": browser.runtime.getURL("icon/empty_trash_64px.png"),
+    "open_in_browser": browser.runtime.getURL("icon/open_in_browser.png"),
+    "search": browser.runtime.getURL("icon/search.png"),
+    "copy": browser.runtime.getURL("icon/copy.png"),
+}
+
 let specialSites = [
     "vk.com"
 ]
@@ -51,6 +59,50 @@ function getAct(type, dir, key) {
         r = bgConfig["Actions"][type][dir];
     }
     return r;
+}
+
+let promptString = {
+    "%a": {}, // action
+    "%g": {}, // background foreground
+    "%t": {}, // tabs position
+    "%d": {}, // download directory
+    "%s": null, // selection
+    "%e": null, // engines' name
+    "%y": {}, // type of action.
+};
+
+function updatePromptString() {
+    for (const key of Object.keys(commons)) {
+        if (/^ACT_/.test(key)) {
+            promptString["%a"][key] = getI18nMessage(key);
+        }
+        else if (/^(FORE|BACK)_GROUND/.test(key)) {
+            promptString["%g"][key] = getI18nMessage(key);
+        }
+        else if (/^TAB_/.test(key)) {
+            promptString["%t"][key] = getI18nMessage(key);
+        }
+    }
+    for (let i = 0; i < 8; i++) {
+        promptString["%d"][i.toString()] = browser.i18n.getMessage("DownloadDirectory", i);
+    }
+    promptString["%y"] = {
+        "textAction": getI18nMessage("textType"),
+        "imageAction": getI18nMessage("imageType"),
+        "linkAction": getI18nMessage("linkType"),
+    }
+}
+updatePromptString();
+
+function translatePrompt(message, property) {
+    return message ? message
+        .replace("%a", promptString["%a"][property["act_name"]])
+        .replace("%t", promptString["%t"][property["tab_pos"]])
+        .replace("%g", promptString["%g"][property["tab_active"] === true ? "FORE_GROUND" : "BACK_GROUND"])
+        .replace("%d", promptString["%d"][property["download_directory"]] || "")
+        .replace("%e", property["engine_name"])
+        .replace("%y", promptString["%y"][this.actionType])
+        .replace("%s", this.selection) : "";
 }
 
 class Prompt {
@@ -120,85 +172,79 @@ class Indicator {
 
 const CMDPANEL_HTML_CONTENT = `
 <table id="GDPanel">
-    <tr class="GDHead">
+    <tr class="GDHeader">
         <th colspan=3>
             动作
         </th>
     </tr>
     <tr class="GDLabelRow" id="GDPanel-text">
-        <td class="GDPanel-label">文本</td>
-        <td class="GDPanel-content" colspan=2>中国最强</td>
+        <td class="GDPanel-content-wrapper" colspan=3><span>文本：</span><span class="GDPanel-content">中国最强</span></td>
     </tr>
     <tr class="GDRow" id="GDRow-text">
         <td class="GDCell" align="center">
-            <div class="GDCell-open"></div>
         </td>
         <td class="GDCell" align="center">
-            <div class="GDCell-open"></div>
         </td>
         <td class="GDCell" align="center">
-            <div class="GDCell-open"></div>
         </td>
     </tr>
     <tr class="GDLabelRow" id="GDPanel-link">
-        <td class="GDPanel-label">链接</td>
-        <td class="GDPanel-content"  colspan=2>https://www.gov.cn</td></tr>
+        <td class="GDPanel-content-wrapper" colspan=3><span >链接：</span><span class="GDPanel-content">中国最强</span></td>
     <tr class="GDRow" id="GDRow-link">
         <td class="GDCell" align="center">
-            <div class="GDCell-open"></div>
         </td>
         <td class="GDCell" align="center">
-            <div class="GDCell-open"></div>
         </td>
         <td class="GDCell" align="center">
-            <div class="GDCell-open"></div>
         </td>
     </tr>
     <tr class="GDLabelRow" id="GDPanel-image">
-        <td class="GDPanel-label">图片</td>
-        <td class="GDPanel-content" colspan=2>https://www.example.com/example.jpg</td>
+        <td class="GDPanel-content-wrapper" colspan=3><span>图片：</span><span class="GDPanel-content">中国最强</span></td>
     </tr>
     <tr class="GDRow" id="GDRow-image">
         <td class="GDCell" align="center">
-            <div class="GDCell-open"></div>
         </td>
         <td class="GDCell" align="center">
-            <div class="GDCell-open"></div>
         </td>
         <td class="GDCell" align="center">
-            <div class="GDCell-open"></div>
+        </td>
+    </tr>
+    <tr class="GDRow" id="GDRow-other">
+        <td class="GDCell" id="GDCell-trash" colspan=2 style="background-image:url('${ICONS.empty_trash}')">
         </td>
     </tr>
     
 </table>`;
 
+
+
+
 class CMDPanel {
-    constructor(enterlistener, leaveListener, dropListener) {
+    //TODO:内容长度自动裁剪
+    //TODO:样式美观
+    //TODO:完善图标自定义功能
+    constructor(enterlistener, leaveListener, dropListener, overlistener) {
         this.el = document.createElement("div");
         this.el.style.display = "none";
         this.el.id = "GDPanel-wrapper";
         this.el.innerHTML = CMDPANEL_HTML_CONTENT;
+        this.lastdragovertarget = null;
 
-        let target = this.el.querySelector("#GDRow-text");
+        let row = this.el.querySelector("#GDRow-text");
         bgConfig.CMDPanel_textAction.forEach((obj, i) => {
-            for (const k of Object.keys(obj)) {
-                if (target.children[i]) { target.children[i].dataset[k] = obj[k]; }
-            }
+            this.updateCell(row.children[i], obj);
         });
 
-        target = this.el.querySelector("#GDRow-link");
+        row = this.el.querySelector("#GDRow-link");
         bgConfig.CMDPanel_linkAction.forEach((obj, i) => {
-            for (const k of Object.keys(obj)) {
-                if (target.children[i]) { target.children[i].dataset[k] = obj[k]; }
-            }
+            this.updateCell(row.children[i], obj);
         });
 
-        target = this.el.querySelector("#GDRow-image");
+        row = this.el.querySelector("#GDRow-image");
         bgConfig.CMDPanel_imageAction.forEach((obj, i) => {
-            for (const k of Object.keys(obj)) {
-                if (target.children[i]) { target.children[i].dataset[k] = obj[k]; }
-            }
+            this.updateCell(row.children[i], obj);
         });
+
         this.el.addEventListener("drop", dropListener)
         // this.el.addEventListener("dragover", e => {
         //     e.stopPropagation();
@@ -207,16 +253,68 @@ class CMDPanel {
         // })
         this.el.addEventListener("dragenter", enterlistener)
         this.el.addEventListener("dragleave", leaveListener);
-
+        this.el.addEventListener("dragover", e => {
+            if (e.target.className.indexOf("GDCell") >= 0 && this.lastdragovertarget != e.target) {
+                this.lastdragovertarget = e.target;
+                this.updateHeader(e.target.dataset);
+                // overlistener(e);
+            }
+        })
         // this.el.querySelectorAll("div").forEach(div => {
         //     div.addEventListener("dragenter", e => this.dragenter(e));
         // })
-        this.displayFlag = false;
         document.body.appendChild(this.el);
 
     }
 
+    assignDataset(element, setting) {
+        for (const k of Object.keys(setting)) {
+            element.dataset[k] = setting[k];
+        }
+    }
+    updateCell(element, setting) {
+        this.assignDataset(element, setting);
 
+        let value = ""
+        switch (setting.act_name) {
+            case commons.ACT_OPEN:
+                value = ICONS.open_in_browser;
+                break;
+            case commons.ACT_SEARCH:
+                value = ICONS.search;
+                break;
+            case commons.ACT_COPY:
+                value = ICONS.copy;
+                break;
+            case commons.ACT_DL:
+                value = ICONS.download;
+                break;
+        }
+        element.style.backgroundImage = `url(${value})`;
+    }
+    render(actionkind, targetkind, selection, textSelection, imageLink) {
+        $H(["#GDPanel-link", "#GDPanel-image", "#GDRow-link", "#GDRow-image"], "table-row");
+        switch (actionkind) {
+            case commons.textAction:
+                $H(["#GDPanel-link", "#GDPanel-image", "#GDRow-link", "#GDRow-image"]);
+                $E("#GDPanel-text .GDPanel-content").textContent = textSelection;
+                break;
+            case commons.linkAction:
+                if (targetkind === commons.TYPE_ELEM_A_IMG) {
+                    $E("#GDPanel-image .GDPanel-content").textContent = imageLink;
+                }
+                else {
+                    $H(["#GDPanel-image", "#GDRow-image"]);
+                }
+                $E("#GDPanel-link .GDPanel-content").textContent = selection;
+                $E("#GDPanel-text .GDPanel-content").textContent = textSelection;
+                break;
+            case commons.imageAction:
+                $H(["#GDPanel-text", "#GDRow-text", "#GDPanel-link", "#GDRow-image"]);
+                $E("#GDPanel-image .GDPanel-content").textContent = selection;
+                break;
+        }
+    }
     place(x = 0, y = 0) {
         this.el.style.left = x + "px";
         this.el.style.top = y + "px";
@@ -229,6 +327,15 @@ class CMDPanel {
     }
     dragenter(e) {
         e.target.setAttribute("style", "background-color:red");
+    }
+    updateHeader(data) {
+        let header = this.el.querySelector(".GDHeader").firstElementChild;
+        if (this.lastdragovertarget.id === "GDCell-trash") {
+            header.textContent = "取消";
+        }
+        else {
+            header.textContent = translatePrompt("%g-%a", data, );
+        }
     }
 }
 
@@ -293,10 +400,11 @@ class DragClass {
         this.dragenter4panel = this.dragenter4panel.bind(this);
         this.dragleave4panel = this.dragleave4panel.bind(this);
         this.drop4panel = this.drop4panel.bind(this);
+        this.dragover4panel = this.dragover4panel.bind(this)
 
-        this.CMDPanel = new CMDPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel);
+        this.CMDPanel = new CMDPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel, this.dragover4panel);
 
-        // end: UI componment
+        //end: UI componment
 
         this.timeoutId = 0; // used for clearTimeout
 
@@ -441,14 +549,7 @@ class DragClass {
                 this.promptBox.display();
                 let message = bgConfig.tipsContent[property["act_name"]];
                 // console.log(promptString["%g"][property["download_directory"]]);
-                message = message ? message
-                    .replace("%a", promptString["%a"][property["act_name"]])
-                    .replace("%t", promptString["%t"][property["tab_pos"]])
-                    .replace("%g", promptString["%g"][property["tab_active"] === true ? "FORE_GROUND" : "BACK_GROUND"])
-                    .replace("%d", promptString["%d"][property["download_directory"]] || "")
-                    .replace("%e", property["engine_name"])
-                    .replace("%y", promptString["%y"][this.actionType])
-                    .replace("%s", this.selection) : "";
+                message = translatePrompt(message, property);
                 this.promptBox.render(this.direction, message);
             }
             //----
@@ -457,6 +558,7 @@ class DragClass {
             if (property["act_name"] === commons.ACT_PANEL) {
                 this.CMDPanel.place(evt.pageX, evt.pageY, this.direction);
                 this.CMDPanel.display();
+                this.CMDPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
             }
             //----
 
@@ -542,22 +644,26 @@ class DragClass {
 
     dragenter4panel(e) {
 
-        this.isPanelArea = true; // it is changed in this.handler("enter");
-        console.info("enter panel");
+        this.isPanelArea = true;
+        // console.info("enter panel");
     }
-
     dragleave4panel(e) {
         // console.log(e);
         // this.isPanelArea = false;
     }
     drop4panel(e) {
         // console.info(e.);
-        console.info(e.originalTarget.parentElement.dataset);
-        const obj = Object.assign({}, e.originalTarget.parentElement.dataset)
-        obj.tab_active = obj.tab_active === "true" ? true : false;
-        obj.search_onsite = obj.search_onsite === "true" ? true : false;
+        // console.info(e.originalTarget.parentElement.dataset);
+        const obj = Object.assign({}, e.originalTarget.dataset)
+        obj.tab_active = sanitizeBoolean(obj.tab_active);
+        obj.search_onsite = sanitizeBoolean(obj.search_onsite);
+        obj.download_saveas = sanitizeBoolean(obj.download_saveas);
+        this.CMDPanel.hide();
         this.post({ direction: commons.DIR_P, panel: obj });
         e.preventDefault(); //note!
+    }
+    dragover4panel(e) {
+
     }
     isNotAcceptable(evt) {
         // if the acceptable area is Input or Textarea, bypass it.
@@ -912,13 +1018,11 @@ let bgPort = browser.runtime.connect({
 });
 let bgConfig = null;
 let mydrag = null;
-let promptString = null;
-console.info("Glitter Drag: Prepare addListener");
-bgPort.onMessage.addListener((response) => {
-    console.info("Glitter Drag: Receive response from background");
-    bgConfig = JSON.parse(response.config);
-    promptString = response.promptString;
-    // console.log(bgConfig);
+
+
+
+browser.storage.local.get().then(config => {
+    bgConfig = config;
     if (mydrag === null) {
         if (["loading", "interactive"].includes(document.readyState)) {
             document.addEventListener("DOMContentLoaded", () => {
@@ -932,3 +1036,5 @@ bgPort.onMessage.addListener((response) => {
         }
     }
 })
+
+// })

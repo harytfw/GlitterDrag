@@ -13,7 +13,7 @@ const commons = {
     TYPE_TEXT_AREA: 5,
     TYPE_ELEM: 2, //元素，主要是没有选中文本，对元素进行了拖拽
     TYPE_ELEM_A: 3, //超链接，a元素
-    TYPE_ELEM_A_IMG: 6, //a元素里面包含图片，但把它当做图片处理
+    TYPE_ELEM_A_IMG: 6, //a元素里面包含图片
     TYPE_ELEM_IMG: 4, //图片
 
     textAction: "textAction",
@@ -212,12 +212,26 @@ const $A = (s = "", context = document) => {
     return r;
 }
 
+const $H = (ss = [], value = "none", context = document) => {
+    for (const s of ss) {
+        const tt = $A(s, context);
+        for (const t of tt) {
+            t.style.display = value;
+        }
+    }
+}
+
 const getI18nMessage = (strName = "") => {
     const message = browser.i18n.getMessage(strName);
     if (message === "") {
         return strName;
     }
     return message;
+}
+
+const sanitizeBoolean = (b) => {
+    if (b === "true") return true;
+    return false;
 }
 
 const testCheckDragTargetType = () => {

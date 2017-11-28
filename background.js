@@ -334,6 +334,7 @@ class ExecutorClass {
         if (data instanceof Uint8Array) {
             const len = "image/".length;
             const ext = this.data.fileInfo.type.substring(len, len + 4);
+            //the file extendsion usually has 3 or 4 characters.
             // console.log(ext);
             if (browser.clipboard && ["png", "jpeg"].includes(ext)) {
                 browser.clipboard.setImageData(data.buffer, ext);
@@ -359,13 +360,17 @@ class ExecutorClass {
     }
 
     searchText(keyword) {
-        // const replaceTable = {
-        //     "%s":keyword,
-        //     "%x":`${keyword} site:${this.data.domain}`,
-        // }
-        let url = config.getSearchURL(this.action.engine_name)
+
+        let url;
+        if (this.action.engine_url && this.action.engine_url.length != 0) { //new engine_url property in v1.53
+            url = this.action.engine_url;
+        }
+        else {
+            url = config.getSearchURL(this.action.engine_name);// old method
+        }
+
         if (url.startsWith("{redirect.html}")) {
-            this.searchImage(keyword);
+            this.searchImage(keyword);//donot follow
             return;
         }
         if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
