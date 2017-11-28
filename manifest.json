@@ -60,5 +60,6 @@
             "id": "glitterdrag@harytfw",
             "strict_min_version": "52.0"
         }
-    }
+    },
+    "web_accessible_resources": ["icon/*.png"]
 }

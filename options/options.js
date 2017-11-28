@@ -980,6 +980,7 @@ class ActionsCategory {
                 const t = this.$E("." + e.target.getAttribute("for"));
                 if (t && t.type === "radio") {
                     t.checked = !t.checked;
+                    this.parent.dispatchEvent(new Event("change"));
                 }
             }
         })
@@ -1008,7 +1009,7 @@ class ActionsCategory {
             let opt = optProtype.cloneNode();
             opt.textContent = g.groupName;
             opt.disabled = 1;
-            
+
             select.appendChild(opt);
             for (const name of Object.keys(g)) {
                 if (name === "groupName") continue;
@@ -1110,7 +1111,12 @@ class ActionsCategory {
         const getRadioValue = (name) => {
             let radios = $A(name, this.parent)
             for (let i = 0; i < radios.length; i++) {
-                if (radios[i].checked) return radios[i].value;
+                if (radios[i].checked) {
+                    if (radios[i].value === "true" || radios[i].value === "false") {
+                        return radios[i].value === "true" ? true : false;
+                    }
+                    return radios[i].value;
+                }
             }
         }
         let temp = {};
@@ -1120,13 +1126,13 @@ class ActionsCategory {
             engine_name: this.$E(".search-engine-name").value,
             engine_url: this.$E(".search-engine-url").value,
             download_directory: this.$E(".download-directory").value,
-            tab_active: getRadioValue(".tab-active") === "true" ? true : false,
+            tab_active: getRadioValue(".tab-active"),
             open_type: getRadioValue(".open-type"),
             search_type: getRadioValue(".search-type"),
             copy_type: getRadioValue(".copy-type"),
             download_type: getRadioValue(".download-type"),
-            download_saveas: getRadioValue(".download-saveas") === "true" ? true : false,
-            search_onsite: getRadioValue(".search-onsite") === "true" ? true : false,
+            download_saveas: getRadioValue(".download-saveas"),
+            search_onsite: getRadioValue(".search-onsite"),
         });
         return temp;
     }
@@ -1370,8 +1376,8 @@ const tabs = {
     navOnClick: function(event) {
         $E(".nav-active").classList.remove("nav-active");
         event.target.classList.add("nav-active");
-        $E(".tab-active").classList.remove("tab-active");
-        $E(`${event.target.getAttribute("toggle-target")}`).classList.add("tab-active");
+        $E(".active").classList.remove("active");
+        $E(`${event.target.getAttribute("toggle-target")}`).classList.add("active");
     },
 
     showOrHideNav: function() {
