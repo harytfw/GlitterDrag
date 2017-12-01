@@ -42,6 +42,7 @@ const commons = {
     ACT_QRCODE: "ACT_QRCODE", // 二维码
     ACT_FIND: "ACT_FIND", // 查找
     ACT_PANEL: "ACT_PANEL", //面板
+    // ACT_SCRIPT: "ACT_SCRIPT", //自定义脚本
     // ACT_BOOKMARK: "ACT_BOOKMARK",
 
     OPEN_LINK: "OPEN_LINK",
@@ -198,9 +199,9 @@ Object.freeze(typeUtil);
 
 const $E = (s = "", context = document) => {
     let r = context.querySelector(s);
-    if (!r) {
-        console.trace("No Result: document.querySelector", s)
-    }
+    // if (!r) {
+    //     console.trace("No Result: document.querySelector", s)
+    // }
     return r;
 }
 
@@ -221,18 +222,15 @@ const $H = (ss = [], value = "none", context = document) => {
     }
 }
 
-const getI18nMessage = (strName = "") => {
-    const message = browser.i18n.getMessage(strName);
+const getI18nMessage = (strName = "", placeholders) => {
+    const message = browser.i18n.getMessage(strName, placeholders);
     if (message === "") {
+        console.warn(`${strName} has not matched i18n message`);
         return strName;
     }
     return message;
 }
 
-const sanitizeBoolean = (b) => {
-    if (b === "true") return true;
-    return false;
-}
 
 const testCheckDragTargetType = () => {
     const assert = console.assert;

@@ -1,7 +1,7 @@
-:root {
-    /* --prompt-height: 100px; */
-    --prompt-width: 200px;
-}
+/* :root {
+     --prompt-height: 100px; 
+     --prompt-width: 200px; 
+} */
 
 #GDIndicator {
     position: absolute;
@@ -25,7 +25,7 @@
     left: 40%;
     top: 40%;
     /* height: var(--prompt-height); */
-    width: var(--prompt-width);
+    width: 200px;
     padding-bottom: 10px;
 }
 
@@ -176,15 +176,3 @@
     background-repeat: no-repeat;
     background-position: 50%;
 }
-
-.GDCell-search {}
-
-.GDCell-search::before {}
-
-.GDCell-copy {}
-
-.GDCell-copy::before {}
-
-.GDCell-download {}
-
-.GDCell-find {}

@@ -76,13 +76,13 @@ const GENERATE_DEFAULT_CONFIG = () => {
             imageAction: commons.ALLOW_NORMAL
         },
 
-        CMDPanel_textAction: [
+        cmdPanel_textAction: [
             ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
         ],
-        CMDPanel_linkAction: [
+        cmdPanel_linkAction: [
             ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
         ],
-        CMDPanel_imageAction: [
+        cmdPanel_imageAction: [
             ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
         ],
         downloadDirectories: ["", "", "", "", "", "", "", ""],

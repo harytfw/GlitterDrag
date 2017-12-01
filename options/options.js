@@ -89,6 +89,27 @@ for (let item of Object.keys(commons)) {
     }
 }
 
+function doI18n() {
+    for (let elem of document.querySelectorAll("[data-i18n]")) {
+        let prefix = "elem_";
+        if ("i18nPrefix" in elem.dataset) {
+            prefix = elem.dataset.i18nPrefix;
+        }
+        let content = "";
+        if ("i18nPlaceholders" in elem.dataset) {
+            let placeholders = elem.dataset.i18nPlaceholders.split(",");
+            content = getI18nMessage(`${prefix}${elem.dataset.i18n}`, placeholders);
+        }
+        else {
+            content = getI18nMessage(`${prefix}${elem.dataset.i18n}`);
+        }
+        if (content === elem.dataset.i18n) {
+            console.warn(elem, "misses i18n message");
+        }
+        elem.textContent = content;
+    }
+}
+
 class _SelectWrapper {
     //                         选项      值      提示    
     constructor(name = "", optList = [], value, tooltip = "") {
@@ -1215,13 +1236,13 @@ class PanelWrapper {
     async load(e) {
         this.category.parent.style.display = "none";
         if (e.target.className.indexOf("text") >= 0) {
-            this.cmdType = "CMDPanel_textAction";
+            this.cmdType = "cmdPanel_textAction";
         }
         else if (e.target.className.indexOf("link") >= 0) {
-            this.cmdType = "CMDPanel_linkAction";
+            this.cmdType = "cmdPanel_linkAction";
         }
         else {
-            this.cmdType = "CMDPanel_imageAction";
+            this.cmdType = "cmdPanel_imageAction";
         }
         this.cmdIndex = e.target.getAttribute("index");
         config.async_get(this.cmdType).then((r) => {
@@ -1301,7 +1322,8 @@ class styleWrapper {
         }
 
         eventUtil.attachEventS("#saveStyle", () => {
-            config.set("style", styleArea.value); // TODO: promise?
+            config.set("style", styleArea.value); // TODO: promise
+
             document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveDone');
             setTimeout(() => {
                 document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveStyle');
@@ -1349,9 +1371,7 @@ const tabs = {
         });
 
         //do with i18n
-        for (let elem of document.querySelectorAll("[data-i18n]")) {
-            elem.textContent = getI18nMessage(`elem_${elem.dataset['i18n']}`);
-        }
+        doI18n();
 
         document.querySelectorAll("input[id]").forEach(elem => {
             if ("not-config" in elem.attributes) return;
@@ -1446,22 +1466,23 @@ config.load().then(() => {
     tabs.init();
 
 
+
 }, () => {});
 
 
 
-function messageListener(msg) {
-    CSlistener(msg);
-}
-document.addEventListener("beforeunload", () => {
-    config.save().then(() => {
-        console.info("succeed to save config ");
-    }).catch(() => {
-        console.error("fail to save config");
-    });
-})
-browser.runtime.onConnect.addListener(port => {
-    if (port.name === "sendToOptions") {
-        port.onMessage.addListener(messageListener);
-    }
-});
+// function messageListener(msg) {
+//     CSlistener(msg);
+// }
+// document.addEventListener("beforeunload", () => {
+//     config.save().then(() => {
+//         console.info("succeed to save config ");
+//     }).catch(() => {
+//         console.error("fail to save config");
+//     });
+// })
+// browser.runtime.onConnect.addListener(port => {
+//     if (port.name === "sendToOptions") {
+//         port.onMessage.addListener(messageListener);
+//     }
+// });

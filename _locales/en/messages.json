@@ -87,6 +87,10 @@
         "message": "Find",
         "description": "Action name"
     },
+    "ACT_PANEL": {
+        "message": "Panel",
+        "description": "Action name"
+    },
     "DIR_U": {
         "message": "Up",
         "description": "Direction"
@@ -312,6 +316,15 @@
         "message": "https://www.google.com/search?q=%s",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     },
+    "elem_Text": {
+        "message": "Text"
+    },
+    "elem_Link": {
+        "message": "Link"
+    },
+    "elem_Image": {
+        "message": "Image"
+    },
     "elem_RefreshbtnOnEngines": {
         "message": "Refresh",
         "description": "Reload button on Options - Search Template"
@@ -379,6 +392,10 @@
     "elem_General": {
         "message": "General",
         "description": "Element on Options page"
+    },
+    "elem_Panel": {
+        "message": "Panel",
+        "description": ""
     },
     "elem_Baidu": {
         "message": "Baidu",
@@ -489,5 +506,59 @@
     "elem_SaveDone": {
         "message": "Saved!",
         "description": "Element on Options page"
+    },
+    "elem_Command": {
+        "message": "Command $NUM$",
+        "description": "",
+        "placeholders": {
+            "num": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
+    },
+    "elem_PerformedAction": {
+        "message": "Performed Action",
+        "description": ""
+    },
+    "elem_TabStatus": {
+        "message": "Tab Status",
+        "description": ""
+    },
+    "elem_SelectEngines": {
+        "message": "Select Engines",
+        "description": ""
+    },
+    "elem_EnginePreview": {
+        "message": "Preview(Editing Works)",
+        "description": ""
+    },
+    "elem_OpenType": {
+        "message": "Open",
+        "description": ""
+    },
+    "elem_SearchType": {
+        "message": "Search",
+        "description": ""
+    },
+    "elem_CopyType": {
+        "message": "Copy",
+        "description": ""
+    },
+    "elem_DownloadType": {
+        "message": "Downlaod",
+        "description": ""
+    },
+    "elem_Saveas": {
+        "message": "Save As",
+        "description": ""
+    },
+    "elem_DownloadDirectory": {
+        "message": "Download Directory",
+        "description": ""
+    },
+    "elem_SearchOnSite": {
+        "message": "Search on Site",
+        "description": ""
     }
 }

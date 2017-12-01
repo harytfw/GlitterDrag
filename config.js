@@ -38,6 +38,18 @@ class ConfigClass {
         return this.storage[key];
     }
 
+    // async async_merge_set(key = "", val = {}, where = "local") {
+
+    //     if (key.length === 0) return Promise.reject("length of key equals zero");
+    //     let area = browser.storage.local;
+    //     if (where === "async") {
+    //         area = browser.storage.sync;
+    //     }
+    //     let ori = (await this.async_get(key));
+    //     Object.assign(ori, val);
+    //     return area.set(key, ori);
+    // }
+
     async async_get(key = "") {
 
         let obj = await browser.storage.local.get(key);

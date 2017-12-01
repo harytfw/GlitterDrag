@@ -117,8 +117,10 @@ class ExecutorClass {
             console.table(this.data);
         }
         if (this.data.direction === commons.DIR_P) {
-            this.action = this.data.panel;
-            this.execute();
+            config.async_get(this.data.key).then(arr => {
+                this.action = arr[this.data.index];
+                this.execute();
+            });
         }
         else {
             config.async_getAct(this.data.actionType, this.data.direction, this.data.modifierKey).then(a => {
@@ -366,11 +368,11 @@ class ExecutorClass {
             url = this.action.engine_url;
         }
         else {
-            url = config.getSearchURL(this.action.engine_name);// old method
+            url = config.getSearchURL(this.action.engine_name); // old method
         }
 
         if (url.startsWith("{redirect.html}")) {
-            this.searchImage(keyword);//donot follow
+            this.searchImage(keyword); //donot follow
             return;
         }
         if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {

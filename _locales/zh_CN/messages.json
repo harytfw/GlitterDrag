@@ -87,6 +87,10 @@
         "message": "查找",
         "description": "Action name"
     },
+    "ACT_PANEL": {
+        "message": "面板",
+        "description": "Action name"
+    },
     "DIR_U": {
         "message": "上",
         "description": "Direction"
@@ -171,10 +175,18 @@
         "message": "后台",
         "description": "The tab opened in background."
     },
+    "OPEN_TEXT": {
+        "message": "文本",
+        "description": ""
+    },
     "OPEN_LINK": {
         "message": "链接",
         "description": ""
     },
+    "OPEN_IMAGE_LINK":{
+        "message":"图像地址优先"
+    }
+    ,
     "OPEN_IMAGE": {
         "message": "图像本身",
         "description": ""
@@ -311,6 +323,15 @@
         "message": "https://www.baidu.com/s?wd=%s",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     },
+    "elem_Text": {
+        "message": "文本"
+    },
+    "elem_Link": {
+        "message": "链接"
+    },
+    "elem_Image": {
+        "message": "图像"
+    },
     "elem_RefreshbtnOnEngines": {
         "message": "刷新",
         "description": "Reload button on Options - Search Template"
@@ -378,6 +399,10 @@
     "elem_General": {
         "message": "常规",
         "description": "Element on Options page"
+    },
+    "elem_Panel": {
+        "message": "面板",
+        "description": ""
     },
     "elem_Baidu": {
         "message": "百度",
@@ -489,5 +514,59 @@
     "elem_SaveDone": {
         "message": "已保存!",
         "description": "Element on Options page"
+    },
+    "elem_Command": {
+        "message": "命令 $NUM$",
+        "description": "",
+        "placeholders": {
+            "num": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
+    },
+    "elem_PerformedAction": {
+        "message": "执行动作",
+        "description": ""
+    },
+    "elem_TabStatus": {
+        "message": "标签页状态",
+        "description": ""
+    },
+    "elem_SelectEngines": {
+        "message": "选择引擎",
+        "description": ""
+    },
+    "elem_EnginePreview": {
+        "message": "预览(编辑有效)",
+        "description": ""
+    },
+    "elem_OpenType": {
+        "message": "打开",
+        "description": ""
+    },
+    "elem_SearchType": {
+        "message": "搜索",
+        "description": ""
+    },
+    "elem_CopyType": {
+        "message": "复制",
+        "description": ""
+    },
+    "elem_DownloadType": {
+        "message": "下载",
+        "description": ""
+    },
+    "elem_Saveas": {
+        "message": "是否另存为",
+        "description": ""
+    },
+    "elem_DownloadDirectory": {
+        "message": "下载目录",
+        "description": ""
+    },
+    "elem_SearchOnSite": {
+        "message": "站内搜索",
+        "description": ""
     }
 }

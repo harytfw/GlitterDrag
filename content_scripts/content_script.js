@@ -105,8 +105,18 @@ function translatePrompt(message, property) {
         .replace("%s", this.selection) : "";
 }
 
+function removeExistedElement(selector) {
+    let e = $E(selector);
+    if (e !== null) {
+        e.remove();
+        return true;
+    }
+    return false;
+}
+
 class Prompt {
     constructor() {
+        removeExistedElement("#GDPrompt");
         this.container = document.createElement("div");
         this.container.id = "GDPrompt";
         this.textContainer = document.createElement("div");
@@ -149,6 +159,7 @@ class Prompt {
 }
 class Indicator {
     constructor() {
+        removeExistedElement("#GDIndicator");
         this.box = document.createElement("div");
         this.box.id = "GDIndicator";
         this.hide();
@@ -219,11 +230,12 @@ const CMDPANEL_HTML_CONTENT = `
 
 
 
-class CMDPanel {
+class cmdPanel {
     //TODO:内容长度自动裁剪
     //TODO:样式美观
     //TODO:完善图标自定义功能
     constructor(enterlistener, leaveListener, dropListener, overlistener) {
+        removeExistedElement("#GDPanel-wrapper");
         this.el = document.createElement("div");
         this.el.style.display = "none";
         this.el.id = "GDPanel-wrapper";
@@ -231,18 +243,18 @@ class CMDPanel {
         this.lastdragovertarget = null;
 
         let row = this.el.querySelector("#GDRow-text");
-        bgConfig.CMDPanel_textAction.forEach((obj, i) => {
-            this.updateCell(row.children[i], obj);
+        bgConfig.cmdPanel_textAction.forEach((obj, i) => {
+            this.updateCell(row.children[i], "text", i);
         });
 
         row = this.el.querySelector("#GDRow-link");
-        bgConfig.CMDPanel_linkAction.forEach((obj, i) => {
-            this.updateCell(row.children[i], obj);
+        bgConfig.cmdPanel_linkAction.forEach((obj, i) => {
+            this.updateCell(row.children[i], "link", i);
         });
 
         row = this.el.querySelector("#GDRow-image");
-        bgConfig.CMDPanel_imageAction.forEach((obj, i) => {
-            this.updateCell(row.children[i], obj);
+        bgConfig.cmdPanel_imageAction.forEach((obj, i) => {
+            this.updateCell(row.children[i], "image", i);
         });
 
         this.el.addEventListener("drop", dropListener)
@@ -256,7 +268,7 @@ class CMDPanel {
         this.el.addEventListener("dragover", e => {
             if (e.target.className.indexOf("GDCell") >= 0 && this.lastdragovertarget != e.target) {
                 this.lastdragovertarget = e.target;
-                this.updateHeader(e.target.dataset);
+                this.updateHeader(e);
                 // overlistener(e);
             }
         })
@@ -267,30 +279,28 @@ class CMDPanel {
 
     }
 
-    assignDataset(element, setting) {
-        for (const k of Object.keys(setting)) {
-            element.dataset[k] = setting[k];
-        }
-    }
-    updateCell(element, setting) {
-        this.assignDataset(element, setting);
 
-        let value = ""
+    updateCell(element, kind, index) {
+        element.dataset["kind"] = kind;
+        const key = element.dataset["key"] = "cmdPanel_" + kind + "Action";
+        element.dataset["index"] = index;
+        let icon = ""
+        const setting = bgConfig[key][index];
         switch (setting.act_name) {
             case commons.ACT_OPEN:
-                value = ICONS.open_in_browser;
+                icon = ICONS.open_in_browser;
                 break;
             case commons.ACT_SEARCH:
-                value = ICONS.search;
+                icon = ICONS.search;
                 break;
             case commons.ACT_COPY:
-                value = ICONS.copy;
+                icon = ICONS.copy;
                 break;
             case commons.ACT_DL:
-                value = ICONS.download;
+                icon = ICONS.download;
                 break;
         }
-        element.style.backgroundImage = `url(${value})`;
+        element.style.backgroundImage = `url(${icon})`;
     }
     render(actionkind, targetkind, selection, textSelection, imageLink) {
         $H(["#GDPanel-link", "#GDPanel-image", "#GDRow-link", "#GDRow-image"], "table-row");
@@ -313,6 +323,8 @@ class CMDPanel {
                 $H(["#GDPanel-text", "#GDRow-text", "#GDPanel-link", "#GDRow-image"]);
                 $E("#GDPanel-image .GDPanel-content").textContent = selection;
                 break;
+            default:
+                break;
         }
     }
     place(x = 0, y = 0) {
@@ -325,17 +337,18 @@ class CMDPanel {
     hide() {
         this.el.style.display = "none";
     }
-    dragenter(e) {
-        e.target.setAttribute("style", "background-color:red");
-    }
-    updateHeader(data) {
+    // dragenter(e) {
+    //     e.target.setAttribute("style", "background-color:red");
+    // }
+
+    updateHeader(e) {
         let header = this.el.querySelector(".GDHeader").firstElementChild;
         if (this.lastdragovertarget.id === "GDCell-trash") {
-            header.textContent = "取消";
+            header.textContent = "取消"; //getI18nMessage("Cancel");
+            return;
         }
-        else {
-            header.textContent = translatePrompt("%g-%a", data, );
-        }
+        const setting = bgConfig[e.target.dataset["key"]][e.target.dataset["index"]];
+        header.textContent = translatePrompt("%g-%a", setting);
     }
 }
 
@@ -402,7 +415,7 @@ class DragClass {
         this.drop4panel = this.drop4panel.bind(this);
         this.dragover4panel = this.dragover4panel.bind(this)
 
-        this.CMDPanel = new CMDPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel, this.dragover4panel);
+        this.cmdPanel = new cmdPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel, this.dragover4panel);
 
         //end: UI componment
 
@@ -554,11 +567,12 @@ class DragClass {
             }
             //----
 
-            this.CMDPanel.hide();
+            this.cmdPanel.hide();
             if (property["act_name"] === commons.ACT_PANEL) {
-                this.CMDPanel.place(evt.pageX, evt.pageY, this.direction);
-                this.CMDPanel.display();
-                this.CMDPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
+                this.cmdPanel.place(evt.pageX, evt.pageY, this.direction);
+                this.cmdPanel.display();
+                this.promptBox.hide();
+                this.cmdPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
             }
             //----
 
@@ -654,12 +668,12 @@ class DragClass {
     drop4panel(e) {
         // console.info(e.);
         // console.info(e.originalTarget.parentElement.dataset);
-        const obj = Object.assign({}, e.originalTarget.dataset)
-        obj.tab_active = sanitizeBoolean(obj.tab_active);
-        obj.search_onsite = sanitizeBoolean(obj.search_onsite);
-        obj.download_saveas = sanitizeBoolean(obj.download_saveas);
-        this.CMDPanel.hide();
-        this.post({ direction: commons.DIR_P, panel: obj });
+        // const obj = Object.assign({}, e.originalTarget.dataset)
+        // obj.tab_active = sanitizeBoolean(obj.tab_active);
+        // obj.search_onsite = sanitizeBoolean(obj.search_onsite);
+        // obj.download_saveas = sanitizeBoolean(obj.download_saveas);
+        this.cmdPanel.hide();
+        this.post({ direction: commons.DIR_P, key: e.originalTarget.dataset["key"], index: parseInt(e.originalTarget.dataset["index"]) });
         e.preventDefault(); //note!
     }
     dragover4panel(e) {
@@ -807,6 +821,7 @@ class DragClass {
             case "dragend": // Bubbling
                 this.indicatorBox && this.indicatorBox.hide();
                 this.promptBox && this.promptBox.stopRender();
+                this.cmdPanel && this.cmdPanel.hide();
                 this.lastDirection = null;
                 //dragend's target is things we are dragging, calling this.isNotAcceptable has not effect. However we have updated this.isInputArea in drop event, just use it.
                 if (this.isInputArea) {
