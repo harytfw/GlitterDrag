@@ -4,6 +4,12 @@ console.info("Glitter Drag: Content script is injected by browser successfully")
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 let IS_TOP_WINDOW = window.top === window;
 
+let style = document.createElement("link");
+style.rel = "stylesheet";
+style.type = "text/css";
+style.href = browser.runtime.getURL("content_scripts/content_script.css");
+
+
 const MIME_TYPE = {
     ".gif": "image/gif",
     ".jpg": "image/jpeg",
@@ -1041,12 +1047,14 @@ browser.storage.local.get().then(config => {
     if (mydrag === null) {
         if (["loading", "interactive"].includes(document.readyState)) {
             document.addEventListener("DOMContentLoaded", () => {
+                document.head.appendChild(style);
                 mydrag = new DragClass(document);
             }, {
                 once: true
             });
         }
         else {
+            document.head.appendChild(style);
             mydrag = new DragClass(document);
         }
     }

@@ -183,10 +183,6 @@
         "message": "链接",
         "description": ""
     },
-    "OPEN_IMAGE_LINK":{
-        "message":"图像地址优先"
-    }
-    ,
     "OPEN_IMAGE": {
         "message": "图像本身",
         "description": ""

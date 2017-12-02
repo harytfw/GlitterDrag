@@ -5,13 +5,15 @@
     "version": "1.53.0b2",
     "homepage_url": "https://github.com/harytfw/GlitterDrag",
     "icons": {
-        "128": "icon/drag.png"
+        "48": "drag.png",
+        "96": "drag.png",
+        "128": "drag.png"
     },
     "author": "harytfw",
     "browser_action": {
         "default_title": "__MSG_browserActionTitle__",
         "default_icon": {
-            "128": "icon/drag.png"
+            "128": "drag.png"
         },
         "browser_style": true
     },
@@ -38,9 +40,7 @@
         "matches": [
             "<all_urls>"
         ],
-        "css": [
-            "content_scripts/content_script.css"
-        ],
+
         "js": [
             "common.js",
             "content_scripts/content_script.js"
@@ -58,5 +58,5 @@
             "strict_min_version": "52.0"
         }
     },
-    "web_accessible_resources": ["icon/*.png"]
+    "web_accessible_resources": ["icon/*.png", "content_scripts/content_script.css"]
 }
