@@ -172,6 +172,10 @@ class Indicator {
         document.body.appendChild(this.box);
     }
     place(x = 0, y = 0, radius = 0) {
+        if (radius === 0) {
+            this.hide();
+            return;
+        }
         radius = radius / devicePixelRatio;
         this.box.style.left = (x - radius) + "px";
         this.box.style.top = (y - radius) + "px";
@@ -248,20 +252,7 @@ class cmdPanel {
         this.el.innerHTML = CMDPANEL_HTML_CONTENT;
         this.lastdragovertarget = null;
 
-        let row = this.el.querySelector("#GDRow-text");
-        bgConfig.cmdPanel_textAction.forEach((obj, i) => {
-            this.updateCell(row.children[i], "text", i);
-        });
 
-        row = this.el.querySelector("#GDRow-link");
-        bgConfig.cmdPanel_linkAction.forEach((obj, i) => {
-            this.updateCell(row.children[i], "link", i);
-        });
-
-        row = this.el.querySelector("#GDRow-image");
-        bgConfig.cmdPanel_imageAction.forEach((obj, i) => {
-            this.updateCell(row.children[i], "image", i);
-        });
 
         this.el.addEventListener("drop", dropListener)
         // this.el.addEventListener("dragover", e => {
@@ -278,13 +269,26 @@ class cmdPanel {
                 // overlistener(e);
             }
         })
-        // this.el.querySelectorAll("div").forEach(div => {
-        //     div.addEventListener("dragenter", e => this.dragenter(e));
-        // })
         document.body.appendChild(this.el);
 
+        this.updateTable();
     }
+    updateTable() {
+        let row = this.el.querySelector("#GDRow-text");
+        bgConfig.cmdPanel_textAction.forEach((obj, i) => {
+            this.updateCell(row.children[i], "text", i);
+        });
 
+        row = this.el.querySelector("#GDRow-link");
+        bgConfig.cmdPanel_linkAction.forEach((obj, i) => {
+            this.updateCell(row.children[i], "link", i);
+        });
+
+        row = this.el.querySelector("#GDRow-image");
+        bgConfig.cmdPanel_imageAction.forEach((obj, i) => {
+            this.updateCell(row.children[i], "image", i);
+        });
+    }
 
     updateCell(element, kind, index) {
         element.dataset["kind"] = kind;
@@ -1041,23 +1045,35 @@ let bgConfig = null;
 let mydrag = null;
 
 
+function doInit() {
+    if (mydrag === null && document.body) {
+        mydrag = new DragClass(document);
+        document.head.appendChild(style);
+        document.removeEventListener("readystatechange", onReadyStateChange);
+        document.removeEventListener("DOMContentLoaded", OnDOMContentLoaded);
+    }
+}
+
+function onReadyStateChange() {
+    if (document.readyState === "complete") doInit();
+}
+
+function OnDOMContentLoaded() {
+    doInit();
+}
+
+browser.storage.onChanged.addListener(_ => {
+    for (const key of Object.keys(_)) {
+        bgConfig[key] = _[key].newValue;
+        mydrag.cmdPanel.updateTable();
+    }
+})
 
 browser.storage.local.get().then(config => {
     bgConfig = config;
-    if (mydrag === null) {
-        if (["loading", "interactive"].includes(document.readyState)) {
-            document.addEventListener("DOMContentLoaded", () => {
-                document.head.appendChild(style);
-                mydrag = new DragClass(document);
-            }, {
-                once: true
-            });
-        }
-        else {
-            document.head.appendChild(style);
-            mydrag = new DragClass(document);
-        }
-    }
+    document.addEventListener('readystatechange', onReadyStateChange, false);
+    document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
+    doInit();
 })
 
 // })
