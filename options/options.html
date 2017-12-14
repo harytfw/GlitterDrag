@@ -27,6 +27,7 @@
         </select>
         <select class="open-type" data-i18n="open_type" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="指定如何打开链接。当 图像地址 不可用时，会自动转换为 一般链接">
             <option data-i18n="OPEN_LINK" data-i18n-prefix="" value="OPEN_LINK">链接</option>
+            <option value="OPEN_TEXT">链接</option>
             <option data-i18n="OPEN_IMAGE" data-i18n-prefix="" value="OPEN_IMAGE">图像本身</option>
             <option data-i18n="OPEN_IMAGE_LINK" data-i18n-prefix="" value="OPEN_IMAGE_LINK">图像地址优先</option>
         </select>
@@ -56,7 +57,7 @@
             <option data-i18n="DOWNLOAD_IMAGE" data-i18n-prefix="" value="DOWNLOAD_IMAGE">图像</option>
         </select>
         <select class="tab-active" data-i18n="active" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="新建标签页的激活状态" style="">
-            <option data-i18n="FORE_GROUND" data-i18n-prefix="" value="true">前台</option>
+            <option data-i18n="FORE_GROUND" data-i18n-prefix="" value="true" >前台</option>
             <option data-i18n="BACK_GROUND" data-i18n-prefix="" value="false">后台</option>
             </select>
         <select class="tab-pos" data-i18n="pos" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="标签页的位置" style="">
@@ -509,9 +510,9 @@
                                     <tr>
                                         <td data-i18n="TabStatus">标签页状态</td>
                                         <td>
-                                            <input class="foreground" value="true" type="radio">
+                                            <input class="foreground tab-active" value="true" type="radio">
                                             <label for="foreground" data-i18n="FORE_GROUND" data-i18n-prefix="">前台</label>
-                                            <input class="background" value="false" type="radio">
+                                            <input class="background tab-active" value="false" type="radio">
                                             <label for="background" data-i18n="BACK_GROUND" data-i18n-prefix="">后台</label>
                                         </td>
                                     </tr>
@@ -601,8 +602,8 @@
                                     <tr>
                                         <td data-i18n="SearchOnSite">是否在站内搜索</td>
                                         <td>
-                                            <input class="search-onsite-yes search-onsite" value="SEARCH_ONSITE_YES" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-yes">是</label>
-                                            <input class="search-onsite-no search-onsite" value="SEARCH_ONSITE_NO" type="radio"><label data-i18n="SEARCH_ONSITE_NO" data-i18n-prefix="" for="search-onsite-no">否</label>
+                                            <input class="search-onsite-yes search-onsite" value="true" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-yes">是</label>
+                                            <input class="search-onsite-no search-onsite" value="false" type="radio"><label data-i18n="SEARCH_ONSITE_NO" data-i18n-prefix="" for="search-onsite-no">否</label>
                                         </td>
                                     </tr>
                                     <!-- <tr>

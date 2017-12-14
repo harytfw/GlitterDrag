@@ -21,7 +21,7 @@ const commons = {
     imageAction: "imageAction",
 
     DIR_P: "DIR_P", //PANEL
-    DIR_ANY:"DIR_ANY",//treated as any direction
+    DIR_ANY: "DIR_ANY", //treated as any direction
     DIR_U: "DIR_U",
     DIR_D: "DIR_D",
     DIR_L: "DIR_L",
@@ -46,7 +46,7 @@ const commons = {
     // ACT_SCRIPT: "ACT_SCRIPT", //自定义脚本
     // ACT_BOOKMARK: "ACT_BOOKMARK",
 
-    OPEN_TEXT:"OPEN_TEXT",
+    OPEN_TEXT: "OPEN_TEXT",
     OPEN_LINK: "OPEN_LINK",
     OPEN_IMAGE: "OPEN_IMAGE",
     OPEN_IMAGE_LINK: "OPEN_IMAGE_LINK",

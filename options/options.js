@@ -232,8 +232,12 @@ class ActionsWrapper {
             console.info(kind, dirName, attribute, "->", e.target.value);
             const key = this.actionsKeyName;
             LStorage.get(key).then(res => {
-                if (e.target.value === "true") res[key][kind][dirName][attribute] = true
-                else if (e.target.value === "false") res[key][kind][dirName][attribute] = false;
+                if (e.target.value === "true") {
+                    res[key][kind][dirName][attribute] = true
+                }
+                else if (e.target.value === "false") {
+                    res[key][kind][dirName][attribute] = false;
+                }
                 else if (attribute === "engine_name") {
                     if (e.target.value.startsWith("*")) {
                         res[key][kind][dirName][attribute] = e.target.value.subStr(1);
@@ -243,7 +247,9 @@ class ActionsWrapper {
                     }
                     res[key][kind][dirName]["engine_url"] = e.target.options[e.target.selectedIndex].getAttribute("url");
                 }
-                else res[key][kind][dirName][attribute] = e.target.value;
+                else {
+                    res[key][kind][dirName][attribute] = e.target.value;
+                }
 
                 $D(res);
                 LStorage.set(res);
@@ -541,11 +547,11 @@ class generalSettingWrapper {
                 LStorage.set({ "tipsContent": content });
             });
             el.addEventListener("change", (e) => {
-                input.value = content[e.target.value].replace(/\n/g,"\\n");
+                input.value = content[e.target.value].replace(/\n/g, "\\n");
                 input.setAttribute("data-id", e.target.value);
             });
             el.selectedIndex = 1;
-            input.value = content[el.value].replace(/\n/g,"\\n");
+            input.value = content[el.value].replace(/\n/g, "\\n");
             // el.dispatchEvent(new Event("change"));
         });
 
@@ -719,7 +725,12 @@ class ActionsView {
                     return radios[i].value;
                 }
             }
+            if (radios[0].value === "true" || radios[0].value === "false") {
+                return radios[0].value === "true" ? true : false;
+            }
+            return radios[0].value;
         }
+        debugger;
         let temp = {};
         Object.assign(temp, {
             act_name: this.$E(".action-name").value,
