@@ -128,16 +128,34 @@
         "description": "Direction"
     },
     "textType": {
-        "message": "文本",
-        "description": "An section of Options"
+        "message": "文本$SUFFIX$",
+        "description": "An section of Options",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
     },
     "linkType": {
-        "message": "链接",
-        "description": "An section of Options"
+        "message": "链接$SUFFIX$",
+        "description": "An section of Options",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
     },
     "imageType": {
-        "message": "图像",
-        "description": "An section of Options"
+        "message": "图像$SUFFIX$",
+        "description": "An section of Options",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
     },
     "TAB_NEW_WINDOW": {
         "message": "新建窗口",
@@ -529,6 +547,10 @@
         "message": "标签页状态",
         "description": ""
     },
+    "elem_TabPosition": {
+        "message": "Tab Position",
+        "description": ""
+    },
     "elem_SelectEngines": {
         "message": "选择引擎",
         "description": ""
@@ -564,5 +586,16 @@
     "elem_SearchOnSite": {
         "message": "站内搜索",
         "description": ""
+    },
+    "elem_NewActions": {
+        "message": "新动作",
+        "description": ""
+    },
+    "elem_DirectionRestriction": {
+        "message": "方向限制",
+        "description": ""
+    },
+    "elem_ShortcutSetting": {
+        "message": "快捷键设定: "
     }
 }

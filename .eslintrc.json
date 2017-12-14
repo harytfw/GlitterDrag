@@ -18,7 +18,9 @@
         "DEFAULT_CONFIG":false,
         "eventUtil":false,
         "typeUtil":false,
-        "$E":false
+        "$E":false,
+        "$A":false,
+        "$H":false
     },
     "rules": {
         "no-console": 0,

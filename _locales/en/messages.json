@@ -128,16 +128,34 @@
         "description": "Direction"
     },
     "textType": {
-        "message": "Text",
-        "description": "An section of Options"
+        "message": "Text$SUFFIX$",
+        "description": "An section of Options",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
     },
     "linkType": {
-        "message": "Links",
-        "description": "An section of Options"
+        "message": "Links$SUFFIX$",
+        "description": "An section of Options",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
     },
     "imageType": {
-        "message": "Images",
-        "description": "An section of Options"
+        "message": "Images$SUFFIX$",
+        "description": "An section of Options",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
     },
     "TAB_NEW_WINDOW": {
         "message": "New win",
@@ -525,12 +543,16 @@
         "message": "Tab Status",
         "description": ""
     },
+    "elem_TabPosition":{
+        "message":"Tab Position",
+        "description":""
+    },
     "elem_SelectEngines": {
         "message": "Select Engines",
         "description": ""
     },
     "elem_EnginePreview": {
-        "message": "Preview(Editing Works)",
+        "message": "Preview(Editable)",
         "description": ""
     },
     "elem_OpenType": {
@@ -559,6 +581,18 @@
     },
     "elem_SearchOnSite": {
         "message": "Search on Site",
+        "description": ""
+    },
+    "elem_NewActions": {
+        "message": "New Actions",
+        "description": ""
+    },
+    "elem_DirectionRestriction":{
+      "message":"Direction Restriction",
+      "description":""
+    },
+    "elem_ShortcutSetting": {
+        "message": "Shortcut Setting: ",
         "description": ""
     }
 }
