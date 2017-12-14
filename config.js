@@ -1,3 +1,9 @@
+
+
+
+
+//Deprecated 
+
 class ConfigClass {
     constructor() {
         this.storage = {};
@@ -38,18 +44,6 @@ class ConfigClass {
         return this.storage[key];
     }
 
-    // async async_merge_set(key = "", val = {}, where = "local") {
-
-    //     if (key.length === 0) return Promise.reject("length of key equals zero");
-    //     let area = browser.storage.local;
-    //     if (where === "async") {
-    //         area = browser.storage.sync;
-    //     }
-    //     let ori = (await this.async_get(key));
-    //     Object.assign(ori, val);
-    //     return area.set(key, ori);
-    // }
-
     async async_get(key = "") {
 
         let obj = await browser.storage.local.get(key);
@@ -60,19 +54,19 @@ class ConfigClass {
         return Promise.resolve(val);
     }
 
-    restore(json) {
-        const parsed = JSON.parse(json);
+    // restore(json) {
+    //     const parsed = JSON.parse(json);
 
-        if ("Actions" in parsed === false) {
-            throw "Invalid JSON File";
-        }
-        for (const key of Object.keys(parsed)) {
-            if (key in DEFAULT_CONFIG === false) {
-                // throw "Invalid JSON File";
-            }
-        }
-        return browser.storage.local.set(parsed);
-    }
+    //     if ("Actions" in parsed === false) {
+    //         throw "Invalid JSON File";
+    //     }
+    //     for (const key of Object.keys(parsed)) {
+    //         if (key in DEFAULT_CONFIG === false) {
+    //             // throw "Invalid JSON File";
+    //         }
+    //     }
+    //     return browser.storage.local.set(parsed);
+    // }
 
     async clear() {
         await browser.storage.local.clear();
@@ -103,6 +97,7 @@ class ConfigClass {
     async loadDefault() {
         return browser.storage.local.set(DEFAULT_CONFIG);
     }
+
     getAct(type, dir, key) {
         let r = null;
         if (key === commons.KEY_CTRL) {

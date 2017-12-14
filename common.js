@@ -21,6 +21,7 @@ const commons = {
     imageAction: "imageAction",
 
     DIR_P: "DIR_P", //PANEL
+    DIR_ANY:"DIR_ANY",//treated as any direction
     DIR_U: "DIR_U",
     DIR_D: "DIR_D",
     DIR_L: "DIR_L",
@@ -45,6 +46,7 @@ const commons = {
     // ACT_SCRIPT: "ACT_SCRIPT", //自定义脚本
     // ACT_BOOKMARK: "ACT_BOOKMARK",
 
+    OPEN_TEXT:"OPEN_TEXT",
     OPEN_LINK: "OPEN_LINK",
     OPEN_IMAGE: "OPEN_IMAGE",
     OPEN_IMAGE_LINK: "OPEN_IMAGE_LINK",
@@ -221,6 +223,17 @@ const $H = (ss = [], value = "none", context = document) => {
         }
     }
 }
+
+var DEBUG_FLAG = false;
+browser.storage.local.get("debug", _ => {
+    DEBUG_FLAG = _.debug;
+})
+
+const $D = (message, ...obj) => {
+    if (DEBUG_FLAG) console.log(message, ...obj);
+    // browser.runtime.sendMessage("");
+}
+
 
 const getI18nMessage = (strName = "", placeholders) => {
     const message = browser.i18n.getMessage(strName, placeholders);

@@ -2,6 +2,14 @@ var supportCopyImage = false;
 
 const TAB_ID_NONE = browser.tabs.TAB_ID_NONE;
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
+const DEFAULT_SEARCH_ENGINE = getI18nMessage("default_search_url");
+
+function parseBoolean(x) {
+    if (typeof x === "boolean") return x;
+    else if (x === "true") return true;
+    else if (x === "false") return false;
+    return false;
+}
 
 function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 5) {
     const url = window.URL.createObjectURL(blob);
@@ -71,6 +79,49 @@ Object.defineProperty(tabsRelation, "parent", {
     }
 });
 
+const flags = {
+    initialize: function() {
+        browser.storage.onChanged.addListener(changes => {
+            for (const k of Object.keys(changes)) {
+                if (k in this) this[k] = changes[k].newValue;
+            }
+        });
+        browser.storage.local.get(all => {
+            for (const k of Object.keys(this)) {
+                if (k === "initialize") continue;
+                this[k] = all[k];
+            }
+        });
+    },
+    enableSync: false,
+    enableIndicator: false,
+    enablePrompt: false,
+    enableStyle: false,
+    enableTimeoutCancel: false,
+    enableAutoSelectPreviousTab: true,
+    enableCtrlKey: false,
+    enableShiftKey: false,
+    timeoutCancel: 2000,
+    triggeredDistance: 20,
+    disableAdjustTabSequence: false,
+    switchToParentTab: false,
+}
+flags.initialize();
+
+const LStorage = browser.storage.local;
+async function getAct(type, dir, key) {
+    let r = null;
+    if (key === commons.KEY_CTRL) {
+        r = (await LStorage.get("Actions_CtrlKey"))["Actions_CtrlKey"][type][dir];
+    }
+    else if (key === commons.KEY_SHIFT) {
+        r = (await LStorage.get("Actions_ShiftKey"))["Actions_ShiftKey"][type][dir];
+    }
+    else {
+        r = (await LStorage.get("Actions"))["Actions"][type][dir];
+    }
+    return r ? r : DEFAULT_CONFIG.Actions[type][dir];
+}
 
 
 class ExecutorClass {
@@ -89,8 +140,8 @@ class ExecutorClass {
         this.backgroundChildTabCount = 0;
 
         browser.tabs.onRemoved.addListener((tabId) => {
-            if (config.get("enableAutoSelectPreviousTab") === true &&
-                config.get("switchToParentTab") !== true &&
+            if (flags.enableAutoSelectPreviousTab &&
+                flags.switchToParentTab &&
                 this.backgroundChildTabCount === 0 &&
                 this.newTabId !== browser.tabs.TAB_ID_NONE &&
                 this.previousTabId !== browser.tabs.TAB_ID_NONE &&
@@ -99,7 +150,7 @@ class ExecutorClass {
                     active: commons.FORE_GROUND
                 });
             }
-            if (config.get("switchToParentTab") === true && tabsRelation.switchToParent(tabId)) {
+            if (flags.switchToParentTab && tabsRelation.switchToParent(tabId)) {
                 browser.tabs.update(tabsRelation.parent, {
                     active: commons.FORE_GROUND
                 });
@@ -111,27 +162,23 @@ class ExecutorClass {
         });
 
     }
-    DO(m) {
+    async DO(m) {
         this.data = m;
         if (commons._DEBUG) {
             console.table(this.data);
         }
         if (this.data.direction === commons.DIR_P) {
-            config.async_get(this.data.key).then(arr => {
-                this.action = arr[this.data.index];
+            LStorage.get(this.data.key).then(arr => {
+                this.action = arr[this.data.key][this.data.index];
                 this.execute();
             });
         }
         else {
-            config.async_getAct(this.data.actionType, this.data.direction, this.data.modifierKey).then(a => {
-                this.action = a;
-                this.execute();
-            });
+            this.action = await getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
+            this.execute();
         }
-
     }
     execute() {
-
 
         let imageFile = null;
 
@@ -239,7 +286,7 @@ class ExecutorClass {
     }
     getTabIndex(tabsLength = 0, currentTabIndex = 0) {
         let index = 0;
-        if (config.get("disableAdjustTabSequence") || this.action.tab_active === commons.FORE_GROUND) {
+        if (flags.disableAdjustTabSequence || this.action.tab_active === commons.FORE_GROUND) {
             this.backgroundChildTabCount = 0;
         }
         switch (this.action.tab_pos) {
@@ -261,10 +308,19 @@ class ExecutorClass {
         if (this.action.tab_active === commons.BACK_GROUND && this.action.tab_pos === commons.TAB_CRIGHT) {
             this.backgroundChildTabCount += 1;
         }
+        $D(`getTabIndex: tabsLength=${tabsLength},
+            currentTabIndex=${currentTabIndex},
+            flags.disableAdjustTabSequence = ${flags.disableAdjustTabSequence},
+            this.action.tab_active =${this.action.tab_active },
+            this.action.tab_pos=${this.action.tab_pos},
+            this.backgroundChildTabCount = ${this.backgroundChildTabCount}
+            finalIndex=${index}
+        `);
         return index;
     }
 
     openTab(url = "") {
+        $D(`openTab: url=${url}`);
         this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
         if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.action.tab_pos)) {
             browser.windows.create({
@@ -286,7 +342,7 @@ class ExecutorClass {
                         });
                         else {
                             browser.tabs.create({
-                                active: this.action.tab_active,
+                                active: parseBoolean(this.action.tab_active),
                                 index: this.getTabIndex(tabs.length, tab.index),
                                 url
                             }).then((newTab) => {
@@ -296,6 +352,8 @@ class ExecutorClass {
                                 }
 
                                 tabsRelation.check(tab.id, newTab.id);
+                            }, (error) => {
+                                console.error(error);
                             });
                         }
                         break;
@@ -311,15 +369,13 @@ class ExecutorClass {
 
     openURL(url = "") {
         function isValidURL(u) {
-            let r = true;
             try {
                 new URL(u);
+                return true;
             }
             catch (e) {
-                r = false;
+                return false;
             }
-            return r;
-
         }
         if (isValidURL(url)) {
             this.openTab(url);
@@ -361,16 +417,24 @@ class ExecutorClass {
 
     }
 
-    searchText(keyword) {
+    async searchText(keyword) {
 
         let url;
         if (this.action.engine_url && this.action.engine_url.length != 0) { //new engine_url property in v1.53
             url = this.action.engine_url;
         }
-        else {
-            url = config.getSearchURL(this.action.engine_name); // old method
+        else { // old method
+            const engines = (await LStorage.get("Engines"))["Engines"];
+            for (const e of engines) {
+                if (e.name === this.action.engine_name) {
+                    url = e.url;
+                    break;
+                }
+            }
         }
-
+        if (!url) {
+            url = DEFAULT_SEARCH_ENGINE;
+        }
         if (url.startsWith("{redirect.html}")) {
             this.searchImage(keyword); //donot follow
             return;
@@ -383,8 +447,18 @@ class ExecutorClass {
         );
     }
 
-    searchImage(imageFileURL) {
-        let url = config.getSearchURL(this.action.engine_name);
+    async searchImage(imageFileURL) {
+        let url;
+        const engines = (await LStorage.get("Engines"))["Engines"];
+        for (const e of engines) {
+            if (e.name === this.action.engine_name) {
+                url = e.url;
+                break;
+            }
+        }
+        if (!url) {
+            url = DEFAULT_SEARCH_ENGINE;
+        }
         if (url.startsWith("{redirect.html}")) {
             let params = url.replace("{redirect.html}", "").replace("{url}", encodeURIComponent(imageFileURL));
             // pass string of params.
@@ -428,12 +502,12 @@ class ExecutorClass {
         for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
         return result;
     }
-    download(url = "", filename = "") {
+    async download(url = "", filename = "") {
         let opt = {
             url,
             saveAs: this.action.download_saveas
         };
-        const directories = config.get("downloadDirectories");
+        const directories = (await LStorage.get("downloadDirectories"))["downloadDirectories"];
         if (url.startsWith("blob:") && this.data.fileInfo) {
             filename = this.data.fileInfo.name || "file.dat";
         }
@@ -461,43 +535,42 @@ class ExecutorClass {
 
 var executor = new ExecutorClass();
 var config = new ConfigClass();
-var promptString = {
-    "%a": {}, // action
-    "%g": {}, // background foreground
-    "%t": {}, // tabs position
-    "%d": {}, // download directory
-    "%s": null, // selection
-    "%e": null, // engines' name
-    "%y": {}, // type of action.
-};
 
-function updatePromptString() {
-    for (const key of Object.keys(commons)) {
-        if (/^ACT_/.test(key)) {
-            promptString["%a"][key] = getI18nMessage(key);
-        }
-        else if (/^(FORE|BACK)_GROUND/.test(key)) {
-            promptString["%g"][key] = getI18nMessage(key);
-        }
-        else if (/^TAB_/.test(key)) {
-            promptString["%t"][key] = getI18nMessage(key);
+config.load()
+
+//保存到firefox的同步存储区
+// browser.storage.onChanged.addListener(async(changes) => {
+//     if (flags.enableSync || ("enableSync" in changes && changes["enableSync"].newValue === true)) {
+//         browser.storage.sync.set((await browser.storage.local.get()));
+//     }
+// });
+
+//在安装扩展时(含更新)触发，更新缺少的配置选项
+browser.runtime.onInstalled.addListener(async() => {
+    let flag = false;
+
+    function assign(target, origin) {
+        for (const aKey of Object.keys(origin)) {
+            if (aKey in target) {
+                if (typeof target[aKey] === "object") {
+                    assign(target[aKey], origin[aKey]);
+                }
+            }
+            else {
+                target[aKey] = origin[aKey];
+                flag = true;
+            }
         }
     }
-    for (let i = 0; i < 8; i++) {
-        promptString["%d"][i.toString()] = browser.i18n.getMessage("DownloadDirectory", i);
+
+    const all = await (browser.storage.local.get());
+    assign(all, DEFAULT_CONFIG);
+    if (flag) {
+        browser.storage.local.set(all);
     }
-    promptString["%y"] = {
-        "textAction": browser.i18n.getMessage("textType"),
-        "imageAction": browser.i18n.getMessage("imageType"),
-        "linkAction": browser.i18n.getMessage("linkType"),
-    }
-}
+})
 
-
-config.load().then(() => {
-    updatePromptString();
-});
-
+//点击工具栏图标时打开选项页
 browser.browserAction.onClicked.addListener(() => {
     browser.runtime.openOptionsPage();
 });
@@ -511,18 +584,4 @@ browser.runtime.onMessage.addListener((m) => {
     }
 });
 
-browser.runtime.onConnect.addListener((port) => {
-    // console.log("port",port);
-    if (port.name === "initial") {
-        port.postMessage({
-            config: JSON.stringify(config.storage),
-            promptString,
-        });
-        //自定义样式
-        if (config.get("enableStyle") === true) {
-            browser.tabs.insertCSS({
-                code: config.get("style")
-            });
-        }
-    }
-});
+// browser.runtime.onConnect.addListener((port) => {});
