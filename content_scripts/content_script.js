@@ -4,12 +4,6 @@ console.info("Glitter Drag: Content script is injected by browser successfully")
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 let IS_TOP_WINDOW = window.top === window;
 
-let style = document.createElement("link");
-style.rel = "stylesheet";
-style.type = "text/css";
-style.href = browser.runtime.getURL("content_scripts/content_script.css");
-
-
 const MIME_TYPE = {
     ".gif": "image/gif",
     ".jpg": "image/jpeg",
@@ -100,15 +94,15 @@ function updatePromptString() {
 }
 updatePromptString();
 
-function translatePrompt(message, property) {
+function translatePrompt(message, property, actionType, selection) {
     return message ? message
         .replace("%a", promptString["%a"][property["act_name"]])
         .replace("%t", promptString["%t"][property["tab_pos"]])
         .replace("%g", promptString["%g"][property["tab_active"] === true ? "FORE_GROUND" : "BACK_GROUND"])
         .replace("%d", promptString["%d"][property["download_directory"]] || "")
         .replace("%e", property["engine_name"])
-        .replace("%y", promptString["%y"][this.actionType])
-        .replace("%s", this.selection) : "";
+        .replace("%y", promptString["%y"][actionType])
+        .replace("%s", selection) : "";
 }
 
 function removeExistedElement(selector) {
@@ -119,6 +113,24 @@ function removeExistedElement(selector) {
     }
     return false;
 }
+
+function injectStyle(opt = { url: "", css: "" }) {
+    let style;
+    if (opt.url && opt.url.length != 0) {
+        style = document.createElement("link");
+        style.rel = "stylesheet";
+        style.type = "text/css";
+        style.href = opt.url;
+        document.head.appendChild(style);
+    }
+    else if (opt.css && opt.css.length != 0) {
+        style = document.createElement("style");
+        style.type = "text/css";
+        style.textContent = opt.css;
+        document.head.appendChild(style);
+    }
+}
+
 
 class Prompt {
     constructor() {
@@ -251,8 +263,6 @@ class cmdPanel {
         this.el.id = "GDPanel-wrapper";
         this.el.innerHTML = CMDPANEL_HTML_CONTENT;
         this.lastdragovertarget = null;
-
-
 
         this.el.addEventListener("drop", dropListener)
         // this.el.addEventListener("dragover", e => {
@@ -425,7 +435,7 @@ class DragClass {
         this.drop4panel = this.drop4panel.bind(this);
         this.dragover4panel = this.dragover4panel.bind(this)
 
-        this.cmdPanel = new cmdPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel, this.dragover4panel);
+        // this.cmdPanel = new cmdPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel, this.dragover4panel);
 
         //end: UI componment
 
@@ -572,18 +582,18 @@ class DragClass {
                 this.promptBox.display();
                 let message = bgConfig.tipsContent[property["act_name"]];
                 // console.log(promptString["%g"][property["download_directory"]]);
-                message = translatePrompt(message, property);
+                message = translatePrompt(message, property, this.actionType, this.selection);
                 this.promptBox.render(this.direction, message);
             }
             //----
 
-            this.cmdPanel.hide();
-            if (property["act_name"] === commons.ACT_PANEL) {
-                this.cmdPanel.place(evt.pageX, evt.pageY, this.direction);
-                this.cmdPanel.display();
-                this.promptBox.hide();
-                this.cmdPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
-            }
+            // this.cmdPanel.hide();
+            // if (property["act_name"] === commons.ACT_PANEL) {
+            //     this.cmdPanel.place(evt.pageX, evt.pageY, this.direction);
+            //     this.cmdPanel.display();
+            //     this.promptBox.hide();
+            //     this.cmdPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
+            // }
             //----
 
         }
@@ -682,7 +692,7 @@ class DragClass {
         // obj.tab_active = sanitizeBoolean(obj.tab_active);
         // obj.search_onsite = sanitizeBoolean(obj.search_onsite);
         // obj.download_saveas = sanitizeBoolean(obj.download_saveas);
-        this.cmdPanel.hide();
+        // this.cmdPanel.hide();
         this.post({ direction: commons.DIR_P, key: e.originalTarget.dataset["key"], index: parseInt(e.originalTarget.dataset["index"]) });
         e.preventDefault(); //note!
     }
@@ -730,6 +740,7 @@ class DragClass {
                 // if (this.isNotAcceptable(evt)) {
                 //     return;
                 // }
+
                 if (evt.target.nodeName === "A" &&
                     (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
                     return;
@@ -831,7 +842,7 @@ class DragClass {
             case "dragend": // Bubbling
                 this.indicatorBox && this.indicatorBox.hide();
                 this.promptBox && this.promptBox.stopRender();
-                this.cmdPanel && this.cmdPanel.hide();
+                // this.cmdPanel && this.cmdPanel.hide();
                 this.lastDirection = null;
                 //dragend's target is things we are dragging, calling this.isNotAcceptable has not effect. However we have updated this.isInputArea in drop event, just use it.
                 if (this.isInputArea) {
@@ -1024,33 +1035,32 @@ function CSlistener(msg) {
     // })
 }
 
-function onGettingConfig(config) {
-    // TODO: debug;
-    bgConfig = JSON.parse(config);
-    // console.log(bgConfig);
-}
+// function onGettingConfig(config) {
+//     // TODO: debug;
+//     bgConfig = JSON.parse(config);
+//     // console.log(bgConfig);
+// }
 
 browser.runtime.onConnect.addListener(port => {
     if (port.name === "sendToContentScript") {
         port.onMessage.addListener(CSlistener);
     }
-    else if (port.name === "updateConfig") {
-        port.onMessage.addListener(onGettingConfig);
-    }
 });
-let bgPort = browser.runtime.connect({
-    name: "initial"
-});
+// let bgPort = browser.runtime.connect({
+//     name: "initial"
+// });
 let bgConfig = null;
 let mydrag = null;
 
-
 function doInit() {
     if (mydrag === null && document.body) {
+        injectStyle({ url: browser.runtime.getURL("content_scripts/content_script.css") });
+        if (bgConfig.enableStyle) {
+            injectStyle({ css: bgConfig.style });
+        }
         mydrag = new DragClass(document);
-        document.head.appendChild(style);
         document.removeEventListener("readystatechange", onReadyStateChange);
-        document.removeEventListener("DOMContentLoaded", OnDOMContentLoaded);
+        document.removeEventListener("DOMContentLoaded", OnDoMContentLoaded);
     }
 }
 
@@ -1058,21 +1068,23 @@ function onReadyStateChange() {
     if (document.readyState === "complete") doInit();
 }
 
-function OnDOMContentLoaded() {
+function OnDoMContentLoaded() {
     doInit();
 }
 
-browser.storage.onChanged.addListener(_ => {
-    for (const key of Object.keys(_)) {
-        bgConfig[key] = _[key].newValue;
-        mydrag.cmdPanel.updateTable();
+function onStorageChange(changes) {
+    for (const key of Object.keys(changes)) {
+        bgConfig[key] = changes[key].newValue;
+        // mydrag.cmdPanel.updateTable();
     }
-})
+}
+
+browser.storage.onChanged.addListener(onStorageChange);
 
 browser.storage.local.get().then(config => {
     bgConfig = config;
     document.addEventListener('readystatechange', onReadyStateChange, false);
-    document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
+    document.addEventListener("DOMContentLoaded", OnDoMContentLoaded);
     doInit();
 })
 

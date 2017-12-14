@@ -130,11 +130,10 @@
 
 #GDPanel {
     background: rgba(233, 233, 233, 0.7);
-    width: 310px;
+    width: 250px;
     table-layout: fixed;
 }
 
-.GDPanel-label {}
 
 .GDPanel-content-wrapper {
     white-space: nowrap;
