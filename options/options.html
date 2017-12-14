@@ -13,11 +13,248 @@
 </head>
 
 <body>
+    <template id="template-for-single-direction">
+        
+        <select class="act-name" data-i18n="act" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="...">
+            <option data-i18n="ACT_NONE" data-i18n-prefix="" value="ACT_NONE">无动作</option>
+            <option data-i18n="ACT_OPEN" data-i18n-prefix=""  value="ACT_OPEN">打开</option>
+            <option data-i18n="ACT_COPY" data-i18n-prefix="" value="ACT_COPY">复制</option>
+            <option data-i18n="ACT_SEARCH" data-i18n-prefix="" value="ACT_SEARCH">搜索</option>
+            <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS" disabled="disabled" style="display: none;">翻译</option>
+            <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL">下载</option>
+            <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled="disabled" style="display: none;">二维码</option>
+            <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" disabled="disabled" style="display: none;">查找</option>
+        </select>
+        <select class="open-type" data-i18n="open_type" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="指定如何打开链接。当 图像地址 不可用时，会自动转换为 一般链接">
+            <option data-i18n="OPEN_LINK" data-i18n-prefix="" value="OPEN_LINK">链接</option>
+            <option data-i18n="OPEN_IMAGE" data-i18n-prefix="" value="OPEN_IMAGE">图像本身</option>
+            <option data-i18n="OPEN_IMAGE_LINK" data-i18n-prefix="" value="OPEN_IMAGE_LINK">图像地址优先</option>
+        </select>
+        <select class="search-type" data-i18n="search_type" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="需要搜索的东西，文本、链接。当 图像地址 不可用时，会自动转换为 一般链接" >
+            <option data-i18n="SEARCH_LINK" data-i18n-prefix="" value="SEARCH_LINK">链接</option>
+            <option data-i18n="SEARCH_IMAGE_LINK" data-i18n-prefix="" value="SEARCH_IMAGE_LINK">图像地址优先</option>
+            <option data-i18n="SEARCH_TEXT" data-i18n-prefix="" value="SEARCH_TEXT">文本</option>
+            <option data-i18n="SEARCH_IMAGE" data-i18n-prefix="" value="SEARCH_IMAGE"图像</option>
+        </select>
+        <select class="engine-name" data-i18n="search" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="调用的搜索引擎，默认调用百度" class="searchEngines" style="">
+            <option value="DEFAULT_SEARCH_ENGINE">默认</option>
+        </select>
+        <select class="search-onsite" data-i18n="search_onsite" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="将关键词 替换成 site:域名 关键词">
+            <option data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" value="true">站内搜索</option>
+            <option data-i18n="SEARCH_ONSITE_NO" data-i18n-prefix="" value="false">不处理</option>
+        </select>
+        <select class="copy-type" data-i18n="copy" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="指定需要复制的东西，文本、链接或图像。当 图像地址 不可用时，会自动转换为 一般链接。复制图像可能会有很多问题，谨慎使用。">
+            <option data-i18n="COPY_LINK" data-i18n-prefix="" value="COPY_LINK">链接</option>
+            <option data-i18n="COPY_IMAGE_LINK" data-i18n-prefix="" value="COPY_IMAGE_LINK">图像地址优先</option>
+            <option data-i18n="COPY_TEXT" data-i18n-prefix="" value="COPY_TEXT">文本</option>
+            <option data-i18n="COPY_IMAGE" data-i18n-prefix="" value="COPY_IMAGE">图像</option>
+        </select>
+        <select class="download-type" data-i18n="download_type" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="指定需要下载的类型。当 图像地址 不可用时，会自动转换为 一般链接" >
+            <option data-i18n="DOWNLOAD_TEXT" data-i18n-prefix="" value="DOWNLOAD_TEXT">文本</option>
+            <option data-i18n="DOWNLOAD_LINK" data-i18n-prefix="" value="DOWNLOAD_LINK">链接</option>
+            <option data-i18n="DOWNLOAD_IMAGE_LINK" data-i18n-prefix="" value="DOWNLOAD_IMAGE_LINK">图像地址优先</option>
+            <option data-i18n="DOWNLOAD_IMAGE" data-i18n-prefix="" value="DOWNLOAD_IMAGE">图像</option>
+        </select>
+        <select class="tab-active" data-i18n="active" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="新建标签页的激活状态" style="">
+            <option data-i18n="FORE_GROUND" data-i18n-prefix="" value="true">前台</option>
+            <option data-i18n="BACK_GROUND" data-i18n-prefix="" value="false">后台</option>
+            </select>
+        <select class="tab-pos" data-i18n="pos" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="标签页的位置" style="">
+            <option data-i18n="TAB_NEW_WINDOW" data-i18n-prefix="" value="TAB_NEW_WINDOW">新建窗口</option>
+            <option data-i18n="TAB_NEW_PRIVATE_WINDOW" data-i18n-prefix="" value="TAB_NEW_PRIVATE_WINDOW">隐私窗口</option>
+            <option data-i18n="TAB_CUR" data-i18n-prefix="" value="TAB_CUR">当前</option>
+            <option data-i18n="TAB_FIRST" data-i18n-prefix="" value="TAB_FIRST">首</option>
+            <option data-i18n="TAB_LAST" data-i18n-prefix="" value="TAB_LAST">尾</option>
+            <option data-i18n="TAB_CLEFT" data-i18n-prefix="" value="TAB_CLEFT">前</option>
+            <option data-i18n="TAB_CRIGHT" data-i18n-prefix="" value="TAB_CRIGHT">后</option>
+        </select>
+        <select class="download-directory" data-i18n="download_directory" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="指定文件保存的目录" >
+            <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="0" value="0">下载目录 0</option>
+            <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="1" value="1">下载目录 1</option>
+            <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="2" value="2">下载目录 2</option>
+            <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="3" value="3">下载目录 3</option>
+            <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="4" value="4">下载目录 4</option>
+            <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="5" value="5">下载目录 5</option>
+            <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="6" value="6">下载目录 6</option>
+            <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="7" value="7">下载目录 7</option>
+        </select>
+        <select class="download-saveas" title="是否需要另存文件为... ?">
+            <option data-i18n="DOWNLOAD_SAVEAS_YES" data-i18n-prefix="" value="true">另存为</option>
+            <option data-i18n="DOWNLOAD_SAVEAS_NO" data-i18n-prefix="" value="false">不另存为</option>
+        </select>
+    </template>
+    <template id="template-for-single-action-type">
+        <div>
+            <label data-i18n="directionControl" data-i18n-prefix="" ></label>
+            <div class="">
+                <select class="direction-control" title="限制允许拖拽的方向">
+                    <option data-i18n="ALLOW_NORMAL" data-i18n-prefix=""  value="ALLOW_NORMAL">普通4个方向</option>
+                    <option data-i18n="ALLOW_QUADRANT" data-i18n-prefix="" value="ALLOW_QUADRANT">斜向4个方向</option>
+                    <option data-i18n="ALLOW_H" data-i18n-prefix="" value="ALLOW_H">水平2个方向</option>
+                    <option data-i18n="ALLOW_V" data-i18n-prefix="" value="ALLOW_V">垂直2个方向</option>
+                    <option data-i18n="ALLOW_LOW_L_UP_R" data-i18n-prefix="" value="ALLOW_LOW_L_UP_R">斜向2个方向</option>
+                    <option data-i18n="ALLOW_UP_L_LOW_R" data-i18n-prefix="" value="ALLOW_UP_L_LOW_R">另2个斜向方向</option>
+                    <option data-i18n="ALLOW_ALL" data-i18n-prefix="" value="ALLOW_ALL">狂热8个方向</option>
+                    <option data-i18n="ALLOW_ONE" data-i18n-prefix="" value="ALLOW_ONE">只有1个方向</option>
+                </select>
+            </div>
+        </div>
+        <div class="direction-container"><label data-i18n="DIR_U" data-i18n-prefix="" ></label><div class="direction" value="DIR_U"></div></div>
+        <div class="direction-container"><label data-i18n="DIR_D" data-i18n-prefix="" ></label><div class="direction" value="DIR_D"></div></div>
+        <div class="direction-container"><label data-i18n="DIR_L" data-i18n-prefix="" ></label><div class="direction" value="DIR_L"></div></div>
+        <div class="direction-container"><label data-i18n="DIR_R" data-i18n-prefix="" ></label><div class="direction" value="DIR_R"></div></div>
+        <div class="direction-container"><label data-i18n="DIR_UP_L" data-i18n-prefix=""></label><div class="direction" value="DIR_UP_L"></div></div>
+        <div class="direction-container"><label data-i18n="DIR_UP_R" data-i18n-prefix=""></label><div class="direction" value="DIR_UP_R"></div></div>
+        <div class="direction-container"><label data-i18n="DIR_LOW_L" data-i18n-prefix=""></label><div class="direction" value="DIR_LOW_L"></div></div>
+        <div class="direction-container"><label data-i18n="DIR_LOW_R" data-i18n-prefix=""></label><div class="direction" value="DIR_LOW_R"></div></div>
+        <div class="direction-container"><label data-i18n="DIR_OUTER" data-i18n-prefix=""></label><div class="direction" value="DIR_OUTER"></div></div>
+    </template>
+    <template id="template-for-actions-container">
+        <div id="actions-switch">
+            <label data-i18n="ShortcutSetting" >快捷键设定: </label>
+            <input class="Actions" value="Actions" type="radio">
+            <label for="Actions">No</label>
+            <input class="Actions_CtrlKey" value="Actions_CtrlKey" type="radio">
+            <label for="Actions_CtrlKey">Ctrl</label>
+            <input class="Actions_ShiftKey" value="Actions_ShiftKey" type="radio">
+            <label for="Actions_ShiftKey">Shift</label>
+        </div>
+        <div id="actions-container">
+            <div class="textAction"></div>
+            <div class="linkAction"></div>
+            <div class="imageAction"></div>
+        </div>
+    </template>
+    <template id="template-action-table">
+        <!--
+        <table>
+                <tbody>
+                    <tr>
+                        <td data-i18n="PerformedAction">执行的动作</td>
+                        <td>
+                            <select class="action-name">
+                                        <option data-i18n="ACT_NONE" data-i18n-prefix="" value="ACT_NONE">无动作</option>
+                                        <option data-i18n="ACT_OPEN" data-i18n-prefix="" value="ACT_OPEN">打开</option>
+                                        <option data-i18n="ACT_COPY" data-i18n-prefix="" value="ACT_COPY">复制</option>
+                                        <option data-i18n="ACT_SEARCH" data-i18n-prefix="" value="ACT_SEARCH">搜索</option>
+                                        <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL">下载</option>
+                                        <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS" disabled>翻译</option>
+                                        <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled>二维码</option>
+                                        <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" disabled>查找</option>
+                                    </select>
 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="TabStatus">标签页状态</td>
+                        <td
+                            <input class="foreground tab-active" value="true" type="radio"><label for="foreground" data-i18n="FORE_GROUND" data-i18n-prefix="">前台</label>
+                            <input class="background tab-active" value="false" type="radio"><label for="background" data-i18n="BACK_GROUND" data-i18n-prefix="" >后台</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>标签页位置</td>
+                        <td>
+                            <select style="" class="tab-pos">
+                                <option data-i18n="ACT_FIND" data-i18n-prefix="" value="TAB_NEW_WINDOW">新建窗口</option>
+                                <option data-i18n="TAB_NEW_PRIVATE_WINDOW" data-i18n-prefix="" value="TAB_NEW_PRIVATE_WINDOW">隐私窗口</option>
+                                <option data-i18n="TAB_CUR" data-i18n-prefix="" value="TAB_CUR">当前</option>
+                                <option data-i18n="TAB_FIRST" data-i18n-prefix="" value="TAB_FIRST">首</option>
+                                <option data-i18n="TAB_LAST" data-i18n-prefix="" value="TAB_LAST">尾</option>
+                                <option data-i18n="TAB_CLEFT" data-i18n-prefix="" value="TAB_CLEFT">前</option>
+                                <option data-i18n="TAB_CRIGHT" data-i18n-prefix="" value="TAB_CRIGHT">后</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="SelectEngines">引擎选择</td>
+                        <td>
+                            <div class="search-engine-select-group"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="EnginePreview">引擎预览</td>
+                        <td><input class="search-engine-name" type="text"><input class="search-engine-url" type="text" style="width:500px;" /></td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="OpenType">打开类型</td>
+                        <td>
+                            <input class="open-text open-type" value="OPEN_TEXT" type="radio"><label data-i18n="OPEN_TEXT" data-i18n-prefix="" for="open-text">文本</label>
+                            <input class="open-link open-type" value="OPEN_LINK" type="radio"><label data-i18n="OPEN_LINK" data-i18n-prefix="" for="open-link">链接</label>
+                            <input class="open-image-link open-type" value="OPEN_IMAGE_LINK" type="radio"><label data-i18n="OPEN_IMAGE_LINK" data-i18n-prefix="" for="open-image-link">优先图像链接</label>
+                            <input class="open-image open-type" value="OPEN_IMAGE" type="radio"><label data-i18n="OPEN_IMAGE" data-i18n-prefix="" for="open-image">图像</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="SearchType">搜索类型</td>
+                        <td>
+                            <input class="search-text search-type" value="SEARCH_TEXT" type="radio"><label data-i18n="SEARCH_TEXT" data-i18n-prefix="" for="search-text">文本</label>
+                            <input class="search-link search-type" value="SEARCH_LINk" type="radio"><label data-i18n="SEARCH_LINK" data-i18n-prefix="" for="search-link">链接</label>
+                            <input class="search-image-link search-type" value="SEARCH_IMAGE_LINK" type="radio"><label data-i18n="SEARCH_IMAGE_LINK" data-i18n-prefix="" for="search-image-link">优先图像链接</label>
+                            <input class="search-image search-type" value="SEARCH_IMAGE" type="radio"><label data-i18n="SEARCH_IMAGE" data-i18n-prefix="" for="search-image">图像</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="CopyType">复制类型</td>
+                        <td>
+                            <input class="copy-text copy-type" value="COPY_TEXT" type="radio"><label data-i18n="COPY_TEXT" data-i18n-prefix="" for="copy-text">文本</label>
+                            <input class="copy-link copy-type" value="COPY_LINK" type="radio"><label data-i18n="COPY_LINK" data-i18n-prefix="" for="copy-link">链接</label>
+                            <input class="copy-image-link copy-type" value="COPY_IMAGE_LINK" type="radio"><label data-i18n="COPY_IMAGE_LINK" data-i18n-prefix="" for="copy-image-link">优先图像链接</label>
+                            <input class="copy-image copy-type" value="COPY_IMAGE" type="radio"><label data-i18n="COPY_IMAGE" data-i18n-prefix="" for="copy-image">图像</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="DownloadType">下载类型</td>
+                        <td>
+                            <input class="download-text download-type" value="DOWNLOAD_TEXT" type="radio"><label data-i18n="DOWNLOAD_TEXT" data-i18n-prefix="" for="download-text">文本</label>
+                            <input class="download-link download-type" value="DOWNLOAD_LINK" type="radio"><label data-i18n="DOWNLOAD_LINK" data-i18n-prefix="" for="download-link">链接</label>
+                            <input class="download-image-link download-type" value="DOWNLOAD_IMAGE_LINK" type="radio"><label data-i18n="DOWNLOAD_IMAGE_LINK" data-i18n-prefix="" for="download-image-link">优先图像链接</label>
+                            <input class="download-image download-type" value="DOWNLOAD_IMAGE" type="radio"><label data-i18n="DOWNLOAD_IMAGE" data-i18n-prefix="" for="download-image">图像</label>
+                        </td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="Saveas">下载另存为...</td>
+                        <td>
+                            <input class="download-saveas-yes download-saveas" value="true" type="radio"><label data-i18n="DOWNLOAD_SAVEAS_YES" data-i18n-prefix="" for="download-saveas-yes">是</label>
+                            <input class="download-saveas-no download-saveas" value="false" type="radio"><label data-i18n="DOWNLOAD_SAVEAS_NO" data-i18n-prefix="" for="download-saveas-no">否</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="DownloadDirectory">下载目录</td>
+                        <td>
+                            <select class="download-directory" title="指定文件保存的目录" style="">
+                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="0" value="0">下载目录 0</option>
+                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="1"  value="1">下载目录 1</option>
+                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="2"  value="2">下载目录 2</option>
+                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="3"  value="3">下载目录 3</option>
+                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="4"  value="4">下载目录 4</option>
+                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="5"  value="5">下载目录 5</option>
+                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="6"  value="6">下载目录 6</option>
+                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="7"  value="7">下载目录 7</option>
+                                    </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="SearchOnSite">是否在站内搜索</td>
+                        <td>
+                            <input class="search-onsite-yes search-onsite" value="SEARCH_ONSITE_YES" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-yes">是</label>
+                            <input class="search-onsite-no search-onsite" value="SEARCH_ONSITE_NO" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-no">否</label>
+                        </td>
+                    </tr>
+                    <!-- <tr>
+                        <td>提示内容</td>
+                        <td><input type="text" class="prompt-content"></td>
+                    </tr> -->
+                </tbody>
+            </table>
+        -->
+    </template>
     <div id="control">
         <button class="default" data-i18n="Backup" id="backup" href="#" target="window" download="GlitterDrag-time.json">备份配置</button>
         <button class="default" data-i18n="Restore" id="restore" href="#">恢复配置 </button>
         <button class="default" data-i18n="Default" id="default" href="#">恢复默认 </button>
+        <button class="default" data-i18n="Sanitize" id="sanitize" href="#" style="display:none">净化</button>
         <input type="file" id="fileInput" accept=".json" style="display:none">
     </div>
     <br>
@@ -26,17 +263,18 @@
         <section id="tabs">
             <nav>
                 <a id="_debug" toggle-target="#tab-debug" data-i18n="Debug" style="color:crimson;display:none" class="nav-a" href="#">调试</a>
-                <a class="nav-a" toggle-target="#tab-general" data-i18n="General" href="#">常规</a>
+                <a class="nav-a" toggle-target="#tab-general-setting" data-i18n="General" href="#">常规</a>
                 <a class="nav-a nav-active" toggle-target="#tab-actions" data-i18n="Actions" href="#">动作</a>
-                <a class="nav-a" toggle-target="#tab-actions-ctrlkey" data-i18n="ActionsCtrlKey" href="#">动作ctrl</a>
-                <a class="nav-a" toggle-target="#tab-actions-shiftkey" data-i18n="ActionsShiftKey" href="#">动作shift</a>
+                <a class="nav-a" toggle-target="#tab-new-actions" data-i18n="NewActions" href="#">新动作</a>
                 <a class="nav-a" toggle-target="#tab-search-template" data-i18n="SearchTemplate" href="#">搜索模板</a>
                 <a class="nav-a" toggle-target="#tab-download" data-i18n="Download" href="#">下载</a>
-                <a class="nav-a" toggle-target="#tab-panel" data-i18n="Panel" href="#">面板</a>
+                <!-- <a class="nav-a" toggle-target="#tab-panel" data-i18n="Panel" href="#">面板</a> -->
                 <a class="nav-a" toggle-target="#tab-style" data-i18n="Style" href="#">样式</a>
             </nav>
             <ul style="list-style:none">
                 <li class="tab-content" id="tab-debug" style="margin-left:12em">
+
+                    <br>
                     <button id="reload">Reload</button>
                     <br>
                     <div>
@@ -63,7 +301,6 @@
                 </li>
                 <li class="tab-content" id="tab-panel">
                     <div id="panel-buttons">
-
                         <h5 data-i18n="Text">文本</h5>
 
                         <button class="panel-text-cmd" index=0 data-i18n="Command" data-i18n-placeholders="1">命令1</button>
@@ -105,12 +342,14 @@
                                     <tr>
                                         <td data-i18n="TabStatus">标签页状态</td>
                                         <td>
-                                            <input data-i18n="FORE_GROUND" data-i18n-prefix="" class="foreground tab-active" value="true" type="radio" name="tab-active"><label for="foreground">前台</label>
-                                            <input data-i18n="BACK_GROUND" data-i18n-prefix="" class="background tab-active" value="false" type="radio" name="tab-active"><label for="background">后台</label>
+                                            <input class="foreground" value="true" type="radio">
+                                            <label for="foreground" data-i18n="FORE_GROUND" data-i18n-prefix="">前台</label>
+                                            <input class="background" value="false" type="radio">
+                                            <label for="background" data-i18n="BACK_GROUND" data-i18n-prefix="">后台</label>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>标签页位置</td>
+                                        <td data-i18n="TabPosition">标签页位置</td>
                                         <td>
                                             <select style="" class="tab-pos">
                                                 <option data-i18n="ACT_FIND" data-i18n-prefix="" value="TAB_NEW_WINDOW">新建窗口</option>
@@ -136,45 +375,45 @@
                                     <tr>
                                         <td data-i18n="OpenType">打开类型</td>
                                         <td>
-                                            <input class="open-text open-type" name="open-type" value="OPEN_TEXT" type="radio"><label data-i18n="OPEN_TEXT" data-i18n-prefix="" for="open-text">文本</label>
-                                            <input class="open-link open-type" name="open-type" value="OPEN_LINK" type="radio"><label data-i18n="OPEN_LINK" data-i18n-prefix="" for="open-link">链接</label>
-                                            <input class="open-image-link open-type" name="open-type" value="OPEN_IMAGE_LINK" type="radio"><label data-i18n="OPEN_IMAGE_LINK" data-i18n-prefix="" for="open-image-link">优先图像链接</label>
-                                            <input class="open-image open-type" name="open-type" value="OPEN_IMAGE" type="radio"><label data-i18n="OPEN_IMAGE" data-i18n-prefix="" for="open-image">图像</label>
+                                            <input class="open-text open-type" value="OPEN_TEXT" type="radio"><label data-i18n="OPEN_TEXT" data-i18n-prefix="" for="open-text">文本</label>
+                                            <input class="open-link open-type" value="OPEN_LINK" type="radio"><label data-i18n="OPEN_LINK" data-i18n-prefix="" for="open-link">链接</label>
+                                            <input class="open-image-link open-type" value="OPEN_IMAGE_LINK" type="radio"><label data-i18n="OPEN_IMAGE_LINK" data-i18n-prefix="" for="open-image-link">优先图像链接</label>
+                                            <input class="open-image open-type" value="OPEN_IMAGE" type="radio"><label data-i18n="OPEN_IMAGE" data-i18n-prefix="" for="open-image">图像</label>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td data-i18n="SearchType">搜索类型</td>
                                         <td>
-                                            <input class="search-text search-type" name="search-type" value="SEARCH_TEXT" type="radio"><label data-i18n="SEARCH_TEXT" data-i18n-prefix="" for="search-text">文本</label>
-                                            <input class="search-link search-type" name="search-type" value="SEARCH_LINk" type="radio"><label data-i18n="SEARCH_LINK" data-i18n-prefix="" for="search-link">链接</label>
-                                            <input class="search-image-link search-type" name="search-type" value="SEARCH_IMAGE_LINK" type="radio"><label data-i18n="SEARCH_IMAGE_LINK" data-i18n-prefix="" for="search-image-link">优先图像链接</label>
-                                            <input class="search-image search-type" name="search-type" value="SEARCH_IMAGE" type="radio"><label data-i18n="SEARCH_IMAGE" data-i18n-prefix="" for="search-image">图像</label>
+                                            <input class="search-text search-type" value="SEARCH_TEXT" type="radio"><label data-i18n="SEARCH_TEXT" data-i18n-prefix="" for="search-text">文本</label>
+                                            <input class="search-link search-type" value="SEARCH_LINk" type="radio"><label data-i18n="SEARCH_LINK" data-i18n-prefix="" for="search-link">链接</label>
+                                            <input class="search-image-link search-type" value="SEARCH_IMAGE_LINK" type="radio"><label data-i18n="SEARCH_IMAGE_LINK" data-i18n-prefix="" for="search-image-link">优先图像链接</label>
+                                            <input class="search-image search-type" value="SEARCH_IMAGE" type="radio"><label data-i18n="SEARCH_IMAGE" data-i18n-prefix="" for="search-image">图像</label>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td data-i18n="CopyType">复制类型</td>
                                         <td>
-                                            <input class="copy-text copy-type" name="copy-type" value="COPY_TEXT" type="radio"><label data-i18n="COPY_TEXT" data-i18n-prefix="" for="copy-text">文本</label>
-                                            <input class="copy-link copy-type" name="copy-type" value="COPY_LINK" type="radio"><label data-i18n="COPY_LINK" data-i18n-prefix="" for="copy-link">链接</label>
-                                            <input class="copy-image-link copy-type" name="copy-type" value="COPY_IMAGE_LINK" type="radio"><label data-i18n="COPY_IMAGE_LINK" data-i18n-prefix="" for="copy-image-link">优先图像链接</label>
-                                            <input class="copy-image copy-type" name="copy-type" value="COPY_IMAGE" type="radio"><label data-i18n="COPY_IMAGE" data-i18n-prefix="" for="copy-image">图像</label>
+                                            <input class="copy-text copy-type" value="COPY_TEXT" type="radio"><label data-i18n="COPY_TEXT" data-i18n-prefix="" for="copy-text">文本</label>
+                                            <input class="copy-link copy-type" value="COPY_LINK" type="radio"><label data-i18n="COPY_LINK" data-i18n-prefix="" for="copy-link">链接</label>
+                                            <input class="copy-image-link copy-type" value="COPY_IMAGE_LINK" type="radio"><label data-i18n="COPY_IMAGE_LINK" data-i18n-prefix="" for="copy-image-link">优先图像链接</label>
+                                            <input class="copy-image copy-type" value="COPY_IMAGE" type="radio"><label data-i18n="COPY_IMAGE" data-i18n-prefix="" for="copy-image">图像</label>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td data-i18n="DownloadType">下载类型</td>
                                         <td>
-                                            <input class="download-text download-type" name="download-type" value="DOWNLOAD_TEXT" type="radio"><label data-i18n="DOWNLOAD_TEXT" data-i18n-prefix="" for="download-text">文本</label>
-                                            <input class="download-link download-type" name="download-type" value="DOWNLOAD_LINK" type="radio"><label data-i18n="DOWNLOAD_LINK" data-i18n-prefix="" for="download-link">链接</label>
-                                            <input class="download-image-link download-type" name="download-type" value="DOWNLOAD_IMAGE_LINK" type="radio"><label data-i18n="DOWNLOAD_IMAGE_LINK" data-i18n-prefix="" for="download-image-link">优先图像链接</label>
-                                            <input class="download-image download-type" name="download-type" value="DOWNLOAD_IMAGE" type="radio"><label data-i18n="DOWNLOAD_IMAGE" data-i18n-prefix="" for="download-image">图像</label>
+                                            <input class="download-text download-type" value="DOWNLOAD_TEXT" type="radio"><label data-i18n="DOWNLOAD_TEXT" data-i18n-prefix="" for="download-text">文本</label>
+                                            <input class="download-link download-type" value="DOWNLOAD_LINK" type="radio"><label data-i18n="DOWNLOAD_LINK" data-i18n-prefix="" for="download-link">链接</label>
+                                            <input class="download-image-link download-type" value="DOWNLOAD_IMAGE_LINK" type="radio"><label data-i18n="DOWNLOAD_IMAGE_LINK" data-i18n-prefix="" for="download-image-link">优先图像链接</label>
+                                            <input class="download-image download-type" value="DOWNLOAD_IMAGE" type="radio"><label data-i18n="DOWNLOAD_IMAGE" data-i18n-prefix="" for="download-image">图像</label>
                                         </td>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td data-i18n="Saveas">下载另存为...</td>
                                         <td>
-                                            <input class="download-saveas-yes download-saveas" name="download-saveas" value="true" type="radio"><label data-i18n="DOWNLOAD_SAVEAS_YES" data-i18n-prefix="" for="download-saveas-yes">是</label>
-                                            <input class="download-saveas-no download-saveas" name="download-saveas" value="false" type="radio"><label data-i18n="DOWNLOAD_SAVEAS_NO" data-i18n-prefix="" for="download-saveas-no">否</label>
+                                            <input class="download-saveas-yes download-saveas" value="true" type="radio"><label data-i18n="DOWNLOAD_SAVEAS_YES" data-i18n-prefix="" for="download-saveas-yes">是</label>
+                                            <input class="download-saveas-no download-saveas" value="false" type="radio"><label data-i18n="DOWNLOAD_SAVEAS_NO" data-i18n-prefix="" for="download-saveas-no">否</label>
                                         </td>
                                     </tr>
                                     <tr>
@@ -195,8 +434,8 @@
                                     <tr>
                                         <td data-i18n="SearchOnSite">是否在站内搜索</td>
                                         <td>
-                                            <input class="search-onsite-yes search-onsite" name="search-onsite" value="SEARCH_ONSITE_YES" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-yes">是</label>
-                                            <input class="search-onsite-no search-onsite" name="search-onsite" value="SEARCH_ONSITE_NO" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-no">否</label>
+                                            <input class="search-onsite-yes search-onsite" value="SEARCH_ONSITE_YES" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-yes">是</label>
+                                            <input class="search-onsite-no search-onsite" value="SEARCH_ONSITE_NO" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-no">否</label>
                                         </td>
                                     </tr>
                                     <!-- <tr>
@@ -209,9 +448,174 @@
                         </div>
                     </div>
                 </li>
-                <li class="tab-content active" id="tab-actions"></li>
-                <li class="tab-content" id="tab-actions-ctrlkey"></li>
-                <li class="tab-content" id="tab-actions-shiftkey"></li>
+                <li class="tab-content" id="tab-new-actions">
+                    <div id="new-actions-container">
+                        <div id="type-category" class="category">
+                            <div class="category-item-selected" owner="Actions" control="directionControl" value="textAction" data-i18n="textType" data-i18n-prefix="">文本</div>
+                            <div value="linkAction" owner="Actions" control="directionControl" data-i18n="linkType" data-i18n-prefix="">链接</div>
+                            <div value="imageAction" owner="Actions" control="directionControl" data-i18n="imageType" data-i18n-prefix="">图像</div>
+                            <div owner="Actions_CtrlKey" control="directionControl_CtrlKey" value="textAction"  data-i18n="textType" data-i18n-prefix="" data-i18n-placeholders="-Ctrl">文本-Ctrl</div>
+                            <div value="linkAction" owner="Actions_CtrlKey" control="directionControl_CtrlKey" data-i18n="linkType" data-i18n-prefix="" data-i18n-placeholders="-Ctrl">链接-Ctrl</div>
+                            <div value="imageAction" owner="Actions_CtrlKey" control="directionControl_CtrlKey" data-i18n="imageType" data-i18n-prefix="" data-i18n-placeholders="-Ctrl">图像-Ctrl</div>
+                            <div owner="Actions_ShiftKey" control="directionControl_ShiftKey" value="textAction" data-i18n="textType" data-i18n-prefix="" data-i18n-placeholders="-Shift">文本-Shift</div>
+                            <div value="linkAction" owner="Actions_ShiftKey" control="directionControl_ShiftKey" data-i18n="linkType" data-i18n-prefix="" data-i18n-placeholders="-Shift">链接-Shift</div>
+                            <div value="imageAction" owner="Actions_ShiftKey" control="directionControl_ShiftKey" data-i18n="imageType" data-i18n-prefix="" data-i18n-placeholders="-Shift">图像-Shift</div>
+                        </div>
+                        <div id="direction-category" class="category">
+                            <div data-i18n="DIR_U" data-i18n-prefix="" value="DIR_U" class="category-item-selected">上</div>
+                            <div data-i18n="DIR_D" data-i18n-prefix="" value="DIR_D">下</div>
+                            <div data-i18n="DIR_L" data-i18n-prefix="" value="DIR_L">左</div>
+                            <div data-i18n="DIR_R" data-i18n-prefix="" value="DIR_R">右</div>
+                            <div data-i18n="DIR_UP_L" data-i18n-prefix="" value="DIR_UP_L">左上</div>
+                            <div data-i18n="DIR_UP_R" data-i18n-prefix="" value="DIR_UP_R">右上</div>
+                            <div data-i18n="DIR_LOW_L" data-i18n-prefix="" value="DIR_LOW_L">左下</div>
+                            <div data-i18n="DIR_LOW_R" data-i18n-prefix="" value="DIR_LOW_R">右下</div>
+                            <div data-i18n="DIR_OUTER" data-i18n-prefix="" value="DIR_OUTER">从外部</div>
+                        </div>
+                        <div id="new-actions-category">
+                            <table>
+                                <tbody>
+                                    <tr style="border-bottom:1px solid rgb(193, 193, 193)">
+                                        <td data-i18n="DirectionRestriction">限制方向</td>
+                                        <td>
+                                            <select class="direction-control" title="限制允许拖拽的方向">
+                                                    <option data-i18n="ALLOW_NORMAL" data-i18n-prefix=""  value="ALLOW_NORMAL">普通4个方向</option>
+                                                    <option data-i18n="ALLOW_QUADRANT" data-i18n-prefix="" value="ALLOW_QUADRANT">斜向4个方向</option>
+                                                    <option data-i18n="ALLOW_H" data-i18n-prefix="" value="ALLOW_H">水平2个方向</option>
+                                                    <option data-i18n="ALLOW_V" data-i18n-prefix="" value="ALLOW_V">垂直2个方向</option>
+                                                    <option data-i18n="ALLOW_LOW_L_UP_R" data-i18n-prefix="" value="ALLOW_LOW_L_UP_R">斜向2个方向</option>
+                                                    <option data-i18n="ALLOW_UP_L_LOW_R" data-i18n-prefix="" value="ALLOW_UP_L_LOW_R">另2个斜向方向</option>
+                                                    <option data-i18n="ALLOW_ALL" data-i18n-prefix="" value="ALLOW_ALL">狂热8个方向</option>
+                                                    <option data-i18n="ALLOW_ONE" data-i18n-prefix="" value="ALLOW_ONE">只有1个方向</option>
+                                                </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="PerformedAction">执行的动作</td>
+                                        <td>
+                                            <select class="action-name">
+                                            <option data-i18n="ACT_NONE" data-i18n-prefix="" value="ACT_NONE">无动作</option>
+                                            <option data-i18n="ACT_OPEN" data-i18n-prefix="" value="ACT_OPEN">打开</option>
+                                            <option data-i18n="ACT_COPY" data-i18n-prefix="" value="ACT_COPY">复制</option>
+                                            <option data-i18n="ACT_SEARCH" data-i18n-prefix="" value="ACT_SEARCH">搜索</option>
+                                            <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL">下载</option>
+                                            <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS" disabled>翻译</option>
+                                            <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled>二维码</option>
+                                            <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" disabled>查找</option>
+                                        </select>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="TabStatus">标签页状态</td>
+                                        <td>
+                                            <input class="foreground" value="true" type="radio">
+                                            <label for="foreground" data-i18n="FORE_GROUND" data-i18n-prefix="">前台</label>
+                                            <input class="background" value="false" type="radio">
+                                            <label for="background" data-i18n="BACK_GROUND" data-i18n-prefix="">后台</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="TabPosition">标签页位置</td>
+                                        <td>
+                                            <select style="" class="tab-pos">
+                                            <option data-i18n="TAB_NEW_WINDOW" data-i18n-prefix="" value="TAB_NEW_WINDOW">新建窗口</option>
+                                            <option data-i18n="TAB_NEW_PRIVATE_WINDOW" data-i18n-prefix="" value="TAB_NEW_PRIVATE_WINDOW">隐私窗口</option>
+                                            <option data-i18n="TAB_CUR" data-i18n-prefix="" value="TAB_CUR">当前</option>
+                                            <option data-i18n="TAB_FIRST" data-i18n-prefix="" value="TAB_FIRST">首</option>
+                                            <option data-i18n="TAB_LAST" data-i18n-prefix="" value="TAB_LAST">尾</option>
+                                            <option data-i18n="TAB_CLEFT" data-i18n-prefix="" value="TAB_CLEFT">前</option>
+                                            <option data-i18n="TAB_CRIGHT" data-i18n-prefix="" value="TAB_CRIGHT">后</option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="SelectEngines">引擎选择</td>
+                                        <td>
+                                            <div class="search-engine-select-group"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="EnginePreview">引擎预览</td>
+                                        <td><input class="search-engine-name" type="text"><input class="search-engine-url" type="text" style="width:500px;" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="OpenType">打开类型</td>
+                                        <td>
+                                            <input class="open-text open-type" value="OPEN_TEXT" type="radio"><label data-i18n="OPEN_TEXT" data-i18n-prefix="" for="open-text">文本</label>
+                                            <input class="open-link open-type" value="OPEN_LINK" type="radio"><label data-i18n="OPEN_LINK" data-i18n-prefix="" for="open-link">链接</label>
+                                            <input class="open-image-link open-type" value="OPEN_IMAGE_LINK" type="radio"><label data-i18n="OPEN_IMAGE_LINK" data-i18n-prefix="" for="open-image-link">优先图像链接</label>
+                                            <input class="open-image open-type" value="OPEN_IMAGE" type="radio"><label data-i18n="OPEN_IMAGE" data-i18n-prefix="" for="open-image">图像</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="SearchType">搜索类型</td>
+                                        <td>
+                                            <input class="search-text search-type" value="SEARCH_TEXT" type="radio"><label data-i18n="SEARCH_TEXT" data-i18n-prefix="" for="search-text">文本</label>
+                                            <input class="search-link search-type" value="SEARCH_LINk" type="radio"><label data-i18n="SEARCH_LINK" data-i18n-prefix="" for="search-link">链接</label>
+                                            <input class="search-image-link search-type" value="SEARCH_IMAGE_LINK" type="radio"><label data-i18n="SEARCH_IMAGE_LINK" data-i18n-prefix="" for="search-image-link">优先图像链接</label>
+                                            <input class="search-image search-type" value="SEARCH_IMAGE" type="radio"><label data-i18n="SEARCH_IMAGE" data-i18n-prefix="" for="search-image">图像</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="CopyType">复制类型</td>
+                                        <td>
+                                            <input class="copy-text copy-type" value="COPY_TEXT" type="radio"><label data-i18n="COPY_TEXT" data-i18n-prefix="" for="copy-text">文本</label>
+                                            <input class="copy-link copy-type" value="COPY_LINK" type="radio"><label data-i18n="COPY_LINK" data-i18n-prefix="" for="copy-link">链接</label>
+                                            <input class="copy-image-link copy-type" value="COPY_IMAGE_LINK" type="radio"><label data-i18n="COPY_IMAGE_LINK" data-i18n-prefix="" for="copy-image-link">优先图像链接</label>
+                                            <input class="copy-image copy-type" value="COPY_IMAGE" type="radio"><label data-i18n="COPY_IMAGE" data-i18n-prefix="" for="copy-image">图像</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="DownloadType">下载类型</td>
+                                        <td>
+                                            <input class="download-text download-type" value="DOWNLOAD_TEXT" type="radio"><label data-i18n="DOWNLOAD_TEXT" data-i18n-prefix="" for="download-text">文本</label>
+                                            <input class="download-link download-type" value="DOWNLOAD_LINK" type="radio"><label data-i18n="DOWNLOAD_LINK" data-i18n-prefix="" for="download-link">链接</label>
+                                            <input class="download-image-link download-type" value="DOWNLOAD_IMAGE_LINK" type="radio"><label data-i18n="DOWNLOAD_IMAGE_LINK" data-i18n-prefix="" for="download-image-link">优先图像链接</label>
+                                            <input class="download-image download-type" value="DOWNLOAD_IMAGE" type="radio"><label data-i18n="DOWNLOAD_IMAGE" data-i18n-prefix="" for="download-image">图像</label>
+                                        </td>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="Saveas">下载另存为...</td>
+                                        <td>
+                                            <input class="download-saveas-yes download-saveas" value="true" type="radio"><label data-i18n="DOWNLOAD_SAVEAS_YES" data-i18n-prefix="" for="download-saveas-yes">是</label>
+                                            <input class="download-saveas-no download-saveas" value="false" type="radio"><label data-i18n="DOWNLOAD_SAVEAS_NO" data-i18n-prefix="" for="download-saveas-no">否</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="DownloadDirectory">下载目录</td>
+                                        <td>
+                                            <select class="download-directory" title="指定文件保存的目录" style="">
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="0" value="0">下载目录 0</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="1"  value="1">下载目录 1</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="2"  value="2">下载目录 2</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="3"  value="3">下载目录 3</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="4"  value="4">下载目录 4</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="5"  value="5">下载目录 5</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="6"  value="6">下载目录 6</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="7"  value="7">下载目录 7</option>
+                                                </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="SearchOnSite">是否在站内搜索</td>
+                                        <td>
+                                            <input class="search-onsite-yes search-onsite" value="SEARCH_ONSITE_YES" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-yes">是</label>
+                                            <input class="search-onsite-no search-onsite" value="SEARCH_ONSITE_NO" type="radio"><label data-i18n="SEARCH_ONSITE_NO" data-i18n-prefix="" for="search-onsite-no">否</label>
+                                        </td>
+                                    </tr>
+                                    <!-- <tr>
+                                    <td>提示内容</td>
+                                    <td><input type="text" class="prompt-content"></td>
+                                </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="tab-content" id="tab-actions"></li>
                 <li class="tab-content" id="tab-search-template">
                     <p data-i18n="PlaceholderTip">用 %s 替代链接里的关键词，输入栏不能为空，名称不应该重复</p>
                     <div id="builtin-engine">
@@ -273,7 +677,9 @@
                     <br>
                     <div id="engine-items"></div>
                 </li>
-                <li class="tab-content" id="tab-general">
+                <li class="tab-content" id="tab-general-setting">
+                    <label data-i18n="defaultText" data-i18n-prefix=""></label><span>: </span><label data-i18n="default_search_url" data-i18n-prefix=""></label>
+                    <br>
                     <label for="triggeredDistance" data-i18n="DistancePx">触发距离（px）</label>
                     <input type="number" id="triggeredDistance" min=0 required>
                     <br>
@@ -282,6 +688,14 @@
                     <br>
                     <label data-i18n="ModifyTipsContent">修改提示的内容:- </label>
                     <select id="tipsContentSelect">
+                        <option data-i18n="ACT_NONE" data-i18n-prefix="" value="ACT_NONE">无动作</option>
+                        <option data-i18n="ACT_OPEN" data-i18n-prefix="" value="ACT_OPEN">打开</option>
+                        <option data-i18n="ACT_COPY" data-i18n-prefix="" value="ACT_COPY">复制</option>
+                        <option data-i18n="ACT_SEARCH" data-i18n-prefix="" value="ACT_SEARCH">搜索</option>
+                        <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL">下载</option>
+                        <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS" disabled>翻译</option>
+                        <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled>二维码</option>
+                        <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" disabled>查找</option>
                     </select>
                     <input id="tipsContentInput" type="text" not-config></input><a data-i18n="TipsContentUsage" style="font:caption" href="https://github.com/harytfw/GlitterDrag/wiki/Usage-for-Content-of-Tips">使用方法</a>
                     <!-- <span>可以使用的占位符: %a - 动作名称; %s - 选中的东西; %g - 标签页激活状态; %t - 标签页位置; %e - 引擎名称;  %d - 下载目录名称; %y - 执行的动作类型;</span> -->
@@ -310,14 +724,20 @@
                     <label for="timeoutCancel" data-i18n="TimeoutCancel">超时取消时间（ms）</label>
                     <input type="number" id="timeoutCancel">
                     <br>
-                    <input disabled type="checkbox" id="enableSync">
+                    <input type="checkbox" id="enableStyle">
+                    <label for="enableStyle" data-i18n="EnableStyle">允许使用自定义样式></label>
+                    <br>
+                    <input type="checkbox" id="enableSync" disabled>
                     <label for="enableSync" data-i18n="EnableSync">同步到Firefox账户(v53+)</label>
+                    <br>
+                    <input type="checkbox" id="debug">
+                    <label for="debug">切换DEBUG</label>
                 </li>
                 <li class="tab-content" id="tab-download">
                     <button data-i18n="ShowDefaultDownloadDirectory" id="showDefaultDownloadDirectory">打开浏览器的默认下载目录</button>
                     <h4 data-i18n="SettingDownloadDirectory">设置下载目录</h4>
                     <p data-i18n="SettingDownloadDirectoryHelperText"></p>
-                    <button id="SavebtnOnDownloadDirectories" data-i18n="SavebtnOnDownloadDirectories">保存</button>
+                    <button id="savebtnOnDownloadDirectories" data-i18n="SavebtnOnDownloadDirectories">保存</button>
                     <!--8个  -->
                     <template id="template-for-directory-entry">
                         <div class="directory-entry" entry-index="0">
@@ -328,13 +748,9 @@
                     </template>
                 </li>
                 <li class="tab-content" id="tab-style">
-
-                    <input type="checkbox" id="enableStyle">
-                    <label for="enableStyle" data-i18n="EnableStyle">允许使用自定义样式></label>
+                    <textarea id="styleContent"></textarea>
                     <br>
                     <button id="saveStyle" data-i18n="SaveStyle"></button>
-                    <textarea id="styleContent"></textarea>
-
                 </li>
             </ul>
 
