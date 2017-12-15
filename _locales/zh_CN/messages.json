@@ -597,5 +597,8 @@
     },
     "elem_ShortcutSetting": {
         "message": "快捷键设定: "
+    },
+    "elem_MaximumDistancePx": {
+        "message": "最大距离 (px)"
     }
 }

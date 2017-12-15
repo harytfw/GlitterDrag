@@ -74,8 +74,10 @@ class ActionsWrapper {
         this.parent = $E("#tab-actions");
         this.fillContent();
         document.addEventListener("tabshow", e => {
-            //模拟点击单选按钮，最终跳转到 :190
-            $E(".Actions", this.parent).dispatchEvent(new Event("radiochange", { bubbles: true }));
+            if (e.target.id === "tab-actions") {
+                //模拟点击单选按钮，最终跳转到 :190
+                $E(".Actions", this.parent).dispatchEvent(new Event("radiochange", { bubbles: true }));
+            }
         });
     }
     async fillContent() {
@@ -84,8 +86,12 @@ class ActionsWrapper {
         $E("#tab-actions").appendChild(cclone);
 
         for (const subcontainer of $A("#tab-actions #actions-container div")) {
+            const label = document.createElement("h3");
+            label.textContent = getI18nMessage(subcontainer.className.split("Action")[0] + "Type");
+            subcontainer.appendChild(label);
             const tclone = document.importNode(this.template4Type.content, true);
             subcontainer.appendChild(tclone);
+
             const dirs = subcontainer.querySelectorAll(".direction");
             for (const d of dirs) {
 
@@ -705,6 +711,7 @@ class ActionsView {
                 }
                 break
             case commons.ACT_FIND:
+                hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes", ".copy-text");
                 break;
             case commons.ACT_QRCODE:
                 break
@@ -730,7 +737,6 @@ class ActionsView {
             }
             return radios[0].value;
         }
-        debugger;
         let temp = {};
         Object.assign(temp, {
             act_name: this.$E(".action-name").value,
@@ -844,7 +850,9 @@ class NewActionsWrapper {
         });
 
         document.addEventListener("tabshow", e => {
-            $E("#type-category .category-item-selected").click();
+            if (e.target.id === "tab-new-actions") {
+                $E("#type-category .category-item-selected").click();
+            }
         });
     }
 

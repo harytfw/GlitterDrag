@@ -136,7 +136,8 @@ a:visited {
     margin-bottom: 12px;
 }
 
-#actions-container,#new-actions-container {
+#actions-container,
+#new-actions-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -182,7 +183,7 @@ a:visited {
 
 /*new action editor style*/
 
-.category{
+.category {
     margin-right: 1em;
 }
 
@@ -219,6 +220,7 @@ a:visited {
 
 
 /**/
+
 #new-actions-category table {
     border-collapse: collapse;
 }
@@ -275,7 +277,6 @@ a:visited {
 #panel-actions-category tr td:nth-child(2) {
     padding-left: 1em;
 }
-
 
 #engine-items>div>a {
     margin-right: 1em;

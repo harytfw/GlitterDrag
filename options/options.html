@@ -23,7 +23,7 @@
             <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS" disabled="disabled" style="display: none;">翻译</option>
             <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL">下载</option>
             <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled="disabled" style="display: none;">二维码</option>
-            <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" disabled="disabled" style="display: none;">查找</option>
+            <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND">查找</option>
         </select>
         <select class="open-type" data-i18n="open_type" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="指定如何打开链接。当 图像地址 不可用时，会自动转换为 一般链接">
             <option data-i18n="OPEN_LINK" data-i18n-prefix="" value="OPEN_LINK">链接</option>
@@ -500,9 +500,9 @@
                                             <option data-i18n="ACT_COPY" data-i18n-prefix="" value="ACT_COPY">复制</option>
                                             <option data-i18n="ACT_SEARCH" data-i18n-prefix="" value="ACT_SEARCH">搜索</option>
                                             <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL">下载</option>
+                                            <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" >查找</option>
                                             <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS" disabled>翻译</option>
                                             <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled>二维码</option>
-                                            <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" disabled>查找</option>
                                         </select>
 
                                         </td>
@@ -683,6 +683,9 @@
                     <br>
                     <label for="triggeredDistance" data-i18n="DistancePx">触发距离（px）</label>
                     <input type="number" id="triggeredDistance" min=0 required>
+                    <br>
+                    <label for="maxTriggeredDistance" data-i18n="MaximumDistancePx">最大触发距离（px）</label>
+                    <input type="number" id="maxTriggeredDistance" min=0 required>
                     <br>
                     <input type="checkbox" id="enablePrompt">
                     <label for="enablePrompt" data-i18n="ShowActionTip">显示动作提示</label>

@@ -32,6 +32,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         enableShiftKey: false,
         timeoutCancel: 2000, // ms
         triggeredDistance: 20, // px
+        maxTriggeredDistance:9999,//px
         disableAdjustTabSequence: false,
         switchToParentTab: false,
         tipsContent: {

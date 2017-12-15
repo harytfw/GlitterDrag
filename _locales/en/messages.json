@@ -543,9 +543,9 @@
         "message": "Tab Status",
         "description": ""
     },
-    "elem_TabPosition":{
-        "message":"Tab Position",
-        "description":""
+    "elem_TabPosition": {
+        "message": "Tab Position",
+        "description": ""
     },
     "elem_SelectEngines": {
         "message": "Select Engines",
@@ -587,12 +587,15 @@
         "message": "New Actions",
         "description": ""
     },
-    "elem_DirectionRestriction":{
-      "message":"Direction Restriction",
-      "description":""
+    "elem_DirectionRestriction": {
+        "message": "Direction Restriction",
+        "description": ""
     },
     "elem_ShortcutSetting": {
         "message": "Shortcut Setting: ",
         "description": ""
+    },
+    "elem_MaximumDistancePx": {
+        "message": "Maximum Distance (px)"
     }
 }

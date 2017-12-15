@@ -445,6 +445,7 @@ class DragClass {
         this.isDropTouched = true; // flag that indicate whether the event object has been calling event.preventDefault or event.stopPropagation . 
         // if the site register drop event and use event.stopPropagation , this event won't bubble up as default. So assumeing it is true until we can catch.
         this.isInputArea = false;
+        this.hideBecauseExceedDistance = false;
     }
 
     post(extraOption = {}) {
@@ -526,7 +527,7 @@ class DragClass {
         // this.direction = this.getDirection();
         // what should we do if user release ctrl or shift key while dragging?
 
-        if (this.distance >= bgConfig.triggeredDistance) {
+        if (this.distance >= bgConfig.triggeredDistance && this.distance <= bgConfig.maxTriggeredDistance) {
             this.direction = this.getDirection();
 
             if (this.actionType === "imageAction") {
@@ -558,8 +559,20 @@ class DragClass {
             return;
         }
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
-        if (IS_TOP_WINDOW && (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
+
+        if (this.distance > bgConfig.maxTriggeredDistance) {
+            this.hideBecauseExceedDistance = true;
+            this.promptBox && this.promptBox.stopRender();
+            // this.indicatorBox && this.indicatorBox.hide();
+        }
+        else if (IS_TOP_WINDOW && (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
             this.direction = this.getDirection();
+
+            if (this.hideBecauseExceedDistance && bgConfig.enablePrompt && this.promptBox !== null) {
+                this.hideBecauseExceedDistance = false;
+                this.promptBox.display();
+            }
+
             if (this.direction === this.lastDirection) {
                 // this.lastDirection = this.direction;
                 return;
