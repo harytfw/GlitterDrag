@@ -1,6 +1,6 @@
 //TODO: 处理拖放区域为 input@type=text
-console.info("Glitter Drag: Content script is injected by browser successfully");
 "use strict";
+console.info("Glitter Drag: Content script is injected by browser successfully");
 let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 let IS_TOP_WINDOW = window.top === window;
 
@@ -617,10 +617,18 @@ class DragClass {
         }
     }
     dragenter(evt) {
+        this.selection = this.textSelection = "If you see this message, please report to the author of GlitterDrag"; // temporary
         const dt = evt.dataTransfer;
+        // console.log(dt.getData("text/plain"));
         let fakeNode = null;
         if (dt.types.includes("text/plain")) {
-            fakeNode = document.createTextNode("");
+            if (dt.types.includes("text/x-moz-url")) {
+                this.selection = "https://example.org";
+                fakeNode = document.createElement("a");
+            }
+            else {
+                fakeNode = document.createTextNode("");
+            }
         }
         else if (dt.types.includes("Files")) {
             fakeNode = document.createElement("img");
@@ -629,7 +637,6 @@ class DragClass {
             console.log("Not here!!!");
             return;
         }
-        this.selection = this.textSelection = "If you see this message, please report to the author of GlitterDrag"; // temporary
         this.targetType = typeUtil.checkDragTargetType(this.selection, this.textSelection, this.imageLink, fakeNode);
 
         this.actionType = typeUtil.getActionType(this.targetType);
@@ -640,6 +647,11 @@ class DragClass {
         this.selection = dt.getData("text/plain").trim();
         if (commons.TYPE_TEXT_URL === this.targetType) {
             this.selection = this.textSelection = typeUtil.fixupSchemer(this.selection);
+        }
+        else if (this.targetType === commons.TYPE_ELEM_A) {
+
+            [this.selection, this.textSelection] = dt.getData("text/x-moz-url").split("\n");
+            //console.log(this.selection,this.textSelection);
         }
         // console.log(dt.files);
         const sended = {
@@ -652,6 +664,9 @@ class DragClass {
                 name: ""
             }
         };
+        if (["textAction", "linkAction"].includes(this.actionType)) {
+            this.post({ direction: commons.DIR_OUTER });
+        }
         const fileReader = new FileReader();
         let file = dt.files[0];
         fileReader.addEventListener("loadend", () => {
@@ -663,30 +678,27 @@ class DragClass {
             sended.fileInfo.type = file.type;
             this.post(sended);
         });
-        if (["textAction", "linkAction"].includes(this.actionType)) {
-            this.post({ direction: commons.DIR_OUTER });
+
+        let action = null;
+        if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
+            action = bgConfig.Actions_CtrlKey.imageAction.DIR_OUTER;
+        }
+        else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
+            action = bgConfig.Actions_ShiftKey.imageAction.DIR_OUTER;
         }
         else {
-            let action = null;
-            if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
-                action = bgConfig.Actions_CtrlKey.imageAction.DIR_OUTER;
-            }
-            else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
-                action = bgConfig.Actions_ShiftKey.imageAction.DIR_OUTER;
-            }
-            else {
-                action = bgConfig.Actions.imageAction.DIR_OUTER;
-            }
-            if (action.act_name === commons.ACT_NONE) { // nothing happen
-                return;
-            }
-            else if (action.act_name === commons.ACT_OPEN && action.tab_pos === commons.TAB_CUR) {
-                this.doDropPreventDefault = false;
-                return;
-            }
-            sended.textSelection = file.name; // name of image file
-            fileReader.readAsArrayBuffer(file);
+            action = bgConfig.Actions.imageAction.DIR_OUTER;
         }
+        if (action.act_name === commons.ACT_NONE) { // nothing happen
+            return;
+        }
+        else if (action.act_name === commons.ACT_OPEN && action.tab_pos === commons.TAB_CUR) {
+            this.doDropPreventDefault = false;
+            return;
+        }
+        sended.textSelection = file.name; // name of image file
+        fileReader.readAsArrayBuffer(file);
+
     }
 
     dragenter4panel(e) {
@@ -833,7 +845,7 @@ class DragClass {
                 if (evt.defaultPrevented) {
                     this.isDropTouched = true;
                 }
-
+                // console.log(evt);
                 if (evt.dataTransfer && !this.running && this.accepting) {
                     // if (evt.dataTransfer.files[0].type === "text/html") { // A html file is dragged into browser.
                     //     //DO NOTHING
