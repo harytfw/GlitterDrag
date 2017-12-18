@@ -546,8 +546,9 @@ config.load()
 // });
 
 //在安装扩展时(含更新)触发，更新缺少的配置选项
-browser.runtime.onInstalled.addListener(async() => {
-    let flag = false;
+browser.runtime.onInstalled.addListener(async(details) => {
+    let changedflag = false;
+    const all = await (browser.storage.local.get());
 
     function assign(target, origin) {
         for (const aKey of Object.keys(origin)) {
@@ -558,17 +559,61 @@ browser.runtime.onInstalled.addListener(async() => {
             }
             else {
                 target[aKey] = origin[aKey];
-                flag = true;
+                // console.log(aKey, origin[aKey]);
+                changedflag = true;
             }
         }
     }
 
-    const all = await (browser.storage.local.get());
-    assign(all, DEFAULT_CONFIG);
-    if (flag) {
-        browser.storage.local.set(all);
+    async function upgrade_153() {
+        const engines = (await LStorage.get("Engines"))["Engines"];
+        for (const aKey of Object.keys(all)) {
+            if (aKey.startsWith("Actions")) {
+                for (const bKey of Object.keys(all[aKey])) {
+                    for (const cKey of Object.keys(all[aKey][bKey])) {
+                        if ("engine_url" in all[aKey][bKey][cKey] === false) {
+                            let url = getI18nMessage("default_search_url");
+                            let n = all[aKey][bKey][cKey]["engine_name"];
+                            for (let obj of engines) {
+                                if (obj.name === n) {
+                                    url = obj.url;
+                                    break;
+                                }
+                            }
+                            all[aKey][bKey][cKey]["engine_url"] = url;
+                        }
+                    }
+                }
+            }
+        }
     }
-})
+    console.log(details);
+
+    if (details.reason === browser.runtime.OnInstalledReason.UPDATE) {
+
+        let midVer = 0;
+        try {
+            midVer = parseInt(details.previousVersion.split(".")[1])
+        }
+        catch (error) {
+            console.error(error);
+            midVer = 0;
+        }
+        if (midVer < 53) { // < 1.53.0
+            changedflag = true;
+            await upgrade_153();
+        }
+        assign(all, DEFAULT_CONFIG);
+    }
+    else if (details.reason === browser.runtime.OnInstalledReason.INSTALL) {
+        changedflag = false;
+        await LStorage.set(DEFAULT_CONFIG);
+    }
+
+    if (changedflag) {
+        await browser.storage.local.set(all);
+    }
+});
 
 //点击工具栏图标时打开选项页
 browser.browserAction.onClicked.addListener(() => {

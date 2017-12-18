@@ -20,7 +20,8 @@
         "typeUtil":false,
         "$E":false,
         "$A":false,
-        "$H":false
+        "$H":false,
+        "$D":false
     },
     "rules": {
         "no-console": 0,
