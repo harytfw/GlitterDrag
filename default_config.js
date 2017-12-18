@@ -35,6 +35,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         maxTriggeredDistance:9999,//px
         disableAdjustTabSequence: false,
         switchToParentTab: false,
+        alwaysImage:false,
         tipsContent: {
             ACT_NONE: "%a",
             ACT_OPEN: "%a",
@@ -93,6 +94,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         specialExts:[], // don't process the file with these extensions.
         */
         debug: false,
+        version:"0.0.0"
     };
 }
 

@@ -4,7 +4,12 @@ browser.runtime.getBrowserInfo().then(info => {
     $D("Browser Info:", info);
     browserMajorVersion = parseInt(browserMajorVersion);
     // browserMajorVersion = 56;
-})
+});
+
+window.addEventListener("beforeunload", e => {
+    LStorage.set({ "version": browser.runtime.getManifest().version });
+});
+
 document.title = getI18nMessage("option_page_title");
 
 const LStorage = browser.storage.local;
@@ -79,6 +84,7 @@ class ActionsWrapper {
                 $E(".Actions", this.parent).dispatchEvent(new Event("radiochange", { bubbles: true }));
             }
         });
+
     }
     async fillContent() {
 
@@ -289,6 +295,7 @@ class ActionsWrapper {
     }
 
     set setting(allSetting) {
+
         for (const kind of Object.keys(allSetting)) {
             for (const dirName of Object.keys(allSetting[kind])) {
                 const context = $E(`.${kind} .direction[value="${dirName}"]`);
@@ -308,12 +315,28 @@ class ActionsWrapper {
                 let opt = document.createElement("option");
                 opt.textContent = "*" + action["engine_name"];
                 opt.value = action["engine_name"];
-                opt.setAttribute("url", action["engine_url"]);
-                elem.insertBefore(opt, elem.firstElementChild);
-                elem.selectedIndex = 0;
-                if (action["engine_url"]) {
+                /* if (action["engine_url"] && action["engine_url"].length !== 0) {
+                    
                     elem.title = action["engine_url"]
                 }
+                else {
+                    LStorage.get("Engines").then(({ Engines }) => {
+                        let url = getI18nMessage("default_search_url");
+                        let n = action["engine_name"];
+                        for (let obj of Engines) {
+                            if (obj.name === n) {
+                                url = obj.url;
+                                break;
+                            }
+                        }
+                        opt.setAttribute("url", url);
+                        
+                    });
+                } */
+                opt.setAttribute("url", action["engine_url"]);
+                elem.insertBefore(opt, elem.firstElementChild);
+                elem.title = action["engine_url"];
+                elem.selectedIndex = 0;
                 $E(".download-directory", context).value = action["download_directory"];
             }
         }
@@ -785,17 +808,29 @@ class ActionsView {
         this.$E(".action-name").value = actSetting["act_name"];
         this.$E(".tab-pos").value = actSetting["tab_pos"];
 
+
+        // if ("engine_url" in actSetting && actSetting["engine_url"].length != 0) {
         this.$E(".search-engine-name").value = actSetting["engine_name"];
-        let searchUrl;
-        if ("engine_url" in actSetting && actSetting["engine_url"].length != 0) {
-            searchUrl = actSetting["engine_url"];
-        }
-        else {
-            this.$E(".search-engine-name").value = "Google Search";
-            searchUrl = "https://www.google.com/search&q=%s";
-            // searchUrl = config.getSearchURL(actSetting["engine_name"]);
-        }
-        this.$E(".search-engine-url").value = searchUrl;
+        this.$E(".search-engine-url").value = actSetting["engine_url"];
+        // }
+        /*         else {
+                    LStorage.get("Engines").then(({ Engines }) => {
+                        let url = null;
+                        let name = actSetting["engine_name"];
+                        for (let obj of Engines) {
+                            if (obj.name === name) {
+                                url = obj.url;
+                                break;
+                            }
+                        }
+                        if (!url) {
+                            url = getI18nMessage("default_search_url");
+                            name = getI18nMessage("defaultText");
+                        }
+                        this.$E(".search-engine-url").value = url;
+                        this.$E(".search-engine-name").value = name;
+                    });
+                } */
 
         this.$E(".download-directory").value = actSetting["download_directory"];
 

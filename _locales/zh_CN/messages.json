@@ -600,5 +600,9 @@
     },
     "elem_MaximumDistancePx": {
         "message": "最大距离 (px)"
+    },
+    "elem_AlwaysImage": {
+        "message": "总是把含图片的链接当成图片类型",
+        "description": ""
     }
 }
