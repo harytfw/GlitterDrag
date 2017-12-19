@@ -653,7 +653,7 @@ class DragClass {
             this.selection = this.textSelection = typeUtil.fixupSchemer(this.selection);
         }
         else if (this.targetType === commons.TYPE_ELEM_A) {
-
+            //书签
             [this.selection, this.textSelection] = dt.getData("text/x-moz-url").split("\n");
             //console.log(this.selection,this.textSelection);
         }
