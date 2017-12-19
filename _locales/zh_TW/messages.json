@@ -379,15 +379,15 @@
         "description": "Select box classes on Options - Search Template"
     },
     "elem_Backup": {
-        "message": "備份設定",
+        "message": "匯出設定",
         "description": "Element on Options page"
     },
     "elem_Restore": {
-        "message": "恢復設定",
+        "message": "匯入設定",
         "description": "Element on Options page"
     },
     "elem_Default": {
-        "message": "恢復預設",
+        "message": "還原預設",
         "description": "Element on Options page"
     },
     "elem_Debug": {
