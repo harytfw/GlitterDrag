@@ -520,6 +520,7 @@ class DragClass {
 
         this.actionType = typeUtil.getActionType(this.targetType);
         if (bgConfig.alwaysImage && this.targetType === commons.TYPE_ELEM_A_IMG) {
+            this.selection = this.imageLink;
             this.actionType = commons.imageAction;
         }
         this.startPos.x = evt.screenX;

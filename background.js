@@ -449,11 +449,16 @@ class ExecutorClass {
 
     async searchImage(imageFileURL) {
         let url;
-        const engines = (await LStorage.get("Engines"))["Engines"];
-        for (const e of engines) {
-            if (e.name === this.action.engine_name) {
-                url = e.url;
-                break;
+        if (this.action.engine_url && this.action.engine_url.length != 0) { //new engine_url property in v1.53
+            url = this.action.engine_url;
+        }
+        else { // old method
+            const engines = (await LStorage.get("Engines"))["Engines"];
+            for (const e of engines) {
+                if (e.name === this.action.engine_name) {
+                    url = e.url;
+                    break;
+                }
             }
         }
         if (!url) {
@@ -464,9 +469,9 @@ class ExecutorClass {
             // pass string of params.
             this.openRedirectPage(params)
         }
-        else {
-            this.searchText(this.data.selection);
-        }
+        // else {
+        //     this.searchText(this.data.selection);
+        // }
     }
     findText(text) {
         if (text.length == 0 && browser.find) return;
