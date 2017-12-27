@@ -102,28 +102,33 @@ function translatePrompt(message, property, actionType, selection) {
         .replace("%d", promptString["%d"][property["download_directory"]] || "")
         .replace("%e", property["engine_name"])
         .replace("%y", promptString["%y"][actionType])
-        .replace("%s", selection) : "";
+        .replace("%s", selection) : "Error Message!";
 }
 
 function removeExistedElement(selector) {
-    let e = $E(selector);
-    if (e !== null) {
-        e.remove();
-        return true;
+    try {
+        let e = $E(selector);
+        if (e !== null) {
+            e.remove();
+            return true;
+        }
+        return false;
     }
-    return false;
+    catch (e) {
+        return false;
+    }
 }
 
 function injectStyle(opt = { url: "", css: "" }) {
     let style;
-    if (opt.url && opt.url.length != 0) {
+    if (opt.url && opt.url.length !== 0) {
         style = document.createElement("link");
         style.rel = "stylesheet";
         style.type = "text/css";
         style.href = opt.url;
         document.head.appendChild(style);
     }
-    else if (opt.css && opt.css.length != 0) {
+    else if (opt.css && opt.css.length !== 0) {
         style = document.createElement("style");
         style.type = "text/css";
         style.textContent = opt.css;
@@ -184,16 +189,17 @@ class Indicator {
         document.body.appendChild(this.box);
     }
     place(x = 0, y = 0, radius = 0) {
-        if (radius === 0) {
-            this.hide();
-            return;
-        }
+
         radius = radius / devicePixelRatio;
         this.box.style.left = (x - radius) + "px";
         this.box.style.top = (y - radius) + "px";
         const h = this.box.style.height = (radius * 2) + "px";
         const w = this.box.style.width = (radius * 2) + "px";
         this.box.style.borderRadius = `${w}  ${h}`;
+        // if (radius <= 0) {
+        //     this.hide();
+        //     return;
+        // }
     }
     display() {
         if (this.box.style.display === "none") this.box.style.display = "initial";
@@ -203,6 +209,7 @@ class Indicator {
     }
 }
 
+/*
 const CMDPANEL_HTML_CONTENT = `
 <table id="GDPanel">
     <tr class="GDHeader">
@@ -371,6 +378,7 @@ class cmdPanel {
         header.textContent = translatePrompt("%g-%a", setting);
     }
 }
+*/
 
 class DragClass {
     constructor(elem) {
@@ -439,7 +447,7 @@ class DragClass {
 
         //end: UI componment
 
-        this.timeoutId = 0; // used for clearTimeout
+        this.timeoutId = -1; // used for clearTimeout
 
         this.doDropPreventDefault = false; // flag that indicate whether call event.preventDefault or not in drop event.
         this.isDropTouched = true; // flag that indicate whether the event object has been calling event.preventDefault or event.stopPropagation . 
@@ -475,6 +483,7 @@ class DragClass {
         this.notAccepting = true;
         this.promptBox && this.promptBox.stopRender();
         this.indicatorBox && this.indicatorBox.hide();
+
     }
     updateModifierKey(evt) {
         if (evt.ctrlKey) {
@@ -559,9 +568,9 @@ class DragClass {
     }
     dragover(evt) {
         this.updateModifierKey(evt);
-        if (this.isPanelArea) {
-            return;
-        }
+        // if (this.isPanelArea) {
+        //     return;
+        // }
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
 
         if (this.distance > bgConfig.maxTriggeredDistance) {
@@ -572,9 +581,9 @@ class DragClass {
         else if (IS_TOP_WINDOW && (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
             this.direction = this.getDirection();
 
-            if (this.hideBecauseExceedDistance && bgConfig.enablePrompt && this.promptBox !== null) {
+            if (this.hideBecauseExceedDistance) {
                 this.hideBecauseExceedDistance = false;
-                this.promptBox.display();
+                this.promptBox && this.promptBox.display();
             }
 
             if (this.direction === this.lastDirection) {
@@ -594,8 +603,8 @@ class DragClass {
                 actions = bgConfig.Actions;
             }
 
-            let property = actions[this.actionType][this.direction]
             if (bgConfig.enablePrompt && this.promptBox !== null) {
+                let property = actions[this.actionType][this.direction]
                 this.promptBox.display();
                 let message = bgConfig.tipsContent[property["act_name"]];
                 // console.log(promptString["%g"][property["download_directory"]]);
@@ -615,9 +624,7 @@ class DragClass {
 
         }
         else {
-            if (this.promptBox) { // may be null if viewing an image
-                this.promptBox.stopRender();
-            }
+            this.promptBox && this.promptBox.stopRender();
         }
     }
     dragenter(evt) {
@@ -707,7 +714,7 @@ class DragClass {
 
     dragenter4panel(e) {
 
-        this.isPanelArea = true;
+        // this.isPanelArea = true;
         // console.info("enter panel");
     }
     dragleave4panel(e) {
@@ -722,8 +729,8 @@ class DragClass {
         // obj.search_onsite = sanitizeBoolean(obj.search_onsite);
         // obj.download_saveas = sanitizeBoolean(obj.download_saveas);
         // this.cmdPanel.hide();
-        this.post({ direction: commons.DIR_P, key: e.originalTarget.dataset["key"], index: parseInt(e.originalTarget.dataset["index"]) });
-        e.preventDefault(); //note!
+        // this.post({ direction: commons.DIR_P, key: e.originalTarget.dataset["key"], index: parseInt(e.originalTarget.dataset["index"]) });
+        // e.preventDefault(); //note!
     }
     dragover4panel(e) {
 
@@ -782,7 +789,7 @@ class DragClass {
                 break;
             case "dragenter":
                 this.accepting = false;
-                this.isPanelArea = false;
+                // this.isPanelArea = false;
                 if (this.isNotAcceptable(evt)) {
                     return;
                 }
@@ -1075,9 +1082,7 @@ browser.runtime.onConnect.addListener(port => {
         port.onMessage.addListener(CSlistener);
     }
 });
-// let bgPort = browser.runtime.connect({
-//     name: "initial"
-// });
+
 let bgConfig = null;
 let mydrag = null;
 
@@ -1117,4 +1122,14 @@ browser.storage.local.get().then(config => {
     doInit();
 })
 
-// })
+function checkInit() {
+    if (!mydrag || !bgConfig) {
+        if (confirm("Glitter Drag: Initializing extension faill, please report to the author of Glitter Drag")) {
+            location.replace("https://github.com/harytfw/GlitterDrag");
+        }
+    }
+    else {
+        console.info("Glitter Drag: Initializing done.");
+    }
+}
+setTimeout(checkInit, 4800);

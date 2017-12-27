@@ -2,7 +2,7 @@ var supportCopyImage = false;
 
 const TAB_ID_NONE = browser.tabs.TAB_ID_NONE;
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
-const DEFAULT_SEARCH_ENGINE = getI18nMessage("default_search_url");
+const DEFAULT_SEARCH_ENGINE = browser.i18n.getMessage("default_search_url");
 
 function parseBoolean(x) {
     if (typeof x === "boolean") return x;
@@ -14,7 +14,7 @@ function parseBoolean(x) {
 function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 5) {
     const url = window.URL.createObjectURL(blob);
     setTimeout(u => window.URL.revokeObjectURL(u), revokeTime, url); // auto revoke
-    return url
+    return url;
 }
 
 function createBlobObjectURLForText(text = "") {
@@ -93,16 +93,16 @@ const flags = {
             }
         });
     },
-    enableSync: false,
-    enableIndicator: false,
-    enablePrompt: false,
-    enableStyle: false,
-    enableTimeoutCancel: false,
+    // enableSync: false,
+    // enableIndicator: false,
+    // enablePrompt: false,
+    // enableStyle: false,
+    // enableTimeoutCancel: false,
     enableAutoSelectPreviousTab: true,
-    enableCtrlKey: false,
-    enableShiftKey: false,
-    timeoutCancel: 2000,
-    triggeredDistance: 20,
+    // enableCtrlKey: false,
+    // enableShiftKey: false,
+    // timeoutCancel: 2000,
+    // triggeredDistance: 20,
     disableAdjustTabSequence: false,
     switchToParentTab: false,
 }
@@ -141,7 +141,7 @@ class ExecutorClass {
 
         browser.tabs.onRemoved.addListener((tabId) => {
             if (flags.enableAutoSelectPreviousTab &&
-                flags.switchToParentTab &&
+                !flags.switchToParentTab &&
                 this.backgroundChildTabCount === 0 &&
                 this.newTabId !== browser.tabs.TAB_ID_NONE &&
                 this.previousTabId !== browser.tabs.TAB_ID_NONE &&
@@ -164,9 +164,10 @@ class ExecutorClass {
     }
     async DO(m) {
         this.data = m;
-        if (commons._DEBUG) {
-            console.table(this.data);
-        }
+        // if (commons._DEBUG) {
+        //     console.table(this.data);
+        // }
+        $D(this.data);
         if (this.data.direction === commons.DIR_P) {
             LStorage.get(this.data.key).then(arr => {
                 this.action = arr[this.data.key][this.data.index];
@@ -179,19 +180,19 @@ class ExecutorClass {
         }
     }
     execute() {
+        $D(this.action);
+        // let imageFile = null;
 
-        let imageFile = null;
-
-        if (this.data.selection && this.data.selection.length === 0) {
+        if (this.data.selection !== null && this.data.selection.length === 0) {
             return;
         }
 
         if (this.data.hasImageBinary) {
             let array = new Uint8Array(this.data.imageData.split(","));
             this.data.imageData = array;
-            imageFile = new File([array], this.data.fileInfo.name, {
-                type: this.data.fileInfo.type
-            });
+            // imageFile = new File([array], this.data.fileInfo.name, {
+            //     type: this.data.fileInfo.type
+            // });
 
             // if (this.data.selection === null) {
             //     this.data.selection = createObjectURL(imageFile);
@@ -324,15 +325,12 @@ class ExecutorClass {
         this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
         if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.action.tab_pos)) {
             browser.windows.create({
-                // *focused: this.action.tab_active,*
-                // firefox don't support focused property yet;
-                // so it has no effect to use.
                 incognito: this.action.tab_pos === "TAB_NEW_PRIVATE_WINDOW" ? true : false,
                 url,
             }).catch(e => console.error(e));
         }
         else {
-            browser.tabs.query({}).then(tabs => {
+            browser.tabs.query({ currentWindow: true }).then(tabs => {
                 for (let tab of tabs) {
                     if (tab.active === true) {
                         tabsRelation.check(tab.id);
@@ -342,7 +340,7 @@ class ExecutorClass {
                         });
                         else {
                             browser.tabs.create({
-                                active: parseBoolean(this.action.tab_active),
+                                active: Boolean(this.action.tab_active),
                                 index: this.getTabIndex(tabs.length, tab.index),
                                 url
                             }).then((newTab) => {
@@ -353,6 +351,7 @@ class ExecutorClass {
 
                                 tabsRelation.check(tab.id, newTab.id);
                             }, (error) => {
+                                $D(error);
                                 console.error(error);
                             });
                         }
@@ -360,6 +359,7 @@ class ExecutorClass {
                     }
                 }
             }, (error) => {
+                $D(error);
                 console.error(error);
             });
         }
@@ -474,7 +474,7 @@ class ExecutorClass {
         // }
     }
     findText(text) {
-        if (text.length == 0 && browser.find) return;
+        if (text.length == 0 || !browser.find) return;
         browser.find.find(text).then((result) => {
             if (result.count > 0) {
                 browser.find.highlightResults();
@@ -539,9 +539,9 @@ class ExecutorClass {
 }
 
 var executor = new ExecutorClass();
-var config = new ConfigClass();
+// var config = new ConfigClass();
 
-config.load()
+// config.load()
 
 //保存到firefox的同步存储区
 // browser.storage.onChanged.addListener(async(changes) => {
@@ -634,4 +634,5 @@ browser.runtime.onMessage.addListener((m) => {
     }
 });
 
+console.info("Glitter Drag: background script executed.")
 // browser.runtime.onConnect.addListener((port) => {});
