@@ -1132,4 +1132,4 @@ function checkInit() {
         console.info("Glitter Drag: Initializing done.");
     }
 }
-setTimeout(checkInit, 4800);
+// setTimeout(checkInit, 4800);
