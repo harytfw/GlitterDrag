@@ -1132,7 +1132,8 @@ function initButton() {
     fileReader.addEventListener("loadend", async() => {
         try {
             const storage = JSON.parse(fileReader.result);
-            LStorage.set(storage);
+            await LStorage.clear();
+            await LStorage.set(storage);
             location.reload();
         }
         catch (e) {

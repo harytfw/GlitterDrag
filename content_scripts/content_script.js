@@ -389,21 +389,16 @@ class DragClass {
 
         this.dragged = elem;
         this.handler = this.handler.bind(this);
+
+        this.wrapperFunction = this.wrapperFunction.bind(this);
+
         ["dragstart", "dragover", "dragenter", "dragend"].forEach(name =>
-            this.dragged.addEventListener(name, evt => {
-                this.handler(evt)
-                return true;
-            }, true)
+            this.dragged.addEventListener(name, this.wrapperFunction, true)
         );
         ["dragover", "drop", "dragend"].forEach(name =>
-            this.dragged.addEventListener(name, evt => {
-                this.handler(evt);
-            }, false)
+            this.dragged.addEventListener(name, this.wrapperFunction, false)
         );
-        this.dragged.addEventListener("dragstart", (e) => {
-            e.returnValue = true; // no effect
-            return true; // no effect
-        }, false);
+        this.dragged.addEventListener("dragstart", this.wrapperFunction, false);
 
         // start: properties to post
         this.selection = ""; // any data, such as text, link
@@ -455,7 +450,10 @@ class DragClass {
         this.isInputArea = false;
         this.hideBecauseExceedDistance = false;
     }
-
+    wrapperFunction(evt) {
+        this.handler(evt);
+        return true;
+    }
     post(extraOption = {}) {
         //sendMessage只能传递字符串化后（类似json）的数据
         //不能传递具体对象
@@ -776,7 +774,6 @@ class DragClass {
                 // if (this.isNotAcceptable(evt)) {
                 //     return;
                 // }
-
                 if (evt.target.nodeName === "A" &&
                     (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
                     return;
@@ -1077,14 +1074,19 @@ function CSlistener(msg) {
 //     // console.log(bgConfig);
 // }
 
-browser.runtime.onConnect.addListener(port => {
+function onConnect(port) {
     if (port.name === "sendToContentScript") {
         port.onMessage.addListener(CSlistener);
     }
-});
+}
+browser.runtime.onConnect.addListener(onConnect);
+
 
 let bgConfig = null;
 let mydrag = null;
+let bgPort = browser.runtime.connect({
+    name: "initial"
+});
 
 function doInit() {
     if (mydrag === null && document.body) {
@@ -1092,7 +1094,13 @@ function doInit() {
         if (bgConfig.enableStyle) {
             injectStyle({ css: bgConfig.style });
         }
-        mydrag = new DragClass(document);
+        try {
+            mydrag = new DragClass(document);
+        }
+        catch (error) {
+            console.error("GlitterDrag: Fail to initialize DragCLass");
+            console.error(error);
+        }
         document.removeEventListener("readystatechange", onReadyStateChange);
         document.removeEventListener("DOMContentLoaded", OnDoMContentLoaded);
     }
@@ -1115,12 +1123,32 @@ function onStorageChange(changes) {
 
 browser.storage.onChanged.addListener(onStorageChange);
 
-browser.storage.local.get().then(config => {
-    bgConfig = config;
-    document.addEventListener('readystatechange', onReadyStateChange, false);
-    document.addEventListener("DOMContentLoaded", OnDoMContentLoaded);
-    doInit();
-})
+if (0) {
+    browser.storage.local.get().then(config => {
+        console.info("GlitterDrag: loaded config from storage");
+        bgConfig = config;
+        document.addEventListener('readystatechange', onReadyStateChange, false);
+        document.addEventListener("DOMContentLoaded", OnDoMContentLoaded);
+        doInit();
+    });
+}
+else {
+    bgPort.onMessage.addListener(response => {
+        console.info("Glitter Drag: Receive response from background");
+        bgConfig = response;
+        document.addEventListener('readystatechange', onReadyStateChange, false);
+        document.addEventListener("DOMContentLoaded", OnDoMContentLoaded);
+        doInit();
+    });
+}
+
+window.addEventListener("beforeunload", () => {
+    browser.storage.onChanged.removeListener(onStorageChange);
+    browser.runtime.onConnect.removeListener(onConnect);
+    bgPort.disconnect();
+});
+
+
 
 function checkInit() {
     if (!mydrag || !bgConfig) {

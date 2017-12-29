@@ -225,15 +225,15 @@ const $H = (ss = [], value = "none", context = document) => {
 }
 
 var DEBUG_FLAG = false;
-browser.storage.local.get("debug", _ => {
-    DEBUG_FLAG = _.debug;
-})
-
+if (window.top === window && browser.runtime.getBackgroundPage) {
+    browser.storage.local.get("debug", _ => {
+        DEBUG_FLAG = _.debug;
+    });
+}
 const $D = (message, ...obj) => {
     if (DEBUG_FLAG) console.log(message, ...obj);
     // browser.runtime.sendMessage("");
 }
-
 
 const getI18nMessage = (strName = "", placeholders) => {
     const message = browser.i18n.getMessage(strName, placeholders);

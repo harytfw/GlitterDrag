@@ -634,5 +634,11 @@ browser.runtime.onMessage.addListener((m) => {
     }
 });
 
+browser.runtime.onConnect.addListener(port => {
+    if (port.name === "initial") {
+        browser.storage.local.get().then(all => {
+            port.postMessage(all);
+        });
+    }
+});
 console.info("Glitter Drag: background script executed.")
-// browser.runtime.onConnect.addListener((port) => {});
