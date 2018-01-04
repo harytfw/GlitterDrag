@@ -532,6 +532,7 @@ class DragClass {
         }
         this.startPos.x = evt.screenX;
         this.startPos.y = evt.screenY;
+        // console.info(`GlitterDrag: drag start, ${this.actionType} ${this.targetType}`);
     }
     dragend(evt) {
         clearTimeout(this.timeoutId);
@@ -1123,7 +1124,7 @@ function onStorageChange(changes) {
 
 browser.storage.onChanged.addListener(onStorageChange);
 
-if (0) {
+if (0) {//a storage bug that reported in #65,so using another way to load configuration.
     browser.storage.local.get().then(config => {
         console.info("GlitterDrag: loaded config from storage");
         bgConfig = config;
