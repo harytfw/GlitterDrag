@@ -604,5 +604,9 @@
     "elem_AlwaysImage": {
         "message": "总是把含图片的链接当成图片类型",
         "description": ""
+    },
+    "ToggleDebug":{
+        "message":"切换至DEBUG模式",
+        "description":""
     }
 }

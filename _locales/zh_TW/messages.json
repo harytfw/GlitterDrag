@@ -604,5 +604,9 @@
     "elem_AlwaysImage": {
         "message": "總是將含圖片的鏈結當成圖片類型",
         "description": ""
+    },
+    "ToggleDebug":{
+        "message":"",
+        "description":""
     }
 }

@@ -601,5 +601,9 @@
     "elem_AlwaysImage":{
       "message":"Always treat a link containing picture as image type",
       "description":""
+    },
+    "ToggleDebug":{
+        "message":"Toggle Debug Mode",
+        "description":""
     }
 }
