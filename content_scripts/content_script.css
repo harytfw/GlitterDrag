@@ -3,6 +3,50 @@
      --prompt-width: 200px; 
 } */
 
+@import "css/font-awesome.css";
+.initialStyle {
+    background-color: transparent;
+    background-position: initial !important;
+    background-repeat: initial !important;
+    background-attachment: initial !important;
+    background-image: initial !important;
+    background-size: initial !important;
+    background-origin: initial !important;
+    background-clip: initial !important;
+    border: initial !important;
+    border-radius: initial !important;
+    border-spacing: initial !important;
+    border-collapse: initial !important;
+    direction: ltr !important;
+    flex-direction: initial !important;
+    font-weight: initial !important;
+    height: 1px;
+    letter-spacing: initial !important;
+    min-width: initial !important;
+    max-width: initial !important;
+    min-height: initial !important;
+    max-height: initial !important;
+    margin: auto !important;
+    outline: initial !important;
+    padding: initial !important;
+    position: fixed;
+    table-layout: initial !important;
+    text-align: initial !important;
+    text-shadow: initial !important;
+    width: 1px;
+    word-break: initial !important;
+    word-spacing: initial !important;
+    overflow-wrap: initial !important;
+    box-sizing: initial !important;
+    display: initial !important;
+    color: inherit !important;
+    font-family: X-LocaleSpecific, sans-serif, Tahoma !important;
+    vertical-align: top !important;
+    white-space: inherit !important;
+    z-index: 2147470001;
+    transform: scale(1);
+}
+
 #GDIndicator {
     position: absolute;
     z-index: 1234;
@@ -129,11 +173,16 @@
 }
 
 #GDPanel {
-    background: rgba(233, 233, 233, 0.7);
-    width: 250px;
+    --width: 210px;
+    --cell-height: 52px;
+    --iconsize: 2em;
+    background: rgba(239, 239, 239, 0.9);
+    width: var(--width);
     table-layout: fixed;
+    border-radius: 5px;
+    padding: 12px 12px 12px 12px;
+    border-spacing: 5px;
 }
-
 
 .GDPanel-content-wrapper {
     white-space: nowrap;
@@ -141,37 +190,15 @@
 }
 
 .GDCell {
-    height: 70px;
-    background-color: white;
-    background-repeat: no-repeat;
-    background-position: center;
+    height: var(--cell-height);
+    background-color: rgba(233, 233, 233);
+    border-radius: 3px;
+    border: 1px solid #777777;
+    box-shadow: 0px 0px 1px 1px rgb(222, 222, 222);
+    text-align: center;
+    font-size: var(--iconsize);
 }
 
-.GDCell div {
-    /* height: 100%; */
-    text-align: -moz-center !important;
-    text-align: -webkit-center !important;
-}
-
-
-/* .GDCell div::before {
-    height: 48px;
-    width: 48px;
-    display: block;
-    margin-bottom: 8px;
-    content: "";
-} */
-
-
-/* 
-.GDCell-open {} */
-
-
-/* .GDCell-open::before {
-    background-image: url("icon/open_in_browser_48px.png");
-} */
-
-#GDRow-other .GDCell {
-    background-repeat: no-repeat;
-    background-position: 50%;
+.GDCell-hover {
+    border: 2px solid rgb(86, 86, 86);
 }

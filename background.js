@@ -169,10 +169,9 @@ class ExecutorClass {
         // }
         $D(this.data);
         if (this.data.direction === commons.DIR_P) {
-            LStorage.get(this.data.key).then(arr => {
-                this.action = arr[this.data.key][this.data.index];
-                this.execute();
-            });
+            let panelAction = await LStorage.get(this.data.key);
+            this.action = panelAction[this.data.key][this.data.index];
+            this.execute();
         }
         else {
             this.action = await getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
@@ -330,7 +329,9 @@ class ExecutorClass {
             }).catch(e => console.error(e));
         }
         else {
-            browser.tabs.query({ currentWindow: true }).then(tabs => {
+            browser.tabs.query({
+                currentWindow: true
+            }).then(tabs => {
                 for (let tab of tabs) {
                     if (tab.active === true) {
                         tabsRelation.check(tab.id);
@@ -404,7 +405,7 @@ class ExecutorClass {
             copy_type: this.action.copy_type,
             data,
         };
-        let portName = this.data.sendToOptions ? "sendToOptions" : "sendToContentScript";
+        let portName = "sendToContentScript";
         browser.tabs.query({
             currentWindow: true,
             active: true

@@ -24,6 +24,7 @@
             <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL">下载</option>
             <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled="disabled" style="display: none;">二维码</option>
             <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND">查找</option>
+            <option data-i18n="ACT_PANEL" data-i18n-prefix="" value="ACT_PANEL">panel</option>
         </select>
         <select class="open-type" data-i18n="open_type" data-i18n-prefix="option_tooltip_" data-i18n-attach="title" title="指定如何打开链接。当 图像地址 不可用时，会自动转换为 一般链接">
             <option data-i18n="OPEN_LINK" data-i18n-prefix="" value="OPEN_LINK">链接</option>
@@ -269,7 +270,7 @@
                 <a class="nav-a" toggle-target="#tab-new-actions" data-i18n="NewActions" href="#">新动作</a>
                 <a class="nav-a" toggle-target="#tab-search-template" data-i18n="SearchTemplate" href="#">搜索模板</a>
                 <a class="nav-a" toggle-target="#tab-download" data-i18n="Download" href="#">下载</a>
-                <!-- <a class="nav-a" toggle-target="#tab-panel" data-i18n="Panel" href="#">面板</a> -->
+                <a class="nav-a" toggle-target="#tab-panel" data-i18n="Panel" href="#">面板</a>
                 <a class="nav-a" toggle-target="#tab-style" data-i18n="Style" href="#">样式</a>
             </nav>
             <ul style="list-style:none">
@@ -339,39 +340,41 @@
                                         <td data-i18n="PerformedAction">执行的动作</td>
                                         <td>
                                             <select class="action-name">
-                                                        <option data-i18n="ACT_NONE" data-i18n-prefix="" value="ACT_NONE">无动作</option>
-                                                        <option data-i18n="ACT_OPEN" data-i18n-prefix="" value="ACT_OPEN">打开</option>
-                                                        <option data-i18n="ACT_COPY" data-i18n-prefix="" value="ACT_COPY">复制</option>
-                                                        <option data-i18n="ACT_SEARCH" data-i18n-prefix="" value="ACT_SEARCH">搜索</option>
-                                                        <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL">下载</option>
-                                                        <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS" disabled>翻译</option>
-                                                        <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled>二维码</option>
-                                                        <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" disabled>查找</option>
-                                                    </select>
+                                            <option data-i18n="ACT_NONE" data-i18n-prefix="" value="ACT_NONE">无动作</option>
+                                            <option data-i18n="ACT_OPEN" data-i18n-prefix="" value="ACT_OPEN">打开</option>
+                                            <option data-i18n="ACT_COPY" data-i18n-prefix="" value="ACT_COPY">复制</option>
+                                            <option data-i18n="ACT_SEARCH" data-i18n-prefix="" value="ACT_SEARCH">搜索</option>
+                                            <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL">下载</option>
+                                            <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" >查找</option>
+                                            <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS" disabled>翻译</option>
+                                            <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled>二维码</option>
+                                            <!-- 避免循环出现面板 -->
+                                            <!-- <option data-i18n="ACT_PANEL" data-i18n-prefix="" value="ACT_PANEL">panel</option> -->
+                                        </select>
 
                                         </td>
                                     </tr>
                                     <tr>
                                         <td data-i18n="TabStatus">标签页状态</td>
                                         <td>
-                                            <input class="foreground" value="true" type="radio">
+                                            <input class="foreground tab-active" value="true" type="radio">
                                             <label for="foreground" data-i18n="FORE_GROUND" data-i18n-prefix="">前台</label>
-                                            <input class="background" value="false" type="radio">
+                                            <input class="background tab-active" value="false" type="radio">
                                             <label for="background" data-i18n="BACK_GROUND" data-i18n-prefix="">后台</label>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td data-i18n="TabPosition">标签页位置</td>
                                         <td>
-                                            <select style="" class="tab-pos">
-                                                <option data-i18n="ACT_FIND" data-i18n-prefix="" value="TAB_NEW_WINDOW">新建窗口</option>
-                                                <option data-i18n="TAB_NEW_PRIVATE_WINDOW" data-i18n-prefix="" value="TAB_NEW_PRIVATE_WINDOW">隐私窗口</option>
-                                                <option data-i18n="TAB_CUR" data-i18n-prefix="" value="TAB_CUR">当前</option>
-                                                <option data-i18n="TAB_FIRST" data-i18n-prefix="" value="TAB_FIRST">首</option>
-                                                <option data-i18n="TAB_LAST" data-i18n-prefix="" value="TAB_LAST">尾</option>
-                                                <option data-i18n="TAB_CLEFT" data-i18n-prefix="" value="TAB_CLEFT">前</option>
-                                                <option data-i18n="TAB_CRIGHT" data-i18n-prefix="" value="TAB_CRIGHT">后</option>
-                                            </select>
+                                            <select class="tab-pos">
+                                            <option data-i18n="TAB_NEW_WINDOW" data-i18n-prefix="" value="TAB_NEW_WINDOW">新建窗口</option>
+                                            <option data-i18n="TAB_NEW_PRIVATE_WINDOW" data-i18n-prefix="" value="TAB_NEW_PRIVATE_WINDOW">隐私窗口</option>
+                                            <option data-i18n="TAB_CUR" data-i18n-prefix="" value="TAB_CUR">当前</option>
+                                            <option data-i18n="TAB_FIRST" data-i18n-prefix="" value="TAB_FIRST">首</option>
+                                            <option data-i18n="TAB_LAST" data-i18n-prefix="" value="TAB_LAST">尾</option>
+                                            <option data-i18n="TAB_CLEFT" data-i18n-prefix="" value="TAB_CLEFT">前</option>
+                                            <option data-i18n="TAB_CRIGHT" data-i18n-prefix="" value="TAB_CRIGHT">后</option>
+                                        </select>
                                         </td>
                                     </tr>
                                     <tr>
@@ -432,22 +435,22 @@
                                         <td data-i18n="DownloadDirectory">下载目录</td>
                                         <td>
                                             <select class="download-directory" title="指定文件保存的目录" style="">
-                                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="0" value="0">下载目录 0</option>
-                                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="1"  value="1">下载目录 1</option>
-                                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="2"  value="2">下载目录 2</option>
-                                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="3"  value="3">下载目录 3</option>
-                                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="4"  value="4">下载目录 4</option>
-                                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="5"  value="5">下载目录 5</option>
-                                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="6"  value="6">下载目录 6</option>
-                                                        <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="7"  value="7">下载目录 7</option>
-                                                    </select>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="0" value="0">下载目录 0</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="1"  value="1">下载目录 1</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="2"  value="2">下载目录 2</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="3"  value="3">下载目录 3</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="4"  value="4">下载目录 4</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="5"  value="5">下载目录 5</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="6"  value="6">下载目录 6</option>
+                                                    <option data-i18n="DownloadDirectory" data-i18n-prefix="" data-i18n-placeholders="7"  value="7">下载目录 7</option>
+                                                </select>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td data-i18n="SearchOnSite">是否在站内搜索</td>
                                         <td>
-                                            <input class="search-onsite-yes search-onsite" value="SEARCH_ONSITE_YES" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-yes">是</label>
-                                            <input class="search-onsite-no search-onsite" value="SEARCH_ONSITE_NO" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-no">否</label>
+                                            <input class="search-onsite-yes search-onsite" value="true" type="radio"><label data-i18n="SEARCH_ONSITE_YES" data-i18n-prefix="" for="search-onsite-yes">是</label>
+                                            <input class="search-onsite-no search-onsite" value="false" type="radio"><label data-i18n="SEARCH_ONSITE_NO" data-i18n-prefix="" for="search-onsite-no">否</label>
                                         </td>
                                     </tr>
                                     <!-- <tr>
@@ -514,6 +517,7 @@
                                             <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" >查找</option>
                                             <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS" disabled>翻译</option>
                                             <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled>二维码</option>
+                                            <option data-i18n="ACT_PANEL" data-i18n-prefix="" value="ACT_PANEL">panel</option>
                                         </select>
 
                                         </td>

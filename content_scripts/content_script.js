@@ -24,13 +24,13 @@ const EVENT_PAHSE = {
 }
 Object.freeze(EVENT_PAHSE);
 
-const ICONS = {
-    "download": browser.runtime.getURL("icon/download.png"),
-    "empty_trash": browser.runtime.getURL("icon/empty_trash_64px.png"),
-    "open_in_browser": browser.runtime.getURL("icon/open_in_browser.png"),
-    "search": browser.runtime.getURL("icon/search.png"),
-    "copy": browser.runtime.getURL("icon/copy.png"),
-}
+// const ICONS = {
+//     "download": browser.runtime.getURL("icon/download.png"),
+//     "empty_trash": browser.runtime.getURL("icon/empty_trash_64px.png"),
+//     "open_in_browser": browser.runtime.getURL("icon/open_in_browser.png"),
+//     "search": browser.runtime.getURL("icon/search.png"),
+//     "copy": browser.runtime.getURL("icon/copy.png"),
+// }
 
 let specialSites = [
     "vk.com"
@@ -42,7 +42,9 @@ let specialExts = [
 //remove highlighting when Escape is pressed
 document.addEventListener("keypress", (e) => {
     if (e.key === "Escape") {
-        browser.runtime.sendMessage({ cmd: "removeHighlighting" });
+        browser.runtime.sendMessage({
+            cmd: "removeHighlighting"
+        });
     }
 })
 
@@ -119,7 +121,10 @@ function removeExistedElement(selector) {
     }
 }
 
-function injectStyle(opt = { url: "", css: "" }) {
+function injectStyle(opt = {
+    url: "",
+    css: ""
+}) {
     let style;
     if (opt.url && opt.url.length !== 0) {
         style = document.createElement("link");
@@ -209,7 +214,16 @@ class Indicator {
     }
 }
 
-/*
+
+const ICONS = {
+    "ACT_DL": "fa fa-download",
+    "ACT_OPEN": "fa fa-external-link",
+    "ACT_SEARCH": "fafa-search",
+    "ACT_COPY": "fa fa-copy",
+    "BAN": "fa fa-ban",
+}
+
+
 const CMDPANEL_HTML_CONTENT = `
 <table id="GDPanel">
     <tr class="GDHeader">
@@ -250,13 +264,12 @@ const CMDPANEL_HTML_CONTENT = `
         </td>
     </tr>
     <tr class="GDRow" id="GDRow-other">
-        <td class="GDCell" id="GDCell-trash" colspan=2 style="background-image:url('${ICONS.empty_trash}')">
+        <td class="GDCell" id="GDCell-ban" colspan=2">
+        <i class="${ICONS.BAN}" aria-hidden="true"></i>
         </td>
     </tr>
     
 </table>`;
-
-
 
 
 class cmdPanel {
@@ -266,29 +279,29 @@ class cmdPanel {
     constructor(enterlistener, leaveListener, dropListener, overlistener) {
         removeExistedElement("#GDPanel-wrapper");
         this.el = document.createElement("div");
-        this.el.style.display = "none";
+        this.hide();
         this.el.id = "GDPanel-wrapper";
         this.el.innerHTML = CMDPANEL_HTML_CONTENT;
         this.lastdragovertarget = null;
 
-        this.el.addEventListener("drop", dropListener)
-        // this.el.addEventListener("dragover", e => {
-        //     e.stopPropagation();
-        //     e.preventDefault(); 
-        //     console.log("over", e);
-        // })
-        this.el.addEventListener("dragenter", enterlistener)
-        this.el.addEventListener("dragleave", leaveListener);
+        this.el.addEventListener("drop", e => dropListener(e, this.lastdragovertarget));
+        this.el.addEventListener("dragenter", enterlistener);
+        this.el.addEventListener("dragleave", e => {
+            leaveListener(e);
+        });
         this.el.addEventListener("dragover", e => {
             if (e.target.className.indexOf("GDCell") >= 0 && this.lastdragovertarget != e.target) {
+                this.lastdragovertarget && this.lastdragovertarget.classList.remove("GDCell-hover");
                 this.lastdragovertarget = e.target;
+                this.lastdragovertarget.classList.add("GDCell-hover");
                 this.updateHeader(e);
                 // overlistener(e);
             }
-        })
+        });
         document.body.appendChild(this.el);
 
         this.updateTable();
+
     }
     updateTable() {
         let row = this.el.querySelector("#GDRow-text");
@@ -313,21 +326,24 @@ class cmdPanel {
         element.dataset["index"] = index;
         let icon = ""
         const setting = bgConfig[key][index];
-        switch (setting.act_name) {
-            case commons.ACT_OPEN:
-                icon = ICONS.open_in_browser;
-                break;
-            case commons.ACT_SEARCH:
-                icon = ICONS.search;
-                break;
-            case commons.ACT_COPY:
-                icon = ICONS.copy;
-                break;
-            case commons.ACT_DL:
-                icon = ICONS.download;
-                break;
-        }
-        element.style.backgroundImage = `url(${icon})`;
+        // switch (setting.act_name) {
+        //     case commons.ACT_OPEN:
+        //         icon = ICONS.open;
+        //         break;
+        //     case commons.ACT_SEARCH:
+        //         icon = ICONS.search;
+        //         break;
+        //     case commons.ACT_COPY:
+        //         icon = ICONS.copy;
+        //         break;
+        //     case commons.ACT_DL:
+        //         icon = ICONS.download;
+        //         break;
+        // }
+        const i = document.createElement("i");
+        i.setAttribute("aria-hidden", true);
+        i.className = ICONS[setting.act_name];
+        element.appendChild(i);
     }
     render(actionkind, targetkind, selection, textSelection, imageLink) {
         $H(["#GDPanel-link", "#GDPanel-image", "#GDRow-link", "#GDRow-image"], "table-row");
@@ -354,23 +370,31 @@ class cmdPanel {
                 break;
         }
     }
-    place(x = 0, y = 0) {
-        this.el.style.left = x + "px";
-        this.el.style.top = y + "px";
+    place(x = 0, y = 0, direction = commons.DIR_U) {
+        let left, top;
+        let w = this.el.querySelector("#GDCell-ban");
+        left = (x - w.offsetLeft - w.offsetWidth / 2) + "px";
+        top = (y - w.offsetTop - w.offsetHeight / 1.5) + "px";
+        console.info(`left:${left},top:${top}`);
+        this.el.style.left = left;
+        this.el.style.top = top;
     }
     display() {
+        this.el.style.visibility = "visible"
         this.el.style.display = "block";
+        this.el.style.zIndex = 99999;
     }
     hide() {
-        this.el.style.display = "none";
-    }
-    // dragenter(e) {
-    //     e.target.setAttribute("style", "background-color:red");
-    // }
+            this.el.style.zIndex = -1;
+            this.el.style.visibility = "hidden"
+        }
+        // dragenter(e) {
+        //     e.target.setAttribute("style", "background-color:red");
+        // }
 
     updateHeader(e) {
         let header = this.el.querySelector(".GDHeader").firstElementChild;
-        if (this.lastdragovertarget.id === "GDCell-trash") {
+        if (this.lastdragovertarget.id === "GDCell-ban") {
             header.textContent = "取消"; //getI18nMessage("Cancel");
             return;
         }
@@ -378,7 +402,6 @@ class cmdPanel {
         header.textContent = translatePrompt("%g-%a", setting);
     }
 }
-*/
 
 class DragClass {
     constructor(elem) {
@@ -438,7 +461,7 @@ class DragClass {
         this.drop4panel = this.drop4panel.bind(this);
         this.dragover4panel = this.dragover4panel.bind(this)
 
-        // this.cmdPanel = new cmdPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel, this.dragover4panel);
+        this.cmdPanel = new cmdPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel, this.dragover4panel);
 
         //end: UI componment
 
@@ -567,9 +590,10 @@ class DragClass {
     }
     dragover(evt) {
         this.updateModifierKey(evt);
-        // if (this.isPanelArea) {
-        //     return;
-        // }
+        if (this.isPanelArea) {
+            console.log("panel!");
+            return;
+        }
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
 
         if (this.distance > bgConfig.maxTriggeredDistance) {
@@ -602,8 +626,9 @@ class DragClass {
                 actions = bgConfig.Actions;
             }
 
+            let property = actions[this.actionType][this.direction]
             if (bgConfig.enablePrompt && this.promptBox !== null) {
-                let property = actions[this.actionType][this.direction]
+
                 this.promptBox.display();
                 let message = bgConfig.tipsContent[property["act_name"]];
                 // console.log(promptString["%g"][property["download_directory"]]);
@@ -612,13 +637,13 @@ class DragClass {
             }
             //----
 
-            // this.cmdPanel.hide();
-            // if (property["act_name"] === commons.ACT_PANEL) {
-            //     this.cmdPanel.place(evt.pageX, evt.pageY, this.direction);
-            //     this.cmdPanel.display();
-            //     this.promptBox.hide();
-            //     this.cmdPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
-            // }
+            this.cmdPanel.hide();
+            if (property["act_name"] === commons.ACT_PANEL) {
+                this.cmdPanel.place(evt.pageX, evt.pageY, this.direction);
+                this.cmdPanel.display();
+                this.promptBox && this.promptBox.hide();
+                this.cmdPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
+            }
             //----
 
         }
@@ -675,7 +700,9 @@ class DragClass {
             }
         };
         if (["textAction", "linkAction"].includes(this.actionType)) {
-            this.post({ direction: commons.DIR_OUTER });
+            this.post({
+                direction: commons.DIR_OUTER
+            });
         }
         const fileReader = new FileReader();
         let file = dt.files[0];
@@ -713,23 +740,23 @@ class DragClass {
 
     dragenter4panel(e) {
 
-        // this.isPanelArea = true;
-        // console.info("enter panel");
+        this.isPanelArea = true;
+        console.info("enter panel");
     }
     dragleave4panel(e) {
-        // console.log(e);
+        console.log(e);
         // this.isPanelArea = false;
     }
-    drop4panel(e) {
+    drop4panel(e, lastdragovertarget) {
         // console.info(e.);
         // console.info(e.originalTarget.parentElement.dataset);
-        // const obj = Object.assign({}, e.originalTarget.dataset)
-        // obj.tab_active = sanitizeBoolean(obj.tab_active);
-        // obj.search_onsite = sanitizeBoolean(obj.search_onsite);
-        // obj.download_saveas = sanitizeBoolean(obj.download_saveas);
-        // this.cmdPanel.hide();
-        // this.post({ direction: commons.DIR_P, key: e.originalTarget.dataset["key"], index: parseInt(e.originalTarget.dataset["index"]) });
-        // e.preventDefault(); //note!
+        const obj = Object.assign({}, lastdragovertarget.dataset);
+        this.cmdPanel.hide();
+        this.post(Object.assign(obj, {
+            direction: commons.DIR_P,
+            index: parseInt(obj.index)
+        }));
+        e.preventDefault(); //note!
     }
     dragover4panel(e) {
 
@@ -787,7 +814,7 @@ class DragClass {
                 break;
             case "dragenter":
                 this.accepting = false;
-                // this.isPanelArea = false;
+                this.isPanelArea = false;
                 if (this.isNotAcceptable(evt)) {
                     return;
                 }
@@ -1091,9 +1118,13 @@ let bgPort = browser.runtime.connect({
 
 function doInit() {
     if (mydrag === null && document.body) {
-        injectStyle({ url: browser.runtime.getURL("content_scripts/content_script.css") });
+        injectStyle({
+            url: browser.runtime.getURL("content_scripts/content_script.css")
+        });
         if (bgConfig.enableStyle) {
-            injectStyle({ css: bgConfig.style });
+            injectStyle({
+                css: bgConfig.style
+            });
         }
         try {
             mydrag = new DragClass(document);
@@ -1124,7 +1155,7 @@ function onStorageChange(changes) {
 
 browser.storage.onChanged.addListener(onStorageChange);
 
-if (0) {//a storage bug that reported in #65,so using another way to load configuration.
+if (false) { //a storage bug that reported in #65,so using another way to load configuration.
     browser.storage.local.get().then(config => {
         console.info("GlitterDrag: loaded config from storage");
         bgConfig = config;
