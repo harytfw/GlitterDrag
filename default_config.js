@@ -1,6 +1,19 @@
 //TODO:减少全局变量,修改变量名
 const ACTION_CONSTRUCTOR = (parameter = {}) => {
-    return Object.assign({ act_name: commons.ACT_OPEN, tab_active: commons.FORE_GROUND, tab_pos: commons.TAB_CRIGHT, engine_name: browser.i18n.getMessage("defaultText"), engine_url: browser.i18n.getMessage("default_search_url"), open_type: commons.OPEN_LINK, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_LINK, download_directory: 0, download_saveas: commons.DOWNLOAD_SAVEAS_YES, search_onsite: commons.SEARCH_ONSITE_NO }, parameter)
+    return Object.assign({
+        act_name: commons.ACT_OPEN,
+        tab_active: commons.FORE_GROUND,
+        tab_pos: commons.TAB_CRIGHT,
+        engine_name: browser.i18n.getMessage("defaultText"),
+        engine_url: browser.i18n.getMessage("default_search_url"),
+        open_type: commons.OPEN_LINK,
+        search_type: commons.SEARCH_TEXT,
+        copy_type: commons.COPY_TEXT,
+        download_type: commons.DOWNLOAD_LINK,
+        download_directory: 0,
+        download_saveas: commons.DOWNLOAD_SAVEAS_YES,
+        search_onsite: commons.SEARCH_ONSITE_NO
+    }, parameter)
 }
 const GENERATE_DEFAULT_CONFIG = () => {
 
@@ -32,10 +45,10 @@ const GENERATE_DEFAULT_CONFIG = () => {
         enableShiftKey: false,
         timeoutCancel: 2000, // ms
         triggeredDistance: 20, // px
-        maxTriggeredDistance:9999,//px
+        maxTriggeredDistance: 9999, //px
         disableAdjustTabSequence: false,
         switchToParentTab: false,
-        alwaysImage:false,
+        alwaysImage: false,
         tipsContent: {
             ACT_NONE: "%a",
             ACT_OPEN: "%a",
@@ -79,22 +92,39 @@ const GENERATE_DEFAULT_CONFIG = () => {
         },
 
         cmdPanel_textAction: [
-            ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
+            ACTION_CONSTRUCTOR({
+                icon: ""
+            }), ACTION_CONSTRUCTOR({
+                icon: ""
+            }), ACTION_CONSTRUCTOR({
+                icon: ""
+            }),
         ],
         cmdPanel_linkAction: [
-            ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
+            ACTION_CONSTRUCTOR({
+                icon: ""
+            }), ACTION_CONSTRUCTOR({
+                icon: ""
+            }), ACTION_CONSTRUCTOR({
+                icon: ""
+            }),
         ],
         cmdPanel_imageAction: [
-            ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }), ACTION_CONSTRUCTOR({ icon: "" }),
+            ACTION_CONSTRUCTOR({
+                icon: ""
+            }), ACTION_CONSTRUCTOR({
+                icon: ""
+            }), ACTION_CONSTRUCTOR({
+                icon: ""
+            }),
         ],
         downloadDirectories: ["", "", "", "", "", "", "", ""],
         style: "",
-        /*
-        specialSites:[], // ignore drag&drop detection on these site.
-        specialExts:[], // don't process the file with these extensions.
-        */
+        specialHosts: [], // ignore drag&drop detection on these hosts.
+        specialExts: [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".html", ".json", ".xml", ".ini", ".py", ".mp3", ".wav", ".mp4", ".zip", ".7z", ".apk", ".rar", ".exe", ".dll"], // don't process the file with these extensions.
+        maxProcessSize: 5, //unit is M; the file that larger than 5M won't be processed.
         debug: false,
-        version:"0.0.0"
+        version: "0.0.0"
     };
 }
 
@@ -105,30 +135,76 @@ const DEFAULT_CONFIG_A = (() => {
     let a = GENERATE_DEFAULT_CONFIG();
 
     Object.assign(a.Actions.textAction, {
-        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORE_GROUND, open_type: commons.OPEN_TEXT, download_type: commons.DOWNLOAD_TEXT }),
-        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND, open_type: commons.OPEN_TEXT, download_type: commons.DOWNLOAD_TEXT }),
-        DIR_L: ACTION_CONSTRUCTOR({ act_name: commons.ACT_COPY, open_type: commons.OPEN_TEXT, download_type: commons.DOWNLOAD_TEXT }),
-        DIR_R: ACTION_CONSTRUCTOR({ act_name: commons.ACT_SEARCH, open_type: commons.OPEN_TEXT, download_type: commons.DOWNLOAD_TEXT }),
+        DIR_U: ACTION_CONSTRUCTOR({
+            act_name: commons.ACT_OPEN,
+            tab_active: commons.FORE_GROUND,
+            open_type: commons.OPEN_TEXT,
+            download_type: commons.DOWNLOAD_TEXT
+        }),
+        DIR_D: ACTION_CONSTRUCTOR({
+            act_name: commons.ACT_OPEN,
+            tab_active: commons.BACK_GROUND,
+            open_type: commons.OPEN_TEXT,
+            download_type: commons.DOWNLOAD_TEXT
+        }),
+        DIR_L: ACTION_CONSTRUCTOR({
+            act_name: commons.ACT_COPY,
+            open_type: commons.OPEN_TEXT,
+            download_type: commons.DOWNLOAD_TEXT
+        }),
+        DIR_R: ACTION_CONSTRUCTOR({
+            act_name: commons.ACT_SEARCH,
+            open_type: commons.OPEN_TEXT,
+            download_type: commons.DOWNLOAD_TEXT
+        }),
     });
 
     Object.assign(a.Actions.linkAction, {
-        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORE_GROUND }),
-        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND }),
-        DIR_L: ACTION_CONSTRUCTOR({ act_name: commons.ACT_COPY, copy_type: commons.COPY_LINK }),
-        DIR_R: ACTION_CONSTRUCTOR({ act_name: commons.ACT_SEARCH, search_type: commons.SEARCH_TEXT }),
+        DIR_U: ACTION_CONSTRUCTOR({
+            act_name: commons.ACT_OPEN,
+            tab_active: commons.FORE_GROUND
+        }),
+        DIR_D: ACTION_CONSTRUCTOR({
+            act_name: commons.ACT_OPEN,
+            tab_active: commons.BACK_GROUND
+        }),
+        DIR_L: ACTION_CONSTRUCTOR({
+            act_name: commons.ACT_COPY,
+            copy_type: commons.COPY_LINK
+        }),
+        DIR_R: ACTION_CONSTRUCTOR({
+            act_name: commons.ACT_SEARCH,
+            search_type: commons.SEARCH_TEXT
+        }),
     });
     Object.assign(a.Actions.imageAction, {
-        DIR_U: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.FORE_GROUND, }),
-        DIR_D: ACTION_CONSTRUCTOR({ act_name: commons.ACT_OPEN, tab_active: commons.BACK_GROUND, }),
+        DIR_U: ACTION_CONSTRUCTOR({
+            act_name: commons.ACT_OPEN,
+            tab_active: commons.FORE_GROUND,
+        }),
+        DIR_D: ACTION_CONSTRUCTOR({
+            act_name: commons.ACT_OPEN,
+            tab_active: commons.BACK_GROUND,
+        }),
     });
 
     for (const p of Object.keys(a.Actions)) {
-        for (const k of ["DIR_U", "DIR_D", "DIR_L", "DIR_R", "DIR_LOW_L", "DIR_LOW_R", "DIR_UP_L", "DIR_UP_R", "DIR_OUTER", ]) {
+        for (const k of["DIR_U", "DIR_D", "DIR_L", "DIR_R", "DIR_LOW_L", "DIR_LOW_R", "DIR_UP_L", "DIR_UP_R", "DIR_OUTER", ]) {
             if (p === "textAction") {
-                Object.assign(a.Actions[p][k], { open_type: commons.OPEN_TEXT, search_type: commons.SEARCH_TEXT, copy_type: commons.COPY_TEXT, download_type: commons.DOWNLOAD_TEXT, })
+                Object.assign(a.Actions[p][k], {
+                    open_type: commons.OPEN_TEXT,
+                    search_type: commons.SEARCH_TEXT,
+                    copy_type: commons.COPY_TEXT,
+                    download_type: commons.DOWNLOAD_TEXT,
+                })
             }
             else if (p === "imageAction") {
-                Object.assign(a.Actions[p][k], { open_type: commons.OPEN_IMAGE, search_type: commons.SEARCH_LINK, copy_type: commons.COPY_IMAGE, download_type: commons.DOWNLOAD_IMAGE, })
+                Object.assign(a.Actions[p][k], {
+                    open_type: commons.OPEN_IMAGE,
+                    search_type: commons.SEARCH_LINK,
+                    copy_type: commons.COPY_IMAGE,
+                    download_type: commons.DOWNLOAD_IMAGE,
+                })
             }
         }
     }

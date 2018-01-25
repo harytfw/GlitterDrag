@@ -32,12 +32,6 @@ Object.freeze(EVENT_PAHSE);
 //     "copy": browser.runtime.getURL("icon/copy.png"),
 // }
 
-let specialSites = [
-    "vk.com"
-]
-let specialExts = [
-    ".html"
-]
 
 //remove highlighting when Escape is pressed
 document.addEventListener("keypress", (e) => {
@@ -346,6 +340,10 @@ class cmdPanel {
         element.appendChild(i);
     }
     render(actionkind, targetkind, selection, textSelection, imageLink) {
+        function trim(str = "", len1 = 5, len2 = 5, maxlen = 10) {
+            if (str.length <= maxlen) return str;
+            return `${str.substr(0,len1)}...${str.substr(str.length-len2,len2)}`
+        }
         $H(["#GDPanel-link", "#GDPanel-image", "#GDRow-link", "#GDRow-image"], "table-row");
         switch (actionkind) {
             case commons.textAction:
@@ -370,7 +368,7 @@ class cmdPanel {
                 break;
         }
     }
-    place(x = 0, y = 0, direction = commons.DIR_U) {
+    place(x = 0, y = 0) {
         let left, top;
         let w = this.el.querySelector("#GDCell-ban");
         left = (x - w.offsetLeft - w.offsetWidth / 2) + "px";
@@ -530,12 +528,24 @@ class DragClass {
             this.timeoutId = setTimeout(() => this.cancel(), bgConfig.timeoutCancel);
         }
 
+
+        this.startPos.x = evt.screenX;
+        this.startPos.y = evt.screenY;
         this.updateModifierKey(evt);
 
         this.targetElem = evt.target;
-        this.selection = evt.dataTransfer.getData("text/x-moz-url-data").trim();
-        this.imageLink = evt.dataTransfer.getData("application/x-moz-file-promise-url");
-        this.textSelection = evt.dataTransfer.getData("text/plain").trim();
+
+        try {
+            //we are not allow to use getData when dragging external file here.
+            this.selection = evt.dataTransfer.getData("text/x-moz-url-data").trim();
+            this.imageLink = evt.dataTransfer.getData("application/x-moz-file-promise-url");
+            this.textSelection = evt.dataTransfer.getData("text/plain").trim();
+        }
+        catch (e) {
+            $D(e);
+            return;
+        }
+
         if (this.selection === "") {
             this.selection = this.textSelection;
         }
@@ -553,8 +563,6 @@ class DragClass {
             this.selection = this.imageLink;
             this.actionType = commons.imageAction;
         }
-        this.startPos.x = evt.screenX;
-        this.startPos.y = evt.screenY;
         // console.info(`GlitterDrag: drag start, ${this.actionType} ${this.targetType}`);
     }
     dragend(evt) {
@@ -710,7 +718,7 @@ class DragClass {
             let bin = new Uint8Array(fileReader.result);
             // console.log(bin, bin.length);
             sended.imageData = bin.toString(); // convert ArrayBuffer to string
-            sended.hasImageBinary = true;
+            sended.externalFlag = true;
             sended.fileInfo.name = file.name;
             sended.fileInfo.type = file.type;
             this.post(sended);
@@ -883,14 +891,20 @@ class DragClass {
                 }
                 // console.log(evt);
                 if (evt.dataTransfer && !this.running && this.accepting) {
-                    // if (evt.dataTransfer.files[0].type === "text/html") { // A html file is dragged into browser.
-                    //     //DO NOTHING
-                    // }
-                    // else {
-                    this.doDropPreventDefault = true;
-                    this.accepting = false;
-                    this.drop(evt);
-                    // }
+                    const file = evt.dataTransfer.files[0];
+                    const fileName = file && file.name;
+                    const ext = fileName && fileName.match(commons.fileExtension)[1];
+                    if (bgConfig.specialExts && bgConfig.specialExts.includes(ext)) {
+                        //DO NOTHING
+                    }
+                    else if (bgConfig.maxProcessSize && file.size >= (bgConfig.maxProcessSize * 1024 * 1024)) {
+                        //DO NOTHING
+                    }
+                    else {
+                        this.doDropPreventDefault = true;
+                        this.accepting = false;
+                        this.drop(evt);
+                    }
                 }
                 else if (this.running) {
                     this.doDropPreventDefault = true;
@@ -914,7 +928,7 @@ class DragClass {
                 // }
                 if (evt.eventPhase === EVENT_PAHSE.BUBBLING_PHASE) {
                     // when the site is an exclusiveSite, ignore this.isDropTouched
-                    if (this.running && (this.isDropTouched === false || specialSites.includes(location.host))) {
+                    if (this.running && (this.isDropTouched === false || (bgConfig.specialSites && bgConfig.specialSites.includes(location.host)))) {
                         this.running = false;
                         this.dragend(evt);
                     }

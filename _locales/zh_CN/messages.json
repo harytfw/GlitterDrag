@@ -605,8 +605,20 @@
         "message": "总是把含图片的链接当成图片类型",
         "description": ""
     },
-    "ToggleDebug":{
-        "message":"切换至DEBUG模式",
-        "description":""
+    "elem_ToggleDebug": {
+        "message": "切换至DEBUG模式",
+        "description": ""
+    },
+    "elem_SpecialHosts": {
+        "message": "特殊域名",
+        "description": ""
+    },
+    "elem_SpecialExts": {
+        "message": "特殊扩展名",
+        "description": ""
+    },
+    "elem_MaxProcessSize": {
+        "message": "处理的最大文件大小 (M)",
+        "description": ""
     }
 }

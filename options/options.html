@@ -636,6 +636,7 @@
                     <p data-i18n="PlaceholderTip">用 %s 替代链接里的关键词，输入栏不能为空，名称不应该重复</p>
                     <div id="builtin-engine">
                         <span data-i18n="BuiltinEngineHelperText">这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：</span>
+                        <!-- TODO 从ENGINES 中动态生成 -->
                         <select style="display:inline-block">
                             <option selected="selected" disabled="disabled" data-i18n="SearchTemplateClasses_General">General</option>
                             <option value="https://www.google.com/search?q=%s">Google Search</option>
@@ -706,7 +707,7 @@
                     <label for="enablePrompt" data-i18n="ShowActionTip">显示动作提示</label>
                     <br>
                     <label data-i18n="ModifyTipsContent">修改提示的内容:- </label>
-                    <select id="tipsContentSelect">
+                    <select id="tipsContentSelect" not-config>
                         <option data-i18n="ACT_NONE" data-i18n-prefix="" value="ACT_NONE">无动作</option>
                         <option data-i18n="ACT_OPEN" data-i18n-prefix="" value="ACT_OPEN">打开</option>
                         <option data-i18n="ACT_COPY" data-i18n-prefix="" value="ACT_COPY">复制</option>
@@ -749,11 +750,21 @@
                     <input type="checkbox" id="alwaysImage">
                     <label for="alwaysImage" data-i18n="AlwaysImage">总是把含图片的链接当成图片</label>
                     <br>
+                    <label for="specialHosts" data-i18n="SpecialHosts">特殊域名</label>
+                    <input type="text" id="specialHosts" not-config>
+                    <br>
+                    <label for="specialExts" data-i18n="SpecialExts">特殊扩展名</label>
+                    <input type="text" id="specialExts" not-config>
+                    <br>
+                    <label for="maxProcessSize" data-i18n="MaxProcessSize">最大处理文件大小</label>
+                    <input type="number" id="maxProcessSize">
+                    <br>
                     <input type="checkbox" id="enableSync" disabled>
-                    <label for="enableSync" data-i18n="EnableSync">同步到Firefox账户(v53+)</label>
+                    <label for="enableSync" data-i18n="EnableSync" style="display:none">同步到Firefox账户(v53+)</label>
                     <br>
                     <input type="checkbox" id="debug">
                     <label for="debug" data-i18n="ToggleDebug">切换DEBUG</label>
+
                 </li>
                 <li class="tab-content" id="tab-download">
                     <button data-i18n="ShowDefaultDownloadDirectory" id="showDefaultDownloadDirectory">打开浏览器的默认下载目录</button>

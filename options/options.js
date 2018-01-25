@@ -7,7 +7,9 @@ browser.runtime.getBrowserInfo().then(info => {
 });
 
 window.addEventListener("beforeunload", e => {
-    LStorage.set({ "version": browser.runtime.getManifest().version });
+    LStorage.set({
+        "version": browser.runtime.getManifest().version
+    });
 });
 
 document.title = getI18nMessage("option_page_title");
@@ -51,15 +53,17 @@ $A("template").forEach(t => {
 
 //hacking label + input[type='radio']
 document.addEventListener("click", e => {
-    if (e.target.nodeName === "LABEL" && e.target.getAttribute("for") !== null) {
-        const t = $E("." + e.target.getAttribute("for"), e.target.parentElement);
-        if (t && t.type === "radio") {
-            // t.checked = !t.checked;
-            t.dispatchEvent(new Event("radiochange", { bubbles: true }));
+        if (e.target.nodeName === "LABEL" && e.target.getAttribute("for") !== null) {
+            const t = $E("." + e.target.getAttribute("for"), e.target.parentElement);
+            if (t && t.type === "radio") {
+                // t.checked = !t.checked;
+                t.dispatchEvent(new Event("radiochange", {
+                    bubbles: true
+                }));
+            }
         }
-    }
-})
-//手动处理选择单选按钮
+    })
+    //手动处理选择单选按钮
 document.addEventListener("radiochange", e => {
     //把同一个父元素的radio当成一组
     let checked = $A("input[type='radio']:checked", e.target.parentElement);
@@ -68,7 +72,9 @@ document.addEventListener("radiochange", e => {
     }
     e.target.checked = true;
     //radiochange也是一种change事件，手动触发，传给上级
-    e.target.dispatchEvent(new Event("change", { bubbles: true }));
+    e.target.dispatchEvent(new Event("change", {
+        bubbles: true
+    }));
 })
 
 class ActionsWrapper {
@@ -81,7 +87,9 @@ class ActionsWrapper {
         document.addEventListener("tabshow", e => {
             if (e.target.id === "tab-actions") {
                 //模拟点击单选按钮，最终跳转到 :190
-                $E(".Actions", this.parent).dispatchEvent(new Event("radiochange", { bubbles: true }));
+                $E(".Actions", this.parent).dispatchEvent(new Event("radiochange", {
+                    bubbles: true
+                }));
             }
         });
 
@@ -225,12 +233,16 @@ class ActionsWrapper {
             this.onupdate();
             this.setting = (await LStorage.get([this.actionsKeyName]))[this.actionsKeyName];
             for (const x of $A(".act-name", this.parent)) {
-                this.onActionBehaviorChange({ target: x });
+                this.onActionBehaviorChange({
+                    target: x
+                });
             }
             const cfg = await LStorage.get(this.controlKeyName);
             for (const x of $A(".direction-control", this.parent)) {
                 x.value = cfg[this.controlKeyName][x.parentElement.parentElement.parentElement.className];
-                this.onDirectionControlChange({ target: x });
+                this.onDirectionControlChange({
+                    target: x
+                });
             }
         }
         else {
@@ -495,7 +507,9 @@ class EngineWrapper {
             }
         }
         if (engines.length > 0) {
-            LStorage.set({ "Engines": engines }).then(() => {
+            LStorage.set({
+                "Engines": engines
+            }).then(() => {
                 savedItems.forEach(item => {
                     item.elem.classList.add("accept", "saved");
                     setTimeout(() => {
@@ -513,7 +527,9 @@ class EngineWrapper {
                 });
 
                 setTimeout(() => {
-                    $E("#tab-actions").dispatchEvent(new Event("updateengines", { engines }));
+                    $E("#tab-actions").dispatchEvent(new Event("updateengines", {
+                        engines
+                    }));
                 }, 1000);
             });
         }
@@ -570,10 +586,14 @@ class generalSettingWrapper {
             const el = $E("#tipsContentSelect");
             const input = $E("#tipsContentInput");
             const content = res["tipsContent"];
-            input.addEventListener("change", ({ target }) => {
+            input.addEventListener("change", ({
+                target
+            }) => {
                 let val = target.value.replace(/\\n/g, "\n");
                 content[el.value] = val;
-                LStorage.set({ "tipsContent": content });
+                LStorage.set({
+                    "tipsContent": content
+                });
             });
             el.addEventListener("change", (e) => {
                 input.value = content[e.target.value].replace(/\n/g, "\\n");
@@ -584,7 +604,30 @@ class generalSettingWrapper {
             // el.dispatchEvent(new Event("change"));
         });
 
+        LStorage.get("specialHosts").then(res => {
+            const el = $E("#specialHosts");
+            el.value = res["specialHosts"].join(",");
+            el.addEventListener("change", () => {
+                const content = el.value.split(",");
+                LStorage.set({
+                    "specialHosts": content
+                });
+            })
+        });
+
+        LStorage.get("specialExts").then(res => {
+            const el = $E("#specialExts");
+            el.value = res["specialExts"].join(",");
+            el.addEventListener("change", () => {
+                const content = el.value.split(",");
+                LStorage.set({
+                    "specialExts": content
+                });
+            })
+        });
+
         $E("#tab-general-setting").addEventListener("change", evt => {
+            if (evt.target.getAttribute("not-config") !== null) return; //特殊处理
             const stored = {};
             stored[evt.target.id] = undefined;
             if (evt.target.type === "checkbox") stored[evt.target.id] = evt.target.checked;
@@ -600,7 +643,7 @@ class generalSettingWrapper {
     }
     async initSetting() {
         for (let elem of $A("#tab-general-setting input[id]")) {
-            if (elem.getAttribute("not-config") !== null) continue;
+            if (elem.getAttribute("not-config") !== null) continue; //特殊处理
             if (elem.type === "file") return;
             if (elem.type === "checkbox") {
                 elem.checked = (await LStorage.get(elem.id))[elem.id];
@@ -780,7 +823,9 @@ class ActionsView {
 
     set setting(data) {
         const initRadio = (t) => {
-            this.$E(t).dispatchEvent(new Event("radiochange", { bubbles: true }));
+            this.$E(t).dispatchEvent(new Event("radiochange", {
+                bubbles: true
+            }));
         }
 
         const actSetting = data;
@@ -865,7 +910,9 @@ class NewActionsWrapper {
         $E("#direction-category").addEventListener("click", async(e) => {
             if (e.target.classList.contains("category-item-disabled")) {
                 $E(".direction-control", this.parent).setAttribute("style", "box-shadow: 0px 0px 4px rgb(255, 0, 0);");
-                setTimeout(() => { $E(".direction-control", this.parent).removeAttribute("style") }, 1000);
+                setTimeout(() => {
+                    $E(".direction-control", this.parent).removeAttribute("style")
+                }, 1000);
                 return;
             }
             let sel = e.target.parentElement.querySelector(".category-item-selected");
@@ -1015,7 +1062,9 @@ class downloadWrapper {
                 document.querySelectorAll(".directory-entry>input:nth-child(2)").forEach((el, index) => {
                     this.directories[index] = el.value;
                 });
-                LStorage.set({ "downloadDirectories": this.directories });
+                LStorage.set({
+                    "downloadDirectories": this.directories
+                });
                 // e.target.setAttribute("disabled", "true");
             })
             const node = document.importNode(document.querySelector("#template-for-directory-entry").content, true);
@@ -1058,7 +1107,9 @@ class styleWrapper {
             }
 
             eventUtil.attachEventS("#saveStyle", () => {
-                LStorage.set({ "style": styleArea.value }).then(() => {
+                LStorage.set({
+                    "style": styleArea.value
+                }).then(() => {
                     document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveDone');
                     setTimeout(() => {
                         document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveStyle');
@@ -1083,7 +1134,9 @@ const tabs = {
             const target = $E(`${event.target.getAttribute("toggle-target")}`);
             target.classList.add("active");
             //+tabshow event
-            target.dispatchEvent(new Event("tabshow", { bubbles: true }));
+            target.dispatchEvent(new Event("tabshow", {
+                bubbles: true
+            }));
         });
 
 
@@ -1115,7 +1168,9 @@ const tabs = {
 
         doI18n();
 
-        $E(".nav-active").dispatchEvent(new Event("click", { bubbles: true }));
+        $E(".nav-active").dispatchEvent(new Event("click", {
+            bubbles: true
+        }));
     },
 
 }

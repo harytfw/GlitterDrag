@@ -108,7 +108,32 @@ const flags = {
 }
 flags.initialize();
 
-const LStorage = browser.storage.local;
+const LStorage = {
+    _buffer: {},
+    initialize: function() {
+        browser.storage.onChanged.addListener(changes => {
+            for (const k of Object.keys(changes)) {
+                this._buffer[k] = changes[k].newValue;
+            }
+        });
+        browser.storage.local.get(all => {
+            for (const k of Object.keys(all)) {
+                this._buffer[k] = all[k];
+            }
+        });
+    },
+    get: async function(thing) {
+        if (!thing) return Promise.resolve(this._buffer);
+        let r = {};
+        r[thing] = this._buffer[thing];
+        return Promise.resolve(r);
+    },
+    set: async function(things) {
+        return browser.storage.local.set(things);
+    },
+};
+LStorage.initialize();
+// const LStorage = browser.storage.local;
 async function getAct(type, dir, key) {
     let r = null;
     if (key === commons.KEY_CTRL) {
@@ -180,22 +205,20 @@ class ExecutorClass {
     }
     execute() {
         $D(this.action);
-        // let imageFile = null;
 
-        if (this.data.selection !== null && this.data.selection.length === 0) {
-            return;
-        }
-
-        if (this.data.hasImageBinary) {
+        if (this.data.externalFlag) {
             let array = new Uint8Array(this.data.imageData.split(","));
             this.data.imageData = array;
-            // imageFile = new File([array], this.data.fileInfo.name, {
-            //     type: this.data.fileInfo.type
-            // });
+            let imageFile = new File([array], this.data.fileInfo.name, {
+                type: this.data.fileInfo.type
+            });
+            console.assert(this.data.selection === null);
+            this.data.selection = createObjectURL(imageFile);
+        }
 
-            // if (this.data.selection === null) {
-            //     this.data.selection = createObjectURL(imageFile);
-            // }
+        if (this.data.selection === null || this.data.selection.length === 0) {
+            $D("the selection is empty");
+            return;
         }
         switch (this.action.act_name) {
             case commons.ACT_OPEN:
@@ -613,7 +636,7 @@ browser.runtime.onInstalled.addListener(async(details) => {
     }
     else if (details.reason === browser.runtime.OnInstalledReason.INSTALL) {
         changedflag = false;
-        await LStorage.set(DEFAULT_CONFIG);
+        await browser.storage.local.set(DEFAULT_CONFIG);
     }
 
     if (changedflag) {
@@ -637,7 +660,7 @@ browser.runtime.onMessage.addListener((m) => {
 
 browser.runtime.onConnect.addListener(port => {
     if (port.name === "initial") {
-        browser.storage.local.get().then(all => {
+        LStorage.get().then(all => { //test purpose, mark for delete
             port.postMessage(all);
         });
     }

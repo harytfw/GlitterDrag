@@ -598,12 +598,24 @@
     "elem_MaximumDistancePx": {
         "message": "Maximum Distance (px)"
     },
-    "elem_AlwaysImage":{
-      "message":"Always treat a link containing picture as image type",
-      "description":""
+    "elem_AlwaysImage": {
+        "message": "Always treat a link containing picture as image type",
+        "description": ""
     },
-    "ToggleDebug":{
-        "message":"Toggle Debug Mode",
-        "description":""
+    "ToggleDebug": {
+        "message": "Toggle Debug Mode",
+        "description": ""
+    },
+    "elem_SpecialHosts": {
+        "message": "Special Hosts",
+        "description": ""
+    },
+    "elem_SpecialExts": {
+        "message": "Special Exts",
+        "description": ""
+    },
+    "elem_MaxProcessSize": {
+        "message": "Maximum Process Size (M)",
+        "description": ""
     }
 }

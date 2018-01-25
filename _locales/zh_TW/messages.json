@@ -605,8 +605,20 @@
         "message": "總是將含圖片的鏈結當成圖片類型",
         "description": ""
     },
-    "ToggleDebug":{
-        "message":"",
-        "description":""
+    "elem_ToggleDebug": {
+        "message": "",
+        "description": ""
+    },
+    "elem_SpecialHosts": {
+        "message": "",
+        "description": ""
+    },
+    "elem_SpecialExts": {
+        "message": "",
+        "description": ""
+    },
+    "elem_MaxProcessSize": {
+        "message": "最大的文件处理大小 (M)",
+        "description": ""
     }
 }

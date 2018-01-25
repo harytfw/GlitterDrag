@@ -77,15 +77,15 @@ async function showDebugTab() {
     document.querySelector("#_debug").style.display = "initial";
     // document.querySelector("#_debug").click();
     document.querySelector("#reload").addEventListener("click", () => {
-        browser.runtime.reload();
-    })
-    // $E("#debug").addEventListener("change", e => {
-    //     LStorage.set({ "debug": e.target.checked });
-    //     location.reload();
-    // });
-    // LStorage.get("debug").then(setting => {
-    //     $E("#debug").checked = setting["debug"];
-    // });
+            browser.runtime.reload();
+        })
+        // $E("#debug").addEventListener("change", e => {
+        //     LStorage.set({ "debug": e.target.checked });
+        //     location.reload();
+        // });
+        // LStorage.get("debug").then(setting => {
+        //     $E("#debug").checked = setting["debug"];
+        // });
     document.addEventListener("keypress", (evt) => {
         const char = evt.key.charAt(0);
         if (char >= "1" && char <= "9" && evt.target.nodeName !== "INPUT" && evt.target.nodeName !== "TEXTAREA") {
@@ -119,6 +119,7 @@ async function showDebugTab() {
         e.stopPropagation();
         e.preventDefault();
         let dt = e.dataTransfer;
+        console.log(dt);
         log(`\nItems:\n`, true)
         for (let type of dt.types) {
             log(`  Type: ${type} , Data: ${dt.getData(type)}\n`);
