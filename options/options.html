@@ -8,7 +8,6 @@
     <link rel="shortcut icon" type="image/png" href="./../Drag.png">
     <link rel="stylesheet" type="text/css" href="extension.css">
     <link rel="stylesheet" type="text/css" href="options.css">
-    <link rel="stylesheet" type="text/css" href="./../content_scripts/content_script.css">
 
 </head>
 
@@ -648,6 +647,7 @@
                             <option value="https://en.wikipedia.org/wiki/%s">Wikipedia (English)</option>
                             <option value="https://www.amazon.com/s/?field-keywords=%s">Amazon Search</option>
                             <option value="https://www.qwant.com/?q=%s&t=all">Qwant Search</option>
+                            <option value="https://www.startpage.com/do/search?&cat=web&query=%s">Startpage Search</option>
                         </select>
                         <select style="display:inline-block">
                             <option selected="selected" disabled="disabled" data-i18n="SearchTemplateClasses_Chinese">Chinese</option>
@@ -750,12 +750,12 @@
                     <input type="checkbox" id="alwaysImage">
                     <label for="alwaysImage" data-i18n="AlwaysImage">总是把含图片的链接当成图片</label>
                     <br>
-                    <label for="specialHosts" data-i18n="SpecialHosts">特殊域名</label>
-                    <input type="text" id="specialHosts" not-config>
-                    <br>
-                    <label for="specialExts" data-i18n="SpecialExts">特殊扩展名</label>
-                    <input type="text" id="specialExts" not-config>
-                    <br>
+                    <label for="specialHosts" data-i18n="SpecialHosts" style="display:none">特殊域名</label>
+                    <input type="text" id="specialHosts" not-config style="display:none">
+                    <!-- <br> -->
+                    <label for="allowExts" data-i18n="AllowExts" style="display:none">特殊扩展名</label>
+                    <input type="text" id="allowExts" not-config style="display:none">
+                    <!-- <br> -->
                     <label for="maxProcessSize" data-i18n="MaxProcessSize">最大处理文件大小</label>
                     <input type="number" id="maxProcessSize">
                     <br>
@@ -795,6 +795,7 @@
     <script src="options.js"></script>
     <script src="./../content_scripts/content_script.js"></script>
     <script src="options_debug.js"></script>
+    <!-- <iframe src="blank.html"></iframe> -->
 </body>
 
 </html>

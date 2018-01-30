@@ -894,13 +894,13 @@ class DragClass {
                     const file = evt.dataTransfer.files[0];
                     const fileName = file && file.name;
                     const ext = fileName && fileName.match(commons.fileExtension)[1];
-                    if (bgConfig.specialExts && bgConfig.specialExts.includes(ext)) {
+                    const containPlainText = "text/plain" in evt.dataTransfer.types;
+
+                    if (bgConfig.maxProcessSize && file && file.size >= (bgConfig.maxProcessSize * 1024 * 1024)) {
                         //DO NOTHING
                     }
-                    else if (bgConfig.maxProcessSize && file.size >= (bgConfig.maxProcessSize * 1024 * 1024)) {
-                        //DO NOTHING
-                    }
-                    else {
+
+                    else if (containPlainText || bgConfig.allowExts.includes(ext)) {
                         this.doDropPreventDefault = true;
                         this.accepting = false;
                         this.drop(evt);

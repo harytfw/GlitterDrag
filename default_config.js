@@ -121,7 +121,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         downloadDirectories: ["", "", "", "", "", "", "", ""],
         style: "",
         specialHosts: [], // ignore drag&drop detection on these hosts.
-        specialExts: [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".html", ".json", ".xml", ".ini", ".py", ".mp3", ".wav", ".mp4", ".zip", ".7z", ".apk", ".rar", ".exe", ".dll"], // don't process the file with these extensions.
+        allowExts: [".txt", ".jpg", ".jpeg", ".png"], // only allow the file with these extension names.
         maxProcessSize: 5, //unit is M; the file that larger than 5M won't be processed.
         debug: false,
         version: "0.0.0"

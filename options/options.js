@@ -615,13 +615,13 @@ class generalSettingWrapper {
             })
         });
 
-        LStorage.get("specialExts").then(res => {
-            const el = $E("#specialExts");
-            el.value = res["specialExts"].join(",");
+        LStorage.get("allowExts").then(res => {
+            const el = $E("#allowExts");
+            el.value = res["allowExts"].join(",");
             el.addEventListener("change", () => {
                 const content = el.value.split(",");
                 LStorage.set({
-                    "specialExts": content
+                    "allowExts": content
                 });
             })
         });
@@ -780,7 +780,10 @@ class ActionsView {
                 hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes", ".copy-text");
                 break;
             case commons.ACT_QRCODE:
-                break
+                break;
+            case commons.ACT_PANEL:
+                hideTR(".copy-text", ".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
+                break;
         }
 
     }

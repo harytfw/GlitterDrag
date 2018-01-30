@@ -186,6 +186,7 @@ class ExecutorClass {
             this.backgroundChildTabCount = 0;
         });
 
+        this.findFlag = false;
     }
     async DO(m) {
         this.data = m;
@@ -498,6 +499,7 @@ class ExecutorClass {
         // }
     }
     findText(text) {
+        this.findFlag = true;
         if (text.length == 0 || !browser.find) return;
         browser.find.find(text).then((result) => {
             if (result.count > 0) {
@@ -650,7 +652,8 @@ browser.browserAction.onClicked.addListener(() => {
 });
 
 browser.runtime.onMessage.addListener((m) => {
-    if (m.cmd && m.cmd === "removeHighlighting") {
+    if (m.cmd && m.cmd === "removeHighlighting" && executor.findFlag) {
+        executor.findFlag = false;
         browser.find.removeHighlighting();
     }
     else {
