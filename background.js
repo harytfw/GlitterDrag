@@ -494,6 +494,13 @@ class ExecutorClass {
             // pass string of params.
             this.openRedirectPage(params)
         }
+        if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
+            url = url.replace("%s", "%x");
+        }
+
+        this.openTab(
+            url.replace("%s", encodeURIComponent(imageFileURL)).replace("%x", encodeURIComponent(`site:${this.data.site} ${imageFileURL}`))
+        );
         // else {
         //     this.searchText(this.data.selection);
         // }
