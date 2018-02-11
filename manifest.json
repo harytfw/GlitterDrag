@@ -58,5 +58,5 @@
             "strict_min_version": "52.0"
         }
     },
-    "web_accessible_resources": ["icon/*.png", "content_scripts/content_script.css"]
+    "web_accessible_resources": ["icon/*", "content_scripts/*"]
 }

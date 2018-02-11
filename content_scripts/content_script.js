@@ -129,6 +129,7 @@ function injectStyle(opt = {
     }
     else if (opt.css && opt.css.length !== 0) {
         style = document.createElement("style");
+        style.id = "GDStyle-" + Math.round(Math.random() * 100);
         style.type = "text/css";
         style.textContent = opt.css;
         document.head.appendChild(style);
@@ -170,10 +171,12 @@ class Prompt {
         this.hide();
     }
     display() {
-        if (this.container.style.display === "none") this.container.style.display = "block";
+        if (this.container.style.display === "none") {
+            this.container.style.setProperty("display", "block", "important");
+        }
     }
     hide() {
-        this.container.style.display = "none";
+        this.container.style.setProperty("display", "none", "important");
     }
     remove() {
         document.body.removeChild(this.parent);
@@ -189,44 +192,45 @@ class Indicator {
     }
     place(x = 0, y = 0, radius = 0) {
 
-        radius = radius / devicePixelRatio;
-        this.box.style.left = (x - radius) + "px";
-        this.box.style.top = (y - radius) + "px";
+        radius = radius / window.devicePixelRatio;
+        this.box.style.setProperty("left", (x - radius) + "px", "important");
+        this.box.style.setProperty("top", (y - radius) + "px", "important");
         const h = this.box.style.height = (radius * 2) + "px";
         const w = this.box.style.width = (radius * 2) + "px";
-        this.box.style.borderRadius = `${w}  ${h}`;
+        this.box.style.setProperty("border-radius", `${w} ${h}`, "important");
         // if (radius <= 0) {
         //     this.hide();
         //     return;
         // }
     }
     display() {
-        if (this.box.style.display === "none") this.box.style.display = "initial";
+        if (this.box.style.display === "none") this.box.style.setProperty("display", `initial`, "important");
     }
     hide() {
-        this.box.style.display = "none";
+        this.box.style.setProperty("display", `none`, "important");
     }
 }
 
 
 const ICONS = {
-    "ACT_DL": "fa fa-download",
-    "ACT_OPEN": "fa fa-external-link",
-    "ACT_SEARCH": "fafa-search",
-    "ACT_COPY": "fa fa-copy",
-    "BAN": "fa fa-ban",
+    "ACT_DL": "GD-fa GD-fa-download",
+    "ACT_OPEN": "GD-fa GD-fa-external-link",
+    "ACT_SEARCH": "GD-fa GD-fa-search",
+    "ACT_COPY": "GD-fa GD-fa-clipboard",
+    "ACT_FIND": "GD-fa GD-fa-find",
+    "BAN": "GD-fa GD-fa-ban",
 }
 
 
 const CMDPANEL_HTML_CONTENT = `
 <table id="GDPanel">
-    <tr class="GDHeader">
+    <tr id="GDHeader">
         <th colspan=3>
             动作
         </th>
     </tr>
-    <tr class="GDLabelRow" id="GDPanel-text">
-        <td class="GDPanel-content-wrapper" colspan=3><span>文本：</span><span class="GDPanel-content">中国最强</span></td>
+    <tr class="GDLabel" id="GDLabel-text">
+        <td class="GDLabel-content" colspan=3><span>文本：</span><span class="GDPanel-content">中国最强</span></td>
     </tr>
     <tr class="GDRow" id="GDRow-text">
         <td class="GDCell" align="center">
@@ -236,8 +240,8 @@ const CMDPANEL_HTML_CONTENT = `
         <td class="GDCell" align="center">
         </td>
     </tr>
-    <tr class="GDLabelRow" id="GDPanel-link">
-        <td class="GDPanel-content-wrapper" colspan=3><span >链接：</span><span class="GDPanel-content">中国最强</span></td>
+    <tr class="GDLabel" id="GDLabel-link">
+        <td class="GDLabel-content" colspan=3><span >链接：</span><span class="GDPanel-content"></span></td>
     <tr class="GDRow" id="GDRow-link">
         <td class="GDCell" align="center">
         </td>
@@ -246,8 +250,8 @@ const CMDPANEL_HTML_CONTENT = `
         <td class="GDCell" align="center">
         </td>
     </tr>
-    <tr class="GDLabelRow" id="GDPanel-image">
-        <td class="GDPanel-content-wrapper" colspan=3><span>图片：</span><span class="GDPanel-content">中国最强</span></td>
+    <tr class="GDLabel" id="GDLabel-image">
+        <td class="GDLabel-content" colspan=3><span>图片：</span><span class="GDPanel-content"></span></td>
     </tr>
     <tr class="GDRow" id="GDRow-image">
         <td class="GDCell" align="center">
@@ -257,7 +261,7 @@ const CMDPANEL_HTML_CONTENT = `
         <td class="GDCell" align="center">
         </td>
     </tr>
-    <tr class="GDRow" id="GDRow-other">
+    <tr class="GDRow" id="GDFooter">
         <td class="GDCell" id="GDCell-ban" colspan=2">
         <i class="${ICONS.BAN}" aria-hidden="true"></i>
         </td>
@@ -292,11 +296,26 @@ class cmdPanel {
                 // overlistener(e);
             }
         });
+        this.el.setAttribute("style", "visibility:hidden;z-index:-1");
         document.body.appendChild(this.el);
 
+        // this.posX = this.el.offsetLeft - this.el.offsetWidth;
+        // this.posY = this.el.offsetTop - this.el.offsetHeight;
         this.updateTable();
+        this.el.style.setProperty("display", "none", "important");
 
     }
+
+    updateHeader(e) {
+        let header = this.el.querySelector("#GDHeader").firstElementChild;
+        if (this.lastdragovertarget.id === "GDCell-ban") {
+            header.textContent = "取消"; //getI18nMessage("Cancel");
+            return;
+        }
+        const setting = bgConfig[e.target.dataset["key"]][e.target.dataset["index"]];
+        header.textContent = translatePrompt("%g-%a", setting);
+    }
+
     updateTable() {
         let row = this.el.querySelector("#GDRow-text");
         bgConfig.cmdPanel_textAction.forEach((obj, i) => {
@@ -318,7 +337,6 @@ class cmdPanel {
         element.dataset["kind"] = kind;
         const key = element.dataset["key"] = "cmdPanel_" + kind + "Action";
         element.dataset["index"] = index;
-        let icon = ""
         const setting = bgConfig[key][index];
         // switch (setting.act_name) {
         //     case commons.ACT_OPEN:
@@ -335,70 +353,57 @@ class cmdPanel {
         //         break;
         // }
         const i = document.createElement("i");
-        i.setAttribute("aria-hidden", true);
+        // i.setAttribute("aria-hidden", true);
         i.className = ICONS[setting.act_name];
         element.appendChild(i);
     }
     render(actionkind, targetkind, selection, textSelection, imageLink) {
-        function trim(str = "", len1 = 5, len2 = 5, maxlen = 10) {
+        function trim(str = "", len1 = 6, len2 = 6, maxlen = 12) {
             if (str.length <= maxlen) return str;
             return `${str.substr(0,len1)}...${str.substr(str.length-len2,len2)}`
         }
-        $H(["#GDPanel-link", "#GDPanel-image", "#GDRow-link", "#GDRow-image"], "table-row");
+        $H(["#GDLabel-link", "#GDLabel-image", "#GDRow-link", "#GDRow-image"], "table-row");
         switch (actionkind) {
             case commons.textAction:
-                $H(["#GDPanel-link", "#GDPanel-image", "#GDRow-link", "#GDRow-image"]);
-                $E("#GDPanel-text .GDPanel-content").textContent = textSelection;
+                $H(["#GDLabel-link", "#GDLabel-image", "#GDRow-link", "#GDRow-image"]);
+                $E("#GDLabel-text .GDPanel-content").textContent = trim(textSelection);
                 break;
             case commons.linkAction:
                 if (targetkind === commons.TYPE_ELEM_A_IMG) {
-                    $E("#GDPanel-image .GDPanel-content").textContent = imageLink;
+                    $E("#GDLabel-image .GDPanel-content").textContent = imageLink;
                 }
                 else {
-                    $H(["#GDPanel-image", "#GDRow-image"]);
+                    $H(["#GDLabel-image", "#GDRow-image"]);
                 }
-                $E("#GDPanel-link .GDPanel-content").textContent = selection;
-                $E("#GDPanel-text .GDPanel-content").textContent = textSelection;
+                $E("#GDLabel-link .GDPanel-content").textContent = trim(selection);
+                $E("#GDLabel-text .GDPanel-content").textContent = trim(textSelection);
                 break;
             case commons.imageAction:
-                $H(["#GDPanel-text", "#GDRow-text", "#GDPanel-link", "#GDRow-image"]);
-                $E("#GDPanel-image .GDPanel-content").textContent = selection;
+                $H(["#GDLabel-text", "#GDRow-text", "#GDLabel-link", "#GDRow-link"]);
+                $E("#GDLabel-image .GDPanel-content").textContent = trim(selection);
                 break;
             default:
                 break;
         }
     }
     place(x = 0, y = 0) {
-        let left, top;
-        let w = this.el.querySelector("#GDCell-ban");
-        left = (x - w.offsetLeft - w.offsetWidth / 2) + "px";
-        top = (y - w.offsetTop - w.offsetHeight / 1.5) + "px";
-        console.info(`left:${left},top:${top}`);
-        this.el.style.left = left;
-        this.el.style.top = top;
+
+        this.el.style.setProperty("visibility", `hidden`, "important");
+        this.el.style.setProperty("display", `block`, "important");
+        //通过上面2行代码正常获取offsetWidth并且不显示在页面上
+        this.el.style.left = (x - this.el.firstElementChild.offsetWidth / 2) + "px";
+        this.el.style.top = (y - this.el.firstElementChild.offsetHeight / 2) + "px";
+
+        this.el.style.setProperty("display", `none`, "important");
+        this.el.style.setProperty("visibility", `visible`, "important");
     }
     display() {
-        this.el.style.visibility = "visible"
-        this.el.style.display = "block";
-        this.el.style.zIndex = 99999;
+        this.el.style.setProperty("display", `block`, "important");
     }
     hide() {
-            this.el.style.zIndex = -1;
-            this.el.style.visibility = "hidden"
-        }
-        // dragenter(e) {
-        //     e.target.setAttribute("style", "background-color:red");
-        // }
-
-    updateHeader(e) {
-        let header = this.el.querySelector(".GDHeader").firstElementChild;
-        if (this.lastdragovertarget.id === "GDCell-ban") {
-            header.textContent = "取消"; //getI18nMessage("Cancel");
-            return;
-        }
-        const setting = bgConfig[e.target.dataset["key"]][e.target.dataset["index"]];
-        header.textContent = translatePrompt("%g-%a", setting);
+        this.el.style.setProperty("display", `none`, "important");
     }
+
 }
 
 class DragClass {
@@ -563,6 +568,11 @@ class DragClass {
             this.selection = this.imageLink;
             this.actionType = commons.imageAction;
         }
+
+        // Need Tests
+        // if (this.selection === this.imageLink && this.actionType === commons.linkAction) {
+        //     this.actionType = commons.imageAction;
+        // }
         // console.info(`GlitterDrag: drag start, ${this.actionType} ${this.targetType}`);
     }
     dragend(evt) {
@@ -599,7 +609,7 @@ class DragClass {
     dragover(evt) {
         this.updateModifierKey(evt);
         if (this.isPanelArea) {
-            console.log("panel!");
+            // console.log("panel!");
             return;
         }
         this.distance = Math.hypot(this.startPos.x - evt.screenX, this.startPos.y - evt.screenY);
@@ -647,10 +657,10 @@ class DragClass {
 
             this.cmdPanel.hide();
             if (property["act_name"] === commons.ACT_PANEL) {
+                this.cmdPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
                 this.cmdPanel.place(evt.pageX, evt.pageY, this.direction);
                 this.cmdPanel.display();
                 this.promptBox && this.promptBox.hide();
-                this.cmdPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
             }
             //----
 
@@ -749,10 +759,10 @@ class DragClass {
     dragenter4panel(e) {
 
         this.isPanelArea = true;
-        console.info("enter panel");
+        // console.info("enter panel");
     }
     dragleave4panel(e) {
-        console.log(e);
+        // console.log(e);
         // this.isPanelArea = false;
     }
     drop4panel(e, lastdragovertarget) {
@@ -1135,6 +1145,9 @@ function doInit() {
         injectStyle({
             url: browser.runtime.getURL("content_scripts/content_script.css")
         });
+        // injectStyle({
+        //     url: browser.runtime.getURL("content_scripts/font-awesome.css")
+        // })
         if (bgConfig.enableStyle) {
             injectStyle({
                 css: bgConfig.style

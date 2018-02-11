@@ -1,0 +1,48 @@
+/*!
+ *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
+ */
+
+
+/* FONT PATH
+ * -------------------------- */
+
+@font-face {
+    font-family: 'FontAwesome';
+    src: url('./font-awesome.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.GD-fa {
+    display: inline-block !important;
+    font: normal normal normal 14px/1 FontAwesome !important;
+    font-size: inherit !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+.GD-fa-download:before {
+    content: "\f019";
+}
+
+.GD-fa-external-link::before {
+    content: "\f35d";
+}
+
+.GD-fa-search::before {
+    content: "\f002";
+}
+
+.GD-fa-clipboard::before {
+    content: "\f0c5";
+}
+
+.GD-fa-find::before {
+    content: "\f002";
+}
+
+.GD-fa-ban::before {
+    content: "\f05e";
+}
