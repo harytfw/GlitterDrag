@@ -613,8 +613,8 @@
         "message": "特殊域名",
         "description": ""
     },
-    "elem_SpecialExts": {
-        "message": "特殊扩展名",
+    "elem_AllowExts": {
+        "message": "允许扩展名",
         "description": ""
     },
     "elem_MaxProcessSize": {

@@ -610,8 +610,8 @@
         "message": "Special Hosts",
         "description": ""
     },
-    "elem_SpecialExts": {
-        "message": "Special Exts",
+    "elem_AllowExts": {
+        "message": "Allow Exts",
         "description": ""
     },
     "elem_MaxProcessSize": {
