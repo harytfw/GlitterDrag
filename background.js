@@ -57,6 +57,7 @@ const tabsRelation = {
         // 1. 父标签页id不为TAB_ID_NONE
         // 2. 所有子标签页已被全部关闭
         // 3. 先前关闭的标签页是最后一个子标签页
+        $D("" + this._parent, this.children.join(","));
         if (this.parent !== TAB_ID_NONE && this.children.length === 0 && isLastChildTab) {
             return true; //需要切换到父标签页
         }

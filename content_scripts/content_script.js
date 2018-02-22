@@ -150,25 +150,13 @@ class Prompt {
         this.hide();
         document.body.appendChild(this.container);
     }
-    renderDir(d = commons.DIR_U) {
+    render(dir, text) {
         //DIR_UP_L
         //[DIR,UP,L]
         //[UP,L]
         //UP-L
-        const suffix = d.split("_").slice(1).join("-");
-        this.arrow.className = `GDArrow-${suffix}`;
-    }
-
-    renderText(t) {
-        this.textContainer.textContent = t;
-    }
-
-    render(dir, text) {
-        this.renderDir(dir);
-        this.renderText(text);
-    }
-    stopRender() {
-        this.hide();
+        this.arrow.className = `GDArrow-${dir.split("_").slice(1).join("-")}`;
+        this.textContainer.textContent = text;
     }
     display() {
         if (this.container.style.display === "none") {
@@ -178,8 +166,8 @@ class Prompt {
     hide() {
         this.container.style.setProperty("display", "none", "important");
     }
-    remove() {
-        document.body.removeChild(this.parent);
+    destory() {
+        document.body.removeChild(this.container);
     }
 }
 class Indicator {
@@ -208,6 +196,9 @@ class Indicator {
     }
     hide() {
         this.box.style.setProperty("display", `none`, "important");
+    }
+    destory() {
+        document.body.removeChild(this.box);
     }
 }
 
@@ -403,6 +394,9 @@ class cmdPanel {
     hide() {
         this.el.style.setProperty("display", `none`, "important");
     }
+    destory() {
+        document.body.removeChild(this.el);
+    }
 
 }
 
@@ -436,6 +430,7 @@ class DragClass {
         // end: properties to post
 
         this.lastDirection = null;
+        this.lastModifierKey = null;
 
         // start: variable to identify type of action
         this.targetElem = null;
@@ -464,8 +459,7 @@ class DragClass {
         this.drop4panel = this.drop4panel.bind(this);
         this.dragover4panel = this.dragover4panel.bind(this)
 
-        this.cmdPanel = new cmdPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel, this.dragover4panel);
-
+        this.cmdPanel = null;
         //end: UI componment
 
         this.timeoutId = -1; // used for clearTimeout
@@ -505,7 +499,7 @@ class DragClass {
         clearTimeout(this.timeoutId);
         this.accepting = this.running = false;
         this.notAccepting = true;
-        this.promptBox && this.promptBox.stopRender();
+        this.promptBox && this.promptBox.hide();
         this.indicatorBox && this.indicatorBox.hide();
 
     }
@@ -519,16 +513,30 @@ class DragClass {
         else {
             this.modifierKey = commons.KEY_NONE;
         }
+
     }
     dragstart(evt) {
-        if (bgConfig.enableIndicator) {
-            if (this.indicatorBox === null) this.indicatorBox = new Indicator();
+        if (bgConfig.enableIndicator /*&& this.indicatorBox === null*/ ) {
+            this.indicatorBox = new Indicator();
+        }
+
+        if (this.indicatorBox !== null) {
             this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
             this.indicatorBox.display();
         }
-        if (bgConfig.enablePrompt && this.promptBox === null) {
-            this.promptBox = new Prompt();
+
+        if (bgConfig.enablePrompt /*&& this.promptBox === null*/ ) {
+            if (IS_TOP_WINDOW) {
+                this.promptBox = new Prompt();
+            }
         }
+
+        if (document.body.getAttribute("contenteditable") === null /*&& this.cmdPanel===null*/ ) {
+            if (IS_TOP_WINDOW) {
+                this.cmdPanel = new cmdPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel, this.dragover4panel);
+            }
+        }
+
         if (bgConfig.enableTimeoutCancel) {
             this.timeoutId = setTimeout(() => this.cancel(), bgConfig.timeoutCancel);
         }
@@ -616,7 +624,7 @@ class DragClass {
 
         if (this.distance > bgConfig.maxTriggeredDistance) {
             this.hideBecauseExceedDistance = true;
-            this.promptBox && this.promptBox.stopRender();
+            this.promptBox && this.promptBox.hide();
             // this.indicatorBox && this.indicatorBox.hide();
         }
         else if (IS_TOP_WINDOW && (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
@@ -627,9 +635,12 @@ class DragClass {
                 this.promptBox && this.promptBox.display();
             }
 
-            if (this.direction === this.lastDirection) {
+            if (this.modifierKey === this.lastModifierKey && this.direction === this.lastDirection) {
                 // this.lastDirection = this.direction;
                 return;
+            }
+            else {
+                this.lastModifierKey = this.modifierKey;
             }
             // console.log(`cur dir:${this.direction} , last dir:${this.lastDirection}`);
             this.lastDirection = this.direction;
@@ -666,7 +677,7 @@ class DragClass {
 
         }
         else {
-            this.promptBox && this.promptBox.stopRender();
+            this.promptBox && this.promptBox.hide();
         }
     }
     dragenter(evt) {
@@ -782,6 +793,9 @@ class DragClass {
     isNotAcceptable(evt) {
         // if the acceptable area is Input or Textarea, bypass it.
         if (["INPUT", "TEXTAREA"].includes(evt.target.nodeName)) {
+            return true;
+        }
+        if (evt.target.getAttribute("contenteditable") !== null) {
             return true;
         }
         return false;
@@ -925,9 +939,13 @@ class DragClass {
                 }
                 break;
             case "dragend": // Bubbling
-                this.indicatorBox && this.indicatorBox.hide();
-                this.promptBox && this.promptBox.stopRender();
+                // this.indicatorBox && this.indicatorBox.hide();
+                // this.promptBox && this.promptBox.hide();
                 // this.cmdPanel && this.cmdPanel.hide();
+                this.indicatorBox && this.indicatorBox.destory();
+                this.promptBox && this.promptBox.destory();
+                this.cmdPanel && this.cmdPanel.destory();
+                this.indicatorBox = this.promptBox = this.cmdPanel = null;
                 this.lastDirection = null;
                 //dragend's target is things we are dragging, calling this.isNotAcceptable has not effect. However we have updated this.isInputArea in drop event, just use it.
                 if (this.isInputArea) {
@@ -1141,7 +1159,7 @@ let bgPort = browser.runtime.connect({
 });
 
 function doInit() {
-    if (mydrag === null && document.body) {
+    if (mydrag === null && document.body && document.body.getAttribute("contenteditable") === null) {
         injectStyle({
             url: browser.runtime.getURL("content_scripts/content_script.css")
         });
@@ -1161,7 +1179,7 @@ function doInit() {
             console.error(error);
         }
         document.removeEventListener("readystatechange", onReadyStateChange);
-        document.removeEventListener("DOMContentLoaded", OnDoMContentLoaded);
+        document.removeEventListener("DOMContentLoaded", OnDOMContentLoaded);
     }
 }
 
@@ -1169,7 +1187,7 @@ function onReadyStateChange() {
     if (document.readyState === "complete") doInit();
 }
 
-function OnDoMContentLoaded() {
+function OnDOMContentLoaded() {
     doInit();
 }
 
@@ -1181,13 +1199,13 @@ function onStorageChange(changes) {
 }
 
 browser.storage.onChanged.addListener(onStorageChange);
-
-if (false) { //a storage bug that reported in #65,so using another way to load configuration.
+const condition = true;
+if (condition === true) { //a storage bug that reported in #65,so using another way to load configuration.
     browser.storage.local.get().then(config => {
         console.info("GlitterDrag: loaded config from storage");
         bgConfig = config;
         document.addEventListener('readystatechange', onReadyStateChange, false);
-        document.addEventListener("DOMContentLoaded", OnDoMContentLoaded);
+        document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
         doInit();
     });
 }
@@ -1196,7 +1214,7 @@ else {
         console.info("Glitter Drag: Receive response from background");
         bgConfig = response;
         document.addEventListener('readystatechange', onReadyStateChange, false);
-        document.addEventListener("DOMContentLoaded", OnDoMContentLoaded);
+        document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
         doInit();
     });
 }
