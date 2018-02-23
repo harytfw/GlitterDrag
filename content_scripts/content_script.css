@@ -1,8 +1,3 @@
-/* :root {
-     --prompt-height: 100px !important; 
-     --prompt-width: 200px !important; 
-} */
-
 @import "./font-awesome.css";
 #GDIndicator,
 #GDPrompt,
@@ -64,7 +59,7 @@
 
 #GDIndicator {
     position: absolute !important;
-    z-index: 1234 !important;
+    z-index: 214747000 !important;
     /*由js控制*/
     border-radius: 0px !important;
     border-style: dashed!important;
@@ -76,7 +71,7 @@
 #GDPrompt {
     position: fixed !important;
     color: black !important;
-    z-index: 1233 !important;
+    z-index: 2147470001 !important;
     box-sizing: initial !important;
     border: initial !important;
     border-radius: 4px !important;
@@ -89,6 +84,7 @@
     height: auto !important;
     width: 200px !important;
     padding-bottom: 10px !important;
+    pointer-events: none;
 }
 
 #GDPrompt>* {
@@ -184,7 +180,7 @@
 
 #GDPanel-wrapper {
     position: absolute !important;
-    z-index: 214747 !important;
+    z-index: 2147470002 !important;
     width: auto !important;
     height: auto !important;
     /* background-color: rgba(135, 143, 235, 0.34) !important; */
