@@ -1,134 +1,134 @@
-﻿{
+{
     "extensionDescription": {
-        "message": "一個拖曳附加元件，透過拖曳文字、鏈結、圖像，非常方便的在前景或背景開啟分頁，並且允許變更四個方向所執行的動作",
-        "description": "附加元件的描述"
+        "message": "",
+        "description": ""
     },
     "extensionName": {
-        "message": "閃耀拖曳",
-        "description": "附加元件的名稱"
+        "message": "",
+        "description": ""
     },
     "browserActionTitle": {
-        "message": "閃耀拖曳 選項",
-        "description": "瀏覽器工具列按鈕顯示的標題"
+        "message": "",
+        "description": ""
     },
     "defaultText": {
-        "message": "預設",
+        "message": "",
         "description": ""
     },
     "directionControl": {
-        "message": "方向控制",
+        "message": "",
         "description": ""
     },
     "ALLOW_NORMAL": {
-        "message": "普通4個方向",
+        "message": "",
         "description": ""
     },
     "ALLOW_QUADRANT": {
-        "message": "傾斜4個方向",
+        "message": "",
         "description": ""
     },
     "ALLOW_H": {
-        "message": "水平2個方向",
+        "message": "",
         "description": ""
     },
     "ALLOW_V": {
-        "message": "垂直2個方向",
+        "message": "",
         "description": ""
     },
     "ALLOW_LOW_L_UP_R": {
-        "message": "傾斜2個方向",
+        "message": "",
         "description": ""
     },
     "ALLOW_UP_L_LOW_R": {
-        "message": "另2個傾斜方向",
+        "message": "",
         "description": ""
     },
     "ALLOW_ALL": {
-        "message": "狂熱8個方向",
+        "message": "",
         "description": ""
     },
     "ALLOW_ONE": {
-        "message": "只有1個方向",
+        "message": "",
         "description": ""
     },
     "ACT_OPEN": {
-        "message": "開啟",
+        "message": "",
         "description": "Action name"
     },
     "ACT_COPY": {
-        "message": "複製",
+        "message": "",
         "description": "Action name"
     },
     "ACT_SEARCH": {
-        "message": "搜尋",
+        "message": "",
         "description": "Action name"
     },
     "ACT_DL": {
-        "message": "下載",
+        "message": "",
         "description": "Action name"
     },
     "ACT_NONE": {
-        "message": "無動作",
+        "message": "",
         "description": "Action name"
     },
     "ACT_TRANS": {
-        "message": "翻譯",
+        "message": "",
         "description": "Action name"
     },
     "ACT_QRCODE": {
-        "message": "二維條碼",
+        "message": "",
         "description": "Action name"
     },
     "ACT_BOOKMARK": {
-        "message": "加入書籤",
+        "message": "",
         "description": "Action name"
     },
     "ACT_FIND": {
-        "message": "尋找",
+        "message": "",
         "description": "Action name"
     },
     "ACT_PANEL": {
-        "message": "面板",
+        "message": "",
         "description": "Action name"
     },
     "DIR_U": {
-        "message": "上",
+        "message": "",
         "description": "Direction"
     },
     "DIR_D": {
-        "message": "下",
+        "message": "",
         "description": "Direction"
     },
     "DIR_L": {
-        "message": "左",
+        "message": "",
         "description": "Direction"
     },
     "DIR_R": {
-        "message": "右",
+        "message": "",
         "description": "Direction"
     },
     "DIR_UP_L": {
-        "message": "左上",
+        "message": "",
         "description": "Direction"
     },
     "DIR_UP_R": {
-        "message": "右上",
+        "message": "",
         "description": "Direction"
     },
     "DIR_LOW_L": {
-        "message": "左下",
+        "message": "",
         "description": "Direction"
     },
     "DIR_LOW_R": {
-        "message": "右下",
+        "message": "",
         "description": "Direction"
     },
     "DIR_OUTER": {
-        "message": "外部",
+        "message": "",
         "description": "Direction"
     },
     "textType": {
-        "message": "文字$SUFFIX$",
+        "message": "",
         "description": "An section of Options",
         "placeholders": {
             "suffix": {
@@ -138,7 +138,7 @@
         }
     },
     "linkType": {
-        "message": "鏈結$SUFFIX$",
+        "message": "",
         "description": "An section of Options",
         "placeholders": {
             "suffix": {
@@ -148,7 +148,7 @@
         }
     },
     "imageType": {
-        "message": "圖像$SUFFIX$",
+        "message": "",
         "description": "An section of Options",
         "placeholders": {
             "suffix": {
@@ -158,349 +158,349 @@
         }
     },
     "TAB_NEW_WINDOW": {
-        "message": "新增視窗",
+        "message": "",
         "description": "Position of tab opened."
     },
     "TAB_NEW_PRIVATE_WINDOW": {
-        "message": "隱私視窗",
+        "message": "",
         "description": "Position of tab opened."
     },
     "TAB_CUR": {
-        "message": "目前",
+        "message": "",
         "description": "Position of tab opened."
     },
     "TAB_LAST": {
-        "message": "尾",
+        "message": "",
         "description": "Position of tab opened."
     },
     "TAB_FIRST": {
-        "message": "首",
+        "message": "",
         "description": "Position of tab opened."
     },
     "TAB_CLEFT": {
-        "message": "前",
+        "message": "",
         "description": "Position of tab opened."
     },
     "TAB_CRIGHT": {
-        "message": "後",
+        "message": "",
         "description": "Position of tab opened."
     },
     "FORE_GROUND": {
-        "message": "前景",
+        "message": "",
         "description": "The tab opened in foreground."
     },
     "BACK_GROUND": {
-        "message": "背景",
+        "message": "",
         "description": "The tab opened in background."
     },
     "OPEN_TEXT": {
-        "message": "文字",
+        "message": "",
         "description": ""
     },
     "OPEN_LINK": {
-        "message": "鏈結",
+        "message": "",
         "description": ""
     },
     "OPEN_IMAGE": {
-        "message": "圖像本身",
+        "message": "",
         "description": ""
     },
     "OPEN_IMAGE_LINK": {
-        "message": "圖像鏈結",
+        "message": "",
         "description": ""
     },
     "SEARCH_LINK": {
-        "message": "鏈結",
+        "message": "",
         "description": "Search action"
     },
     "SEARCH_TEXT": {
-        "message": "文字",
+        "message": "",
         "description": "Search action"
     },
     "SEARCH_IMAGE": {
-        "message": "圖像",
+        "message": "",
         "description": "Search action"
     },
     "SEARCH_IMAGE_LINK": {
-        "message": "圖像鏈結",
+        "message": "",
         "description": ""
     },
     "SEARCH_ONSITE_YES": {
-        "message": "站內搜尋",
+        "message": "",
         "description": "Search action"
     },
     "SEARCH_ONSITE_NO": {
-        "message": "不處理",
+        "message": "",
         "description": "Search action"
     },
     "COPY_TEXT": {
-        "message": "文字",
+        "message": "",
         "description": "Copy action"
     },
     "COPY_LINK": {
-        "message": "鏈結",
+        "message": "",
         "description": "Copy action"
     },
     "COPY_IMAGE": {
-        "message": "圖像",
+        "message": "",
         "description": "Copy action"
     },
     "COPY_IMAGE_LINK": {
-        "message": "圖像鏈結",
+        "message": "",
         "description": ""
     },
     "DOWNLOAD_TEXT": {
-        "message": "文字",
+        "message": "",
         "description": "Copy action"
     },
     "DOWNLOAD_LINK": {
-        "message": "鏈結",
+        "message": "",
         "description": "Copy action"
     },
     "DOWNLOAD_IMAGE": {
-        "message": "圖像",
+        "message": "",
         "description": "Copy action"
     },
     "DOWNLOAD_IMAGE_LINK": {
-        "message": "圖像鏈結",
+        "message": "",
         "description": "Copy action"
     },
     "DOWNLOAD_SAVEAS_YES": {
-        "message": "另存為",
+        "message": "",
         "description": "Copy action"
     },
     "DOWNLOAD_SAVEAS_NO": {
-        "message": "不另存為",
+        "message": "",
         "description": "Copy action"
     },
     "option_page_title": {
-        "message": "閃耀拖曳-選項",
+        "message": "",
         "description": "title of page"
     },
     "option_tooltip_act": {
-        "message": "要執行的動作",
+        "message": "",
         "description": "tooltip on option"
     },
     "option_tooltip_active": {
-        "message": "新增分頁的啟用狀態",
+        "message": "",
         "description": "tooltip on option"
     },
     "option_tooltip_pos": {
-        "message": "分頁的位置",
+        "message": "",
         "description": "tooltip on option"
     },
     "option_tooltip_search": {
-        "message": "調用的搜尋引擎，預設調用百度",
+        "message": "，",
         "description": "tooltip on option"
     },
     "option_tooltip_open_type": {
-        "message": "指定如何開啟鏈結。圖像鏈結 無法使用時，會自動轉換為 普通鏈結",
+        "message": "",
         "description": "tooltip on option"
     },
     "option_tooltip_search_type": {
-        "message": "需要搜尋的東西，文字、鏈結",
+        "message": "",
         "description": "tooltip on option"
     },
     "option_tooltip_search_onsite": {
-        "message": "將關鍵字 取代成 site:域名 關鍵字",
+        "message": "",
         "description": "tooltip on option"
     },
     "option_tooltip_copy": {
-        "message": "指定需要複製的東西，文字、鏈結或圖像。圖像鏈結 無法使用時，會自動轉換為 普通鏈結。複製圖像可能會有很多問題，謹慎使用。",
+        "message": "",
         "description": "tooltip on option"
     },
     "option_tooltip_allow": {
-        "message": "限制允許拖曳的方向",
+        "message": "",
         "description": "tooltip on option"
     },
     "option_tooltip_download_type": {
-        "message": "指定需要下載的類型。圖像鏈結 無法使用時，會自動轉換為 普通鏈結",
+        "message": "",
         "description": "tooltip on option"
     },
     "option_tooltip_download_directory": {
-        "message": "指定檔案儲存的目錄",
+        "message": "",
         "description": "tooltip on option"
     },
     "search_name_tooltip": {
-        "message": "搜尋引擎的名稱",
+        "message": "",
         "description": "tooltip on Options - Search Template"
     },
     "option_tooltip_download_saveas": {
-        "message": "是否需要另存檔案為... ?",
+        "message": "",
         "description": "tooltip on option"
     },
     "search_url_tooltip": {
-        "message": "調用的鏈結",
+        "message": "",
         "description": "tooltip on Options - Search Template"
     },
     "default_search_url": {
-        "message": "https:\/\/www.baidu.com\/s?wd=%s",
+        "message": "",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     },
     "elem_Text": {
-        "message": "文字"
+        "message": ""
     },
     "elem_Link": {
-        "message": "鏈結"
+        "message": ""
     },
     "elem_Image": {
-        "message": "圖像"
+        "message": ""
     },
     "elem_RefreshbtnOnEngines": {
-        "message": "重新整理",
+        "message": "",
         "description": "Reload button on Options - Search Template"
     },
     "elem_AddbtnOnEngines": {
-        "message": "新增",
+        "message": "",
         "description": "Add button on Options - Search Template"
     },
     "elem_SavebtnOnEngines": {
-        "message": "儲存",
+        "message": "",
         "description": "Save button on Options - Search Template"
     },
     "elem_BuiltinEngineHelperText": {
-        "message": "這裡是為你預先提供的搜尋引擎，選取後會自動新增在下方，不過還需要你自己點儲存按鈕：",
+        "message": "",
         "description": "Helper text on Options - Search Template"
     },
     "elem_SearchTemplateClasses_General": {
-        "message": "通用",
+        "message": "",
         "description": "Select box classes on Options - Search Template"
     },
     "elem_SearchTemplateClasses_Chinese": {
-        "message": "中文",
+        "message": "",
         "description": "Select box classes on Options - Search Template"
     },
     "elem_SearchTemplateClasses_ImageUrl": {
-        "message": "圖片搜尋(透過網址)",
+        "message": "",
         "description": "Select box classes on Options - Search Template"
     },
     "elem_SearchTemplateClasses_ImageSearch": {
-        "message": "圖片搜尋(透過上傳)",
+        "message": "",
         "description": "Select box classes on Options - Search Template"
     },
     "elem_Backup": {
-        "message": "匯出設定",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_Restore": {
-        "message": "匯入設定",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_Default": {
-        "message": "還原預設",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_Debug": {
-        "message": "偵錯",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_Actions": {
-        "message": "動作",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_ActionsCtrlKey": {
-        "message": "帶有 Ctrl 鍵的動作",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_ActionsShiftKey": {
-        "message": "帶有 Shift 鍵的動作",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_SearchTemplate": {
-        "message": "搜尋範本",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_General": {
-        "message": "一般",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_Panel": {
-        "message": "面板",
+        "message": "",
         "description": ""
     },
     "elem_Baidu": {
-        "message": "百度",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_Bing": {
-        "message": "Bing",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_PlaceholderTip": {
-        "message": "用 %s 取代鏈結裡的關鍵字",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_ShowActionTip": {
-        "message": "顯示動作提示",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_ModifyTipsContent": {
-        "message": "變更提示的內容: ",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_TipsContentUsage": {
-        "message": "使用方法",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_EnableDistanceTip": {
-        "message": "啟用距離指示",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_EnableAutoSelectPreviousTab": {
-        "message": "自動選取上一個分頁（只有當在分頁右邊前景開啟時才有效）",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_SwitchToParentTab": {
-        "message": "在關閉所有子分頁後，切換至父分頁. (會覆寫上面的選項) ",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_DisableAdjustTabSequence": {
-        "message": "不調整分頁的開啟順序",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_EnableCtrlKey": {
-        "message": "當按下 Ctrl 鍵時使用不同的動作",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_EnableShiftKey": {
-        "message": "當按下 Shift 鍵時使用不同的動作",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_DistancePx": {
-        "message": "觸發距離（px）",
+        "message": "",
         "description": "Element on Options page"
     },
 
     "elem_EnableTimeoutCancel": {
-        "message": "啟用逾時取消",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_TimeoutCancel": {
-        "message": "逾時取消時間：",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_EnableSync": {
-        "message": "同步至 Firefox 帳號 (v53+)",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_EnableStyle": {
-        "message": "啟用自訂樣式",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_Download": {
-        "message": "下載",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_ShowDefaultDownloadDirectory": {
-        "message": "開啟瀏覽器的預設下載目錄",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_SettingDownloadDirectory": {
-        "message": "設定下載目錄",
+        "message": "",
         "description": "Element on Options page"
     },
     "DownloadDirectory": {
-        "message": "下載目錄 $NUM$",
+        "message": "",
         "description": "Element on Options page",
         "placeholders": {
             "num": {
@@ -510,27 +510,27 @@
         }
     },
     "elem_SettingDownloadDirectoryHelperText": {
-        "message": "設定的目錄只能作為“瀏覽器的預設下載目錄”的子目錄，不支援絕對路徑。第二列是你可以設定的目錄路徑。例如 image\/ 表示最終下載目錄是“預設下載目錄\/image\/”。留空則表示使用“預設下載目錄”。",
-        "description": "Element on Options page"
+        "message": "",
+        "description": ""
     },
     "elem_SavebtnOnDownloadDirectories": {
-        "message": "儲存",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_Style": {
-        "message": "樣式",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_SaveStyle": {
-        "message": "儲存樣式",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_SaveDone": {
-        "message": "已儲存!",
+        "message": "!",
         "description": "Element on Options page"
     },
     "elem_Command": {
-        "message": "命令 $NUM$",
+        "message": "",
         "description": "",
         "placeholders": {
             "num": {
@@ -540,69 +540,69 @@
         }
     },
     "elem_PerformedAction": {
-        "message": "執行動作",
+        "message": "",
         "description": ""
     },
     "elem_TabStatus": {
-        "message": "分頁狀態",
+        "message": "",
         "description": ""
     },
     "elem_TabPosition": {
-        "message": "分頁位置",
+        "message": "",
         "description": ""
     },
     "elem_SelectEngines": {
-        "message": "選擇引擎",
+        "message": "",
         "description": ""
     },
     "elem_EnginePreview": {
-        "message": "預覽(編輯有效)",
+        "message": "",
         "description": ""
     },
     "elem_OpenType": {
-        "message": "開啟",
+        "message": "",
         "description": ""
     },
     "elem_SearchType": {
-        "message": "搜尋",
+        "message": "",
         "description": ""
     },
     "elem_CopyType": {
-        "message": "複製",
+        "message": "",
         "description": ""
     },
     "elem_DownloadType": {
-        "message": "下載",
+        "message": "",
         "description": ""
     },
     "elem_Saveas": {
-        "message": "是否另存為",
+        "message": "",
         "description": ""
     },
     "elem_DownloadDirectory": {
-        "message": "下載目錄",
+        "message": "",
         "description": ""
     },
     "elem_SearchOnSite": {
-        "message": "站內搜尋",
+        "message": "",
         "description": ""
     },
     "elem_NewActions": {
-        "message": "新動作",
+        "message": "",
         "description": ""
     },
     "elem_DirectionRestriction": {
-        "message": "方向限制",
+        "message": "",
         "description": ""
     },
     "elem_ShortcutSetting": {
-        "message": "快速鍵設定: "
+        "message": ": "
     },
     "elem_MaximumDistancePx": {
-        "message": "最大距離 (px)"
+        "message": ""
     },
     "elem_AlwaysImage": {
-        "message": "總是將含圖片的鏈結當成圖片類型",
+        "message": "",
         "description": ""
     },
     "elem_ToggleDebug": {
@@ -618,10 +618,6 @@
         "description": ""
     },
     "elem_MaxProcessSize": {
-        "message": "",
-        "description": ""
-    },
-    "elem_SelectStyle": {
         "message": "",
         "description": ""
     }

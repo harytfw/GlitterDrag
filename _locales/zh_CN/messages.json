@@ -620,5 +620,9 @@
     "elem_MaxProcessSize": {
         "message": "处理的最大文件大小 (M)",
         "description": ""
+    },
+    "elem_SelectStyle": {
+        "message": "选择样式",
+        "description": ""
     }
 }

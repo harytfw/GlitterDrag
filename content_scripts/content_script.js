@@ -170,6 +170,50 @@ class Prompt {
         document.body.removeChild(this.container);
     }
 }
+
+
+class RemotePrompt {
+    constructor() {
+        window.top.postMessage({
+            name: "promptBox",
+            func: "RequestPrompt",
+            RequestPrompt: []
+        }, "*");
+    }
+
+    render() {
+        window.top.postMessage({
+            name: "promptBox",
+            func: "render",
+            render: [...arguments]
+        }, "*")
+    }
+
+    display() {
+        window.top.postMessage({
+            name: "promptBox",
+            func: "display",
+            display: [...arguments]
+        }, "*")
+    }
+
+    hide(why) {
+        window.top.postMessage({
+            name: "promptBox",
+            func: "hide",
+            hide: ["remote hide and " + why]
+        }, "*")
+    }
+
+    destory() {
+        window.top.postMessage({
+            name: "promptBox",
+            func: "destory",
+            destory: [...arguments]
+        }, "*")
+    }
+}
+
 class Indicator {
     constructor() {
         removeExistedElement("#GDIndicator");
@@ -469,10 +513,27 @@ class DragClass {
         // if the site register drop event and use event.stopPropagation , this event won't bubble up as default. So assumeing it is true until we can catch.
         this.isInputArea = false;
         this.hideBecauseExceedDistance = false;
+
+        if (IS_TOP_WINDOW) {
+            window.addEventListener("message", this.onMessage.bind(this));
+        }
     }
     wrapperFunction(evt) {
         this.handler(evt);
         return true;
+    }
+    onMessage(event) {
+
+        const name = event.data["name"],
+            func = event.data["func"];
+
+        if (name === "promptBox") {
+            if (func === "RequestPrompt" && this.promptBox === null) this[name] = new Prompt();
+            else if (func !== "RequestPrompt" && this.promptBox !== null) {
+                const f = this[name][func];
+                f && f.apply(this[name], event.data[func]);
+            }
+        }
     }
     post(extraOption = {}) {
         //sendMessage只能传递字符串化后（类似json）的数据
@@ -528,6 +589,9 @@ class DragClass {
         if (bgConfig.enablePrompt /*&& this.promptBox === null*/ ) {
             if (IS_TOP_WINDOW) {
                 this.promptBox = new Prompt();
+            }
+            else {
+                this.promptBox = new RemotePrompt();
             }
         }
 
@@ -627,7 +691,7 @@ class DragClass {
             this.promptBox && this.promptBox.hide();
             // this.indicatorBox && this.indicatorBox.hide();
         }
-        else if (IS_TOP_WINDOW && (this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
+        else if ((this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
             this.direction = this.getDirection();
 
             if (this.hideBecauseExceedDistance) {
@@ -666,11 +730,13 @@ class DragClass {
             }
             //----
 
-            this.cmdPanel.hide();
+            this.cmdPanel && this.cmdPanel.hide();
             if (property["act_name"] === commons.ACT_PANEL) {
-                this.cmdPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
-                this.cmdPanel.place(evt.pageX, evt.pageY, this.direction);
-                this.cmdPanel.display();
+                if (this.cmdPanel) {
+                    this.cmdPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
+                    this.cmdPanel.place(evt.pageX, evt.pageY, this.direction);
+                    this.cmdPanel.display();
+                }
                 this.promptBox && this.promptBox.hide();
             }
             //----
@@ -708,9 +774,12 @@ class DragClass {
     drop(evt) {
         console.info("Glitter Drag: An external dragging behavior is detected");
         const dt = evt.dataTransfer;
-        this.selection = dt.getData("text/plain").trim();
-        if (commons.TYPE_TEXT_URL === this.targetType) {
-            this.selection = this.textSelection = typeUtil.fixupSchemer(this.selection);
+        this.textSelection = dt.getData("text/plain").trim();
+        if (commons.TYPE_TEXT === this.targetType) {
+            this.selection = this.textSelection;
+        }
+        else if (commons.TYPE_TEXT_URL === this.targetType) {
+            this.selection = this.textSelection = typeUtil.fixupSchemer(this.textSelection);
         }
         else if (this.targetType === commons.TYPE_ELEM_A) {
             //书签
@@ -718,6 +787,13 @@ class DragClass {
             //console.log(this.selection,this.textSelection);
         }
         // console.log(dt.files);
+        if (["textAction", "linkAction"].includes(this.actionType)) {
+            this.post({
+                direction: commons.DIR_OUTER
+            });
+            return;
+        }
+
         const sended = {
             selection: null,
             direction: commons.DIR_OUTER,
@@ -728,11 +804,7 @@ class DragClass {
                 name: ""
             }
         };
-        if (["textAction", "linkAction"].includes(this.actionType)) {
-            this.post({
-                direction: commons.DIR_OUTER
-            });
-        }
+
         const fileReader = new FileReader();
         let file = dt.files[0];
         fileReader.addEventListener("loadend", () => {
@@ -780,7 +852,7 @@ class DragClass {
         // console.info(e.);
         // console.info(e.originalTarget.parentElement.dataset);
         const obj = Object.assign({}, lastdragovertarget.dataset);
-        this.cmdPanel.hide();
+        this.cmdPanel && this.cmdPanel.hide();
         this.post(Object.assign(obj, {
             direction: commons.DIR_P,
             index: parseInt(obj.index)
@@ -795,7 +867,7 @@ class DragClass {
         if (["INPUT", "TEXTAREA"].includes(evt.target.nodeName)) {
             return true;
         }
-        if (evt.target.getAttribute("contenteditable") !== null) {
+        if (evt.target.nodeName !== "#text" && evt.target.getAttribute("contenteditable") !== null) {
             return true;
         }
         return false;
@@ -836,6 +908,9 @@ class DragClass {
                 // }
                 if (evt.target.nodeName === "A" &&
                     (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
+                    return;
+                }
+                if (evt.target.nodeName === "OBJECT") {
                     return;
                 }
                 // don't process it if the node has set attribute "draggable" 

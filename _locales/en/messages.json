@@ -617,5 +617,9 @@
     "elem_MaxProcessSize": {
         "message": "Maximum Process Size (M)",
         "description": ""
+    },
+    "elem_SelectStyle": {
+        "message": "Select Style",
+        "description": ""
     }
 }

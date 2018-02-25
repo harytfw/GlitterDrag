@@ -47,7 +47,7 @@
     font-weight: initial !important;
     vertical-align: initial !important;
     overflow: initial !important;
-    z-index: 2147470001;
+    z-index: 2147470000;
     transform: scale(1);
 }
 
@@ -59,7 +59,7 @@
 
 #GDIndicator {
     position: absolute !important;
-    z-index: 214747000 !important;
+    z-index: 2147483601 !important;
     /*由js控制*/
     border-radius: 0px !important;
     border-style: dashed!important;
@@ -71,7 +71,7 @@
 #GDPrompt {
     position: fixed !important;
     color: black !important;
-    z-index: 2147470001 !important;
+    z-index: 2147483600 !important;
     box-sizing: initial !important;
     border: initial !important;
     border-radius: 4px !important;
@@ -189,7 +189,7 @@
 
 #GDPanel {
     display: block;
-    z-index: 2147470002 !important;
+    z-index: 2147483602 !important;
     --cell-width: 52px !important;
     --cell-height: 52px !important;
     --icon-size: 28px !important;
