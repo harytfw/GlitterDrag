@@ -606,23 +606,23 @@
         "description": ""
     },
     "elem_ToggleDebug": {
-        "message": "",
+        "message": "切換至 DEBUG 模式",
         "description": ""
     },
     "elem_SpecialHosts": {
-        "message": "",
+        "message": "特殊域名",
         "description": ""
     },
     "elem_AllowExts": {
-        "message": "",
+        "message": "允許副檔名",
         "description": ""
     },
     "elem_MaxProcessSize": {
-        "message": "",
+        "message": "處理的最大檔案大小 (M)",
         "description": ""
     },
     "elem_SelectStyle": {
-        "message": "",
+        "message": "選擇樣式",
         "description": ""
     }
 }
