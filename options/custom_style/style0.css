@@ -1,7 +1,7 @@
 /* Author：harytfw */
 
 #GDPrompt {
-    background-color: rgb(9, 150, 248) !important;
+    background-color: rgba(9, 150, 248, 0.85) !important;
     border-color: rgb(6, 112, 204) !important;
     border-radius: 0px !important;
     color: white !important;
@@ -16,25 +16,13 @@
     width: 130px !important;
 }
 
-.GDArrow-UP-R::after {
-    display: block !important;
-    content: "\f062" !important;
-    transform: rotate(45deg) !important;
-}
-
-.GDArrow-U::after {
-    display: block !important;
-    content: "\f062" !important;
-}
-
+.GDArrow-UP-R::after,
+.GDArrow-U::after,
 .GDArrow-UP-L::after {
-    display: block !important;
     content: "\f062" !important;
-    transform: rotate(-45deg) !important;
 }
 
 .GDArrow-L::after {
-    display: block !important;
     content: "\f060" !important;
 }
 
@@ -42,18 +30,10 @@
     content: "\f061" !important;
 }
 
-.GDArrow-LOW-L::after {
-    content: "\f063" !important;
-    transform: rotate(45deg) !important;
-}
-
-.GDArrow-D::after {
-    content: "\f063" !important;
-}
-
+.GDArrow-LOW-L::after,
+.GDArrow-D::after,
 .GDArrow-LOW-R::after {
     content: "\f063" !important;
-    transform: rotate(-45deg) !important;
 }
 
 #GDIndicator {
