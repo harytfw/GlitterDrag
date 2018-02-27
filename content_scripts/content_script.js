@@ -32,6 +32,7 @@ Object.freeze(EVENT_PAHSE);
 //     "copy": browser.runtime.getURL("icon/copy.png"),
 // }
 
+const specialSites = ["vk.com"];
 
 //remove highlighting when Escape is pressed
 document.addEventListener("keypress", (e) => {
@@ -1031,7 +1032,7 @@ class DragClass {
                 // }
                 if (evt.eventPhase === EVENT_PAHSE.BUBBLING_PHASE) {
                     // when the site is an exclusiveSite, ignore this.isDropTouched
-                    if (this.running && (this.isDropTouched === false || (bgConfig.specialSites && bgConfig.specialSites.includes(location.host)))) {
+                    if (this.running && (this.isDropTouched === false || specialSites.includes(location.host) || (bgConfig.specialSites && bgConfig.specialSites.includes(location.host)))) {
                         this.running = false;
                         this.dragend(evt);
                     }
