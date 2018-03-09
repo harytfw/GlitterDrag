@@ -1,8 +1,8 @@
 //TODO: 处理拖放区域为 input@type=text
 "use strict";
 console.info("Glitter Drag: Content script is injected by browser successfully");
-let isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
-let IS_TOP_WINDOW = window.top === window;
+const isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
+const IS_TOP_WINDOW = window.top === window;
 
 const MIME_TYPE = {
     ".gif": "image/gif",
@@ -457,14 +457,6 @@ class DragClass {
 
         this.wrapperFunction = this.wrapperFunction.bind(this);
 
-        ["dragstart", "dragover", "dragenter", "dragend"].forEach(name =>
-            this.dragged.addEventListener(name, this.wrapperFunction, true)
-        );
-        ["dragover", "drop", "dragend"].forEach(name =>
-            this.dragged.addEventListener(name, this.wrapperFunction, false)
-        );
-        this.dragged.addEventListener("dragstart", this.wrapperFunction, false);
-
         // start: properties to post
         this.selection = ""; // any data, such as text, link
         this.textSelection = ""; // text you select.
@@ -517,6 +509,29 @@ class DragClass {
 
         if (IS_TOP_WINDOW) {
             window.addEventListener("message", this.onMessage.bind(this));
+        }
+        this.registerEvent();
+        /*
+        setTimeout(() => {
+            //延后函数的运行顺序 确保监听函数总是在最后执行
+            console.info("GD:re-register event")
+            this.unregisterEvent();
+            this.registerEvent();
+        }, 2333);
+        */
+    }
+    registerEvent() {
+        for (const n of ["dragstart", "dragover", "dragenter", "dragend"]) {
+            this.dragged.addEventListener(n, this.wrapperFunction, true)
+        }
+        for (const n of ["dragstart", "dragover", "drop", "dragend"]) {
+            this.dragged.addEventListener(n, this.wrapperFunction, false)
+        }
+    }
+    unregisterEvent() {
+        for (const n of ["dragstart", "dragover", "dragenter", "drop", "dragend"]) {
+            this.dragged.removeEventListener(n, this.wrapperFunction, false);
+            this.dragged.removeEventListener(n, this.wrapperFunction, true);
         }
     }
     wrapperFunction(evt) {
@@ -865,10 +880,10 @@ class DragClass {
     }
     isNotAcceptable(evt) {
         // if the acceptable area is Input or Textarea, bypass it.
-        if (["INPUT", "TEXTAREA"].includes(evt.target.nodeName)) {
+        if (["INPUT", "TEXTAREA", "#text"].includes(evt.target.nodeName)) {
             return true;
         }
-        if (evt.target.nodeName !== "#text" && evt.target.getAttribute("contenteditable") !== null) {
+        if (evt.target.getAttribute && evt.target.getAttribute("contenteditable") !== null) {
             return true;
         }
         return false;
@@ -880,13 +895,21 @@ class DragClass {
         // dragover  target是拖放的目标区域
         // drop      同上
         // dragenter 同上
-
+        // const VIEW_MODE = true;
+        // const BREAK_MODE = false;
 
         const type = evt.type;
-        // if (1) {
-        //     // console.log(`type:${type} phase:${evt.eventPhase} prevent:${evt.defaultPrevented} touched:${this.isDropTouched} running:${this.running} accepting:${this.accepting}}`)
-        //     console.log(`${type}, ${this.endPos.x}, ${this.endPos.y}, ${isTopWindow}`);
-        // }
+
+        /*
+        if (VIEW_MODE) {
+            console.log(type,evt.defaultPrevented,evt);
+            setTimeout(()=>{
+                console.log("after 2s " + evt.defaultPrevented,evt);
+            },2000);
+            if (BREAK_MODE) return;
+        }
+        */
+
         if (type === "dragover" || type === "dragstart") {
             // only store screenX in dragover and dragstart.
             this.endPos.x = evt.screenX;
@@ -912,6 +935,9 @@ class DragClass {
                     return;
                 }
                 if (evt.target.nodeName === "OBJECT") {
+                    return;
+                }
+                if (evt.target.getAttribute && evt.target.getAttribute("contenteditable") !== null) {
                     return;
                 }
                 // don't process it if the node has set attribute "draggable" 
@@ -985,11 +1011,14 @@ class DragClass {
                  */
                 this.doDropPreventDefault = false;
                 this.isDropTouched = false;
-
                 if (evt.defaultPrevented) {
                     this.isDropTouched = true;
                 }
-                // console.log(evt);
+                //https://github.com/harytfw/GlitterDrag/issues/75
+                if (location.host === "mail.google.com" && evt.target.nodeName === "DIV" && evt.target.className.toLowerCase() === "ac9") {
+                    this.accepting = false;
+                }
+
                 if (evt.dataTransfer && !this.running && this.accepting) {
                     const file = evt.dataTransfer.files[0];
                     const fileName = file && file.name;
