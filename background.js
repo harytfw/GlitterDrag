@@ -224,8 +224,10 @@ class ExecutorClass {
         }
         switch (this.action.act_name) {
             case commons.ACT_OPEN:
-                if (this.data.actionType === "linkAction" && this.action.open_type === commons.OPEN_IMAGE_LINK && this.data.imageLink !== "") {
-                    this.openURL(this.data.imageLink)
+                if (this.data.actionType === commons.linkAction) {
+                    if (this.action.open_type === commons.OPEN_IMAGE_LINK && this.data.imageLink !== "") this.openURL(this.data.imageLink)
+                    else if (this.action.open_type == commons.OPEN_TEXT) this.openURL(this.data.textSelection);
+                    else this.openURL(this.data.selection)
                 }
                 else if (this.data.selection.startsWith("blob:")) { // blob url
                     this.openRedirectPage({
@@ -246,7 +248,7 @@ class ExecutorClass {
             case commons.ACT_COPY:
                 switch (this.action.copy_type) {
                     case commons.COPY_IMAGE_LINK:
-                        if (this.data.actionType === "linkAction" && this.data.imageLink !== "") {
+                        if (this.data.actionType === commons.linkAction && this.data.imageLink !== "") {
                             this.copy(this.data.imageLink);
                         }
                         else {
@@ -265,7 +267,7 @@ class ExecutorClass {
                 }
                 break;
             case commons.ACT_SEARCH:
-                if (this.data.actionType === "linkAction") {
+                if (this.data.actionType === commons.linkAction) {
                     if (this.action.search_type === commons.SEARCH_IMAGE_LINK && this.data.imageLink !== "") {
                         this.searchText(this.data.imageLink);
                     }
@@ -276,7 +278,7 @@ class ExecutorClass {
                         this.searchText(this.data.selection);
                     }
                 }
-                else if (this.data.actionType === "imageAction") {
+                else if (this.data.actionType === commons.imageAction) {
                     this.searchImage(this.data.selection);
                 }
                 else if (this.action.search_type === commons.SEARCH_TEXT) {
@@ -290,7 +292,7 @@ class ExecutorClass {
                 }
                 break;
             case commons.ACT_DL:
-                if (this.data.actionType === "linkAction" && this.action.download_type === commons.DOWNLOAD_IMAGE_LINK && this.data.imageLink !== "") {
+                if (this.data.actionType === commons.linkAction && this.action.download_type === commons.DOWNLOAD_IMAGE_LINK && this.data.imageLink !== "") {
                     this.download(this.data.imageLink);
                 }
                 else if (this.action.download_type === commons.DOWNLOAD_TEXT) {
@@ -349,7 +351,7 @@ class ExecutorClass {
         this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
         if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.action.tab_pos)) {
             browser.windows.create({
-                incognito: this.action.tab_pos === "TAB_NEW_PRIVATE_WINDOW" ? true : false,
+                incognito: this.action.tab_pos === commons.TAB_NEW_PRIVATE_WINDOW ? true : false,
                 url,
             }).catch(e => console.error(e));
         }
@@ -585,7 +587,7 @@ var executor = new ExecutorClass();
 // });
 
 //在安装扩展时(含更新)触发，更新缺少的配置选项
-browser.runtime.onInstalled.addListener(async(details) => {
+browser.runtime.onInstalled.addListener(async (details) => {
     let changedflag = false;
     const all = await (browser.storage.local.get());
 

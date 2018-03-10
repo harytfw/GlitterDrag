@@ -740,8 +740,15 @@ class DragClass {
 
                 this.promptBox.display();
                 let message = bgConfig.tipsContent[property["act_name"]];
-                // console.log(promptString["%g"][property["download_directory"]]);
-                message = translatePrompt(message, property, this.actionType, this.selection);
+                if ((property["act_name"] === commons.ACT_OPEN && property["open_type"] === commons.OPEN_TEXT) ||
+                    (property["act_name"] === commons.ACT_COPY && property["copy_type"] === commons.COPY_TEXT) ||
+                    (property["act_name"] === commons.ACT_SEARCH && property["search_type"] === commons.SEARCH_TEXT) ||
+                    (property["act_name"] === commons.ACT_DL && property["download_type"] === commons.DOWNLOAD_TEXT)) {
+                    message = translatePrompt(message, property, commons.textAction, this.textSelection);
+                }
+                else {
+                    message = translatePrompt(message, property, this.actionType, this.selection);
+                }
                 this.promptBox.render(this.direction, message);
             }
             //----
