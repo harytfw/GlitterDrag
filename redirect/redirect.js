@@ -36,7 +36,7 @@ function searchImageViaUploadImage(file = new File()) {
                     method: "POST",
                     headers: headers,
                     body: form,
-                }).then(async(res) => {
+                }).then(async (res) => {
                     return res.json();
                 }).then((json) => {
                     stopAnimation();
@@ -56,7 +56,7 @@ function searchImageViaUploadImage(file = new File()) {
                 fetch(server, {
                     method: "POST",
                     body: form
-                }).then(async(res) => {
+                }).then(async (res) => {
                     stopAnimation();
                     location.href = res.url;
                 }).catch((error) => {
@@ -136,6 +136,10 @@ async function main() {
                 fetch(url).then(response => {
                     return response.blob();
                 }).then(file => {
+
+                    if (url.startsWith("blob")) {
+                        window.URL.revokeObjectURL(url);
+                    }
                     searchImageViaUploadImage(new File([file], fileName, { type: fileType }));
                 })
             }

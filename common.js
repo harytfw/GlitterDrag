@@ -328,6 +328,15 @@ const getI18nMessage = (strName = "", placeholders) => {
     return message;
 }
 
+/*
+const encodeBinaryData = (arr = new ArrayBuffer()) =>{
+    return new Uint8Array(arr).toString();
+}
+
+const decodeBinaryData = (src = "")=>{
+    return new Uint8Array(arr.split(","));
+}
+*/
 
 const testCheckDragTargetType = () => {
     const assert = console.assert;

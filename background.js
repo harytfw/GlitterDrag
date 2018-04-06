@@ -4,14 +4,8 @@ const TAB_ID_NONE = browser.tabs.TAB_ID_NONE;
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
 const DEFAULT_SEARCH_ENGINE = browser.i18n.getMessage("default_search_url");
 
-function parseBoolean(x) {
-    if (typeof x === "boolean") return x;
-    else if (x === "true") return true;
-    else if (x === "false") return false;
-    return false;
-}
 
-function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 5) {
+function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 3) {
     const url = window.URL.createObjectURL(blob);
     setTimeout(u => window.URL.revokeObjectURL(u), revokeTime, url); // auto revoke
     return url;
@@ -23,6 +17,12 @@ function createBlobObjectURLForText(text = "") {
     });
     return createObjectURL(blob);
 }
+
+function onError(e) {
+    $D(e);
+    console.error(e);
+}
+
 
 const tabsRelation = {
     _parent: TAB_ID_NONE,
@@ -152,11 +152,19 @@ async function getAct(type, dir, key) {
 
 class ExecutorClass {
     constructor() {
+        //template
         this.data = {
             direction: commons.DIR_U,
             selection: "",
-            sendToOptions: false,
-            actionType: "textAction"
+            textSelection: "",
+            imageLink: "",
+            site: "",
+            actionType: commons.textAction,
+            fileInfo: null || {
+                type: "",
+                name: "",
+            },
+            imageData: null,
         };
         this.action = {};
 
@@ -164,6 +172,7 @@ class ExecutorClass {
         this.previousTabId = TAB_ID_NONE;
 
         this.backgroundChildTabCount = 0;
+
 
         browser.tabs.onRemoved.addListener((tabId) => {
             if (flags.enableAutoSelectPreviousTab &&
@@ -194,34 +203,53 @@ class ExecutorClass {
         // if (commons._DEBUG) {
         //     console.table(this.data);
         // }
-        $D(this.data);
+        // $D(this.data);
         if (this.data.direction === commons.DIR_P) {
             let panelAction = await LStorage.get(this.data.key);
             this.action = panelAction[this.data.key][this.data.index];
-            this.execute();
         }
         else {
             this.action = await getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
-            this.execute();
         }
+        await this.execute();
+        this.data.imageData = null;
+
     }
-    execute() {
+    async execute() {
         $D(this.action);
 
-        if (this.data.externalFlag) {
-            let array = new Uint8Array(this.data.imageData.split(","));
-            this.data.imageData = array;
-            let imageFile = new File([array], this.data.fileInfo.name, {
-                type: this.data.fileInfo.type
-            });
-            console.assert(this.data.selection === null);
-            this.data.selection = createObjectURL(imageFile);
+        if (typeof this.data.imageData === "string") { //把imageData转换成File
+            this.data.imageData = new Uint8Array(this.data.imageData.split(","));
+            console.assert(this.data.imageData instanceof Uint8Array);
+            this.data.selection = createObjectURL(
+                new File([this.data.imageData], this.data.fileInfo.name, {
+                    type: this.data.fileInfo.type
+                })
+            );
+            $D("create object url: " + this.data.selection);
         }
 
-        if (this.data.selection === null || this.data.selection.length === 0) {
-            $D("the selection is empty");
-            return;
+        else if (this.data.actionType === commons.imageAction && this.data.imageData === null) {
+            const MIME_TYPE = {
+                ".gif": "image/gif",
+                ".jpg": "image/jpeg",
+                ".jpeg": "image/jpeg",
+                ".png": "image/png",
+                ".bmp": "image/bmp",
+            }
+            const result = this.data.selection.match(commons.fileExtension);
+            result && (result[1] = MIME_TYPE[result[1]]);
+            const [name, type] = result || ["image.jpg", "image/jpeg"];
+            this.data.fileInfo = { name, type };
+
         }
+
+        if (this.data.selection === "" || this.data.selection === null || this.data.selection.length === 0) {
+            const e = "the selection is empty";
+            $D(e);
+            return Promise.reject(e);
+        }
+
         switch (this.action.act_name) {
             case commons.ACT_OPEN:
                 if (this.data.actionType === commons.linkAction) {
@@ -310,6 +338,7 @@ class ExecutorClass {
             case commons.ACT_TRANS:
                 break;
         }
+        return Promise.resolve();
     }
     getTabIndex(tabsLength = 0, currentTabIndex = 0) {
         let index = 0;
@@ -346,53 +375,48 @@ class ExecutorClass {
         return index;
     }
 
-    openTab(url = "") {
+    async openTab(url = "") {
+
+        const onCreateTab = (newTab, parentTab) => {
+            // 只有当在右边前台打开才记录标签页id
+            if (this.action.tab_pos === commons.TAB_CRIGHT && this.action.tab_active === commons.FORE_GROUND) {
+                this.newTabId = newTab.id;
+            }
+            tabsRelation.check(parentTab.id, newTab.id);
+        }
+
+        const onQueryTab = tabs => {
+            for (let tab of tabs) {
+                if (tab.active === true) {
+
+                    tabsRelation.check(tab.id);
+                    this.previousTabId = tab.id;
+
+                    if (this.action.tab_pos === commons.TAB_CUR) browser.tabs.update(tab.id, { url });
+                    else browser.tabs
+                        .create({ active: Boolean(this.action.tab_active), index: this.getTabIndex(tabs.length, tab.index), url })
+                        .then(newTab => onCreateTab(newTab, tab))
+                        .catch(onError);
+                    break;
+                }
+            }
+        }
+
         $D(`openTab: url=${url}`);
         this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
         if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.action.tab_pos)) {
             browser.windows.create({
                 incognito: this.action.tab_pos === commons.TAB_NEW_PRIVATE_WINDOW ? true : false,
                 url,
-            }).catch(e => console.error(e));
+            }).catch(onError);
         }
-        else {
-            browser.tabs.query({
-                currentWindow: true
-            }).then(tabs => {
-                for (let tab of tabs) {
-                    if (tab.active === true) {
-                        tabsRelation.check(tab.id);
-                        this.previousTabId = tab.id;
-                        if (this.action.tab_pos === commons.TAB_CUR) browser.tabs.update(tab.id, {
-                            url
-                        });
-                        else {
-                            browser.tabs.create({
-                                active: Boolean(this.action.tab_active),
-                                index: this.getTabIndex(tabs.length, tab.index),
-                                url
-                            }).then((newTab) => {
-                                // 只有当在右边前台打开才记录标签页id
-                                if (this.action.tab_pos === commons.TAB_CRIGHT && this.action.tab_active === commons.FORE_GROUND) {
-                                    this.newTabId = newTab.id;
-                                }
+        else browser.tabs
+            .query({ currentWindow: true })
+            .then(onQueryTab)
+            .catch(onError);
 
-                                tabsRelation.check(tab.id, newTab.id);
-                            }, (error) => {
-                                $D(error);
-                                console.error(error);
-                            });
-                        }
-                        break;
-                    }
-                }
-            }, (error) => {
-                $D(error);
-                console.error(error);
-            });
-        }
+        return Promise.resolve();
     }
-
 
 
     openURL(url = "") {
@@ -445,9 +469,8 @@ class ExecutorClass {
 
     }
 
-    async searchText(keyword) {
-
-        let url;
+    async getEngine() {
+        let url = DEFAULT_SEARCH_ENGINE;
         if (this.action.engine_url && this.action.engine_url.length != 0) { //new engine_url property in v1.53
             url = this.action.engine_url;
         }
@@ -460,54 +483,79 @@ class ExecutorClass {
                 }
             }
         }
-        if (!url) {
-            url = DEFAULT_SEARCH_ENGINE;
-        }
+
+        return Promise.resolve(url);
+    }
+
+    async searchText(keyword) {
+        let url = await this.getEngine();
+
         if (url.startsWith("{redirect.html}")) {
-            this.searchImage(keyword); //donot follow
-            return;
+            this.openRedirectPage(keyword);
         }
-        if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
-            url = url.replace("%s", "%x");
+        else {
+            if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
+                url = url.replace("%s", "%x");
+            }
+            this.openTab(
+                url
+                .replace("%s", encodeURIComponent(keyword))
+                .replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
+            );
         }
-        this.openTab(
-            url.replace("%s", encodeURIComponent(keyword)).replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
-        );
     }
 
     async searchImage(imageFileURL) {
-        let url;
-        if (this.action.engine_url && this.action.engine_url.length != 0) { //new engine_url property in v1.53
-            url = this.action.engine_url;
-        }
-        else { // old method
-            const engines = (await LStorage.get("Engines"))["Engines"];
-            for (const e of engines) {
-                if (e.name === this.action.engine_name) {
-                    url = e.url;
-                    break;
-                }
-            }
-        }
-        if (!url) {
-            url = DEFAULT_SEARCH_ENGINE;
-        }
+        const url = await this.getEngine();
+
         if (url.startsWith("{redirect.html}")) {
-            let params = url.replace("{redirect.html}", "").replace("{url}", encodeURIComponent(imageFileURL));
-            // pass string of params.
-            this.openRedirectPage(params)
+            this.openRedirectPage(imageFileURL)
         }
-        if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
-            url = url.replace("%s", "%x");
+        else {
+            this.openTab(
+                url
+                .replace("%s", encodeURIComponent(imageFileURL))
+                .replace("%x", encodeURIComponent(`site:${this.data.site} ${imageFileURL}`))
+            );
         }
 
-        this.openTab(
-            url.replace("%s", encodeURIComponent(imageFileURL)).replace("%x", encodeURIComponent(`site:${this.data.site} ${imageFileURL}`))
-        );
-        // else {
-        //     this.searchText(this.data.selection);
-        // }
     }
+
+    async openRedirectPage(param) {
+        const SUPPORT_CMD = ["open", "search"]
+
+
+        const aUrl = new URL(REDIRECT_URL);
+        if (typeof param === "string") {
+            //param 是图像文件地址
+            const engine = (await this.getEngine()).replace("{redirect.html}", REDIRECT_URL);
+            //替换{redirect.html}是为了让new URL识别不出错
+            console.assert(engine.startsWith("{redirect.html}") === false);
+            const url = new URL(engine);
+
+            aUrl.searchParams.append("url", param);
+            aUrl.searchParams.append("cmd", "search");
+            aUrl.searchParams.append("engineName", url.searchParams.get("engineName"));
+            aUrl.searchParams.append("fileName", this.data.fileInfo.name);
+            aUrl.searchParams.append("fileType", this.data.fileInfo.type);
+        }
+        else if (param instanceof Object) {
+            for (const key of Object.keys(param)) {
+                if (key === "cmd") console.assert(SUPPORT_CMD.includes(key));
+                aUrl.searchParams.append(key, param[key]);
+            }
+        }
+        else {
+            $D("unknown type of redirect param", param);
+            return Promise.reject();
+        }
+
+        $D(aUrl.toString());
+        this.openTab(aUrl.toString());
+
+        return Promise.resolve();
+    }
+
     findText(text) {
         this.findFlag = true;
         if (text.length == 0 || !browser.find) return;
@@ -517,24 +565,13 @@ class ExecutorClass {
             }
         });
     }
-    openRedirectPage(params) {
-        if ("fileInfo" in this.data === false) {
-            this.data.fileInfo = {
-                name: "example.jpg",
-                type: "image/jpeg",
-            }
-        }
-        if (typeof params === "string") {
-            this.openTab(REDIRECT_URL + params + `&fileName=${this.data.fileInfo.name}&fileType=${this.data.fileInfo.type}`);
-        }
-        else {
-            const url = new URL(REDIRECT_URL);
-            for (const key of Object.keys(params)) {
-                url.searchParams.append(key, params[key]);
-            }
-            this.openTab(url.toString());
+    removeFind() {
+        if (this.findFlag) { //可能有其他扩展也使用 browser.find，加一个判断
+            this.findFlag = false;
+            browser.find.removeHighlighting();
         }
     }
+
 
     randomString(length = 8) {
         // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
@@ -569,8 +606,10 @@ class ExecutorClass {
 
         // console.log(opt.filename);
         browser.downloads.download(opt);
+
+        return Promise.resolve();
     }
-    translateText(text) {}
+    translateText() {}
 
 }
 
@@ -662,9 +701,8 @@ browser.browserAction.onClicked.addListener(() => {
 });
 
 browser.runtime.onMessage.addListener((m) => {
-    if (m.cmd && m.cmd === "removeHighlighting" && executor.findFlag) {
-        executor.findFlag = false;
-        browser.find.removeHighlighting();
+    if (m.cmd && m.cmd === "removeHighlighting") {
+        executor.removeFind();
     }
     else {
         executor.DO(m);

@@ -561,13 +561,13 @@ class DragClass {
             imageLink: this.imageLink,
             site: location.host,
             actionType: this.actionType,
-            sendToOptions: false,
             modifierKey: this.modifierKey,
+            fileInfo: null,
+            imageData: null
         }, extraOption);
 
         // console.info(sended);
         if (isRunInOptionsContext) {
-            sended.sendToOptions = true;
             // backgroundPage.executor.DO(sended);
         }
         browser.runtime.sendMessage(sended);
@@ -663,32 +663,32 @@ class DragClass {
         // }
         // console.info(`GlitterDrag: drag start, ${this.actionType} ${this.targetType}`);
     }
-    dragend(evt) {
+    dragend() {
         clearTimeout(this.timeoutId);
         // this.direction = this.getDirection();
         // what should we do if user release ctrl or shift key while dragging?
 
         if (this.distance >= bgConfig.triggeredDistance && this.distance <= bgConfig.maxTriggeredDistance) {
             this.direction = this.getDirection();
-
-            if (this.actionType === "imageAction") {
-                const result = this.selection.match(commons.fileExtension);
-                const [name, ext] = result || ["image.jpg", ".jpg"];
-                fetch(this.imageLink).then(res => res.arrayBuffer()).then(buf => {
-                    const bin = new Uint8Array(buf);
-                    this.post({
-                        imageData: bin.toString(),
-                        fileInfo: {
-                            type: MIME_TYPE[ext],
-                            name,
-                        },
-                        hasImageBinary: true,
-                    })
-                })
-            }
-            else {
-                this.post();
-            }
+            this.post();
+            // if (this.actionType === "imageAction") {
+            // this.post()
+            // const result = this.selection.match(commons.fileExtension);
+            // const [name, ext] = result || ["image.jpg", ".jpg"];
+            // fetch(this.imageLink).then(res => res.arrayBuffer()).then(buf => {
+            //     const bin = new Uint8Array(buf);
+            //     this.post({
+            //         imageData: bin.toString(),
+            //         fileInfo: {
+            //             type: MIME_TYPE[ext],
+            //             name,
+            //         },
+            //     })
+            // })
+            // }
+            // else {
+            //     this.post();
+            // }
         }
 
 
@@ -816,30 +816,7 @@ class DragClass {
             });
             return;
         }
-
-        const sended = {
-            selection: null,
-            direction: commons.DIR_OUTER,
-            textSelection: "",
-            hasImageBinary: false,
-            fileInfo: {
-                type: "",
-                name: ""
-            }
-        };
-
-        const fileReader = new FileReader();
-        let file = dt.files[0];
-        fileReader.addEventListener("loadend", () => {
-            let bin = new Uint8Array(fileReader.result);
-            // console.log(bin, bin.length);
-            sended.imageData = bin.toString(); // convert ArrayBuffer to string
-            sended.externalFlag = true;
-            sended.fileInfo.name = file.name;
-            sended.fileInfo.type = file.type;
-            this.post(sended);
-        });
-
+        
         let action = null;
         if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
             action = bgConfig.Actions_CtrlKey.imageAction.DIR_OUTER;
@@ -857,17 +834,31 @@ class DragClass {
             this.doDropPreventDefault = false;
             return;
         }
-        sended.textSelection = file.name; // name of image file
+
+        const fileReader = new FileReader();
+        let file = dt.files[0];
+        fileReader.addEventListener("loadend", () => {
+            this.post({
+                selection: null,
+                direction: commons.DIR_OUTER,
+                textSelection: file.name,
+                fileInfo: {
+                    type: file.type,
+                    name: file.name
+                },
+                imageData: new Uint8Array(fileReader.result).toString(),
+            });
+        });
         fileReader.readAsArrayBuffer(file);
 
     }
 
-    dragenter4panel(e) {
+    dragenter4panel() {
 
         this.isPanelArea = true;
         // console.info("enter panel");
     }
-    dragleave4panel(e) {
+    dragleave4panel() {
         // console.log(e);
         // this.isPanelArea = false;
     }
@@ -882,7 +873,7 @@ class DragClass {
         }));
         e.preventDefault(); //note!
     }
-    dragover4panel(e) {
+    dragover4panel() {
 
     }
     isNotAcceptable(evt) {
