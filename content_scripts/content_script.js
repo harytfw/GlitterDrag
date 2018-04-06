@@ -639,6 +639,15 @@ class DragClass {
             return;
         }
 
+        //workaround #79
+        for (const ext of [".jpg", ".jpeg", ".png", "gif"]) { //image viewer window
+            if (location.href.endsWith(ext) && document.querySelector("img").src === location.href) {
+                $D("checkpoint");
+                this.selection = location.href;
+                break;
+            }
+        }
+
         if (this.selection === "") {
             this.selection = this.textSelection;
         }
@@ -656,6 +665,7 @@ class DragClass {
             this.selection = this.imageLink;
             this.actionType = commons.imageAction;
         }
+
 
         // Need Tests
         // if (this.selection === this.imageLink && this.actionType === commons.linkAction) {
@@ -816,7 +826,7 @@ class DragClass {
             });
             return;
         }
-        
+
         let action = null;
         if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
             action = bgConfig.Actions_CtrlKey.imageAction.DIR_OUTER;
