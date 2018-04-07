@@ -49,6 +49,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         disableAdjustTabSequence: false,
         switchToParentTab: false,
         alwaysImage: false,
+        imageReferrer:false,
         tipsContent: {
             ACT_NONE: "%a",
             ACT_OPEN: "%a",

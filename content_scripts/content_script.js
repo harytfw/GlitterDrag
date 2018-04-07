@@ -3,6 +3,7 @@
 console.info("Glitter Drag: Content script is injected by browser successfully");
 const isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 const IS_TOP_WINDOW = window.top === window;
+const FIREFOX_VERSION = navigator.userAgent.match(/Firefox\/(\d\d)\.\d/)[1]; //wrong meathod
 
 const MIME_TYPE = {
     ".gif": "image/gif",
@@ -581,6 +582,7 @@ class DragClass {
 
     }
     updateModifierKey(evt) {
+        console.assert(evt instanceof Event, "evt is not event");
         if (evt.ctrlKey) {
             this.modifierKey = commons.KEY_CTRL;
         }
@@ -673,14 +675,59 @@ class DragClass {
         // }
         // console.info(`GlitterDrag: drag start, ${this.actionType} ${this.targetType}`);
     }
-    dragend() {
+    dragend(evt) {
         clearTimeout(this.timeoutId);
         // this.direction = this.getDirection();
         // what should we do if user release ctrl or shift key while dragging?
 
         if (this.distance >= bgConfig.triggeredDistance && this.distance <= bgConfig.maxTriggeredDistance) {
             this.direction = this.getDirection();
-            this.post();
+
+            if (bgConfig.imageReferrer === true && this.actionType === commons.imageAction) {
+                let action = null;
+                if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
+                    action = bgConfig.Actions_CtrlKey.imageAction[this.direction];
+                }
+                else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
+                    action = bgConfig.Actions_ShiftKey.imageAction[this.direction];
+                }
+                else {
+                    action = bgConfig.Actions.imageAction[this.direction];
+                }
+
+                if (action.act_name === commons.ACT_DL && [commons.DOWNLOAD_IMAGE, commons.DOWNLOAD_LINK].includes(action.download_type)) {
+
+                    let _fetch = null;
+                    if (FIREFOX_VERSION >= 58 && content.fetch) {
+                        //see https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Content_scripts#XHR_and_Fetch
+                        _fetch = content.fetch;
+                    }
+                    else {
+                        _fetch.fetch;
+                    }
+                    _fetch(this.imageLink, { cache: "force-cache" })
+                        .then(a => a.arrayBuffer())
+                        .then(arrayBuffer => {
+                            const result = this.imageLink.match(commons.fileExtension);
+                            const [name, ext] = result || ["image.jpg", ".jpg"];
+                            this.post({
+                                fileInfo: {
+                                    name,
+                                    type: MIME_TYPE[ext]
+                                },
+                                imageData: new Uint8Array(arrayBuffer).toString()
+                            });
+                        }).catch(() => { //may be CORS, fallback
+                            this.post();
+                        });
+                }
+                else {
+                    this.post();
+                }
+            }
+            else {
+                this.post();
+            }
             // if (this.actionType === "imageAction") {
             // this.post()
             // const result = this.selection.match(commons.fileExtension);

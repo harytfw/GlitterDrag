@@ -621,5 +621,9 @@
     "elem_SelectStyle": {
         "message": "Select Style",
         "description": ""
+    },
+    "elem_ImageReferrer": {
+        "message": "Append referrer when download iamge",
+        "description":""
     }
 }

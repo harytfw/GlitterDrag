@@ -173,6 +173,16 @@ class ExecutorClass {
 
         this.backgroundChildTabCount = 0;
 
+        this.lastDownloadItemID = -1;
+        this.lastDownloadObjectURL = ""; //prepare for revoke
+        browser.downloads.onChanged.addListener(item => {
+            if (item.id === this.lastDownloadItemID && item.state.current === browser.downloads.State.COMPLETE) {
+                window.URL.revokeObjectURL(this.lastDownloadObjectURL);
+                this.lastDownloadItemID = -1;
+                this.lastDownloadObjectURL = "";
+            }
+        })
+
 
         browser.tabs.onRemoved.addListener((tabId) => {
             if (flags.enableAutoSelectPreviousTab &&
@@ -241,7 +251,6 @@ class ExecutorClass {
             result && (result[1] = MIME_TYPE[result[1]]);
             const [name, type] = result || ["image.jpg", "image/jpeg"];
             this.data.fileInfo = { name, type };
-
         }
 
         if (this.data.selection === "" || this.data.selection === null || this.data.selection.length === 0) {
@@ -587,6 +596,7 @@ class ExecutorClass {
         };
         const directories = (await LStorage.get("downloadDirectories"))["downloadDirectories"];
         if (url.startsWith("blob:") && this.data.fileInfo) {
+            this.lastDownloadObjectURL = url;
             filename = this.data.fileInfo.name || "file.dat";
         }
         if (this.action.download_type !== commons.DOWNLOAD_TEXT) {
@@ -605,9 +615,11 @@ class ExecutorClass {
         opt.filename = directories[this.action.download_directory] + filename;
 
         // console.log(opt.filename);
-        browser.downloads.download(opt);
+        return browser.downloads.download(opt).then(id => {
+            this.lastDownloadItemID = id;
+            return Promise.resolve();
+        });
 
-        return Promise.resolve();
     }
     translateText() {}
 
