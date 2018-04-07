@@ -703,7 +703,7 @@ class DragClass {
                         _fetch = content.fetch;
                     }
                     else {
-                        _fetch.fetch;
+                        _fetch = fetch;
                     }
                     _fetch(this.imageLink, { cache: "force-cache" })
                         .then(a => a.arrayBuffer())
