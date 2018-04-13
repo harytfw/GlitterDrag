@@ -53,17 +53,17 @@ $A("template").forEach(t => {
 
 //hacking label + input[type='radio']
 document.addEventListener("click", e => {
-        if (e.target.nodeName === "LABEL" && e.target.getAttribute("for") !== null) {
-            const t = $E("." + e.target.getAttribute("for"), e.target.parentElement);
-            if (t && t.type === "radio") {
-                // t.checked = !t.checked;
-                t.dispatchEvent(new Event("radiochange", {
-                    bubbles: true
-                }));
-            }
+    if (e.target.nodeName === "LABEL" && e.target.getAttribute("for") !== null) {
+        const t = $E("." + e.target.getAttribute("for"), e.target.parentElement);
+        if (t && t.type === "radio") {
+            // t.checked = !t.checked;
+            t.dispatchEvent(new Event("radiochange", {
+                bubbles: true
+            }));
         }
-    })
-    //手动处理选择单选按钮
+    }
+})
+//手动处理选择单选按钮
 document.addEventListener("radiochange", e => {
     //把同一个父元素的radio当成一组
     let checked = $A("input[type='radio']:checked", e.target.parentElement);
@@ -664,13 +664,13 @@ class ActionsView {
         });
 
 
-        this.initALl();
+        this.initALL();
     }
     $E(str, context = this.parent) {
         return $E(str, context);
     }
 
-    initALl() {
+    initALL() {
         //初始化搜索引擎
         const selectProtype = document.createElement("select");
         const optProtype = document.createElement("option");
@@ -728,7 +728,7 @@ class ActionsView {
         showTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".copy-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
         switch (e.target.value) {
             case commons.ACT_NONE:
-                // hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".copy-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
+                hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".copy-text", ".download-text", ".download-saveas-yes",".search-text", ".download-directory", ".search-onsite-yes");
                 break;
             case commons.ACT_OPEN:
                 hideTR(".copy-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
@@ -774,6 +774,9 @@ class ActionsView {
                 }
                 else if (this.actionType === "linkAction") {
                     hideRadios(".copy-image");
+                }
+                else if (this.actionType === "imageAction") {
+                    hideRadios(".copy-text");
                 }
                 break
             case commons.ACT_FIND:
@@ -825,60 +828,54 @@ class ActionsView {
     }
 
     set setting(data) {
-        const initRadio = (t) => {
+        const setAsRadioValue = (t) => {
             this.$E(t).dispatchEvent(new Event("radiochange", {
                 bubbles: true
             }));
         }
 
+
         const actSetting = data;
         if (actSetting["tab_active"] === commons.FORE_GROUND) {
-            initRadio(".foreground")
+            setAsRadioValue(".foreground")
         }
         else {
-            initRadio(".background")
+            setAsRadioValue(".background")
         }
 
         if (actSetting["search_onsite"] === commons.SEARCH_ONSITE_YES) {
-            initRadio(".search-onsite-yes")
+            setAsRadioValue(".search-onsite-yes")
         }
         else {
-            initRadio(".search-onsite-no")
+            setAsRadioValue(".search-onsite-no")
         }
 
         if (actSetting["download_saveas"] === commons.DOWNLOAD_SAVEAS_YES) {
-            initRadio(".download-saveas-yes")
+            setAsRadioValue(".download-saveas-yes")
         }
         else {
-            initRadio(".download-saveas-no")
+            setAsRadioValue(".download-saveas-no")
         }
+
+        for (const name of ["open_type", "copy_type", "download_type", "search_type"]) {
+            let value = actSetting[name];
+            value = value.toLowerCase().replace(/_/g, "-");
+            debugger;
+            setAsRadioValue("." + value);
+        }
+
+        // this.$E(".open-type").value = actSetting["open_type"];
+        // this.$E(".copy-type").value = actSetting["copy_type"];
+        // this.$E(".download-type").value = actSetting["download_type"];
+        // this.$E(".search-type").value = actSetting["search_type"];
+
 
         this.$E(".action-name").value = actSetting["act_name"];
         this.$E(".tab-pos").value = actSetting["tab_pos"];
 
 
-        // if ("engine_url" in actSetting && actSetting["engine_url"].length != 0) {
         this.$E(".search-engine-name").value = actSetting["engine_name"];
         this.$E(".search-engine-url").value = actSetting["engine_url"];
-        // }
-        /*         else {
-                    LStorage.get("Engines").then(({ Engines }) => {
-                        let url = null;
-                        let name = actSetting["engine_name"];
-                        for (let obj of Engines) {
-                            if (obj.name === name) {
-                                url = obj.url;
-                                break;
-                            }
-                        }
-                        if (!url) {
-                            url = getI18nMessage("default_search_url");
-                            name = getI18nMessage("defaultText");
-                        }
-                        this.$E(".search-engine-url").value = url;
-                        this.$E(".search-engine-name").value = name;
-                    });
-                } */
 
         this.$E(".download-directory").value = actSetting["download_directory"];
 
@@ -893,7 +890,7 @@ class NewActionsWrapper {
             return this.actionType;
         });
 
-        this.parent.addEventListener("change", async(e) => {
+        this.parent.addEventListener("change", async (e) => {
             let res = (await LStorage.get(this.actionsKeyName));
             res[this.actionsKeyName][this.actionType][this.direction] = this.category.setting;
             res[this.controlKeyName] = (await LStorage.get(this.controlKeyName))[this.controlKeyName];
@@ -902,7 +899,7 @@ class NewActionsWrapper {
             $D(res);
         })
 
-        $E("#type-category").addEventListener("click", async(e) => {
+        $E("#type-category").addEventListener("click", async (e) => {
             let sel = $E(".category-item-selected", e.target.parentElement);
             sel.classList.remove("category-item-selected");
             e.target.classList.add("category-item-selected");
@@ -910,7 +907,7 @@ class NewActionsWrapper {
             $E(".direction-control").dispatchEvent(new Event("change"));
         });
 
-        $E("#direction-category").addEventListener("click", async(e) => {
+        $E("#direction-category").addEventListener("click", async (e) => {
             if (e.target.classList.contains("category-item-disabled")) {
                 $E(".direction-control", this.parent).setAttribute("style", "box-shadow: 0px 0px 4px rgb(255, 0, 0);");
                 setTimeout(() => {
@@ -926,7 +923,7 @@ class NewActionsWrapper {
             this.category.setting = setting;
             $D(setting);
         });
-        $E(".direction-control", this.parent).addEventListener("change", async(e) => {
+        $E(".direction-control", this.parent).addEventListener("change", async (e) => {
             const cfg = await LStorage.get(this.controlKeyName);
             cfg[this.controlKeyName][this.actionType] = e.target.value;
             await LStorage.set(cfg);
@@ -1194,7 +1191,7 @@ function initButton() {
     eventUtil.attachEventS("#fileInput", (event) => {
         fileReader.readAsText(event.target.files[0]);
     }, "change");
-    fileReader.addEventListener("loadend", async() => {
+    fileReader.addEventListener("loadend", async () => {
         try {
             const storage = JSON.parse(fileReader.result);
             await LStorage.clear();
@@ -1207,7 +1204,7 @@ function initButton() {
             alert(msg);
         }
     });
-    eventUtil.attachEventS("#backup", async() => {
+    eventUtil.attachEventS("#backup", async () => {
         const storage = await (LStorage.get());
         const blob = new Blob([JSON.stringify(storage, null, 2)]);
         const url = URL.createObjectURL(blob);
@@ -1224,12 +1221,12 @@ function initButton() {
         }, 1000 * 60 * 5);
     });
 
-    eventUtil.attachEventS("#default", async() => {
+    eventUtil.attachEventS("#default", async () => {
         await LStorage.clear();
         await LStorage.set(DEFAULT_CONFIG);
         location.reload();
     });
-    eventUtil.attachEventS("#sanitize", async() => {
+    eventUtil.attachEventS("#sanitize", async () => {
         const all = await (browser.storage.local.get());
         const removed = Object.keys(all).filter((x) => x in DEFAULT_CONFIG === false);
 
