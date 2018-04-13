@@ -45,20 +45,6 @@ document.addEventListener("keypress", (e) => {
 })
 
 
-function getAct(type, dir, key) {
-    let r = null;
-    if (key === commons.KEY_CTRL) {
-        r = bgConfig["Actions_CtrlKey"][type][dir];
-    }
-    else if (key === commons.KEY_SHIFT) {
-        r = bgConfig["Actions_ShiftKey"][type][dir];
-    }
-    else {
-        r = bgConfig["Actions"][type][dir];
-    }
-    return r;
-}
-
 let promptString = {
     "%a": {}, // action
     "%g": {}, // background foreground

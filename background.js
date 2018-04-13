@@ -1,4 +1,3 @@
-var supportCopyImage = false;
 
 const TAB_ID_NONE = browser.tabs.TAB_ID_NONE;
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
