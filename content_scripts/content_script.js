@@ -3,7 +3,7 @@
 console.info("Glitter Drag: Content script is injected by browser successfully");
 const isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 const IS_TOP_WINDOW = window.top === window;
-const FIREFOX_VERSION = navigator.userAgent.match(/Firefox\/(\d\d)\.\d/)[1]; //wrong meathod
+const FIREFOX_VERSION = navigator.userAgent.match(/Firefox\/(\d\d)\.\d/)[1]; //wrong method
 
 const MIME_TYPE = {
     ".gif": "image/gif",
@@ -630,11 +630,17 @@ class DragClass {
         //workaround #79
         for (const ext of [".jpg", ".jpeg", ".png", "gif"]) { //image viewer window
             if (location.href.endsWith(ext) && document.querySelector("img").src === location.href) {
-                $D("checkpoint");
                 this.selection = location.href;
                 break;
             }
         }
+
+        //fix #85,part 2
+        if (this.targetElem.nodeName === "A" && this.targetElem.href.startsWith("javascript") && this.targetElem.firstElementChild && this.targetElem.firstElementChild.nodeName === "IMG") {
+            this.targetElem = this.targetElem.firstElementChild;
+            this.imageLink = this.textSelection = this.selection = this.targetElem.src;
+        }
+
 
         if (this.selection === "") {
             this.selection = this.textSelection;
@@ -971,18 +977,32 @@ class DragClass {
                 // if (this.isNotAcceptable(evt)) {
                 //     return;
                 // }
-                if (evt.target.nodeName === "A" &&
-                    (evt.target.href.startsWith("javascript:") || evt.target.href.startsWith("#"))) {
+                if (evt.target.nodeName === "A" && evt.target.href.startsWith("#")) {
                     return;
                 }
                 if (evt.target.nodeName === "OBJECT") {
                     return;
                 }
-                if (evt.target.getAttribute && evt.target.getAttribute("contenteditable") !== null) {
+                if (evt.target.getAttribute &&
+                    (evt.target.getAttribute("contenteditable") !== null ||
+                        evt.target.getAttribute("draggble") !== null)) {
                     return;
                 }
-                // don't process it if the node has set attribute "draggable" 
-                if (evt.target.nodeName === "#text" || (evt.target.getAttribute && evt.target.getAttribute("draggable") === null)) {
+
+
+                //fix #85,part 1
+                if (evt.target.nodeName === "A" && evt.target.href.startsWith("javascript:")) {
+                    if (evt.target.firstElementChild && evt.target.firstElementChild.nodeName === "IMG") {
+                        this.running = true;
+                        this.dragstart(evt);
+                        return;
+                    }
+                    else {
+                        return;
+                    }
+                }
+
+                if (["#text", "A", "IMG"].includes(evt.target.nodeName)) {
                     this.running = true;
                     this.dragstart(evt);
                 }
