@@ -860,7 +860,6 @@ class ActionsView {
         for (const name of ["open_type", "copy_type", "download_type", "search_type"]) {
             let value = actSetting[name];
             value = value.toLowerCase().replace(/_/g, "-");
-            debugger;
             setAsRadioValue("." + value);
         }
 
