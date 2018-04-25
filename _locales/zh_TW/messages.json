@@ -624,5 +624,9 @@
     "elem_SelectStyle": {
         "message": "選擇樣式",
         "description": ""
+    },
+    "elem_ImageReferrer": {
+        "message": "下載圖像時附加 Referrer",
+        "description": ""
     }
 }
