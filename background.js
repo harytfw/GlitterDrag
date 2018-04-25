@@ -1,4 +1,3 @@
-
 const TAB_ID_NONE = browser.tabs.TAB_ID_NONE;
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
 const DEFAULT_SEARCH_ENGINE = browser.i18n.getMessage("default_search_url");
@@ -402,7 +401,7 @@ class ExecutorClass {
 
                     if (this.action.tab_pos === commons.TAB_CUR) browser.tabs.update(tab.id, { url });
                     else browser.tabs
-                        .create({ active: Boolean(this.action.tab_active), index: this.getTabIndex(tabs.length, tab.index), url })
+                        .create({ active: Boolean(this.action.tab_active), index: this.getTabIndex(tabs.length, tab.index), url, openerTabId: tab.id })
                         .then(newTab => onCreateTab(newTab, tab))
                         .catch(onError);
                     break;
