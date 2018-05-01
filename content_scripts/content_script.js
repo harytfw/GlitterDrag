@@ -995,14 +995,16 @@ class DragClass {
                     if (evt.target.firstElementChild && evt.target.firstElementChild.nodeName === "IMG") {
                         this.running = true;
                         this.dragstart(evt);
-                        return;
                     }
-                    else {
-                        return;
-                    }
+                    return;
                 }
 
                 if (["#text", "A", "IMG"].includes(evt.target.nodeName)) {
+                    this.running = true;
+                    this.dragstart(evt);
+                }
+                else if (evt.target.nodeName === "TEXTAREA" ||
+                    (evt.target.nodeName === "INPUT" && evt.target.type.toLowerCase() === "text")) {
                     this.running = true;
                     this.dragstart(evt);
                 }
