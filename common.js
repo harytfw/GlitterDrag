@@ -31,7 +31,6 @@ const commons = {
     DIR_LOW_L: "DIR_LOW_L",
     DIR_LOW_R: "DIR_LOW_R",
     DIR_OUTER: "DIR_OUTER",
-
     PLACE_HOLDER: "PLACE_HOLDER",
 
     ACT_NONE: "ACT_NONE", // 无动作

@@ -25,14 +25,6 @@ const EVENT_PAHSE = {
 }
 Object.freeze(EVENT_PAHSE);
 
-// const ICONS = {
-//     "download": browser.runtime.getURL("icon/download.png"),
-//     "empty_trash": browser.runtime.getURL("icon/empty_trash_64px.png"),
-//     "open_in_browser": browser.runtime.getURL("icon/open_in_browser.png"),
-//     "search": browser.runtime.getURL("icon/search.png"),
-//     "copy": browser.runtime.getURL("icon/copy.png"),
-// }
-
 const specialSites = ["vk.com"];
 
 //remove highlighting when Escape is pressed
@@ -89,19 +81,6 @@ function translatePrompt(message, property, actionType, selection) {
         .replace("%s", selection) : "Error Message!";
 }
 
-function removeExistedElement(selector) {
-    try {
-        let e = $E(selector);
-        if (e !== null) {
-            e.remove();
-            return true;
-        }
-        return false;
-    }
-    catch (e) {
-        return false;
-    }
-}
 
 function injectStyle(opt = {
     url: "",
@@ -122,314 +101,6 @@ function injectStyle(opt = {
         style.textContent = opt.css;
         document.head.appendChild(style);
     }
-}
-
-
-class Prompt {
-    constructor() {
-        removeExistedElement("#GDPrompt");
-        this.container = document.createElement("div");
-        this.container.id = "GDPrompt";
-        this.textContainer = document.createElement("div");
-        this.arrow = document.createElement("i")
-        this.arrow.id = "GDArrow";
-        this.container.appendChild(this.arrow);
-        this.container.appendChild(this.textContainer);
-        this.hide();
-        document.body.appendChild(this.container);
-    }
-    render(dir, text) {
-        //DIR_UP_L
-        //[DIR,UP,L]
-        //[UP,L]
-        //UP-L
-        this.arrow.className = `GDArrow-${dir.split("_").slice(1).join("-")}`;
-        this.textContainer.textContent = text;
-    }
-    display() {
-        if (this.container.style.display === "none") {
-            this.container.style.setProperty("display", "block", "important");
-        }
-    }
-    hide() {
-        this.container.style.setProperty("display", "none", "important");
-    }
-    destory() {
-        document.body.removeChild(this.container);
-    }
-}
-
-
-class RemotePrompt {
-    constructor() {
-        window.top.postMessage({
-            name: "promptBox",
-            func: "RequestPrompt",
-            RequestPrompt: []
-        }, "*");
-    }
-
-    render() {
-        window.top.postMessage({
-            name: "promptBox",
-            func: "render",
-            render: [...arguments]
-        }, "*")
-    }
-
-    display() {
-        window.top.postMessage({
-            name: "promptBox",
-            func: "display",
-            display: [...arguments]
-        }, "*")
-    }
-
-    hide(why) {
-        window.top.postMessage({
-            name: "promptBox",
-            func: "hide",
-            hide: ["remote hide and " + why]
-        }, "*")
-    }
-
-    destory() {
-        window.top.postMessage({
-            name: "promptBox",
-            func: "destory",
-            destory: [...arguments]
-        }, "*")
-    }
-}
-
-class Indicator {
-    constructor() {
-        removeExistedElement("#GDIndicator");
-        this.box = document.createElement("div");
-        this.box.id = "GDIndicator";
-        this.hide();
-        document.body.appendChild(this.box);
-    }
-    place(x = 0, y = 0, radius = 0) {
-
-        radius = radius / window.devicePixelRatio;
-        this.box.style.setProperty("left", (x - radius) + "px", "important");
-        this.box.style.setProperty("top", (y - radius) + "px", "important");
-        const h = this.box.style.height = (radius * 2) + "px";
-        const w = this.box.style.width = (radius * 2) + "px";
-        this.box.style.setProperty("border-radius", `${w} ${h}`, "important");
-        // if (radius <= 0) {
-        //     this.hide();
-        //     return;
-        // }
-    }
-    display() {
-        if (this.box.style.display === "none") this.box.style.setProperty("display", `initial`, "important");
-    }
-    hide() {
-        this.box.style.setProperty("display", `none`, "important");
-    }
-    destory() {
-        document.body.removeChild(this.box);
-    }
-}
-
-
-const ICONS = {
-    "ACT_DL": "GD-fa GD-fa-download",
-    "ACT_OPEN": "GD-fa GD-fa-external-link",
-    "ACT_SEARCH": "GD-fa GD-fa-search",
-    "ACT_COPY": "GD-fa GD-fa-clipboard",
-    "ACT_FIND": "GD-fa GD-fa-find",
-    "BAN": "GD-fa GD-fa-ban",
-}
-
-
-const CMDPANEL_HTML_CONTENT = `
-<table id="GDPanel">
-    <tr id="GDHeader">
-        <th colspan=3>
-            动作
-        </th>
-    </tr>
-    <tr class="GDLabel" id="GDLabel-text">
-        <td class="GDLabel-content" colspan=3><span>文本：</span><span class="GDPanel-content">中国最强</span></td>
-    </tr>
-    <tr class="GDRow" id="GDRow-text">
-        <td class="GDCell" align="center">
-        </td>
-        <td class="GDCell" align="center">
-        </td>
-        <td class="GDCell" align="center">
-        </td>
-    </tr>
-    <tr class="GDLabel" id="GDLabel-link">
-        <td class="GDLabel-content" colspan=3><span >链接：</span><span class="GDPanel-content"></span></td>
-    <tr class="GDRow" id="GDRow-link">
-        <td class="GDCell" align="center">
-        </td>
-        <td class="GDCell" align="center">
-        </td>
-        <td class="GDCell" align="center">
-        </td>
-    </tr>
-    <tr class="GDLabel" id="GDLabel-image">
-        <td class="GDLabel-content" colspan=3><span>图片：</span><span class="GDPanel-content"></span></td>
-    </tr>
-    <tr class="GDRow" id="GDRow-image">
-        <td class="GDCell" align="center">
-        </td>
-        <td class="GDCell" align="center">
-        </td>
-        <td class="GDCell" align="center">
-        </td>
-    </tr>
-    <tr class="GDRow" id="GDFooter">
-        <td class="GDCell" id="GDCell-ban" colspan=2">
-        <i class="${ICONS.BAN}" aria-hidden="true"></i>
-        </td>
-    </tr>
-    
-</table>`;
-
-
-class cmdPanel {
-    //TODO:内容长度自动裁剪
-    //TODO:样式美观
-    //TODO:完善图标自定义功能
-    constructor(enterlistener, leaveListener, dropListener, overlistener) {
-        removeExistedElement("#GDPanel-wrapper");
-        this.el = document.createElement("div");
-        this.hide();
-        this.el.id = "GDPanel-wrapper";
-        this.el.innerHTML = CMDPANEL_HTML_CONTENT;
-        this.lastdragovertarget = null;
-
-        this.el.addEventListener("drop", e => dropListener(e, this.lastdragovertarget));
-        this.el.addEventListener("dragenter", enterlistener);
-        this.el.addEventListener("dragleave", e => {
-            leaveListener(e);
-        });
-        this.el.addEventListener("dragover", e => {
-            if (e.target.className.indexOf("GDCell") >= 0 && this.lastdragovertarget != e.target) {
-                this.lastdragovertarget && this.lastdragovertarget.classList.remove("GDCell-hover");
-                this.lastdragovertarget = e.target;
-                this.lastdragovertarget.classList.add("GDCell-hover");
-                this.updateHeader(e);
-                // overlistener(e);
-            }
-        });
-        this.el.setAttribute("style", "visibility:hidden;z-index:-1");
-        document.body.appendChild(this.el);
-
-        // this.posX = this.el.offsetLeft - this.el.offsetWidth;
-        // this.posY = this.el.offsetTop - this.el.offsetHeight;
-        this.updateTable();
-        this.el.style.setProperty("display", "none", "important");
-
-    }
-
-    updateHeader(e) {
-        let header = this.el.querySelector("#GDHeader").firstElementChild;
-        if (this.lastdragovertarget.id === "GDCell-ban") {
-            header.textContent = "取消"; //getI18nMessage("Cancel");
-            return;
-        }
-        const setting = bgConfig[e.target.dataset["key"]][e.target.dataset["index"]];
-        header.textContent = translatePrompt("%g-%a", setting);
-    }
-
-    updateTable() {
-        let row = this.el.querySelector("#GDRow-text");
-        bgConfig.cmdPanel_textAction.forEach((obj, i) => {
-            this.updateCell(row.children[i], "text", i);
-        });
-
-        row = this.el.querySelector("#GDRow-link");
-        bgConfig.cmdPanel_linkAction.forEach((obj, i) => {
-            this.updateCell(row.children[i], "link", i);
-        });
-
-        row = this.el.querySelector("#GDRow-image");
-        bgConfig.cmdPanel_imageAction.forEach((obj, i) => {
-            this.updateCell(row.children[i], "image", i);
-        });
-    }
-
-    updateCell(element, kind, index) {
-        element.dataset["kind"] = kind;
-        const key = element.dataset["key"] = "cmdPanel_" + kind + "Action";
-        element.dataset["index"] = index;
-        const setting = bgConfig[key][index];
-        // switch (setting.act_name) {
-        //     case commons.ACT_OPEN:
-        //         icon = ICONS.open;
-        //         break;
-        //     case commons.ACT_SEARCH:
-        //         icon = ICONS.search;
-        //         break;
-        //     case commons.ACT_COPY:
-        //         icon = ICONS.copy;
-        //         break;
-        //     case commons.ACT_DL:
-        //         icon = ICONS.download;
-        //         break;
-        // }
-        const i = document.createElement("i");
-        // i.setAttribute("aria-hidden", true);
-        i.className = ICONS[setting.act_name];
-        element.appendChild(i);
-    }
-    render(actionkind, targetkind, selection, textSelection, imageLink) {
-        function trim(str = "", len1 = 6, len2 = 6, maxlen = 12) {
-            if (str.length <= maxlen) return str;
-            return `${str.substr(0,len1)}...${str.substr(str.length-len2,len2)}`
-        }
-        $H(["#GDLabel-link", "#GDLabel-image", "#GDRow-link", "#GDRow-image"], "table-row");
-        switch (actionkind) {
-            case commons.textAction:
-                $H(["#GDLabel-link", "#GDLabel-image", "#GDRow-link", "#GDRow-image"]);
-                $E("#GDLabel-text .GDPanel-content").textContent = trim(textSelection);
-                break;
-            case commons.linkAction:
-                if (targetkind === commons.TYPE_ELEM_A_IMG) {
-                    $E("#GDLabel-image .GDPanel-content").textContent = imageLink;
-                }
-                else {
-                    $H(["#GDLabel-image", "#GDRow-image"]);
-                }
-                $E("#GDLabel-link .GDPanel-content").textContent = trim(selection);
-                $E("#GDLabel-text .GDPanel-content").textContent = trim(textSelection);
-                break;
-            case commons.imageAction:
-                $H(["#GDLabel-text", "#GDRow-text", "#GDLabel-link", "#GDRow-link"]);
-                $E("#GDLabel-image .GDPanel-content").textContent = trim(selection);
-                break;
-            default:
-                break;
-        }
-    }
-    place(x = 0, y = 0) {
-
-        this.el.style.setProperty("visibility", `hidden`, "important");
-        this.el.style.setProperty("display", `block`, "important");
-        //通过上面2行代码正常获取offsetWidth并且不显示在页面上
-        this.el.style.left = (x - this.el.firstElementChild.offsetWidth / 2) + "px";
-        this.el.style.top = (y - this.el.firstElementChild.offsetHeight / 2) + "px";
-
-        this.el.style.setProperty("display", `none`, "important");
-        this.el.style.setProperty("visibility", `visible`, "important");
-    }
-    display() {
-        this.el.style.setProperty("display", `block`, "important");
-    }
-    hide() {
-        this.el.style.setProperty("display", `none`, "important");
-    }
-    destory() {
-        document.body.removeChild(this.el);
-    }
-
 }
 
 class DragClass {
@@ -475,15 +146,24 @@ class DragClass {
         // end: value that can be use in UI process
 
         // start: UI componment
-        this.promptBox = null;
-        this.indicatorBox = null;
+        if (IS_TOP_WINDOW) {
+            this.promptBox = new Prompt();
+            if (document.body.getAttribute("contenteditable") === null) {
+                this.panelBox = new Panel({ dragenter: this.dragenter4panel.bind(this), dragleave: this.dragleave4panel.bind(this), drop: this.drop4panel.bind(this), dragover: this.dragover4panel.bind(this) });
+            }
+            window.addEventListener("message", this.onMessage.bind(this));
+        }
+        else {
+            this.promptBox = new RemotePrompt();
+        }
+
+        this.indicatorBox = new Indicator();
 
         this.dragenter4panel = this.dragenter4panel.bind(this);
         this.dragleave4panel = this.dragleave4panel.bind(this);
         this.drop4panel = this.drop4panel.bind(this);
         this.dragover4panel = this.dragover4panel.bind(this)
 
-        this.cmdPanel = null;
         //end: UI componment
 
         this.timeoutId = -1; // used for clearTimeout
@@ -494,9 +174,6 @@ class DragClass {
         this.isInputArea = false;
         this.hideBecauseExceedDistance = false;
 
-        if (IS_TOP_WINDOW) {
-            window.addEventListener("message", this.onMessage.bind(this));
-        }
         this.registerEvent();
         /*
         setTimeout(() => {
@@ -531,8 +208,7 @@ class DragClass {
             func = event.data["func"];
 
         if (name === "promptBox") {
-            if (func === "RequestPrompt" && this.promptBox === null) this[name] = new Prompt();
-            else if (func !== "RequestPrompt" && this.promptBox !== null) {
+            if (func !== "RequestPrompt" && this.promptBox instanceof Prompt) {
                 const f = this[name][func];
                 f && f.apply(this[name], event.data[func]);
             }
@@ -554,8 +230,25 @@ class DragClass {
         }, extraOption);
 
         // console.info(sended);
-        if (isRunInOptionsContext) {
-            // backgroundPage.executor.DO(sended);
+        
+        browser.runtime.sendMessage(sended);
+    }
+    postForBookmark(dt) {
+        let sended = {
+            direction: null,
+            selection: null,
+            textSelection: null,
+            imageLink: null,
+            site: null,
+            actionType: null,
+            fileInfo: null,
+            imageData: null,
+            bookmarks: [],
+            modifierKey: this.modifierKey,
+        };
+        for (let i = 0; i < dt.mozItemCount; i++) {
+            let [url, title] = dt.mozGetDataAt("text/x-moz-url", i).split("\n");
+            sended.bookmarks.push(url);
         }
         browser.runtime.sendMessage(sended);
     }
@@ -563,8 +256,8 @@ class DragClass {
         clearTimeout(this.timeoutId);
         this.accepting = this.running = false;
         this.notAccepting = true;
-        this.promptBox && this.promptBox.hide();
-        this.indicatorBox && this.indicatorBox.hide();
+        this.promptBox.hide();
+        this.indicatorBox.hide();
 
     }
     updateModifierKey(evt) {
@@ -581,29 +274,9 @@ class DragClass {
 
     }
     dragstart(evt) {
-        if (bgConfig.enableIndicator /*&& this.indicatorBox === null*/ ) {
-            this.indicatorBox = new Indicator();
-        }
+        this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
+        this.indicatorBox.display();
 
-        if (this.indicatorBox !== null) {
-            this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
-            this.indicatorBox.display();
-        }
-
-        if (bgConfig.enablePrompt /*&& this.promptBox === null*/ ) {
-            if (IS_TOP_WINDOW) {
-                this.promptBox = new Prompt();
-            }
-            else {
-                this.promptBox = new RemotePrompt();
-            }
-        }
-
-        if (document.body.getAttribute("contenteditable") === null /*&& this.cmdPanel===null*/ ) {
-            if (IS_TOP_WINDOW) {
-                this.cmdPanel = new cmdPanel(this.dragenter4panel, this.dragleave4panel, this.drop4panel, this.dragover4panel);
-            }
-        }
 
         if (bgConfig.enableTimeoutCancel) {
             this.timeoutId = setTimeout(() => this.cancel(), bgConfig.timeoutCancel);
@@ -753,15 +426,14 @@ class DragClass {
 
         if (this.distance > bgConfig.maxTriggeredDistance) {
             this.hideBecauseExceedDistance = true;
-            this.promptBox && this.promptBox.hide();
-            // this.indicatorBox && this.indicatorBox.hide();
+            this.promptBox.hide();
         }
         else if ((this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
             this.direction = this.getDirection();
 
             if (this.hideBecauseExceedDistance) {
                 this.hideBecauseExceedDistance = false;
-                this.promptBox && this.promptBox.display();
+                this.promptBox.display();
             }
 
             if (this.modifierKey === this.lastModifierKey && this.direction === this.lastDirection) {
@@ -785,7 +457,7 @@ class DragClass {
             }
 
             let property = actions[this.actionType][this.direction]
-            if (bgConfig.enablePrompt && this.promptBox !== null) {
+            if (bgConfig.enablePrompt) {
 
                 this.promptBox.display();
                 let message = bgConfig.tipsContent[property["act_name"]];
@@ -802,20 +474,16 @@ class DragClass {
             }
             //----
 
-            this.cmdPanel && this.cmdPanel.hide();
+            this.panelBox.hide();
             if (property["act_name"] === commons.ACT_PANEL) {
-                if (this.cmdPanel) {
-                    this.cmdPanel.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
-                    this.cmdPanel.place(evt.pageX, evt.pageY, this.direction);
-                    this.cmdPanel.display();
-                }
-                this.promptBox && this.promptBox.hide();
+                this.panelBox.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
+                this.panelBox.place(evt.clientX, evt.clientY);
+                this.panelBox.display();
+                this.promptBox.hide();
             }
-            //----
-
         }
         else {
-            this.promptBox && this.promptBox.hide();
+            this.promptBox.hide();
         }
     }
     dragenter(evt) {
@@ -915,7 +583,7 @@ class DragClass {
         // console.info(e.);
         // console.info(e.originalTarget.parentElement.dataset);
         const obj = Object.assign({}, lastdragovertarget.dataset);
-        this.cmdPanel && this.cmdPanel.hide();
+        this.panelBox.hide();
         this.post(Object.assign(obj, {
             direction: commons.DIR_P,
             index: parseInt(obj.index)
@@ -943,19 +611,21 @@ class DragClass {
         // drop      同上
         // dragenter 同上
         // const VIEW_MODE = true;
-        // const BREAK_MODE = false;
-
+        // const BREAK_MODE = true;
+        // const SKIP_DRAGOVER = true;
         const type = evt.type;
 
-        /*
-        if (VIEW_MODE) {
-            console.log(type,evt.defaultPrevented,evt);
-            setTimeout(()=>{
-                console.log("after 2s " + evt.defaultPrevented,evt);
-            },2000);
-            if (BREAK_MODE) return;
-        }
-        */
+        // if (VIEW_MODE) {
+        //     console.log(evt.dataTransfer.types);
+        //     if (!(SKIP_DRAGOVER && type === "dragover")) {
+        //         console.log(type, evt.defaultPrevented, evt);
+
+        //     }
+        //     if (BREAK_MODE) {
+        //         evt.preventDefault();
+        //         return;
+        //     }
+        // }
 
         if (type === "dragover" || type === "dragstart") {
             // only store screenX in dragover and dragstart.
@@ -1037,7 +707,7 @@ class DragClass {
                 break;
             case "dragover": // Capturing or Bubbling
                 if (this.isNotAcceptable(evt)) {
-                    this.promptBox && this.promptBox.hide();
+                    this.promptBox.hide();
                     return;
                 }
 
@@ -1052,7 +722,7 @@ class DragClass {
                 }
                 else {
                     if (evt.defaultPrevented) {
-                        this.promptBox && this.promptBox.hide();
+                        this.promptBox.hide();
                     }
                     if (this.running || this.accepting) {
                         evt.preventDefault();
@@ -1086,16 +756,23 @@ class DragClass {
                     const file = evt.dataTransfer.files[0];
                     const fileName = file && file.name;
                     const ext = fileName && fileName.match(commons.fileExtension)[1];
-                    const containPlainText = "text/plain" in evt.dataTransfer.types;
-
+                    const containPlainText = evt.dataTransfer.types.includes("text/plain");
+                    const containBookmark = evt.dataTransfer.types.includes("text/plain");
                     if (bgConfig.maxProcessSize && file && file.size >= (bgConfig.maxProcessSize * 1024 * 1024)) {
                         //DO NOTHING
                     }
 
-                    else if (containPlainText || bgConfig.allowExts.includes(ext)) {
+                    else if ((containPlainText && !containBookmark) || bgConfig.allowExts.includes(ext)) {
                         this.doDropPreventDefault = true;
                         this.accepting = false;
                         this.drop(evt);
+                    }
+                    else if (containBookmark) {
+                        //drop bookmark
+                        this.doDropPreventDefault = true;
+                        this.accepting = false;
+                        //directly post;
+                        this.postForBookmark(evt.dataTransfer);
                     }
                 }
                 else if (this.running) {
@@ -1107,13 +784,8 @@ class DragClass {
                 }
                 break;
             case "dragend": // Bubbling
-                // this.indicatorBox && this.indicatorBox.hide();
-                // this.promptBox && this.promptBox.hide();
-                // this.cmdPanel && this.cmdPanel.hide();
-                this.indicatorBox && this.indicatorBox.destory();
-                this.promptBox && this.promptBox.destory();
-                this.cmdPanel && this.cmdPanel.destory();
-                this.indicatorBox = this.promptBox = this.cmdPanel = null;
+                this.indicatorBox.hide();
+                this.promptBox.hide();
                 this.lastDirection = null;
                 //dragend's target is things we are dragging, calling this.isNotAcceptable has not effect. However we have updated this.isInputArea in drop event, just use it.
                 if (this.isInputArea) {

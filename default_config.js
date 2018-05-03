@@ -49,7 +49,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         disableAdjustTabSequence: false,
         switchToParentTab: false,
         alwaysImage: false,
-        imageReferrer:false,
+        imageReferrer: false,
         tipsContent: {
             ACT_NONE: "%a",
             ACT_OPEN: "%a",
@@ -92,7 +92,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
             imageAction: commons.ALLOW_NORMAL
         },
 
-        cmdPanel_textAction: [
+        Panel_textAction: [
             ACTION_CONSTRUCTOR({
                 icon: ""
             }), ACTION_CONSTRUCTOR({
@@ -101,7 +101,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 icon: ""
             }),
         ],
-        cmdPanel_linkAction: [
+        Panel_linkAction: [
             ACTION_CONSTRUCTOR({
                 icon: ""
             }), ACTION_CONSTRUCTOR({
@@ -110,7 +110,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 icon: ""
             }),
         ],
-        cmdPanel_imageAction: [
+        Panel_imageAction: [
             ACTION_CONSTRUCTOR({
                 icon: ""
             }), ACTION_CONSTRUCTOR({
@@ -190,7 +190,7 @@ const DEFAULT_CONFIG_A = (() => {
     });
 
     for (const p of Object.keys(a.Actions)) {
-        for (const k of["DIR_U", "DIR_D", "DIR_L", "DIR_R", "DIR_LOW_L", "DIR_LOW_R", "DIR_UP_L", "DIR_UP_R", "DIR_OUTER", ]) {
+        for (const k of ["DIR_U", "DIR_D", "DIR_L", "DIR_R", "DIR_LOW_L", "DIR_LOW_R", "DIR_UP_L", "DIR_UP_R", "DIR_OUTER", ]) {
             if (p === "textAction") {
                 Object.assign(a.Actions[p][k], {
                     open_type: commons.OPEN_TEXT,
