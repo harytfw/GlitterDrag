@@ -632,5 +632,13 @@
     "elem_EnableLockScrollbar":{
         "message":"拖拽时锁住滚动条",
         "description":""
+    },
+    "elem_PanelTips":{
+        "message":"提示内容",
+        "description":""
+    },
+    "elem_PanelIcon":{
+        "message":"图标",
+        "description":""
     }
 }

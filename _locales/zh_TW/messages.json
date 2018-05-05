@@ -632,5 +632,13 @@
     "elem_EnableLockScrollbar": {
         "message": "",
         "description": ""
+    },
+    "elem_PanelTips":{
+        "message":"",
+        "description":""
+    },
+    "elem_PanelIcon":{
+        "message":"",
+        "description":""
     }
 }

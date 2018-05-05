@@ -629,5 +629,14 @@
     "elem_EnableLockScrollbar":{
         "message":"Lock scrollbar when dragging",
         "description":""
+    },
+    "elem_PanelTips":{
+        "message":"Panel Tips",
+        "description":""
+    },
+    "elem_PanelIcon":{
+        "message":"Panel Icon",
+        "description":""
     }
+
 }
