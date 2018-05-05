@@ -327,24 +327,7 @@ class ActionsWrapper {
                 let opt = document.createElement("option");
                 opt.textContent = "*" + action["engine_name"];
                 opt.value = action["engine_name"];
-                /* if (action["engine_url"] && action["engine_url"].length !== 0) {
-                    
-                    elem.title = action["engine_url"]
-                }
-                else {
-                    LStorage.get("Engines").then(({ Engines }) => {
-                        let url = getI18nMessage("default_search_url");
-                        let n = action["engine_name"];
-                        for (let obj of Engines) {
-                            if (obj.name === n) {
-                                url = obj.url;
-                                break;
-                            }
-                        }
-                        opt.setAttribute("url", url);
-                        
-                    });
-                } */
+
                 opt.setAttribute("url", action["engine_url"]);
                 elem.insertBefore(opt, elem.firstElementChild);
                 elem.title = action["engine_url"];
@@ -353,16 +336,6 @@ class ActionsWrapper {
             }
         }
 
-        // this.$E(".search-engine-name").value = actSetting["engine_name"];
-        // let searchUrl;
-        // if ("engine_url" in actSetting && actSetting["engine_url"].length != 0) {
-        //     searchUrl = actSetting["engine_url"];
-        // }
-        // else {
-        //     this.$E(".search-engine-name").value = "Google Search";
-        //     searchUrl = "https://www.google.com/search&q=%s";
-        //     // searchUrl = config.getSearchURL(actSetting["engine_name"]);
-        // }
 
     }
 
@@ -728,7 +701,7 @@ class ActionsView {
         showTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".copy-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
         switch (e.target.value) {
             case commons.ACT_NONE:
-                hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".copy-text", ".download-text", ".download-saveas-yes",".search-text", ".download-directory", ".search-onsite-yes");
+                hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".copy-text", ".download-text", ".download-saveas-yes", ".search-text", ".download-directory", ".search-onsite-yes");
                 break;
             case commons.ACT_OPEN:
                 hideTR(".copy-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
@@ -790,25 +763,31 @@ class ActionsView {
         }
 
     }
+    getRadioValue(name) {
+        let radios = $A(name, this.parent)
+        for (let i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                if (radios[i].value === "true" || radios[i].value === "false") {
+                    return radios[i].value === "true" ? true : false;
+                }
+                return radios[i].value;
+            }
+        }
+        if (radios[0].value === "true" || radios[0].value === "false") {
+            return radios[0].value === "true" ? true : false;
+        }
+        return radios[0].value;
+    }
+    setAsRadioValue(t) {
+        this.$E(t).dispatchEvent(new Event("radiochange", {
+            bubbles: true
+        }));
+    }
     get actionType() {
         return this.actionTypeGetter();
     }
     get setting() {
-        const getRadioValue = (name) => {
-            let radios = $A(name, this.parent)
-            for (let i = 0; i < radios.length; i++) {
-                if (radios[i].checked) {
-                    if (radios[i].value === "true" || radios[i].value === "false") {
-                        return radios[i].value === "true" ? true : false;
-                    }
-                    return radios[i].value;
-                }
-            }
-            if (radios[0].value === "true" || radios[0].value === "false") {
-                return radios[0].value === "true" ? true : false;
-            }
-            return radios[0].value;
-        }
+
         let temp = {};
         Object.assign(temp, {
             act_name: this.$E(".action-name").value,
@@ -816,67 +795,53 @@ class ActionsView {
             engine_name: this.$E(".search-engine-name").value,
             engine_url: this.$E(".search-engine-url").value,
             download_directory: this.$E(".download-directory").value,
-            tab_active: getRadioValue(".tab-active"),
-            open_type: getRadioValue(".open-type"),
-            search_type: getRadioValue(".search-type"),
-            copy_type: getRadioValue(".copy-type"),
-            download_type: getRadioValue(".download-type"),
-            download_saveas: getRadioValue(".download-saveas"),
-            search_onsite: getRadioValue(".search-onsite"),
+            tab_active: this.getRadioValue(".tab-active"),
+            open_type: this.getRadioValue(".open-type"),
+            search_type: this.getRadioValue(".search-type"),
+            copy_type: this.getRadioValue(".copy-type"),
+            download_type: this.getRadioValue(".download-type"),
+            download_saveas: this.getRadioValue(".download-saveas"),
+            search_onsite: this.getRadioValue(".search-onsite"),
         });
         return temp;
     }
 
     set setting(data) {
-        const setAsRadioValue = (t) => {
-            this.$E(t).dispatchEvent(new Event("radiochange", {
-                bubbles: true
-            }));
-        }
-
-
-        const actSetting = data;
-        if (actSetting["tab_active"] === commons.FORE_GROUND) {
-            setAsRadioValue(".foreground")
+        if (data["tab_active"] === commons.FORE_GROUND) {
+            this.setAsRadioValue(".foreground")
         }
         else {
-            setAsRadioValue(".background")
+            this.setAsRadioValue(".background")
         }
 
-        if (actSetting["search_onsite"] === commons.SEARCH_ONSITE_YES) {
-            setAsRadioValue(".search-onsite-yes")
+        if (data["search_onsite"] === commons.SEARCH_ONSITE_YES) {
+            this.setAsRadioValue(".search-onsite-yes")
         }
         else {
-            setAsRadioValue(".search-onsite-no")
+            this.setAsRadioValue(".search-onsite-no")
         }
 
-        if (actSetting["download_saveas"] === commons.DOWNLOAD_SAVEAS_YES) {
-            setAsRadioValue(".download-saveas-yes")
+        if (data["download_saveas"] === commons.DOWNLOAD_SAVEAS_YES) {
+            this.setAsRadioValue(".download-saveas-yes")
         }
         else {
-            setAsRadioValue(".download-saveas-no")
+            this.setAsRadioValue(".download-saveas-no")
         }
 
         for (const name of ["open_type", "copy_type", "download_type", "search_type"]) {
-            let value = actSetting[name];
+            let value = data[name];
             value = value.toLowerCase().replace(/_/g, "-");
-            setAsRadioValue("." + value);
+            this.setAsRadioValue("." + value);
         }
 
-        // this.$E(".open-type").value = actSetting["open_type"];
-        // this.$E(".copy-type").value = actSetting["copy_type"];
-        // this.$E(".download-type").value = actSetting["download_type"];
-        // this.$E(".search-type").value = actSetting["search_type"];
+        this.$E(".action-name").value = data["act_name"];
+        this.$E(".tab-pos").value = data["tab_pos"];
 
 
-        this.$E(".action-name").value = actSetting["act_name"];
-        this.$E(".tab-pos").value = actSetting["tab_pos"];
+        this.$E(".search-engine-name").value = data["engine_name"];
+        this.$E(".search-engine-url").value = data["engine_url"];
 
-
-        this.$E(".search-engine-name").value = actSetting["engine_name"];
-        this.$E(".search-engine-url").value = actSetting["engine_url"];
-
-        this.$E(".download-directory").value = actSetting["download_directory"];
+        this.$E(".download-directory").value = data["download_directory"];
 
         this.$E(".action-name").dispatchEvent(new Event("change"));
     }
@@ -996,7 +961,6 @@ class NewActionsWrapper {
     }
 }
 
-
 class PanelWrapper {
     constructor() {
         this.btns = $E("#panel-buttons");
@@ -1013,6 +977,7 @@ class PanelWrapper {
         this.category = new ActionsView(this.btns.nextElementSibling, this.actionTypeGetter);
         this.btns.nextElementSibling.addEventListener("change", e => this.onchange(e));
         this.category.parent.style.display = "none";
+        this.dontsave = false;
     }
     actionTypeGetter() {
         return this.cmdType.split("_")[1];
@@ -1020,28 +985,45 @@ class PanelWrapper {
     async load(e) {
         this.category.parent.style.display = "none";
         if (e.target.className.indexOf("text") >= 0) {
-            this.cmdType = "cmdPanel_textAction";
+            this.cmdType = "Panel_textAction";
         }
         else if (e.target.className.indexOf("link") >= 0) {
-            this.cmdType = "cmdPanel_linkAction";
+            this.cmdType = "Panel_linkAction";
         }
         else {
-            this.cmdType = "cmdPanel_imageAction";
+            this.cmdType = "Panel_imageAction";
         }
         this.cmdIndex = e.target.getAttribute("index");
         LStorage.get(this.cmdType).then((r) => {
-            this.category.setting = r[this.cmdType][this.cmdIndex];
+            this.dontsave = true;
+            this.setting = r[this.cmdType][this.cmdIndex];
             this.category.parent.style.display = "block";
+            this.dontsave = false;
         });
     }
     onchange(e) {
-        //先获取再保存
-        $D("保存面板设置：");
-        $D(this.category.setting);
-        LStorage.get(this.cmdType).then(r => {
-            r[this.cmdType][this.cmdIndex] = this.category.setting;
-            LStorage.set(r);
-        });
+        if (!this.dontsave) {
+            //先获取再保存
+            $D("Save panel setting：");
+            $D(this.category.setting);
+            LStorage.get(this.cmdType).then(r => {
+                r[this.cmdType][this.cmdIndex] = this.setting;
+                LStorage.set(r);
+            });
+        }
+    }
+
+    set setting(data) {
+        this.category.setting = data;
+        this.category.$E(".panel-icon").value = data["icon"];
+        this.category.$E(".panel-tips").value = data["panel_tips"];
+    }
+
+    get setting() {
+        const data = this.category.setting;
+        data["icon"] = this.category.$E(".panel-icon").value;
+        data["panel_tips"] = this.category.$E(".panel-tips").value;
+        return data;
     }
 }
 

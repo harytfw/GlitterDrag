@@ -62,8 +62,8 @@
     z-index: 2147483601 !important;
     /*由js控制*/
     border-radius: 0px !important;
-    border-style: dashed!important;
-    border-color: rgba(30, 180, 180, 0.85)!important;
+    border-style: dashed !important;
+    border-color: rgba(30, 180, 180, 0.85) !important;
     box-sizing: initial !important;
     pointer-events: none !important;
 }
@@ -192,7 +192,6 @@
     z-index: 2147483602 !important;
     --cell-width: 52px !important;
     --cell-height: 52px !important;
-    --icon-size: 28px !important;
     --font-size: 14px !important;
     background: rgba(239, 239, 239, 0.9) !important;
     width: auto !important;
@@ -223,6 +222,7 @@
 
 .GDCell {
     height: var(--cell-height) !important;
+    width: var(--cell-width) !important;
     background-color: rgba(233, 233, 233) !important;
     border-radius: 3px !important;
     border: 1px solid #777777 !important;
@@ -236,9 +236,8 @@
 }
 
 #GDPanel .GDCell i {
-    width: var(--cell-width) !important;
     text-align: center !important;
-    font-size: var(--icon-size) !important;
+    font-size: 28px !important;
     color: black !important;
 }
 

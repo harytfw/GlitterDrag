@@ -46,3 +46,9 @@
 .GD-fa-ban::before {
     content: "\f05e";
 }
+
+.GD-fa-custom{
+    background-repeat: no-repeat;
+    height: 48px !important;
+    width: 48px !important; 
+}

@@ -34,7 +34,7 @@ class UIClass {
         this.node.remove();
     }
 
-    initContext(data) {
+    initContent(data) {
         if (typeof data === "string") {
             this.node.innerHTML = data;
         }
@@ -211,6 +211,7 @@ const ICONS = {
     "ACT_COPY": "GD-fa GD-fa-clipboard",
     "ACT_FIND": "GD-fa GD-fa-find",
     "BAN": "GD-fa GD-fa-ban",
+    "CUSTOM":"GD-fa GD-fa-custom"
 }
 const PANEL_HTML_CONTENT = `
 <table id="GDPanel">
@@ -273,7 +274,8 @@ class Panel extends UIClass {
     //TODO:完善图标自定义功能
     constructor(listener = { dragenter: () => {}, dragleave: () => {}, drop: () => {}, dragover: () => {} }) {
         super("GDPanel", "table");
-        this.initContext(PANEL_HTML_CONTENT)
+        this.initContent(PANEL_HTML_CONTENT)
+        this.header = this.$E("#GDHeader").firstElementChild;
         this.lastdragovertarget = null;
         this.listener = listener;
         this.addListener("drop", e => this.listener.drop(e, this.lastdragovertarget));
@@ -309,22 +311,32 @@ class Panel extends UIClass {
             for (const cell of row.children) {
                 cell.dataset["kind"] = kind;
                 cell.dataset["key"] = confKey;
-                cell.dataset["index"] = index
-                const act_name = bgConfig[confKey][index++]["act_name"];
-                cell.firstElementChild.className = ICONS[act_name];
+                cell.dataset["index"] = index;
+                const act_name = bgConfig[confKey][index]["act_name"];
+                const icon = bgConfig[confKey][index]["icon"];
+                if (icon === "") cell.firstElementChild.className = ICONS[act_name];
+                else {
+                    const el = cell.firstElementChild;
+                    el.className = ICONS.CUSTOM;
+                    el.style.backgroundImage = `url(${icon})`;
+                }
+                index++;
             }
         }
     }
 
 
     updateHeader(e) {
-        let header = this.$E("#GDHeader").firstElementChild;
+
         if (this.lastdragovertarget.id === "GDCell-ban") {
-            header.textContent = "取消"; //getI18nMessage("Cancel");
+            this.header.textContent = "取消"; //getI18nMessage("Cancel");
             return;
         }
         const setting = bgConfig[e.target.dataset["key"]][e.target.dataset["index"]];
-        header.textContent = translatePrompt("%g-%a", setting);
+        const tips = setting["panel_tips"];
+        if (tips !== "") this.header.textContent = translatePrompt(tips, setting);
+        else this.header.textContent = translatePrompt("%g-%a", setting);
+
     }
 
     render(actionkind, targetkind, selection, textSelection, imageLink) {
@@ -335,7 +347,7 @@ class Panel extends UIClass {
         $H(["#GDLabel-link", "#GDLabel-image", "#GDRow-link", "#GDRow-image"], "table-row", this.node);
         switch (actionkind) {
             case commons.textAction:
-                $H(["#GDLabel-link", "#GDLabel-image", "#GDRow-link", "#GDRow-image"]);
+                $H(["#GDLabel-link", "#GDLabel-image", "#GDRow-link", "#GDRow-image"], "none", this.node);
                 this.$E("#GDLabel-text .GDPanel-content").textContent = trim(textSelection);
                 break;
             case commons.linkAction:
