@@ -628,5 +628,9 @@
     "elem_ImageReferrer": {
         "message": "下载图像时添加Referrer",
         "description": ""
+    },
+    "elem_EnableLockScrollbar":{
+        "message":"拖拽时锁住滚动条",
+        "description":""
     }
 }

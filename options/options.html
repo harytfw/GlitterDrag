@@ -329,10 +329,14 @@
                                             <input class="search-onsite-no search-onsite" value="false" type="radio"><label data-i18n="SEARCH_ONSITE_NO" data-i18n-prefix="" for="search-onsite-no">否</label>
                                         </td>
                                     </tr>
-                                    <!-- <tr>
-                                        <td>提示内容</td>
-                                        <td><input type="text" class="prompt-content"></td>
-                                    </tr> -->
+                                    <tr>
+                                        <td data-i18n="PanelTips">提示内容</td>
+                                        <td><input type="text" class="panel-tips"></td>
+                                    </tr>
+                                    <tr>
+                                        <td data-i18n="PanelIcon">面板图标</td>
+                                        <td> <textarea class="panel-icon"></textarea> </td>
+                                    </tr>
                                 </tbody>
                             </table>
 
@@ -622,11 +626,14 @@
                     <input type="number" id="timeoutCancel">
                     <br>
                     <input type="checkbox" id="enableStyle">
-                    <label for="enableStyle" data-i18n="EnableStyle">允许使用自定义样式></label>
+                    <label for="enableStyle" data-i18n="EnableStyle">允许使用自定义样式</label>
+                    <br>
+                    <input type="checkbox" id="enableLockScrollbar">
+                    <label for="enableLockScrollbar" data-i18n="EnableLockScrollbar">拖拽时锁定滚动条</label>
                     <br>
                     <input type="checkbox" id="alwaysImage">
                     <label for="alwaysImage" data-i18n="AlwaysImage">总是把含图片的链接当成图片</label>
-                    <br> 
+                    <br>
                     <input type="checkbox" id="imageReferrer">
                     <label for="imageReferrer" data-i18n="ImageReferrer">下载图像时附上Referrer</label>
                     <br>

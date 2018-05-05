@@ -15,7 +15,8 @@ const commons = {
     TYPE_ELEM_A: 3, //超链接，a元素
     TYPE_ELEM_A_IMG: 6, //a元素里面包含图片
     TYPE_ELEM_IMG: 4, //图片
-
+    TYPE_BOOKMARK:7, //书签
+    
     textAction: "textAction",
     linkAction: "linkAction",
     imageAction: "imageAction",

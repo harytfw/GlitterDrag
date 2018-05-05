@@ -103,6 +103,25 @@ function injectStyle(opt = {
     }
 }
 
+const scrollbarLocker = {
+    //https://stackoverflow.com/questions/13631730/how-to-lock-scrollbar-and-leave-it-visible
+    x: 0,
+    y: 0,
+    lock: function() {
+        this.x = window.scrollX;
+        this.y = window.scrollY;
+        window.addEventListener("scroll", this.doLock, false);
+    },
+    free: function() {
+        window.removeEventListener("scroll", this.doLock, false);
+    },
+    doLock: function() {
+        window.scrollTo(this.x,this.y);
+    }
+    
+}
+scrollbarLocker.doLock = scrollbarLocker.doLock.bind(scrollbarLocker);
+
 class DragClass {
     constructor(elem) {
 
@@ -226,32 +245,30 @@ class DragClass {
             actionType: this.actionType,
             modifierKey: this.modifierKey,
             fileInfo: null,
-            imageData: null
+            imageData: null,
+            bookmarks: null,
         }, extraOption);
 
         // console.info(sended);
-        
+
         browser.runtime.sendMessage(sended);
     }
-    postForBookmark(dt) {
-        let sended = {
+
+    postForBookmark(bookmarks) {
+        browser.runtime.sendMessage({
             direction: null,
             selection: null,
             textSelection: null,
             imageLink: null,
             site: null,
             actionType: null,
+            modifierKey: null,
             fileInfo: null,
             imageData: null,
-            bookmarks: [],
-            modifierKey: this.modifierKey,
-        };
-        for (let i = 0; i < dt.mozItemCount; i++) {
-            let [url, title] = dt.mozGetDataAt("text/x-moz-url", i).split("\n");
-            sended.bookmarks.push(url);
-        }
-        browser.runtime.sendMessage(sended);
+            bookmarks,
+        })
     }
+
     cancel() {
         clearTimeout(this.timeoutId);
         this.accepting = this.running = false;
@@ -274,6 +291,11 @@ class DragClass {
 
     }
     dragstart(evt) {
+
+        if(bgConfig.enableLockScrollbar){
+            scrollbarLocker.lock();
+        }
+
         this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
         this.indicatorBox.display();
 
@@ -486,12 +508,16 @@ class DragClass {
             this.promptBox.hide();
         }
     }
-    dragenter(evt) {
+    dragenter(evt) { //TODO
         this.selection = this.textSelection = "If you see this message, please report to the author of GlitterDrag"; // temporary
         const dt = evt.dataTransfer;
         // console.log(dt.getData("text/plain"));
         let fakeNode = null;
-        if (dt.types.includes("text/plain")) {
+        if (dt.types.includes("text/x-moz-place")) {
+            this.targetType = commons.TYPE_BOOKMARK;
+            return;
+        }
+        else if (dt.types.includes("text/plain")) {
             if (dt.types.includes("text/x-moz-url")) {
                 this.selection = "https://example.org";
                 fakeNode = document.createElement("a");
@@ -515,18 +541,29 @@ class DragClass {
         console.info("Glitter Drag: An external dragging behavior is detected");
         const dt = evt.dataTransfer;
         this.textSelection = dt.getData("text/plain").trim();
-        if (commons.TYPE_TEXT === this.targetType) {
+
+        if (commons.TYPE_BOOKMARK === this.targetType) {
+            const bookmarks = [];
+            for (let i = 0; i < dt.mozItemCount; i++) {
+                let [url, title] = dt.mozGetDataAt("text/x-moz-url", i).split("\n");
+                bookmarks.push({ url, title });
+            }
+            this.postForBookmark(bookmarks);
+            return;
+        }
+        else if (commons.TYPE_TEXT === this.targetType) {
             this.selection = this.textSelection;
         }
         else if (commons.TYPE_TEXT_URL === this.targetType) {
             this.selection = this.textSelection = typeUtil.fixupSchemer(this.textSelection);
         }
         else if (this.targetType === commons.TYPE_ELEM_A) {
-            //书签
             [this.selection, this.textSelection] = dt.getData("text/x-moz-url").split("\n");
-            //console.log(this.selection,this.textSelection);
         }
-        // console.log(dt.files);
+        else { //TODO 没有符合的选项
+            return;
+        }
+
         if (["textAction", "linkAction"].includes(this.actionType)) {
             this.post({
                 direction: commons.DIR_OUTER
@@ -690,16 +727,10 @@ class DragClass {
                     return;
                 }
                 if (evt.dataTransfer && !this.running) {
-                    const mimes = Object.values(MIME_TYPE);
-                    for (let i = 0; i < mimes.length; i++) {
-                        const mime = mimes[i];
-                        if (evt.dataTransfer.types.includes(mime)) {
-                            evt.preventDefault();
-                            this.accepting = true;
-                            this.dragenter(evt);
-                            break;
-                        }
-                    }
+                    evt.preventDefault();
+                    this.accepting = true;
+                    this.dragenter(evt);
+                    break;
                 }
                 else if (this.running) {
                     evt.preventDefault();
@@ -757,22 +788,15 @@ class DragClass {
                     const fileName = file && file.name;
                     const ext = fileName && fileName.match(commons.fileExtension)[1];
                     const containPlainText = evt.dataTransfer.types.includes("text/plain");
-                    const containBookmark = evt.dataTransfer.types.includes("text/plain");
+
                     if (bgConfig.maxProcessSize && file && file.size >= (bgConfig.maxProcessSize * 1024 * 1024)) {
                         //DO NOTHING
                     }
 
-                    else if ((containPlainText && !containBookmark) || bgConfig.allowExts.includes(ext)) {
+                    else if (containPlainText || bgConfig.allowExts.includes(ext)) {
                         this.doDropPreventDefault = true;
                         this.accepting = false;
                         this.drop(evt);
-                    }
-                    else if (containBookmark) {
-                        //drop bookmark
-                        this.doDropPreventDefault = true;
-                        this.accepting = false;
-                        //directly post;
-                        this.postForBookmark(evt.dataTransfer);
                     }
                 }
                 else if (this.running) {
@@ -784,6 +808,9 @@ class DragClass {
                 }
                 break;
             case "dragend": // Bubbling
+                if(bgConfig.enableLockScrollbar){
+                    scrollbarLocker.free();
+                }
                 this.indicatorBox.hide();
                 this.promptBox.hide();
                 this.lastDirection = null;
@@ -1034,7 +1061,6 @@ function OnDOMContentLoaded() {
 function onStorageChange(changes) {
     for (const key of Object.keys(changes)) {
         bgConfig[key] = changes[key].newValue;
-        // mydrag.cmdPanel.updateTable();
     }
 }
 

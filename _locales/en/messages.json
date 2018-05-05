@@ -625,5 +625,9 @@
     "elem_ImageReferrer": {
         "message": "Append referrer when download iamge",
         "description":""
+    },
+    "elem_EnableLockScrollbar":{
+        "message":"Lock scrollbar when dragging",
+        "description":""
     }
 }

@@ -43,6 +43,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         enableAutoSelectPreviousTab: true,
         enableCtrlKey: false,
         enableShiftKey: false,
+        enableLockScrollbar: true,
         timeoutCancel: 2000, // ms
         triggeredDistance: 20, // px
         maxTriggeredDistance: 9999, //px
@@ -94,31 +95,41 @@ const GENERATE_DEFAULT_CONFIG = () => {
 
         Panel_textAction: [
             ACTION_CONSTRUCTOR({
-                icon: ""
+                icon: "",
+                panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
-                icon: ""
+                icon: "",
+                panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
-                icon: ""
+                icon: "",
+                panel_tips: "%g-%a"
             }),
         ],
         Panel_linkAction: [
             ACTION_CONSTRUCTOR({
-                icon: ""
+                icon: "",
+                panel_tips: "%g-%a",
             }), ACTION_CONSTRUCTOR({
-                icon: ""
+                icon: "",
+                panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
-                icon: ""
+                icon: "",
+                panel_tips: "%g-%a"
             }),
         ],
         Panel_imageAction: [
             ACTION_CONSTRUCTOR({
-                icon: ""
+                icon: "",
+                panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
-                icon: ""
+                icon: "",
+                panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
-                icon: ""
+                icon: "",
+                panel_tips: "%g-%a"
             }),
         ],
+        Bookmark_Action: ACTION_CONSTRUCTOR(),
         downloadDirectories: ["", "", "", "", "", "", "", ""],
         style: "",
         specialHosts: [], // ignore drag&drop detection on these hosts.

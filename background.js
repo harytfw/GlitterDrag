@@ -208,11 +208,16 @@ class ExecutorClass {
     }
     async DO(m) {
         this.data = m;
-        // if (commons._DEBUG) {
-        //     console.table(this.data);
-        // }
-        // $D(this.data);
-        if (this.data.direction === commons.DIR_P) {
+        // console.log(this.data);
+        if (Array.isArray(this.data.bookmarks)) {
+            this.action =(await LStorage.get("Bookmark_Action"))["Bookmark_Action"];
+            for (const bookmark of this.data.bookmarks) {
+                await this.openTab(bookmark.url);
+            }
+            return;
+        }
+
+        else if (this.data.direction === commons.DIR_P) {
             let panelAction = await LStorage.get(this.data.key);
             this.action = panelAction[this.data.key][this.data.index];
         }
@@ -390,6 +395,7 @@ class ExecutorClass {
                 this.newTabId = newTab.id;
             }
             tabsRelation.check(parentTab.id, newTab.id);
+            return Promise.resolve();
         }
 
         const onQueryTab = tabs => {
@@ -399,30 +405,28 @@ class ExecutorClass {
                     tabsRelation.check(tab.id);
                     this.previousTabId = tab.id;
 
-                    if (this.action.tab_pos === commons.TAB_CUR) browser.tabs.update(tab.id, { url });
-                    else browser.tabs
+                    if (this.action.tab_pos === commons.TAB_CUR) return browser.tabs.update(tab.id, { url });
+                    else return browser.tabs
                         .create({ active: Boolean(this.action.tab_active), index: this.getTabIndex(tabs.length, tab.index), url, openerTabId: tab.id })
                         .then(newTab => onCreateTab(newTab, tab))
                         .catch(onError);
-                    break;
                 }
             }
+            return Promise.reject("No active tab was found");
         }
 
         $D(`openTab: url=${url}`);
         this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
         if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.action.tab_pos)) {
-            browser.windows.create({
+            return browser.windows.create({
                 incognito: this.action.tab_pos === commons.TAB_NEW_PRIVATE_WINDOW ? true : false,
                 url,
             }).catch(onError);
         }
-        else browser.tabs
+        else return browser.tabs
             .query({ currentWindow: true })
             .then(onQueryTab)
             .catch(onError);
-
-        return Promise.resolve();
     }
 
 
@@ -656,6 +660,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
     }
 
     async function upgrade_153() {
+        console.info("upgrade v1.53.0");
         const engines = (await LStorage.get("Engines"))["Engines"];
         for (const aKey of Object.keys(all)) {
             if (aKey.startsWith("Actions")) {
@@ -677,6 +682,17 @@ browser.runtime.onInstalled.addListener(async (details) => {
             }
         }
     }
+
+    async function upgrade_155() {
+        console.info("upgrade v1.55.0");
+        for (const aKey of ["cmdPanel_textAction", "cmdPanel_linkAction", "cmdPanel_imageAction"]) {
+            const [a, b] = aKey.split("_");
+            all["Panel_" + b] = all[aKey];
+            await browser.storage.local.remove(aKey);
+            delete all[aKey];
+        }
+    }
+
     console.log(details);
 
     if (details.reason === browser.runtime.OnInstalledReason.UPDATE) {
@@ -689,10 +705,17 @@ browser.runtime.onInstalled.addListener(async (details) => {
             console.error(error);
             midVer = 0;
         }
+
         if (midVer < 53) { // < 1.53.0
             changedflag = true;
             await upgrade_153();
         }
+
+        if (midVer < 55) { // < 1.55.0
+            changedflag = true;
+            await upgrade_155();
+        }
+
         assign(all, DEFAULT_CONFIG);
     }
     else if (details.reason === browser.runtime.OnInstalledReason.INSTALL) {
