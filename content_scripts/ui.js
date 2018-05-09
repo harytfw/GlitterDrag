@@ -211,7 +211,7 @@ const ICONS = {
     "ACT_COPY": "GD-fa GD-fa-clipboard",
     "ACT_FIND": "GD-fa GD-fa-find",
     "BAN": "GD-fa GD-fa-ban",
-    "CUSTOM":"GD-fa GD-fa-custom"
+    "CUSTOM": "GD-fa GD-fa-custom"
 }
 const PANEL_HTML_CONTENT = `
 <table id="GDPanel">
@@ -388,3 +388,169 @@ class Panel extends UIClass {
         super.place(x, y);
     }
 }
+
+Translator.init();
+Object.freeze(Translator);
+
+const TRANSLATOR_HTML = `
+  <div id="GDInputBar">
+            <input type=text>
+            <select>
+                <option>baidu</option>
+                <option>google</option>
+                <option>iciba</option>
+            </select>
+  </div>
+  <div id=GDResultBox>	
+		<div id=GDTransContainer>
+            <div id=GDSingleWord>
+                <div id=GDPho>
+                    <span id=GDENText>英</span>
+                    <span id=GDENPho></span>
+                    <span id=GDAMText>美</span>
+                    <span id=GDAMPho></span>
+                </div>
+            <!-- 
+                <div class=GDTrans>
+                <span class=GDPart></span>
+                <span class=GDMeaning></span>
+                </div>
+            -->
+            </div>
+            <div id=GDLongText>
+            </div>
+		</div>
+  </div>
+ `
+class Translator {
+    constructor() {
+        this.mousedown = this.mousedown.bind(this);
+
+        removeExistedElement('#GDDict');
+        this.box = document.createElement('div');
+        this.box.id = 'GDDict';
+        this.box.innerHTML = TRANSLATORBOX_HTML;
+        document.body.appendChild(this.box);
+        document.addEventListener("mousedown", this.mousedown);
+
+
+        this.box.addEventListener("keypress", e => {
+            if (e.key === "Escape") {
+                this.hide();
+            }
+        });
+
+        this.box.querySelector("#GDInputBar input").addEventListener("keypress", e => {
+            if (e.key === "Enter") {
+                this.onEnterPress(e);
+            }
+        });
+    }
+    get primaryProvider() {
+        return "baidu";
+    }
+    translate(text) {
+        let srcLang = "en";
+        let targetLang = "zh";
+        this.status = "loading";
+
+        const singleWord = this.box.querySelector("#GDSingleWord");
+        const longText = this.box.querySelector("#GDLongText");
+        const input = this.box.querySelector("#GDInputBar input");
+
+        singleWord.style.display = "none";
+
+        for (const m of singleWord.querySelectorAll(".GDTrans")) m.remove();
+
+        longText.style.display = "none";
+        longText.innerHTML = "";
+        input.value = text;
+        TranslatorServices[this.primaryProvider].queryTrans(srcLang, targetLang, text)
+            .then(json => {
+                //debugger;
+                if (json.isLongText === true) {
+                    longText.textContent = json.trans[0].meaning;
+                    longText.style.display = "block";
+                }
+                else {
+                    const fragment = document.createDocumentFragment();
+
+                    const div = document.createElement("div");
+                    div.className = "GDTrans";
+                    const p = document.createElement("span");
+                    p.className = "GDParts";
+                    const m = document.createElement("span");
+                    m.className = "GDMeaning";
+                    div.appendChild(p);
+                    div.appendChild(m);
+
+                    for (const t of json.trans) {
+                        const cloned = div.cloneNode(true);
+                        cloned.firstChild.textContent = t.part;
+                        cloned.lastChild.textContent = t.meaning;
+                        fragment.appendChild(cloned);
+                    }
+
+                    singleWord.appendChild(fragment);
+                    this.box.querySelector("#GDENPho").textContent = json.ph_en;
+                    this.box.querySelector("#GDAMPho").textContent = json.ph_am;
+                    this.status = "";
+                    singleWord.style.display = "block";
+                }
+                input.focus();
+
+            })
+            .catch(error => {
+                this.status = error;
+                console.error(error);
+            })
+    }
+    onEnterPress(e) {
+        this.translate(e.target.value);
+    }
+    mousedown({ button, target }) {
+        let parent = target;
+        while (parent) {
+            if (parent === this.box) break; //点击自己，不隐藏
+            else if (parent === document.body && button === 0) { this.hide(); break; }
+            parent = parent.parentElement;
+        }
+    }
+    place(x, y) {
+        this.box.style.setProperty("left", x + "px", "important");
+        this.box.style.setProperty("top", y + "px", "important");
+    }
+    display() {
+        if (this.box.style.display === "none") {
+            this.box.style.setProperty("display", "block", "important");
+        }
+    }
+    hide() {
+        this.box.style.setProperty("display", "none", "important");
+    }
+
+    destory() {
+        document.body.removeEventListener("mousedown", this.mousedown);
+        removeExistedElement('#GDDict');
+    }
+
+    set status(t) {
+        if (t === "") { //hide because empty
+
+        }
+        else {
+
+        }
+    }
+    generate_html() {
+
+    }
+}
+
+
+function playAudio(buffer) {
+
+}
+
+
+const MD5 = {};

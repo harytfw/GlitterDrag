@@ -116,9 +116,9 @@ const scrollbarLocker = {
         window.removeEventListener("scroll", this.doLock, false);
     },
     doLock: function() {
-        window.scrollTo(this.x,this.y);
+        window.scrollTo(this.x, this.y);
     }
-    
+
 }
 scrollbarLocker.doLock = scrollbarLocker.doLock.bind(scrollbarLocker);
 
@@ -292,7 +292,7 @@ class DragClass {
     }
     dragstart(evt) {
 
-        if(bgConfig.enableLockScrollbar){
+        if (bgConfig.enableLockScrollbar) {
             scrollbarLocker.lock();
         }
 
@@ -316,6 +316,7 @@ class DragClass {
             this.selection = evt.dataTransfer.getData("text/x-moz-url-data").trim();
             this.imageLink = evt.dataTransfer.getData("application/x-moz-file-promise-url");
             this.textSelection = evt.dataTransfer.getData("text/plain").trim();
+
         }
         catch (e) {
             $D(e);
@@ -711,7 +712,7 @@ class DragClass {
                     this.dragstart(evt);
                 }
                 else if (evt.target.nodeName === "TEXTAREA" ||
-                    (evt.target.nodeName === "INPUT" && evt.target.type.toLowerCase() === "text")) {
+                    (evt.target.nodeName === "INPUT" && ["text", "number", "url"].includes(evt.target.type.toLowerCase()))) {
                     this.running = true;
                     this.dragstart(evt);
                 }
@@ -808,7 +809,7 @@ class DragClass {
                 }
                 break;
             case "dragend": // Bubbling
-                if(bgConfig.enableLockScrollbar){
+                if (bgConfig.enableLockScrollbar) {
                     scrollbarLocker.free();
                 }
                 this.indicatorBox.hide();
@@ -996,6 +997,7 @@ const clipboard = new Clipboard();
 function CSlistener(msg) {
     let node = mydrag.targetElem && mydrag.targetElem.parentElement ? mydrag.targetElem.parentElement : document.body.firstChild;
     clipboard.write(node, msg.data);
+
     // case commons.COPY_IMAGE:
     //     browser.runtime.sendMessage({
     //         imageSrc: elem.src

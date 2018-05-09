@@ -706,11 +706,11 @@ class ActionsView {
             case commons.ACT_OPEN:
                 hideTR(".copy-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
 
-                if (this.actionType === "linkAction") {
+                if (this.actionType === commons.linkAction) {
                     hideTR(".search-text", ".search-onsite-yes");
                     hideRadios(".open-text", ".open-image");
                 }
-                else if (this.actionType === "imageAction") {
+                else if (this.actionType === commons.imageAction) {
                     hideTR(".search-text", ".search-onsite-yes");
                     hideRadios(".open-text", ".open-image-link");
                 }
@@ -720,35 +720,38 @@ class ActionsView {
                 break
             case commons.ACT_SEARCH:
                 hideTR(".open-text", ".copy-text", ".download-text", ".download-saveas-yes", ".download-directory");
-                if (this.actionType === "imageAction") {
+                if (this.actionType === commons.imageAction) {
                     hideTR(".open-text", ".search-onsite-yes");
                     hideRadios(".search-text", ".search-image-link", ".open-image-link");
                 }
-                else if (this.actionType === "textAction") {
+                else if (this.actionType === commons.textAction) {
                     hideTR(".search-text");
                 }
-                else if (this.actionType === "linkAction") {
+                else if (this.actionType === commons.linkAction) {
                     hideRadios(".search-image");
                 }
                 break;
             case commons.ACT_DL:
                 hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".copy-text", ".search-onsite-yes");
-                if (this.actionType === "linkAction") {
+                if (this.actionType === commons.linkAction) {
                     hideRadios(".download-image");
                 }
-                else if (this.actionType === "imageAction") {
+                else if (this.actionType === commons.imageAction) {
                     hideTR(".download-text");
+                }
+                else if (this.actionType === commons.textAction) {
+                    hideTR(".download-type");
                 }
                 break;
             case commons.ACT_COPY:
                 hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
-                if (this.actionType === "textAction") {
+                if (this.actionType === commons.textAction) {
                     hideTR(".copy-text");
                 }
-                else if (this.actionType === "linkAction") {
+                else if (this.actionType === commons.linkAction) {
                     hideRadios(".copy-image");
                 }
-                else if (this.actionType === "imageAction") {
+                else if (this.actionType === commons.imageAction) {
                     hideRadios(".copy-text");
                 }
                 break
