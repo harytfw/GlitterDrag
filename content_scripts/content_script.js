@@ -529,9 +529,11 @@ class DragClass {
 
         const name = event.data["name"],
             func = event.data["func"];
-
         if (name === "promptBox") {
-            if (func === "RequestPrompt" && this.promptBox === null) this[name] = new Prompt();
+            if (func === "RequestPrompt"){ 
+                this.promptBox = null;
+                this.promptBox = new Prompt();
+            }
             else if (func !== "RequestPrompt" && this.promptBox !== null) {
                 const f = this[name][func];
                 f && f.apply(this[name], event.data[func]);
