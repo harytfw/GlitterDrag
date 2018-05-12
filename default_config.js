@@ -129,7 +129,13 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 panel_tips: "%g-%a"
             }),
         ],
-        Bookmark_Action: ACTION_CONSTRUCTOR(),
+        translator:{
+            baidu_gek:"",
+            baidu_token:"",
+            primary_provider:"",
+            recent_sourcelang:"auto",
+            recent_targetlang:"auto",
+        },
         downloadDirectories: ["", "", "", "", "", "", "", ""],
         style: "",
         specialHosts: [], // ignore drag&drop detection on these hosts.

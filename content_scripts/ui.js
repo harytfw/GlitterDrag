@@ -469,7 +469,7 @@ class Translator extends UIClass {
 
         this.singleWord = new BaseUIClass(this.$E("#GDSingleWord"));
         this.longText = new BaseUIClass(this.$E("#GDLongText"));
-        // this.input = this.$E("#GDInputBar input");
+        this.phonetic = new BaseUIClass(this.$E("#GDPho"));
         //phonetic
         this.ENPho = this.$E("#GDENPho");
         this.AMPho = this.$E("#GDAMPho");
@@ -479,7 +479,7 @@ class Translator extends UIClass {
         this.afterChangeLangCode = this.afterChangeLangCode.bind(this);
         this.$E("#GDSourceLang").addEventListener("click", this.beforeChangeLangCode);
         this.$E("#GDTargetLang").addEventListener("click", this.beforeChangeLangCode);
-        this.$E("#GDLocale").addEventListener("click", this.afterChangeLangCode);
+        this.localeBox.addListener("click", this.afterChangeLangCode);
 
         this.addListener("keypress", e => {
             console.log(e);
@@ -498,8 +498,10 @@ class Translator extends UIClass {
             }
         });
 
-        this.sourceLangCode = "auto";
-        this.targetLangCode = "auto";
+        this.sourceLangCode = bgConfig.translator.recent_sourcelang;
+        this.targetLangCode = bgConfig.translator.recent_targetlang;
+
+        this._text = "";
     }
 
 
@@ -513,7 +515,7 @@ class Translator extends UIClass {
         this.resultBox.hide();
     }
 
-    afterChangeLangCode({ target }) {
+    async afterChangeLangCode({ target }) {
         if (target.tagName !== "A") return;
         const code = target.getAttribute("code");
         const id = this.localeBox.node.dataset["sourceId"];
@@ -524,6 +526,7 @@ class Translator extends UIClass {
             this.targetLangCode = code;
         }
         this.localeBox.hide();
+        await this.translate(this._text);
         this.resultBox.display();
     }
 
@@ -533,6 +536,13 @@ class Translator extends UIClass {
 
     set sourceLangCode(code) {
         this.$E("#GDSourceLang").setAttribute("code", code);
+        browser.storage.local.get("translator", data => {
+            const oldCode = data["translator"]["recent_sourcelang"];
+            if (oldCode !== code) {
+                data["translator"]["recent_sourcelang"] = code;
+                browser.storage.local.set("translator", data);
+            }
+        })
         this.$E("#GDSourceLang").textContent = TranslatorService.LANGUAGE_CODE_MAP.get(code);
     }
 
@@ -542,10 +552,18 @@ class Translator extends UIClass {
 
     set targetLangCode(code) {
         this.$E("#GDTargetLang").setAttribute("code", code);
+        browser.storage.local.get("translator", data => {
+            const oldCode = data["translator"]["recent_sourcelang"];
+            if (oldCode !== code) {
+                data["translator"]["recent_targetlang"] = code;
+                browser.storage.local.set("translator", data);
+            }
+        })
         this.$E("#GDTargetLang").textContent = TranslatorService.LANGUAGE_CODE_MAP.get(code);
     }
 
     translate(text) {
+        this._text = text;
         this.status = "loading";
 
         for (const m of this.singleWord.$A(".GDParts")) {
@@ -557,9 +575,7 @@ class Translator extends UIClass {
 
         this.singleWord.hide();
         this.longText.hide();
-
-        this.longText.node.innerHTML = "";
-
+        this.phonetic.hide();
         TranslatorService[this.primaryProvider].queryTrans(this.sourceLangCode, this.targetLangCode, text)
             .then(json => {
                 //debugger;
@@ -594,9 +610,8 @@ class Translator extends UIClass {
                     this.AMPho.textContent = json.ph_am;
                     this.status = "";
                     this.singleWord.setDisplayProperty("grid");
+                    this.phonetic.display();
                 }
-                // input.focus();
-
             })
             .catch(error => {
                 this.status = error;
