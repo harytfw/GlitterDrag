@@ -210,7 +210,7 @@ class ExecutorClass {
         this.data = m;
         // console.log(this.data);
         if (Array.isArray(this.data.bookmarks)) {
-            this.action =(await LStorage.get("Bookmark_Action"))["Bookmark_Action"];
+            this.action = (await LStorage.get("Bookmark_Action"))["Bookmark_Action"];
             for (const bookmark of this.data.bookmarks) {
                 await this.openTab(bookmark.url);
             }
@@ -348,6 +348,7 @@ class ExecutorClass {
                 this.findText(this.data.textSelection);
                 break;
             case commons.ACT_TRANS:
+                this.translateText(this.data.textSelection);
                 break;
         }
         return Promise.resolve();
@@ -623,7 +624,21 @@ class ExecutorClass {
         });
 
     }
-    translateText() {}
+    translateText(text) {
+        const sended = {
+            command: "translate",
+            data: text
+        }
+
+        let portName = "sendToContentScript";
+        browser.tabs.query({
+            currentWindow: true,
+            active: true
+        }, (tabs) => {
+            let port = browser.tabs.connect(tabs[0].id, { name: portName });
+            port.postMessage(sended);
+        });
+    }
 
 }
 

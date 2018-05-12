@@ -5,6 +5,8 @@ class UIClass {
         this.removePreviousOne();
         this.node = document.createElement(tag)
         if (this.id !== "") this.node.id = id;
+
+        this._rect = new DOMRect();
     }
 
 
@@ -51,6 +53,26 @@ class UIClass {
         this.setStyleProperty("top", y + "px");
     }
 
+    place_fix(x = 0, y = 0) {
+        this.getRect(this._rect);
+        const rect = this._rect;
+        const [width, height] = [window.innerWidth, window.innerHeight];
+        if (rect.width + x >= width) {
+            x = width - rect.width;
+        }
+        else {
+            x -= rect.width / 2;
+        }
+        if (rect.height + y >= height) {
+            y = height - rect.height;
+        }
+        else {
+            y -= rect.height / 2;
+        }
+        this.setStyleProperty("left", x + "px");
+        this.setStyleProperty("top", y + "px");
+    }
+
     hide() {
         if (this.node.parentElement instanceof Node) this.remove();
         //this.setDisplayProperty("none");
@@ -92,6 +114,10 @@ class UIClass {
         this.setStyleProperty("visibility", "");
         this.setDisplayProperty("");
         this.remove();
+    }
+
+    get isHiding() {
+        return this.node.style.display === "none";
     }
 }
 
@@ -368,7 +394,7 @@ class Panel extends UIClass {
                 break;
         }
     }
-    place(x = 0, y = 0) { //TODO：重写
+    place(x = 0, y = 0) {
         const rect = new DOMRect();
         this.getRect(rect);
 
@@ -389,27 +415,20 @@ class Panel extends UIClass {
     }
 }
 
-Translator.init();
-Object.freeze(Translator);
-
 const TRANSLATOR_HTML = `
   <div id="GDInputBar">
-            <input type=text>
-            <select>
-                <option>baidu</option>
-                <option>google</option>
-                <option>iciba</option>
-            </select>
+            <!-- <input id="GDTextInput" type=text> --><a id="GDSourceLang" href="javascript:void(0)">源语言</a><span>-></span><a id="GDTargetLang" href="javascript:void(0)">目标语言</a>
   </div>
   <div id=GDResultBox>	
-		<div id=GDTransContainer>
+        <div id=GDTransContainer>
+        
+            <div id=GDPho>
+                <!-- <span id=GDENText>英</span>  -->
+                <span id=GDENPho></span>
+                <!-- <span id=GDAMText>美</span> --> 
+                <span id=GDAMPho></span>
+            </div>
             <div id=GDSingleWord>
-                <div id=GDPho>
-                    <span id=GDENText>英</span>
-                    <span id=GDENPho></span>
-                    <span id=GDAMText>美</span>
-                    <span id=GDAMPho></span>
-                </div>
             <!-- 
                 <div class=GDTrans>
                 <span class=GDPart></span>
@@ -421,83 +440,155 @@ const TRANSLATOR_HTML = `
             </div>
 		</div>
   </div>
+  <div id="GDLocale">
+  </div>
  `
-class Translator {
+class Translator extends UIClass {
     constructor() {
-        this.mousedown = this.mousedown.bind(this);
+        super("GDDict");
 
-        removeExistedElement('#GDDict');
-        this.box = document.createElement('div');
-        this.box.id = 'GDDict';
-        this.box.innerHTML = TRANSLATORBOX_HTML;
-        document.body.appendChild(this.box);
-        document.addEventListener("mousedown", this.mousedown);
+        this.initContent(TRANSLATOR_HTML);
+
+        this.localeBox = this.$E("#GDLocale");
+
+        for (const [code, name] of TranslatorService.LANGUAGE_CODE_MAP) {
+            let a = document.createElement("a");
+            a.href = "javascript:void(0)";
+            a.textContent = name;
+            a.setAttribute("code", code);
+            this.localeBox.appendChild(a);
+        }
 
 
-        this.box.addEventListener("keypress", e => {
+        this.singleWord = this.$E("#GDSingleWord");
+        this.longText = this.$E("#GDLongText");
+        // this.input = this.$E("#GDInputBar input");
+        //phonetic
+        this.ENPho = this.$E("#GDENPho");
+        this.AMPho = this.$E("#GDAMPho");
+
+
+        this.beforeChangeLangCode = this.beforeChangeLangCode.bind(this);
+        this.afterChangeLangCode = this.afterChangeLangCode.bind(this);
+        this.$E("#GDSourceLang").addEventListener("click", this.beforeChangeLangCode);
+        this.$E("#GDTargetLang").addEventListener("click", this.beforeChangeLangCode);
+        this.$E("#GDLocale").addEventListener("click", this.afterChangeLangCode);
+
+        this.addListener("keypress", e => {
+            console.log(e);
             if (e.key === "Escape") {
                 this.hide();
             }
         });
 
-        this.box.querySelector("#GDInputBar input").addEventListener("keypress", e => {
-            if (e.key === "Enter") {
-                this.onEnterPress(e);
+        document.body.addEventListener("mousedown", ({ button, target }) => {
+            if (this.isHiding === true) return;
+            let parent = target;
+            while (parent) {
+                if (parent === this.node) break; //点击自己，不隐藏
+                else if (parent === document.body && button === 0) { this.hide(); break; }
+                parent = parent.parentElement;
             }
         });
+
+        this.sourceLangCode = "auto";
+        this.targetLangCode = "auto";
     }
+
+
     get primaryProvider() {
         return "baidu";
     }
+
+    beforeChangeLangCode({ target }) {
+        this.$E("#GDLocale").style.setProperty("display", "grid", "important");
+        this.$E("#GDLocale").dataset["sourceId"] = target.id;
+        this.$E("#GDResultBox").style.setProperty("display", "none", "important");
+    }
+
+    afterChangeLangCode({ target }) {
+        if (target.tagName !== "A") return;
+        const code = target.getAttribute("code");
+        const id = this.$E("#GDLocale").dataset["sourceId"];
+        if (id === "GDSourceLang") {
+            this.sourceLangCode = code;
+        }
+        else {
+            this.targetLangCode = code;
+        }
+        this.$E("#GDLocale").style.setProperty("display", "none", "important");
+        this.$E("#GDResultBox").style.setProperty("display", "block", "important");
+    }
+
+    get sourceLangCode() {
+        return this.$E("#GDSourceLang").getAttribute("code") || "auto";
+    }
+
+    set sourceLangCode(code) {
+        this.$E("#GDSourceLang").setAttribute("code", code);
+        this.$E("#GDSourceLang").textContent = TranslatorService.LANGUAGE_CODE_MAP.get(code);
+    }
+
+    get targetLangCode() {
+        return this.$E("#GDTargetLang").getAttribute("code") || "auto";
+    }
+
+    set targetLangCode(code) {
+        this.$E("#GDTargetLang").setAttribute("code", code);
+        this.$E("#GDTargetLang").textContent = TranslatorService.LANGUAGE_CODE_MAP.get(code);
+    }
+
     translate(text) {
-        let srcLang = "en";
-        let targetLang = "zh";
         this.status = "loading";
 
-        const singleWord = this.box.querySelector("#GDSingleWord");
-        const longText = this.box.querySelector("#GDLongText");
-        const input = this.box.querySelector("#GDInputBar input");
+        for (const m of this.singleWord.querySelectorAll(".GDParts")) {
+            this.singleWord.removeChild(m);
+        }
+        for (const m of this.singleWord.querySelectorAll(".GDMeaning")) {
+            this.singleWord.removeChild(m);
+        }
 
-        singleWord.style.display = "none";
+        this.singleWord.style.setProperty("display", "none", "important");
+        this.longText.style.display = "none";
 
-        for (const m of singleWord.querySelectorAll(".GDTrans")) m.remove();
+        this.longText.innerHTML = "";
 
-        longText.style.display = "none";
-        longText.innerHTML = "";
-        input.value = text;
-        TranslatorServices[this.primaryProvider].queryTrans(srcLang, targetLang, text)
+        TranslatorService[this.primaryProvider].queryTrans(this.sourceLangCode, this.targetLangCode, text)
             .then(json => {
                 //debugger;
                 if (json.isLongText === true) {
-                    longText.textContent = json.trans[0].meaning;
-                    longText.style.display = "block";
+                    this.longText.textContent = json.trans[0].meaning;
+                    this.longText.style.display = "block";
                 }
                 else {
                     const fragment = document.createDocumentFragment();
 
-                    const div = document.createElement("div");
-                    div.className = "GDTrans";
+                    // const div = document.createElement("div");
+                    // div.className = "GDTrans";
                     const p = document.createElement("span");
                     p.className = "GDParts";
                     const m = document.createElement("span");
                     m.className = "GDMeaning";
-                    div.appendChild(p);
-                    div.appendChild(m);
+                    // div.appendChild(p);
+                    // div.appendChild(m);
 
                     for (const t of json.trans) {
-                        const cloned = div.cloneNode(true);
-                        cloned.firstChild.textContent = t.part;
-                        cloned.lastChild.textContent = t.meaning;
-                        fragment.appendChild(cloned);
+                        // const cloned = div.cloneNode(true);
+                        const clone_p = p.cloneNode(true);
+                        const clone_m = m.cloneNode(true);
+                        clone_p.textContent = t.part;
+                        clone_m.textContent = t.meaning;
+                        fragment.appendChild(clone_p);
+                        fragment.appendChild(clone_m);
                     }
 
-                    singleWord.appendChild(fragment);
-                    this.box.querySelector("#GDENPho").textContent = json.ph_en;
-                    this.box.querySelector("#GDAMPho").textContent = json.ph_am;
+                    this.singleWord.appendChild(fragment);
+                    this.ENPho.textContent = json.ph_en;
+                    this.AMPho.textContent = json.ph_am;
                     this.status = "";
-                    singleWord.style.display = "block";
+                    this.singleWord.style.setProperty("display", "grid", "important");
                 }
-                input.focus();
+                // input.focus();
 
             })
             .catch(error => {
@@ -505,52 +596,7 @@ class Translator {
                 console.error(error);
             })
     }
-    onEnterPress(e) {
-        this.translate(e.target.value);
-    }
-    mousedown({ button, target }) {
-        let parent = target;
-        while (parent) {
-            if (parent === this.box) break; //点击自己，不隐藏
-            else if (parent === document.body && button === 0) { this.hide(); break; }
-            parent = parent.parentElement;
-        }
-    }
     place(x, y) {
-        this.box.style.setProperty("left", x + "px", "important");
-        this.box.style.setProperty("top", y + "px", "important");
-    }
-    display() {
-        if (this.box.style.display === "none") {
-            this.box.style.setProperty("display", "block", "important");
-        }
-    }
-    hide() {
-        this.box.style.setProperty("display", "none", "important");
-    }
-
-    destory() {
-        document.body.removeEventListener("mousedown", this.mousedown);
-        removeExistedElement('#GDDict');
-    }
-
-    set status(t) {
-        if (t === "") { //hide because empty
-
-        }
-        else {
-
-        }
-    }
-    generate_html() {
-
+        this.place_fix(x, y);
     }
 }
-
-
-function playAudio(buffer) {
-
-}
-
-
-const MD5 = {};

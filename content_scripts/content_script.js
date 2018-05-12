@@ -161,6 +161,10 @@ class DragClass {
             x: 0,
             y: 0
         };
+        this.endClientPos = {
+            x: 0,
+            y: 0
+        }
         this.isPanelArea = false;
         // end: value that can be use in UI process
 
@@ -177,6 +181,7 @@ class DragClass {
         }
 
         this.indicatorBox = new Indicator();
+        this.translatorBox = new Translator();
 
         this.dragenter4panel = this.dragenter4panel.bind(this);
         this.dragleave4panel = this.dragleave4panel.bind(this);
@@ -226,7 +231,7 @@ class DragClass {
         const name = event.data["name"],
             func = event.data["func"];
         if (name === "promptBox") {
-            if (func === "RequestPrompt"){ 
+            if (func === "RequestPrompt") {
                 this.promptBox = null;
                 this.promptBox = new Prompt();
             }
@@ -310,6 +315,7 @@ class DragClass {
 
         this.startPos.x = evt.screenX;
         this.startPos.y = evt.screenY;
+
         this.updateModifierKey(evt);
 
         this.targetElem = evt.target;
@@ -672,6 +678,8 @@ class DragClass {
             // only store screenX in dragover and dragstart.
             this.endPos.x = evt.screenX;
             this.endPos.y = evt.screenY;
+            this.endClientPos.x = evt.clientX;
+            this.endClientPos.y = evt.clientY;
 
         }
         else if (type === "dragend") {
@@ -998,8 +1006,15 @@ const clipboard = new Clipboard();
 
 
 function CSlistener(msg) {
-    let node = mydrag.targetElem && mydrag.targetElem.parentElement ? mydrag.targetElem.parentElement : document.body.firstChild;
-    clipboard.write(node, msg.data);
+    if (msg.command === "copy") {
+        let node = mydrag.targetElem && mydrag.targetElem.parentElement ? mydrag.targetElem.parentElement : document.body.firstChild;
+        clipboard.write(node, msg.data);
+    }
+    else if (msg.command === "translate") {
+        mydrag.translatorBox.translate(msg.data);
+        mydrag.translatorBox.place(mydrag.endClientPos.x, mydrag.endClientPos.y);
+        mydrag.translatorBox.display();
+    }
 
     // case commons.COPY_IMAGE:
     //     browser.runtime.sendMessage({

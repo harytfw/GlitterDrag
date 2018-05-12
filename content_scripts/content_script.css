@@ -1,8 +1,8 @@
 @import "./font-awesome.css";
 #GDIndicator,
 #GDPrompt,
-#GDPanel-wrapper,
-#GDPanel {
+#GDPanel,
+#GDDict {
     background-color: transparent !important;
     background-position: initial !important;
     background-repeat: initial !important;
@@ -243,4 +243,93 @@
 
 #GDPanel .GDCell i[class*="GD-fa-find"] {
     color: purple !important;
+}
+
+#GDDict {
+    position: fixed !important;
+    font-size: 16px;
+    background: #fffffffa !important;
+    padding: 2px 8px 4px 8px !important;
+    height: auto !important;
+    width: 20em !important;
+    border-radius: 4px !important;
+    box-shadow: #2f2f2f 0px 0px 3px;
+    --gray-color: #808080;
+}
+
+#GDSourceLang,
+#GDTargetLang {
+    color: #1888ee !important;
+    font-size: 0.8em !important;
+}
+
+#GDSourceLang+span {
+    color: var(--gray-color) !important;
+}
+
+#GDLocale {
+    display: none !important;
+    font-size: 0.65em !important;
+    overflow-y: scroll !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    grid-column-gap: 5px !important;
+    grid-row-gap: 6px !important;
+}
+
+#GDLocale>a {
+    border: solid #a2a2a2 0.1px !important;
+    border-radius: 5px !important;
+    color: #000 !important;
+    justify-self: stretch !important;
+    line-height: 2.5em !important;
+    text-align: center !important;
+    color: #565656 !important;
+}
+
+#GDLocale>a:hover {
+    background-color: #d4d4d480 !important;
+    color: #1888ee !important;
+}
+
+#GDENPho,
+#GDAMPho {
+    font-size: 0.75em !important;
+    color: var(--gray-color) !important;
+}
+
+#GDENPho::before {
+    content: "["
+}
+
+#GDENPho::after {
+    content: "], "
+}
+
+#GDAMPho::before {
+    content: "["
+}
+
+#GDAMPho::after {
+    content: "]"
+}
+
+#GDSingleWord {
+    display: grid !important;
+    grid-template-columns: max-content auto !important;
+    align-items: center !important;
+    grid-column-gap: 10px !important;
+    grid-row-gap: 4px !important;
+}
+
+.GDParts {
+    font-size: 0.7em !important;
+    color: var(--gray-color) !important;
+    justify-self: center !important;
+}
+
+.GDMeaning,#GDLongText {
+    font-size: 0.8em;
+    color: #3C3C3C !important;
+    line-height: 1.3em !important ;
+    justify-self: left;
 }
