@@ -281,8 +281,8 @@ class DragClass {
         clearTimeout(this.timeoutId);
         this.accepting = this.running = false;
         this.notAccepting = true;
-        this.promptBox.hide();
-        this.indicatorBox.hide();
+        this.promptBox.remove();
+        this.indicatorBox.remove();
 
     }
     updateModifierKey(evt) {
@@ -305,7 +305,7 @@ class DragClass {
         }
 
         this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
-        this.indicatorBox.display();
+        this.indicatorBox.mount();
 
 
         if (bgConfig.enableTimeoutCancel) {
@@ -458,14 +458,14 @@ class DragClass {
 
         if (this.distance > bgConfig.maxTriggeredDistance) {
             this.hideBecauseExceedDistance = true;
-            this.promptBox.hide();
+            this.promptBox.remove();
         }
         else if ((this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
             this.direction = this.getDirection();
 
             if (this.hideBecauseExceedDistance) {
                 this.hideBecauseExceedDistance = false;
-                this.promptBox.display();
+                this.promptBox.mount();
             }
 
             if (this.modifierKey === this.lastModifierKey && this.direction === this.lastDirection) {
@@ -491,7 +491,7 @@ class DragClass {
             let property = actions[this.actionType][this.direction]
             if (bgConfig.enablePrompt) {
 
-                this.promptBox.display();
+                this.promptBox.mount();
                 let message = bgConfig.tipsContent[property["act_name"]];
                 if ((property["act_name"] === commons.ACT_OPEN && property["open_type"] === commons.OPEN_TEXT) ||
                     (property["act_name"] === commons.ACT_COPY && property["copy_type"] === commons.COPY_TEXT) ||
@@ -506,16 +506,16 @@ class DragClass {
             }
             //----
 
-            this.panelBox.hide();
+            this.panelBox.remove();
             if (property["act_name"] === commons.ACT_PANEL) {
                 this.panelBox.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
                 this.panelBox.place(evt.clientX, evt.clientY);
-                this.panelBox.display();
-                this.promptBox.hide();
+                this.panelBox.mount();
+                this.promptBox.remove();
             }
         }
         else {
-            this.promptBox.hide();
+            this.promptBox.remove();
         }
     }
     dragenter(evt) { //TODO
@@ -630,7 +630,7 @@ class DragClass {
         // console.info(e.);
         // console.info(e.originalTarget.parentElement.dataset);
         const obj = Object.assign({}, lastdragovertarget.dataset);
-        this.panelBox.hide();
+        this.panelBox.remove();
         this.post(Object.assign(obj, {
             direction: commons.DIR_P,
             index: parseInt(obj.index)
@@ -750,7 +750,7 @@ class DragClass {
                 break;
             case "dragover": // Capturing or Bubbling
                 if (this.isNotAcceptable(evt)) {
-                    this.promptBox.hide();
+                    this.promptBox.remove();
                     return;
                 }
 
@@ -765,7 +765,7 @@ class DragClass {
                 }
                 else {
                     if (evt.defaultPrevented) {
-                        this.promptBox.hide();
+                        this.promptBox.remove();
                     }
                     if (this.running || this.accepting) {
                         evt.preventDefault();
@@ -823,8 +823,8 @@ class DragClass {
                 if (bgConfig.enableLockScrollbar) {
                     scrollbarLocker.free();
                 }
-                this.indicatorBox.hide();
-                this.promptBox.hide();
+                this.indicatorBox.remove();
+                this.promptBox.remove();
                 this.lastDirection = null;
                 //dragend's target is things we are dragging, calling this.isNotAcceptable has not effect. However we have updated this.isInputArea in drop event, just use it.
                 if (this.isInputArea) {
@@ -1013,7 +1013,7 @@ function CSlistener(msg) {
     else if (msg.command === "translate") {
         mydrag.translatorBox.translate(msg.data);
         mydrag.translatorBox.place(mydrag.endClientPos.x, mydrag.endClientPos.y);
-        mydrag.translatorBox.display();
+        mydrag.translatorBox.mount();
     }
 
     // case commons.COPY_IMAGE:

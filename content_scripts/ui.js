@@ -1,14 +1,10 @@
-class UIClass {
-    constructor(id = "", tag = "div") {
-        // if (id === "") throw "id of UIClass is empty";
-        this.id = id;
-        this.removePreviousOne();
-        this.node = document.createElement(tag)
-        if (this.id !== "") this.node.id = id;
-
+class BaseUIClass {
+    constructor(node = document.body) {
+        this.node = node;
         this._rect = new DOMRect();
-    }
 
+        this.displayValue = "block";
+    }
 
     $E(s = "", context = this.node) {
         return context.querySelector(s);
@@ -17,16 +13,6 @@ class UIClass {
     $A(s = "", context = this.node) {
         return context.querySelectorAll(s);
     }
-
-    removePreviousOne() {
-        if (this.id !== "") {
-            const p = this.$E("#" + this.id, document);
-            if (p instanceof Node) {
-                p.remove();
-            }
-        }
-    }
-
 
     mount(parentElement = document.body) {
         parentElement.appendChild(this.node);
@@ -53,6 +39,7 @@ class UIClass {
         this.setStyleProperty("top", y + "px");
     }
 
+    //修复div溢出窗口的情况+设置div的中心为x,y
     place_fix(x = 0, y = 0) {
         this.getRect(this._rect);
         const rect = this._rect;
@@ -74,13 +61,12 @@ class UIClass {
     }
 
     hide() {
-        if (this.node.parentElement instanceof Node) this.remove();
-        //this.setDisplayProperty("none");
+        // if (this.node.parentElement instanceof Node) this.remove();
+        this.setDisplayProperty("none");
     }
 
     display() {
-        if (this.node.parentElement === null) this.mount();
-        //this.setDisplayProperty("block");
+        this.setDisplayProperty(this.displayValue);
     }
 
     setDisplayProperty(value = "") {
@@ -120,6 +106,26 @@ class UIClass {
         return this.node.style.display === "none";
     }
 }
+
+class UIClass extends BaseUIClass {
+    constructor(id = "", tag = "div") {
+        super(document.createElement(tag));
+        this.id = id;
+        if (this.id !== "") this.node.id = id;
+        this.removePreviousOne();
+    }
+
+    removePreviousOne() {
+        if (this.id !== "") {
+            const p = this.$E("#" + this.id, document);
+            if (p instanceof Node) {
+                p.remove();
+            }
+        }
+    }
+
+}
+
 
 class Prompt extends UIClass {
     constructor() {
@@ -449,19 +455,20 @@ class Translator extends UIClass {
 
         this.initContent(TRANSLATOR_HTML);
 
-        this.localeBox = this.$E("#GDLocale");
-
+        this.localeBox = new BaseUIClass(this.$E("#GDLocale"));
+        this.localeBox.displayValue = "grid";
+        this.resultBox = new BaseUIClass(this.$E("#GDResultBox"));
         for (const [code, name] of TranslatorService.LANGUAGE_CODE_MAP) {
             let a = document.createElement("a");
             a.href = "javascript:void(0)";
             a.textContent = name;
             a.setAttribute("code", code);
-            this.localeBox.appendChild(a);
+            this.localeBox.node.appendChild(a);
         }
 
 
-        this.singleWord = this.$E("#GDSingleWord");
-        this.longText = this.$E("#GDLongText");
+        this.singleWord = new BaseUIClass(this.$E("#GDSingleWord"));
+        this.longText = new BaseUIClass(this.$E("#GDLongText"));
         // this.input = this.$E("#GDInputBar input");
         //phonetic
         this.ENPho = this.$E("#GDENPho");
@@ -501,23 +508,23 @@ class Translator extends UIClass {
     }
 
     beforeChangeLangCode({ target }) {
-        this.$E("#GDLocale").style.setProperty("display", "grid", "important");
-        this.$E("#GDLocale").dataset["sourceId"] = target.id;
-        this.$E("#GDResultBox").style.setProperty("display", "none", "important");
+        this.localeBox.display();
+        this.localeBox.node.dataset["sourceId"] = target.id;
+        this.resultBox.hide();
     }
 
     afterChangeLangCode({ target }) {
         if (target.tagName !== "A") return;
         const code = target.getAttribute("code");
-        const id = this.$E("#GDLocale").dataset["sourceId"];
+        const id = this.localeBox.node.dataset["sourceId"];
         if (id === "GDSourceLang") {
             this.sourceLangCode = code;
         }
         else {
             this.targetLangCode = code;
         }
-        this.$E("#GDLocale").style.setProperty("display", "none", "important");
-        this.$E("#GDResultBox").style.setProperty("display", "block", "important");
+        this.localeBox.hide();
+        this.resultBox.display();
     }
 
     get sourceLangCode() {
@@ -541,24 +548,24 @@ class Translator extends UIClass {
     translate(text) {
         this.status = "loading";
 
-        for (const m of this.singleWord.querySelectorAll(".GDParts")) {
-            this.singleWord.removeChild(m);
+        for (const m of this.singleWord.$A(".GDParts")) {
+            this.singleWord.node.removeChild(m);
         }
-        for (const m of this.singleWord.querySelectorAll(".GDMeaning")) {
-            this.singleWord.removeChild(m);
+        for (const m of this.singleWord.$A(".GDMeaning")) {
+            this.singleWord.node.removeChild(m);
         }
 
-        this.singleWord.style.setProperty("display", "none", "important");
-        this.longText.style.display = "none";
+        this.singleWord.hide();
+        this.longText.hide();
 
-        this.longText.innerHTML = "";
+        this.longText.node.innerHTML = "";
 
         TranslatorService[this.primaryProvider].queryTrans(this.sourceLangCode, this.targetLangCode, text)
             .then(json => {
                 //debugger;
                 if (json.isLongText === true) {
-                    this.longText.textContent = json.trans[0].meaning;
-                    this.longText.style.display = "block";
+                    this.longText.node.textContent = json.trans[0].meaning;
+                    this.longText.display();
                 }
                 else {
                     const fragment = document.createDocumentFragment();
@@ -582,11 +589,11 @@ class Translator extends UIClass {
                         fragment.appendChild(clone_m);
                     }
 
-                    this.singleWord.appendChild(fragment);
+                    this.singleWord.node.appendChild(fragment);
                     this.ENPho.textContent = json.ph_en;
                     this.AMPho.textContent = json.ph_am;
                     this.status = "";
-                    this.singleWord.style.setProperty("display", "grid", "important");
+                    this.singleWord.setDisplayProperty("grid");
                 }
                 // input.focus();
 
