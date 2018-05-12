@@ -122,9 +122,22 @@ const scrollbarLocker = {
 }
 scrollbarLocker.doLock = scrollbarLocker.doLock.bind(scrollbarLocker);
 
+function RemoteBuilder(name, exposeFunName = []) {
+    let obj = {};
+    for (let fun of exposeFunName) {
+        obj[fun] = function(name, fun, ...argv) {
+            window.top.postMessage({
+                name,
+                fun,
+                argv,
+            }, "*");
+        }.bind(null, name, fun);
+    }
+    return obj;
+}
 class DragClass {
     constructor(elem) {
-
+        this.count = 0;
         this.running = false; // happend in browser
         this.accepting = false; // happend between browser and outer
         this.notAccepting = false;
@@ -170,18 +183,18 @@ class DragClass {
 
         // start: UI componment
         if (IS_TOP_WINDOW) {
+            this.translatorBox = new Translator();
             this.promptBox = new Prompt();
-            if (document.body.getAttribute("contenteditable") === null) {
-                this.panelBox = new Panel({ dragenter: this.dragenter4panel.bind(this), dragleave: this.dragleave4panel.bind(this), drop: this.drop4panel.bind(this), dragover: this.dragover4panel.bind(this) });
-            }
+            this.panelBox = new Panel({ dragenter: this.dragenter4panel.bind(this), dragleave: this.dragleave4panel.bind(this), drop: this.drop4panel.bind(this), dragover: this.dragover4panel.bind(this) });
             window.addEventListener("message", this.onMessage.bind(this));
         }
         else {
-            this.promptBox = new RemotePrompt();
+            this.promptBox = RemoteBuilder("promptBox", ["mount", "remote", "render", "remove"]);
+            this.panelBox = RemoteBuilder("panelBox", ["mount", "remove", "place", "render"]);
+            this.translatorBox = RemoteBuilder("translatorBox", ["mount", "remove", "place", "translate"]);
         }
 
         this.indicatorBox = new Indicator();
-        this.translatorBox = new Translator();
 
         this.dragenter4panel = this.dragenter4panel.bind(this);
         this.dragleave4panel = this.dragleave4panel.bind(this);
@@ -226,21 +239,35 @@ class DragClass {
         this.handler(evt);
         return true;
     }
+
+    fixClientPositon(frameElement, x, y) {
+        const rect = frameElement.getBoundingClientRect();
+        return {
+            x: x + rect.x,
+            y: y + rect.y
+        }
+    }
+
     onMessage(event) {
+        // console.log(event);
 
         const name = event.data["name"],
-            func = event.data["func"];
-        if (name === "promptBox") {
-            if (func === "RequestPrompt") {
-                this.promptBox = null;
-                this.promptBox = new Prompt();
+            fun = event.data["fun"],
+            argv = event.data["argv"];
+
+
+        const f = this[name][fun];
+        if (f) {
+            if (fun === "place") {
+                this.endClientPos = this.fixClientPositon(event.source.frameElement, argv[0], argv[1]);
+                f.apply(this[name], [this.endClientPos.x, this.endClientPos.y]);
             }
-            else if (func !== "RequestPrompt" && this.promptBox !== null) {
-                const f = this[name][func];
-                f && f.apply(this[name], event.data[func]);
+            else {
+                f.apply(this[name], argv);
             }
         }
     }
+
     post(extraOption = {}) {
         //sendMessage只能传递字符串化后（类似json）的数据
         //不能传递具体对象
@@ -283,6 +310,7 @@ class DragClass {
         this.notAccepting = true;
         this.promptBox.remove();
         this.indicatorBox.remove();
+        scrollbarLocker.free();
 
     }
     updateModifierKey(evt) {
@@ -299,7 +327,6 @@ class DragClass {
 
     }
     dragstart(evt) {
-
         if (bgConfig.enableLockScrollbar) {
             scrollbarLocker.lock();
         }
@@ -379,6 +406,23 @@ class DragClass {
 
         if (this.distance >= bgConfig.triggeredDistance && this.distance <= bgConfig.maxTriggeredDistance) {
             this.direction = this.getDirection();
+            let actions = null;
+            if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
+                actions = bgConfig.Actions_CtrlKey;
+            }
+            else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
+                actions = bgConfig.Actions_ShiftKey;
+            }
+            else {
+                actions = bgConfig.Actions;
+            }
+            let property = actions[this.actionType][this.direction];
+            if (property["act_name"] === commons.ACT_TRANS) {
+                this.translatorBox.translate(this.textSelection);
+                this.translatorBox.place(this.endClientPos.x, this.endClientPos.y);
+                this.translatorBox.mount();
+                return;
+            }
 
             if (bgConfig.imageReferrer === true && this.actionType === commons.imageAction) {
                 let action = null;
@@ -425,24 +469,6 @@ class DragClass {
             else {
                 this.post();
             }
-            // if (this.actionType === "imageAction") {
-            // this.post()
-            // const result = this.selection.match(commons.fileExtension);
-            // const [name, ext] = result || ["image.jpg", ".jpg"];
-            // fetch(this.imageLink).then(res => res.arrayBuffer()).then(buf => {
-            //     const bin = new Uint8Array(buf);
-            //     this.post({
-            //         imageData: bin.toString(),
-            //         fileInfo: {
-            //             type: MIME_TYPE[ext],
-            //             name,
-            //         },
-            //     })
-            // })
-            // }
-            // else {
-            //     this.post();
-            // }
         }
 
 
@@ -680,7 +706,6 @@ class DragClass {
             this.endPos.y = evt.screenY;
             this.endClientPos.x = evt.clientX;
             this.endClientPos.y = evt.clientY;
-
         }
         else if (type === "dragend") {
             // https://github.com/harytfw/GlitterDrag/issues/38
@@ -1009,11 +1034,6 @@ function CSlistener(msg) {
     if (msg.command === "copy") {
         let node = mydrag.targetElem && mydrag.targetElem.parentElement ? mydrag.targetElem.parentElement : document.body.firstChild;
         clipboard.write(node, msg.data);
-    }
-    else if (msg.command === "translate") {
-        mydrag.translatorBox.translate(msg.data);
-        mydrag.translatorBox.place(mydrag.endClientPos.x, mydrag.endClientPos.y);
-        mydrag.translatorBox.mount();
     }
 
     // case commons.COPY_IMAGE:

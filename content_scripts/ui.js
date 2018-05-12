@@ -40,7 +40,7 @@ class BaseUIClass {
     }
 
     //修复div溢出窗口的情况+设置div的中心为x,y
-    place_fix(x = 0, y = 0) {
+    place_fix(x = 0, y = 0) {//TODO translatorBox在超出窗口位置后有一半在窗口外
         this.getRect(this._rect);
         const rect = this._rect;
         const [width, height] = [window.innerWidth, window.innerHeight];
