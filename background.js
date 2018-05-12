@@ -667,6 +667,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
                 }
             }
             else {
+                $D(aKey, "  ", target[aKey], " -> ", origin[aKey]);
                 target[aKey] = origin[aKey];
                 // console.log(aKey, origin[aKey]);
                 changedflag = true;
@@ -701,10 +702,12 @@ browser.runtime.onInstalled.addListener(async (details) => {
     async function upgrade_155() {
         console.info("upgrade v1.55.0");
         for (const aKey of ["cmdPanel_textAction", "cmdPanel_linkAction", "cmdPanel_imageAction"]) {
-            const [a, b] = aKey.split("_");
-            all["Panel_" + b] = all[aKey];
-            await browser.storage.local.remove(aKey);
-            delete all[aKey];
+            if (aKey in all) {
+                const [a, b] = aKey.split("_");
+                all["Panel_" + b] = all[aKey];
+                await browser.storage.local.remove(aKey);
+                delete all[aKey];
+            }
         }
     }
 
