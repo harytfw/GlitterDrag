@@ -130,7 +130,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
             }),
         ],
         translator:{
-            baidu_gek:"",
+            baidu_gtk:"",
             baidu_token:"",
             primary_provider:"",
             recent_sourcelang:"auto",

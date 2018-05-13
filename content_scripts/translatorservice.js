@@ -265,7 +265,7 @@ const TranslatorService = {
             }
 
 
-            console.log(from, to, query);
+            // console.log(from, to, query);
 
             let isLongText = true;
             query = query.trim();

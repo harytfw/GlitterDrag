@@ -137,7 +137,6 @@ function RemoteBuilder(name, exposeFunName = []) {
 }
 class DragClass {
     constructor(elem) {
-        this.count = 0;
         this.running = false; // happend in browser
         this.accepting = false; // happend between browser and outer
         this.notAccepting = false;
@@ -266,6 +265,20 @@ class DragClass {
                 f.apply(this[name], argv);
             }
         }
+    }
+
+    asyncData(){
+        //对于UI部件的拖拽才需要同步数据，其他情况不用同步
+        //panel
+        //panelBox 在frame下有问题
+        
+        this.direction
+        this.selection
+        this.textSelection
+        this.imageLink
+        this.actionType
+        this.modifierKey
+
     }
 
     post(extraOption = {}) {

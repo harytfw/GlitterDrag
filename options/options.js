@@ -16,7 +16,7 @@ document.title = getI18nMessage("option_page_title");
 
 const LStorage = browser.storage.local;
 
-console.log("UILanguage: " + browser.i18n.getUILanguage());
+console.info("UILanguage: " + browser.i18n.getUILanguage());
 
 function doI18n(scope = document) {
     for (let elem of scope.querySelectorAll("[data-i18n]")) {

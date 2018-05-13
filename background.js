@@ -711,7 +711,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
         }
     }
 
-    console.log(details);
+    console.info(details);
 
     if (details.reason === browser.runtime.OnInstalledReason.UPDATE) {
 
