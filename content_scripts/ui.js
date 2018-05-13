@@ -540,9 +540,9 @@ class Translator extends UIClass {
             const oldCode = data["translator"]["recent_sourcelang"];
             if (oldCode !== code) {
                 data["translator"]["recent_sourcelang"] = code;
-                browser.storage.local.set("translator", data);
+                browser.storage.local.set(data);
             }
-        })
+        });
         this.$E("#GDSourceLang").textContent = TranslatorService.LANGUAGE_CODE_MAP.get(code);
     }
 
@@ -553,12 +553,12 @@ class Translator extends UIClass {
     set targetLangCode(code) {
         this.$E("#GDTargetLang").setAttribute("code", code);
         browser.storage.local.get("translator", data => {
-            const oldCode = data["translator"]["recent_sourcelang"];
+            const oldCode = data["translator"]["recent_targetlang"];
             if (oldCode !== code) {
                 data["translator"]["recent_targetlang"] = code;
-                browser.storage.local.set("translator", data);
+                browser.storage.local.set(data);
             }
-        })
+        });
         this.$E("#GDTargetLang").textContent = TranslatorService.LANGUAGE_CODE_MAP.get(code);
     }
 
@@ -576,7 +576,7 @@ class Translator extends UIClass {
         this.singleWord.hide();
         this.longText.hide();
         this.phonetic.hide();
-        TranslatorService[this.primaryProvider].queryTrans(this.sourceLangCode, this.targetLangCode, text)
+        return TranslatorService[this.primaryProvider].queryTrans(this.sourceLangCode, this.targetLangCode, text)
             .then(json => {
                 //debugger;
                 if (json.isLongText === true) {
@@ -614,7 +614,7 @@ class Translator extends UIClass {
                 }
             })
             .catch(error => {
-                this.status = error;
+                this.status = "unknown error occured,please check the console";
                 console.error(error);
             })
     }
