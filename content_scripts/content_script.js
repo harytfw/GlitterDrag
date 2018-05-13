@@ -253,7 +253,10 @@ class DragClass {
         const name = event.data["name"],
             fun = event.data["fun"],
             argv = event.data["argv"];
-
+            
+        if(!name || !(name in this)){
+            return;
+        }
 
         const f = this[name][fun];
         if (f) {

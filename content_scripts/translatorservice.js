@@ -209,7 +209,7 @@ const TranslatorService = {
         //不同翻译站点提供的语言代码会有所不同，需要映射到统一的语言代码
         LANGUAGE_CODE_MAP_BAIDU: new Map([
             ["zh-CN", "zh"],
-            ["zh-TW", "zht"],
+            ["zh-TW", "cht"],
             ["ja", "jp"],
             ["ko", "kor"],
         ]),
@@ -234,9 +234,11 @@ const TranslatorService = {
                 })
 
         },
-        detechLanguage(query) {
+        detechLanguage(query="") {
             const url = `http://fanyi.baidu.com/langdetect`
             const form = new FormData();
+            //baidu的检测语言api不接受超长的字符串
+            query=query.substr(0,25);
             form.append('query', query);
             const request = new Request(url, {
                 method: 'POST',
@@ -251,6 +253,13 @@ const TranslatorService = {
                 })
         },
         queryTrans: async function(from = "en", to = "zh", query = "") {
+
+            let isLongText = true;
+            query = query.trim();
+            if (/^\w+$/ig.test(query) === true && to==="zh-CN") {//只对简体生效
+                isLongText = false;
+            }
+
             if (from === "auto") {
                 from = await this.detechLanguage(query);
             }
@@ -267,11 +276,6 @@ const TranslatorService = {
 
             // console.log(from, to, query);
 
-            let isLongText = true;
-            query = query.trim();
-            if (/^\w+$/ig.test(query) === true) {
-                isLongText = false;
-            }
 
             const gtk = "320305.131321201";
             const token = "59daf518c516e1ff0fd6b7f6893268eb";
