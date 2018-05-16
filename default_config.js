@@ -132,7 +132,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         translator:{
             baidu_gtk:"",
             baidu_token:"",
-            primary_provider:"",
+            primary_provider:"google",
             recent_sourcelang:"auto",
             recent_targetlang:"auto",
         },
