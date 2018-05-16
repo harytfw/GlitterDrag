@@ -638,6 +638,9 @@
         "message":"Panel Icon",
         "description":""
     },
+    "panel_Cancel":{
+        "message":"Cancel"
+    },
     "elem_UpdateBaiduData":{
         "message":"Update Baidu Data"
     },

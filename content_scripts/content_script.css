@@ -178,14 +178,6 @@
     */
 }
 
-#GDPanel-wrapper {
-    position: absolute !important;
-    z-index: 2147470002 !important;
-    width: auto !important;
-    height: auto !important;
-    /* background-color: rgba(135, 143, 235, 0.34) !important; */
-    /* padding: 6px !important; */
-}
 
 #GDPanel {
     display: block;
@@ -242,7 +234,7 @@
 }
 
 #GDPanel .GDCell i[class*="GD-fa-find"] {
-    color: purple !important;
+    color: #ef0fff !important;
 }
 
 #GDDict {

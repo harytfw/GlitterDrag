@@ -641,6 +641,9 @@
         "message": "",
         "description": ""
     },
+    "panel_Cancel":{
+        "message":""
+    },
     "elem_Translator": {
         "message": ""
     },

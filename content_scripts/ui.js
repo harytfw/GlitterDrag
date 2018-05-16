@@ -361,7 +361,7 @@ class Panel extends UIClass {
     updateHeader(e) {
 
         if (this.lastdragovertarget.id === "GDCell-ban") {
-            this.header.textContent = "取消"; //getI18nMessage("Cancel");
+            this.header.textContent = getI18nMessage("panel_Cancel"); //getI18nMessage("Cancel");
             return;
         }
         const setting = bgConfig[e.target.dataset["key"]][e.target.dataset["index"]];

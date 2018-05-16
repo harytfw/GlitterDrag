@@ -641,6 +641,9 @@
         "message": "图标",
         "description": ""
     },
+    "panel_Cancel":{
+        "message":"取消"
+    },
     "elem_Translator":{
         "message":"翻译"
     },
