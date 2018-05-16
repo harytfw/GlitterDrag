@@ -40,7 +40,7 @@ class BaseUIClass {
     }
 
     //修复div溢出窗口的情况+设置div的中心为x,y
-    place_fix(x = 0, y = 0) {//TODO translatorBox在超出窗口位置后有一半在窗口外
+    place_fix(x = 0, y = 0) { //TODO translatorBox在超出窗口位置后有一半在窗口外
         this.getRect(this._rect);
         const rect = this._rect;
         const [width, height] = [window.innerWidth, window.innerHeight];
@@ -424,6 +424,7 @@ class Panel extends UIClass {
 const TRANSLATOR_HTML = `
   <div id="GDInputBar">
             <!-- <input id="GDTextInput" type=text> --><a id="GDSourceLang" href="javascript:void(0)">源语言</a><span>-></span><a id="GDTargetLang" href="javascript:void(0)">目标语言</a>
+            <a href="javascript:void(0)" id="GDProviderName" provider=""></a>
   </div>
   <div id=GDResultBox>	
         <div id=GDTransContainer>
@@ -448,6 +449,8 @@ const TRANSLATOR_HTML = `
   </div>
   <div id="GDLocale">
   </div>
+  <div id="GDProvider">
+  </div>
  `
 class Translator extends UIClass {
     constructor() {
@@ -465,21 +468,41 @@ class Translator extends UIClass {
             a.setAttribute("code", code);
             this.localeBox.node.appendChild(a);
         }
-
+        this.providerBox = new BaseUIClass(this.$E("#GDProvider"));
+        for (const name of TranslatorService.PROVIDER_LIST) {
+            let a = document.createElement("a");
+            a.href = "javascript:void(0)";
+            a.textContent = getI18nMessage("Provider_" + name);
+            a.setAttribute("provider", name);
+            this.providerBox.node.appendChild(a);
+        }
 
         this.singleWord = new BaseUIClass(this.$E("#GDSingleWord"));
         this.longText = new BaseUIClass(this.$E("#GDLongText"));
         this.phonetic = new BaseUIClass(this.$E("#GDPho"));
+        this._provider = this.$E("#GDProviderName");
         //phonetic
         this.ENPho = this.$E("#GDENPho");
         this.AMPho = this.$E("#GDAMPho");
-
 
         this.beforeChangeLangCode = this.beforeChangeLangCode.bind(this);
         this.afterChangeLangCode = this.afterChangeLangCode.bind(this);
         this.$E("#GDSourceLang").addEventListener("click", this.beforeChangeLangCode);
         this.$E("#GDTargetLang").addEventListener("click", this.beforeChangeLangCode);
         this.localeBox.addListener("click", this.afterChangeLangCode);
+
+        this._provider.addEventListener("click", () => {
+            this.localeBox.hide();
+            this.resultBox.hide();
+            this.providerBox.setDisplayProperty("grid");
+        })
+        this.providerBox.addListener("click", ({ target }) => {
+            if (target.tagName !== "A") return;
+            this.providerBox.setDisplayProperty("none");
+            this.provider = target.getAttribute("provider");
+            this.saveLangCodeAndProvider();
+            this.translate(this._text);
+        });
 
         this.addListener("keypress", e => {
             console.log(e);
@@ -497,22 +520,19 @@ class Translator extends UIClass {
                 parent = parent.parentElement;
             }
         });
-
-        this.sourceLangCode = bgConfig.translator.recent_sourcelang;
         this.targetLangCode = bgConfig.translator.recent_targetlang;
-
+        this.sourceLangCode = bgConfig.translator.recent_sourcelang;
+        this.provider = bgConfig.translator.primary_provider;
         this._text = "";
     }
 
 
-    get primaryProvider() {
-        return "baidu";
-    }
 
     beforeChangeLangCode({ target }) {
         this.localeBox.display();
         this.localeBox.node.dataset["sourceId"] = target.id;
         this.resultBox.hide();
+        this.providerBox.hide();
     }
 
     async afterChangeLangCode({ target }) {
@@ -525,41 +545,55 @@ class Translator extends UIClass {
         else {
             this.targetLangCode = code;
         }
+        this.saveLangCodeAndProvider();
         this.localeBox.hide();
         await this.translate(this._text);
         this.resultBox.display();
     }
 
     get sourceLangCode() {
-        return this.$E("#GDSourceLang").getAttribute("code") || "auto";
+        return this.$E("#GDSourceLang").getAttribute("code") || "";
     }
 
     set sourceLangCode(code) {
+        if (code == this.sourceLangCode) {
+            return;
+        }
         this.$E("#GDSourceLang").setAttribute("code", code);
-        browser.storage.local.get("translator", data => {
-            const oldCode = data["translator"]["recent_sourcelang"];
-            if (oldCode !== code) {
-                data["translator"]["recent_sourcelang"] = code;
-                browser.storage.local.set(data);
-            }
-        });
         this.$E("#GDSourceLang").textContent = TranslatorService.LANGUAGE_CODE_MAP.get(code);
     }
 
     get targetLangCode() {
-        return this.$E("#GDTargetLang").getAttribute("code") || "auto";
+        return this.$E("#GDTargetLang").getAttribute("code") || "";
     }
 
     set targetLangCode(code) {
+        if (code == this.targetLangCode) {
+            return;
+        }
         this.$E("#GDTargetLang").setAttribute("code", code);
-        browser.storage.local.get("translator", data => {
-            const oldCode = data["translator"]["recent_targetlang"];
-            if (oldCode !== code) {
-                data["translator"]["recent_targetlang"] = code;
-                browser.storage.local.set(data);
-            }
-        });
         this.$E("#GDTargetLang").textContent = TranslatorService.LANGUAGE_CODE_MAP.get(code);
+    }
+
+    set provider(name) {
+        if (!TranslatorService.PROVIDER_LIST.includes(name)) {
+            name = "google"; //fallback
+        }
+        this._provider.setAttribute("provider", name);
+        this._provider.textContent = getI18nMessage("provider_" + name);
+    }
+
+    get provider() {
+        return this._provider.getAttribute("provider");
+    }
+
+    saveLangCodeAndProvider() {
+        browser.storage.local.get("translator").then(data => {
+            data["translator"]["recent_targetlang"] = this.targetLangCode;
+            data["translator"]["recent_sourcelang"] = this.sourceLangCode;
+            data["translator"]["primary_provider"] = this.provider;
+            browser.storage.local.set(data);
+        });
     }
 
     translate(text) {
@@ -576,10 +610,10 @@ class Translator extends UIClass {
         this.singleWord.hide();
         this.longText.hide();
         this.phonetic.hide();
-        return TranslatorService[this.primaryProvider].queryTrans(this.sourceLangCode, this.targetLangCode, text)
+        return TranslatorService[this.provider].queryTrans(this.sourceLangCode, this.targetLangCode, text)
             .then(json => {
                 //debugger;
-                if (json.isLongText === true) {
+                if (json.type === TranslatorService.RESULT_TYPE.SENTENCE) {
                     this.longText.node.textContent = json.trans[0].meaning;
                     this.longText.display();
                 }
@@ -606,12 +640,14 @@ class Translator extends UIClass {
                     }
 
                     this.singleWord.node.appendChild(fragment);
-                    this.ENPho.textContent = json.ph_en;
+                    if (json.ph_en) { this.ENPho.style.display = "";this.ENPho.textContent = json.ph_en; }
+                    else { this.ENPho.style.display = "none"; }
                     this.AMPho.textContent = json.ph_am;
                     this.status = "";
                     this.singleWord.setDisplayProperty("grid");
                     this.phonetic.display();
                 }
+                this.resultBox.display();
             })
             .catch(error => {
                 this.status = "unknown error occured,please check the console";

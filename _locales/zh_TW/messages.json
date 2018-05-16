@@ -633,12 +633,51 @@
         "message": "",
         "description": ""
     },
-    "elem_PanelTips":{
-        "message":"",
-        "description":""
+    "elem_PanelTips": {
+        "message": "",
+        "description": ""
     },
-    "elem_PanelIcon":{
-        "message":"",
-        "description":""
+    "elem_PanelIcon": {
+        "message": "",
+        "description": ""
+    },
+    "elem_Translator": {
+        "message": ""
+    },
+    "elem_UpdateBaiduData": {
+        "message": ""
+    },
+    "elem_UpdateBaiduWarning": {
+        "message": ""
+    },
+    "elem_UpdateBaiduSuccess": {
+        "message": ""
+    },
+    "translator_Provider": {
+        "message": ""
+    },
+    "provider_baidu": {
+        "message": ""
+    },
+    "provider_google": {
+        "message": ""
+    },
+    "language_english":{
+        "message":""
+    },
+    "language_simplified_chinese":{
+        "message":""
+    },
+    "language_traditional_chinese":{
+        "message":""
+    },
+    "language_japanese":{
+        "message":""
+    },
+    "language_german":{
+        "message":""
+    },
+    "language_korean":{
+        "message":""
     }
 }

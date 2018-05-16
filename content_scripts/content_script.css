@@ -258,16 +258,30 @@
 }
 
 #GDSourceLang,
-#GDTargetLang {
+#GDTargetLang,
+#GDProviderName {
     color: #1888ee !important;
     font-size: 0.8em !important;
+}
+
+#GDProviderName {
+    margin-left: 4em;
 }
 
 #GDSourceLang+span {
     color: var(--gray-color) !important;
 }
 
-#GDLocale {
+#GDInputBar {
+    border-bottom: 1px var(--gray-color) solid;
+}
+
+#GDResultBox,#GDLocale,#GDProvider {
+    margin-top: 6px;
+}
+
+#GDLocale,
+#GDProvider {
     display: none !important;
     font-size: 0.65em !important;
     overflow-y: scroll !important;
@@ -276,7 +290,8 @@
     grid-row-gap: 6px !important;
 }
 
-#GDLocale>a {
+#GDLocale>a,
+#GDProvider>a {
     border: solid #a2a2a2 0.1px !important;
     border-radius: 5px !important;
     color: #000 !important;
@@ -286,7 +301,8 @@
     color: #565656 !important;
 }
 
-#GDLocale>a:hover {
+#GDLocale>a:hover,
+#GDProvider>a:hover {
     background-color: #d4d4d480 !important;
     color: #1888ee !important;
 }
@@ -327,9 +343,10 @@
     justify-self: center !important;
 }
 
-.GDMeaning,#GDLongText {
+.GDMeaning,
+#GDLongText {
     font-size: 0.8em;
     color: #3C3C3C !important;
-    line-height: 1.3em !important ;
+    line-height: 1.3em !important;
     justify-self: left;
 }
