@@ -95,46 +95,70 @@ const GENERATE_DEFAULT_CONFIG = () => {
 
         Panel_textAction: [
             ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
                 icon: "",
                 panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
-                icon: "",
+                act_name: commons.ACT_TRANS,
+                icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAACJUlEQVRoge1YwbHCIBBNCYgNWMIvwRIswRIswQ5ycEKOlmAJluDRSchMSkgJ/oP4P1mWyAYIOfBm9qKGvAe7bxeLIiMjwwtcdD0XcvhEaj5kKOKvT6TmQ0YWEJDIK2WwsmdZQBaQUkAsbIS8a0SH1RLFsBXNYbTTVXNOzYkEY/fr5y41J2ewi9zru78R3S0ZmW3VHrk27/C6u357ZiO626hIL3K/AFU7uJAPndBWNAfbb83dl/cluTqR4pbJk5U9A7k/KXZRwLTAXIULWcLdX411svq5MxqQltuqVkan9M15WNX+GGvGdCsbSSVuoKYOr5qz0ZkdTMILRiqJrod5z4UsXdZSNzo4WsS92bGyZ9CVQDxc8t7o1PrpVe0xrgikHv5SytHzzZNc0HrfAvDjZ1X78/X59ynqNTPA9aIV8wR5ZxFcyBOsGWjBXMhTCvJOImDRs4vcI2kZtpjfno2Sx3bPKgLx/sfnu2hpNEX+/+VuIgzv1zq60WdC9AQX8lMi4Cg9tcuquMOlEYW8TYTekaH3Y/cEXnfXID1B5epAIW+K6Hr9c+j9GDlT5Iye4EN+JELLb8z7bR3bq5hDkNdJa4Kg96sGZo15PQGdEGeQh0AGPkrQihkUojd5bO6nBrknKBHe5IvCeqq0iH1PmBQwoyiD94S5cPF+G4L1BB8Y3k/4lyJIT/ABxfttWOyegL8ceP+MQuRL3BNswOZ+6hqrKeaMjBXiF0b+4FTz85cOAAAAAElFTkSuQmCC",
                 panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_SEARCH,
+                tab_active: commons.FORE_GROUND,
+                tab_pos: commons.TAB_CRIGHT,
+                engine_name: "Wikipedia",
+                engine_url: "https://en.wikipedia.org/wiki/%s",
                 icon: "",
                 panel_tips: "%g-%a"
             }),
         ],
         Panel_linkAction: [
             ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_OPEN,
+                tab_active: commons.FORE_GROUND,
+                tab_pos: commons.TAB_CRIGHT,
                 icon: "",
                 panel_tips: "%g-%a",
             }), ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
+                copy_type: commons.COPY_TEXT,
                 icon: "",
                 panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_DL,
                 icon: "",
                 panel_tips: "%g-%a"
             }),
         ],
         Panel_imageAction: [
             ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_OPEN,
+                tab_active: commons.FORE_GROUND,
+                tab_pos: commons.TAB_CRIGHT,
                 icon: "",
                 panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_DL,
+                download_saveas: commons.DOWNLOAD_SAVEAS_NO,
+                download_directory: "img/",
                 icon: "",
                 panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_SEARCH,
+                tab_active: commons.FORE_GROUND,
+                tab_pos: commons.TAB_CRIGHT,
+                engine_name: "Bing Search",
+                engine_url: "https://www.bing.com/images/searchbyimage?FORM=IRSBIQ&cbir=sbi&imgurl=%s",
                 icon: "",
                 panel_tips: "%g-%a"
             }),
         ],
-        translator:{
-            baidu_gtk:"",
-            baidu_token:"",
-            primary_provider:"google",
-            recent_sourcelang:"auto",
-            recent_targetlang:"auto",
+        translator: {
+            baidu_gtk: "",
+            baidu_token: "",
+            primary_provider: "google",
+            recent_sourcelang: "auto",
+            recent_targetlang: "auto",
         },
         downloadDirectories: ["", "", "", "", "", "", "", ""],
         style: "",
@@ -166,9 +190,7 @@ const DEFAULT_CONFIG_A = (() => {
             download_type: commons.DOWNLOAD_TEXT
         }),
         DIR_L: ACTION_CONSTRUCTOR({
-            act_name: commons.ACT_COPY,
-            open_type: commons.OPEN_TEXT,
-            download_type: commons.DOWNLOAD_TEXT
+            act_name: commons.ACT_PANEL,
         }),
         DIR_R: ACTION_CONSTRUCTOR({
             act_name: commons.ACT_SEARCH,

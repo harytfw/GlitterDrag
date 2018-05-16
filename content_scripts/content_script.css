@@ -178,7 +178,6 @@
     */
 }
 
-
 #GDPanel {
     display: block;
     z-index: 2147483602 !important;
@@ -221,6 +220,8 @@
     box-shadow: 0px 0px 1px 1px rgb(222, 222, 222) !important;
     text-align: center !important;
     vertical-align: middle !important;
+    box-sizing: border-box !important;
+    background-repeat: no-repeat !important;
 }
 
 .GDCell-hover {
@@ -268,7 +269,9 @@
     border-bottom: 1px var(--gray-color) solid;
 }
 
-#GDResultBox,#GDLocale,#GDProvider {
+#GDResultBox,
+#GDLocale,
+#GDProvider {
     margin-top: 6px;
 }
 

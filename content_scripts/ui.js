@@ -19,7 +19,7 @@ class BaseUIClass {
     }
 
     remove() {
-        this.node.remove();
+        // this.node.remove();
     }
 
     initContent(data) {
@@ -160,44 +160,6 @@ class Prompt extends UIClass {
     }
 }
 
-
-class RemotePrompt {
-    constructor() {
-
-    }
-
-    render() {
-        window.top.postMessage({
-            name: "promptBox",
-            func: "render",
-            render: [...arguments]
-        }, "*")
-    }
-
-    display() {
-        window.top.postMessage({
-            name: "promptBox",
-            func: "display",
-            display: [...arguments]
-        }, "*")
-    }
-
-    hide() {
-        window.top.postMessage({
-            name: "promptBox",
-            func: "hide",
-            hide: [...arguments]
-        }, "*")
-    }
-
-    destory() { //gai remove
-        window.top.postMessage({
-            name: "promptBox",
-            func: "destory",
-            destory: [...arguments]
-        }, "*")
-    }
-}
 
 class Indicator extends UIClass {
     constructor() {

@@ -646,6 +646,7 @@ class DragClass {
         // console.info(e.);
         // console.info(e.originalTarget.parentElement.dataset);
         this.panelBox.remove();
+        e.preventDefault(); //note!
         if (lastdragovertarget.id === "GDCell-ban") return;
         const obj = Object.assign({}, lastdragovertarget.dataset);
         let action = bgConfig[obj.key][parseInt(obj.index)];
@@ -660,7 +661,6 @@ class DragClass {
             direction: commons.DIR_P,
             index: parseInt(obj.index)
         }));
-        e.preventDefault(); //note!
     }
     dragover4panel() {
 
