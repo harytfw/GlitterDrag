@@ -755,6 +755,10 @@ class ActionsView {
                     hideRadios(".copy-text");
                 }
                 break
+
+            case commons.ACT_TRANS:
+                hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".download-text",".copy-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
+                break;
             case commons.ACT_FIND:
                 hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes", ".copy-text");
                 break;

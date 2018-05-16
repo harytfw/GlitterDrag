@@ -253,8 +253,8 @@ class DragClass {
         const name = event.data["name"],
             fun = event.data["fun"],
             argv = event.data["argv"];
-            
-        if(!name || !(name in this)){
+
+        if (!name || !(name in this)) {
             return;
         }
 
@@ -270,11 +270,11 @@ class DragClass {
         }
     }
 
-    asyncData(){
+    asyncData() {
         //对于UI部件的拖拽才需要同步数据，其他情况不用同步
         //panel
         //panelBox 在frame下有问题
-        
+
         this.direction
         this.selection
         this.textSelection
@@ -422,18 +422,9 @@ class DragClass {
 
         if (this.distance >= bgConfig.triggeredDistance && this.distance <= bgConfig.maxTriggeredDistance) {
             this.direction = this.getDirection();
-            let actions = null;
-            if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
-                actions = bgConfig.Actions_CtrlKey;
-            }
-            else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
-                actions = bgConfig.Actions_ShiftKey;
-            }
-            else {
-                actions = bgConfig.Actions;
-            }
-            let property = actions[this.actionType][this.direction];
-            if (property["act_name"] === commons.ACT_TRANS) {
+
+            let action = this.readCurrentAction();
+            if (action["act_name"] === commons.ACT_TRANS) {
                 this.translatorBox.translate(this.textSelection);
                 this.translatorBox.place(this.endClientPos.x, this.endClientPos.y);
                 this.translatorBox.mount();
@@ -441,16 +432,8 @@ class DragClass {
             }
 
             if (bgConfig.imageReferrer === true && this.actionType === commons.imageAction) {
-                let action = null;
-                if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
-                    action = bgConfig.Actions_CtrlKey.imageAction[this.direction];
-                }
-                else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
-                    action = bgConfig.Actions_ShiftKey.imageAction[this.direction];
-                }
-                else {
-                    action = bgConfig.Actions.imageAction[this.direction];
-                }
+
+                let action = this.readCurrentAction(commons.imageAction);
 
                 if (action.act_name === commons.ACT_DL && [commons.DOWNLOAD_IMAGE, commons.DOWNLOAD_LINK].includes(action.download_type)) {
 
@@ -519,18 +502,9 @@ class DragClass {
             }
             // console.log(`cur dir:${this.direction} , last dir:${this.lastDirection}`);
             this.lastDirection = this.direction;
-            let actions = null;
-            if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
-                actions = bgConfig.Actions_CtrlKey;
-            }
-            else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
-                actions = bgConfig.Actions_ShiftKey;
-            }
-            else {
-                actions = bgConfig.Actions;
-            }
 
-            let property = actions[this.actionType][this.direction]
+
+            let property = this.readCurrentAction();
             if (bgConfig.enablePrompt) {
 
                 this.promptBox.mount();
@@ -671,8 +645,17 @@ class DragClass {
     drop4panel(e, lastdragovertarget) {
         // console.info(e.);
         // console.info(e.originalTarget.parentElement.dataset);
-        const obj = Object.assign({}, lastdragovertarget.dataset);
         this.panelBox.remove();
+        if (lastdragovertarget.id === "GDCell-ban") return;
+        const obj = Object.assign({}, lastdragovertarget.dataset);
+        let action = bgConfig[obj.key][parseInt(obj.index)];
+        if (action["act_name"] === commons.ACT_TRANS) {
+            this.translatorBox.translate(this.textSelection);
+            this.translatorBox.place(this.endClientPos.x, this.endClientPos.y);
+            this.translatorBox.mount();
+            return;
+        }
+
         this.post(Object.assign(obj, {
             direction: commons.DIR_P,
             index: parseInt(obj.index)
@@ -985,6 +968,22 @@ class DragClass {
             default:
                 return d.normal;
         }
+    }
+    readCurrentAction(type = null) {
+        let actions = null;
+        if (type === null) {
+            type = this.actionType;
+        }
+        if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
+            actions = bgConfig.Actions_CtrlKey;
+        }
+        else if (bgConfig.enableShiftKey && this.modifierKey === commons.KEY_SHIFT) {
+            actions = bgConfig.Actions_ShiftKey;
+        }
+        else {
+            actions = bgConfig.Actions;
+        }
+        return actions[type][this.direction]
     }
 
 }

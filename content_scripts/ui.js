@@ -348,9 +348,8 @@ class Panel extends UIClass {
                 const icon = bgConfig[confKey][index]["icon"];
                 if (icon === "") cell.firstElementChild.className = ICONS[act_name];
                 else {
-                    const el = cell.firstElementChild;
-                    el.className = ICONS.CUSTOM;
-                    el.style.backgroundImage = `url(${icon})`;
+                    cell.firstElementChild.remove();
+                    cell.style.backgroundImage = `url(${icon})`;
                 }
                 index++;
             }

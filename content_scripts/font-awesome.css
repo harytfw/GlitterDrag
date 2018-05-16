@@ -47,8 +47,6 @@
     content: "\f05e";
 }
 
-.GD-fa-custom{
-    background-repeat: no-repeat;
-    height: 48px !important;
-    width: 48px !important; 
+.GD-fa-custom::before{
+    content:" ";
 }
