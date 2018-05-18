@@ -557,14 +557,7 @@ class Translator extends UIClass {
             this.translate(this._text);
         });
 
-        this.addListener("keypress", e => {
-            console.log(e);
-            if (e.key === "Escape") {
-                this.hide();
-            }
-        });
-
-        document.body.addEventListener("mousedown", ({ button, target }) => {
+        document.addEventListener("mousedown", ({ button, target }) => {
             if (this.isHiding === true) return;
             let parent = target;
             while (parent) {
@@ -712,5 +705,9 @@ class Translator extends UIClass {
     }
     place(x, y) {
         this.place_fix(x, y);
+    }
+    mount() {
+        super.mount();
+        this.node.focus();
     }
 }

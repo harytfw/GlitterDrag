@@ -9,7 +9,7 @@
 }
 
 #GDArrow {
-    font: normal normal normal 20px FontAwesome !important;
+    font: normal normal normal 20px GDFontAwesome !important;
     line-height: 2em !important;
     height: 40px !important;
     border-radius: 0px !important;

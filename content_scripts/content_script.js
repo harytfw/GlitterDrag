@@ -33,6 +33,7 @@ document.addEventListener("keypress", (e) => {
         browser.runtime.sendMessage({
             cmd: "removeHighlighting"
         });
+        maindrag.translatorBox.remove();
     }
 })
 
@@ -143,7 +144,6 @@ class DragClass {
 
         this.dragged = elem;
         this.handler = this.handler.bind(this);
-
         this.wrapperFunction = this.wrapperFunction.bind(this);
 
         // start: properties to post
@@ -639,7 +639,7 @@ class DragClass {
         const obj = Object.assign({}, lastdragovertarget.dataset);
         let action = bgConfig[obj.key][parseInt(obj.index)];
 
-        
+
         switch (obj.key) {
             case 'Panel_textAction':
                 this.actionType = commons.textAction;
@@ -1006,14 +1006,11 @@ function onConnect(port) {
 browser.runtime.onConnect.addListener(onConnect);
 
 
-let bgConfig = null;
-let mydrag = null;
-let bgPort = browser.runtime.connect({
-    name: "initial"
-});
+let bgConfig = {};
+let maindrag = null;
 
 function doInit() {
-    if (mydrag === null && document.body && document.body.getAttribute("contenteditable") === null) {
+    if (document.body && document.body.getAttribute("contenteditable") === null) {
         injectStyle({
             url: browser.runtime.getURL("content_scripts/content_script.css")
         });
@@ -1024,13 +1021,6 @@ function doInit() {
             injectStyle({
                 css: bgConfig.style
             });
-        }
-        try {
-            mydrag = new DragClass(document);
-        }
-        catch (error) {
-            console.error("GlitterDrag: Fail to initialize DragCLass");
-            console.error(error);
         }
         document.removeEventListener("readystatechange", onReadyStateChange);
         document.removeEventListener("DOMContentLoaded", OnDOMContentLoaded);
@@ -1057,12 +1047,23 @@ if (condition === true) { //a storage bug that reported in #65,so using another 
     browser.storage.local.get().then(config => {
         console.info("GlitterDrag: loaded config from storage");
         bgConfig = config;
+        try {
+            maindrag = new DragClass(document);
+        }
+        catch (error) {
+            console.error("GlitterDrag: Fail to initialize DragCLass");
+            console.error(error);
+        }
         document.addEventListener('readystatechange', onReadyStateChange, false);
         document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
         doInit();
     });
 }
 else {
+    const bgPort = browser.runtime.connect({
+        name: "initial"
+    });
+
     bgPort.onMessage.addListener(response => {
         console.info("Glitter Drag: Receive response from background");
         bgConfig = response;
@@ -1075,13 +1076,12 @@ else {
 window.addEventListener("beforeunload", () => {
     browser.storage.onChanged.removeListener(onStorageChange);
     browser.runtime.onConnect.removeListener(onConnect);
-    bgPort.disconnect();
 });
 
 
 
 function checkInit() {
-    if (!mydrag || !bgConfig) {
+    if (!maindrag || !bgConfig) {
         if (confirm("Glitter Drag: Initializing extension faill, please report to the author of Glitter Drag")) {
             location.replace("https://github.com/harytfw/GlitterDrag");
         }

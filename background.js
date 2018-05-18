@@ -754,7 +754,7 @@ browser.runtime.onMessage.addListener((m) => {
 
 browser.runtime.onConnect.addListener(port => {
     if (port.name === "initial") {
-        LStorage.get().then(all => { //test purpose, mark for delete
+        LStorage.get().then(all => {
             port.postMessage(all);
         });
     }
