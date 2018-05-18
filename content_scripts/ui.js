@@ -298,12 +298,14 @@ class Panel extends UIClass {
         this.addListener("dragleave", this.listener.dragleave);
         this.addListener("dragover", this.ondragover.bind(this));
 
-        this.update();
+
 
         this.selection = "";
         this.textSelection = "";
         this.imageLink = "";
         this.actionType = null;
+
+        this.updateFlag = false;
     }
     ondragover(e) {
         if (e.target.classList.contains("GDPanelGrid") && this.lastdragovertarget != e.target) {
@@ -314,12 +316,61 @@ class Panel extends UIClass {
         }
     }
 
+
+
+    drawingIcon(ctx, iconChar, CSS) {
+        function setContextStyle() {
+            ctx.textBaseline = 'top';
+            ctx.textAlign = 'left'
+            ctx.fillStyle = CSS.color;
+            ctx.font = `${CSS.getPropertyValue('--font-size')} ${CSS.fontFamily}`;
+        }
+        //remove the unit
+        const val = 48; //the size of icon;
+        const canvas = ctx.canvas;
+        //reset width and height
+        canvas.width = canvas.height = val;
+        //assume canvas is in square shape,then clear the whole canvas
+        ctx.clearRect(0, 0, val, val);
+        //set the style
+        setContextStyle(ctx);
+        //measure the actaul width
+        const obj = ctx.measureText(iconChar);
+        if (obj.width > val) {
+            //assign the actual width
+            canvas.width = obj.width;
+            canvas.height = canvas.width;
+        }
+        setContextStyle(ctx);
+
+        //drawtext
+        ctx.fillText(iconChar, 1, 1);
+    }
+
     update() {
+        const that = this;
+
+        function getIcon(grid) {
+            const CSS = window.getComputedStyle(grid);
+            let char = CSS.getPropertyValue('--icon');
+            char = char.match(/\s*\\([\w\d]+)\s*/i)[1];
+            char = String.fromCharCode(parseInt(char, 16));
+            that.drawingIcon(ctx, char, CSS);
+            return canvas.toDataURL();
+        }
+
         const map = {
             "text": [".GDPanelTextGrid", "Panel_textAction"],
             "link": [".GDPanelLinkGrid", "Panel_linkAction"],
             "image": [".GDPanelImageGrid", "Panel_imageAction"],
         }
+
+        const canvas = document.createElement("canvas");
+        // canvas.style.width = "52px";
+        // canvas.style.height = "52px";
+        // document.body.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+
         for (const kind of Object.keys(map)) {
             const [selector, confKey] = map[kind];
             let index = 0;
@@ -328,17 +379,19 @@ class Panel extends UIClass {
                 grid.dataset["key"] = confKey;
                 grid.dataset["index"] = index;
                 const act_name = bgConfig[confKey][index]["act_name"];
-                const icon = bgConfig[confKey][index]["icon"];
+                let icon = bgConfig[confKey][index]["icon"];
+
                 if (icon === "") {
                     grid.classList.add("GD-fa");
                     grid.classList.add(ICONS[act_name]);
+                    icon = getIcon(grid);
                 }
-                else {
-                    grid.style.backgroundImage = `url(${icon})`;
-                }
+                grid.style.backgroundImage = `url(${icon})`;
                 index++;
             }
         }
+        const grid = this.$E('#GDPanelFooter');
+        grid.style.backgroundImage = `url(${getIcon(grid)})`;
     }
 
 
@@ -411,6 +464,13 @@ class Panel extends UIClass {
     }
     place(x = 0, y = 0) {
         super.place_fix(x, y);
+    }
+    mount() {
+        if (!this.updateFlag) {
+            this.updateFlag = true;
+            this.update();
+        }
+        super.mount();
     }
 }
 
