@@ -179,62 +179,166 @@
 }
 
 #GDPanel {
-    display: block;
     z-index: 2147483602 !important;
-    --cell-width: 52px !important;
-    --cell-height: 52px !important;
-    --font-size: 14px !important;
     background: rgba(239, 239, 239, 0.9) !important;
-    width: auto !important;
-    height: auto !important;
-    table-layout: fixed !important;
     border-radius: 5px !important;
-    padding: 12px 12px 12px 12px !important;
-    border-spacing: 5px !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: 16px !important;
+    grid-column-gap: .6em !important;
+    grid-row-gap: .3em !important;
+    grid-template-columns: 3em 3em 3em !important;
+    padding: .6em !important;
+    place-content: space-between;
+    width: 11em !important;
 }
 
-#GDPanel * {
-    font-size: var(--font-size) !important;
-    font-weight: initial !important;
+.GDPanelFull {
+    height: 19em !important;
+    grid-template-rows: 1em 1em 3em 1em 3em 1em 3em 3em !important;
+    grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "linklabel link link" "grid4 grid5 grid6" "imagelabel image image" "grid7 grid8 grid9" "footer footer ." !important;
 }
 
-#GDHeader th,
-.GDLabel-content {
+.GDPanelOnlyText {
+    height: 11em !important;
+    grid-template-rows: 1em 1em 3em 3em !important;
+    grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "footer footer ." !important;
+}
+
+.GDPanelTextAndLink {
+    height: 15em !important;
+    grid-template-rows: 1em 1em 3em 1em 3em 3em !important;
+    grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "linklabel link link" "grid4 grid5 grid6" "footer footer ." !important;
+}
+
+.GDPanelOnlyImage {
+    height: 11em !important;
+    grid-template-rows: 1em 1em 3em 3em !important;
+    grid-template-areas: "header header header" "imagelabel image image" "grid7 grid8 grid9" "footer footer ." !important;
+}
+
+.GDPanelLinkAndImage {
+    height: 15em !important;
+    grid-template-rows: 1em 1em 3em 1em 3em 3em !important;
+    grid-template-areas: "header header header" "linklabel link link" "grid4 grid5 grid6" "imagelabel image image" "grid7 grid8 grid9" "footer footer ." !important;
+}
+
+#GDPanelHeader {
+    grid-area: header;
+}
+
+#GDPanelFooter {
+    grid-area: footer;
+}
+
+#GDPanelTextContent {
+    grid-area: text;
+}
+
+#GDPanelLinkContent {
+    grid-area: link;
+}
+
+#GDPanelImageContent {
+    grid-area: image;
+}
+
+#GDPanelTextLabel {
+    grid-area: textlabel;
+}
+
+#GDPanelLinkLabel {
+    grid-area: linklabel;
+}
+
+#GDPanelImageLabel {
+    grid-area: imagelabel;
+}
+
+#GDPanelGrid1 {
+    grid-area: grid1
+}
+
+#GDPanelGrid2 {
+    grid-area: grid2
+}
+
+#GDPanelGrid3 {
+    grid-area: grid3
+}
+
+#GDPanelGrid4 {
+    grid-area: grid4
+}
+
+#GDPanelGrid5 {
+    grid-area: grid5
+}
+
+#GDPanelGrid6 {
+    grid-area: grid6
+}
+
+#GDPanelGrid7 {
+    grid-area: grid7
+}
+
+#GDPanelGrid8 {
+    grid-area: grid8
+}
+
+#GDPanelGrid9 {
+    grid-area: grid9
+}
+
+#GDPanelHeader {
     white-space: nowrap !important;
     overflow: hidden !important;
-    padding: initial !important;
     color: black !important;
-}
-
-#GDHeader th {
     font-weight: bold !important;
     text-align: center;
+    width: 100%;
+    overflow: hidden;
 }
 
-.GDCell {
-    height: var(--cell-height) !important;
-    width: var(--cell-width) !important;
+#GDPanelTextLabel::after,
+#GDPanelLinkLabel::after,
+#GDPanelImageLabel::after {
+    content: ":";
+}
+
+#GDPanelTextContent,
+#GDPanelLinkContent,
+#GDPanelImageContent {
+    justify-self: left;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.GDPanelGrid {
     background-color: rgba(233, 233, 233) !important;
     border-radius: 3px !important;
     border: 1px solid #777777 !important;
     box-shadow: 0px 0px 1px 1px rgb(222, 222, 222) !important;
     text-align: center !important;
-    vertical-align: middle !important;
-    box-sizing: border-box !important;
     background-repeat: no-repeat !important;
+    place-self: stretch !important;
+    text-align: center !important;
+    font-size: 2em !important;
+    background-position: center;
+    background-size: 1.2em 1.2em;
 }
 
-.GDCell-hover {
+.GD-fa::before {
+    vertical-align: sub;
+}
+
+.GDPanelGridHover {
     border: 1px solid rgb(58, 58, 58) !important;
 }
 
-#GDPanel .GDCell i {
-    text-align: center !important;
-    font-size: 28px !important;
-    color: black !important;
-}
-
-#GDPanel .GDCell i[class*="GD-fa-find"] {
+.GD-fa-find {
     color: #ef0fff !important;
 }
 

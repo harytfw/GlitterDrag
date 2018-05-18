@@ -257,9 +257,9 @@ class DragClass {
         if (!name || !(name in this)) {
             return;
         }
-
         const f = this[name][fun];
         if (f) {
+            this.running = true;
             if (fun === "place") {
                 this.endClientPos = this.fixClientPositon(event.source.frameElement, argv[0], argv[1]);
                 f.apply(this[name], [this.endClientPos.x, this.endClientPos.y]);
@@ -268,20 +268,6 @@ class DragClass {
                 f.apply(this[name], argv);
             }
         }
-    }
-
-    asyncData() {
-        //对于UI部件的拖拽才需要同步数据，其他情况不用同步
-        //panel
-        //panelBox 在frame下有问题
-
-        this.direction
-        this.selection
-        this.textSelection
-        this.imageLink
-        this.actionType
-        this.modifierKey
-
     }
 
     post(extraOption = {}) {
@@ -535,7 +521,8 @@ class DragClass {
         }
     }
     dragenter(evt) { //TODO
-        this.selection = this.textSelection = "If you see this message, please report to the author of GlitterDrag"; // temporary
+        this.selection = this.textSelection = "If you see this message, please report to the author of GlitterDrag"; // 
+        //temporary
         const dt = evt.dataTransfer;
         // console.log(dt.getData("text/plain"));
         let fakeNode = null;
@@ -634,7 +621,6 @@ class DragClass {
     }
 
     dragenter4panel() {
-
         this.isPanelArea = true;
         // console.info("enter panel");
     }
@@ -645,13 +631,29 @@ class DragClass {
     drop4panel(e, lastdragovertarget) {
         // console.info(e.);
         // console.info(e.originalTarget.parentElement.dataset);
+
         this.panelBox.remove();
         e.preventDefault(); //note!
-        if (lastdragovertarget.id === "GDCell-ban") return;
+        if (lastdragovertarget.id === "GDPanelFooter") return;
+
         const obj = Object.assign({}, lastdragovertarget.dataset);
         let action = bgConfig[obj.key][parseInt(obj.index)];
+
+        
+        switch (obj.key) {
+            case 'Panel_textAction':
+                this.actionType = commons.textAction;
+                break
+            case 'Panel_linkAction':
+                this.actionType = commons.linkAction;
+                break;
+            case 'Panel_imageAction':
+                this.actionType = commons.imageAction;
+                this.panelBox.selection = this.panelBox.imageLink;
+                break;
+        }
         if (action["act_name"] === commons.ACT_TRANS) {
-            this.translatorBox.translate(this.textSelection);
+            this.translatorBox.translate(this.panelBox.textSelection);
             this.translatorBox.place(this.endClientPos.x, this.endClientPos.y);
             this.translatorBox.mount();
             return;
@@ -659,8 +661,16 @@ class DragClass {
 
         this.post(Object.assign(obj, {
             direction: commons.DIR_P,
-            index: parseInt(obj.index)
+            index: parseInt(obj.index),
+            selection: this.panelBox.selection,
+            textSelection: this.panelBox.textSelection,
+            imageLink: this.panelBox.imageLink,
+            actionType: this.actionType
         }));
+
+        this.panelBox.selection = "";
+        this.panelBox.textSelection = "";
+        this.panelBox.imageLink = "";
     }
     dragover4panel() {
 

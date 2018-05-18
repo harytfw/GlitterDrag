@@ -19,7 +19,7 @@ class BaseUIClass {
     }
 
     remove() {
-        // this.node.remove();
+        this.node.remove();
     }
 
     initContent(data) {
@@ -199,13 +199,13 @@ class Indicator extends UIClass {
 
 
 const ICONS = {
-    "ACT_DL": "GD-fa GD-fa-download",
-    "ACT_OPEN": "GD-fa GD-fa-external-link",
-    "ACT_SEARCH": "GD-fa GD-fa-search",
-    "ACT_COPY": "GD-fa GD-fa-clipboard",
-    "ACT_FIND": "GD-fa GD-fa-find",
-    "BAN": "GD-fa GD-fa-ban",
-    "CUSTOM": "GD-fa GD-fa-custom"
+    "ACT_DL": "GD-fa-download",
+    "ACT_OPEN": "GD-fa-external-link",
+    "ACT_SEARCH": "GD-fa-search",
+    "ACT_COPY": "GD-fa-clipboard",
+    "ACT_FIND": "GD-fa-find",
+    "BAN": "GD-fa-ban",
+    "CUSTOM": "GD-fa-custom"
 }
 const PANEL_HTML_CONTENT = `
 <table id="GDPanel">
@@ -262,14 +262,35 @@ const PANEL_HTML_CONTENT = `
     </tr>
     
 </table>`;
+
+const PANEL_HTML = `
+        <div id='GDPanelHeader'></div>
+        <div id='GDPanelTextLabel'>${getI18nMessage("textType")}</div>
+        <div id='GDPanelTextContent'></div>
+        <div id='GDPanelGrid1' class='GDPanelGrid GDPanelTextGrid'></div>
+        <div id='GDPanelGrid2' class='GDPanelGrid GDPanelTextGrid'></div>
+        <div id='GDPanelGrid3' class='GDPanelGrid GDPanelTextGrid'></div>
+        <div id='GDPanelLinkLabel'>${getI18nMessage("linkType")}</div>
+        <div id='GDPanelLinkContent'></div>
+        <div id='GDPanelGrid4' class='GDPanelGrid GDPanelLinkGrid'></div>
+        <div id='GDPanelGrid5' class='GDPanelGrid GDPanelLinkGrid'></div>
+        <div id='GDPanelGrid6' class='GDPanelGrid GDPanelLinkGrid'></div>
+        <div id='GDPanelImageLabel'>${getI18nMessage("imageType")}</div>
+        <div id='GDPanelImageContent'></div>
+        <div id='GDPanelGrid7' class='GDPanelGrid GDPanelImageGrid'></div>
+        <div id='GDPanelGrid8' class='GDPanelGrid GDPanelImageGrid'></div>
+        <div id='GDPanelGrid9' class='GDPanelGrid GDPanelImageGrid'></div>
+        <div id='GDPanelFooter' class='GDPanelGrid GD-fa ${ICONS.BAN}' ></div>
+`
 class Panel extends UIClass {
     //TODO:内容长度自动裁剪
     //TODO:样式美观
     //TODO:完善图标自定义功能
     constructor(listener = { dragenter: () => {}, dragleave: () => {}, drop: () => {}, dragover: () => {} }) {
-        super("GDPanel", "table");
-        this.initContent(PANEL_HTML_CONTENT)
-        this.header = this.$E("#GDHeader").firstElementChild;
+        super("GDPanel", "div");
+        this.displayValue = "grid";
+        this.initContent(PANEL_HTML)
+        this.header = this.$E("#GDPanelHeader");
         this.lastdragovertarget = null;
         this.listener = listener;
         this.addListener("drop", e => this.listener.drop(e, this.lastdragovertarget));
@@ -277,41 +298,43 @@ class Panel extends UIClass {
         this.addListener("dragleave", this.listener.dragleave);
         this.addListener("dragover", this.ondragover.bind(this));
 
-        this.setStyleProperty("visibility", "hidden");
-        this.setStyleProperty("zIndex", "-1");
-
         this.update();
 
+        this.selection = "";
+        this.textSelection = "";
+        this.imageLink = "";
+        this.actionType = null;
     }
     ondragover(e) {
-        if (e.target.className.indexOf("GDCell") >= 0 && this.lastdragovertarget != e.target) {
-            this.lastdragovertarget && this.lastdragovertarget.classList.remove("GDCell-hover");
+        if (e.target.classList.contains("GDPanelGrid") && this.lastdragovertarget != e.target) {
+            this.lastdragovertarget && this.lastdragovertarget.classList.remove("GDPanelGridHover");
             this.lastdragovertarget = e.target;
-            this.lastdragovertarget.classList.add("GDCell-hover");
+            this.lastdragovertarget.classList.add("GDPanelGridHover");
             this.updateHeader(e);
         }
     }
 
     update() {
         const map = {
-            "text": ["#GDRow-text", "Panel_textAction"],
-            "link": ["#GDRow-link", "Panel_linkAction"],
-            "image": ["#GDRow-image", "Panel_imageAction"],
+            "text": [".GDPanelTextGrid", "Panel_textAction"],
+            "link": [".GDPanelLinkGrid", "Panel_linkAction"],
+            "image": [".GDPanelImageGrid", "Panel_imageAction"],
         }
         for (const kind of Object.keys(map)) {
             const [selector, confKey] = map[kind];
-            const row = this.$E(selector);
             let index = 0;
-            for (const cell of row.children) {
-                cell.dataset["kind"] = kind;
-                cell.dataset["key"] = confKey;
-                cell.dataset["index"] = index;
+            for (let grid of this.$A(selector)) {
+                grid.dataset["kind"] = kind;
+                grid.dataset["key"] = confKey;
+                grid.dataset["index"] = index;
                 const act_name = bgConfig[confKey][index]["act_name"];
                 const icon = bgConfig[confKey][index]["icon"];
-                if (icon === "") cell.firstElementChild.className = ICONS[act_name];
+                if (icon === "") {
+                    grid.classList.add("GD-fa");
+                    grid.classList.add(ICONS[act_name]);
+                }
                 else {
-                    cell.firstElementChild.remove();
-                    cell.style.backgroundImage = `url(${icon})`;
+                    grid.style.backgroundImage = `url(${icon})`;
                 }
                 index++;
             }
@@ -320,8 +343,7 @@ class Panel extends UIClass {
 
 
     updateHeader(e) {
-
-        if (this.lastdragovertarget.id === "GDCell-ban") {
+        if (this.lastdragovertarget.id === "GDPanelFooter") {
             this.header.textContent = getI18nMessage("panel_Cancel"); //getI18nMessage("Cancel");
             return;
         }
@@ -337,48 +359,58 @@ class Panel extends UIClass {
             if (str.length <= maxlen) return str;
             return `${str.substr(0,len1)}...${str.substr(str.length-len2,len2)}`
         }
-        $H(["#GDLabel-link", "#GDLabel-image", "#GDRow-link", "#GDRow-image"], "table-row", this.node);
+        this.selection = selection;
+        this.textSelection = textSelection;
+        this.imageLink = imageLink;
+        const that = this;
+
+        function changeDisplay(s = [], value) {
+            for (const ss of s) {
+                for (const el of that.$A(ss)) {
+                    el.style.setProperty("display", value, "important");
+                }
+            }
+        }
+
+        this.node.classList.remove("GDPanelOnlyText", "GDPanelOnlyImage", "GDPanelTextAndLink", "GDPanelLinkAndImage");
+
+        changeDisplay([".GDPanelTextGrid,[id^=GDPanelText]", ".GDPanelLinkGrid,[id^=GDPanelLink]", ".GDPanelImageGrid,[id^=GDPanelImage]"], "none");
         switch (actionkind) {
             case commons.textAction:
-                $H(["#GDLabel-link", "#GDLabel-image", "#GDRow-link", "#GDRow-image"], "none", this.node);
-                this.$E("#GDLabel-text .GDPanel-content").textContent = trim(textSelection);
+                this.node.classList.add("GDPanelOnlyText");
+                this.$E("#GDPanelTextContent").textContent = trim(textSelection);
+                changeDisplay([".GDPanelTextGrid,[id^=GDPanelText]"], "");
                 break;
             case commons.linkAction:
-                if (targetkind === commons.TYPE_ELEM_A_IMG) {
-                    this.$E("#GDLabel-image .GDPanel-content").textContent = imageLink;
+                if (bgConfig.alwaysImage) {
+                    this.node.classList.add("GDPanelOnlyImage");
+                    this.$E("#GDPanelImageContent").textContent = trim(imageLink);
+                    changeDisplay([".GDPanelImageGrid,[id^=GDPanelImage]"], "");
+                }
+                else if (targetkind === commons.TYPE_ELEM_A_IMG) {
+                    this.node.classList.add("GDPanelLinkAndImage");
+                    this.$E("#GDPanelImageContent").textContent = trim(imageLink);
+                    changeDisplay([".GDPanelLinkGrid,[id^=GDPanelLink]", ".GDPanelImageGrid,[id^=GDPanelImage]"], "");
+                    this.$E("#GDPanelLinkContent").textContent = trim(selection);
                 }
                 else {
-                    $H(["#GDLabel-image", "#GDRow-image"], "none", this.node);
+                    this.node.classList.add("GDPanelTextAndLink");
+                    this.$E("#GDPanelTextContent").textContent = trim(textSelection);
+                    changeDisplay([".GDPanelTextGrid,[id^=GDPanelText]", ".GDPanelLinkGrid,[id^=GDPanelLink]"], "");
+                    this.$E("#GDPanelLinkContent").textContent = trim(selection);
                 }
-                this.$E("#GDLabel-link .GDPanel-content").textContent = trim(selection);
-                this.$E("#GDLabel-text .GDPanel-content").textContent = trim(textSelection);
                 break;
             case commons.imageAction:
-                $H(["#GDLabel-text", "#GDRow-text", "#GDLabel-link", "#GDRow-link"], "none", this.node);
-                this.$E("#GDLabel-image .GDPanel-content").textContent = trim(selection);
+                this.node.classList.add("GDPanelOnlyImage");
+                this.$E("#GDPanelImageContent").textContent = trim(imageLink);
+                changeDisplay([".GDPanelImageGrid,[id^=GDPanelImage]"], "")
                 break;
             default:
                 break;
         }
     }
     place(x = 0, y = 0) {
-        const rect = new DOMRect();
-        this.getRect(rect);
-
-        const [width, height] = [window.innerWidth, window.innerHeight];
-        if (rect.width + x >= width) {
-            x = width - rect.width;
-        }
-        else {
-            x -= rect.width / 2;
-        }
-        if (rect.height + y >= height) {
-            y = height - rect.height;
-        }
-        else {
-            y -= rect.height / 2;
-        }
-        super.place(x, y);
+        super.place_fix(x, y);
     }
 }
 
@@ -601,7 +633,10 @@ class Translator extends UIClass {
                     }
 
                     this.singleWord.node.appendChild(fragment);
-                    if (json.ph_en) { this.ENPho.style.display = "";this.ENPho.textContent = json.ph_en; }
+                    if (json.ph_en) {
+                        this.ENPho.style.display = "";
+                        this.ENPho.textContent = json.ph_en;
+                    }
                     else { this.ENPho.style.display = "none"; }
                     this.AMPho.textContent = json.ph_am;
                     this.status = "";

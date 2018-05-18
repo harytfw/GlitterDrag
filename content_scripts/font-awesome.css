@@ -46,7 +46,3 @@
 .GD-fa-ban::before {
     content: "\f05e";
 }
-
-.GD-fa-custom::before{
-    content:" ";
-}
