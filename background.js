@@ -463,22 +463,14 @@ class ExecutorClass {
             }
             return;
         }
-        const sended = {
-            command: "copy",
-            copy_type: this.action.copy_type,
-            data,
-        };
-        let portName = "sendToContentScript";
-        browser.tabs.query({
-            currentWindow: true,
-            active: true
-        }, (tabs) => {
-            let port = browser.tabs.connect(tabs[0].id, {
-                name: portName
-            });
-            port.postMessage(sended);
-        });
 
+        const storage = document.createElement("textarea");
+        storage.value = data;
+        document.body.appendChild(storage);
+        storage.focus();
+        storage.setSelectionRange(0, storage.value.length);
+        document.execCommand("copy");
+        storage.remove();
     }
 
     async getEngine() {
