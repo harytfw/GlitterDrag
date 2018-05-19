@@ -641,11 +641,11 @@
         "message": "图标",
         "description": ""
     },
-    "panel_Cancel":{
-        "message":"取消"
+    "panel_Cancel": {
+        "message": "取消"
     },
-    "elem_Translator":{
-        "message":"翻译"
+    "elem_Translator": {
+        "message": "翻译"
     },
     "elem_UpdateBaiduData": {
         "message": "更新百度数据"
@@ -653,8 +653,8 @@
     "elem_UpdateBaiduWarning": {
         "message": "扩展需要获取您百度账号的一些数据(gtk和token)，才能使用百度翻译服务。这些数据仅仅用于调用百度翻译API，不作其他用途."
     },
-    "elem_UpdateBaiduSuccess":{
-        "message":"数据更新成功！"
+    "elem_UpdateBaiduSuccess": {
+        "message": "数据更新成功！"
     },
     "translator_Provider": {
         "message": "翻译接口"
@@ -665,25 +665,31 @@
     "provider_google": {
         "message": "谷歌翻译"
     },
-    "language_auto":{
-        "message":"自动"
+    "language_auto": {
+        "message": "自动"
     },
-    "language_english":{
-        "message":"英语"
+    "language_english": {
+        "message": "英语"
     },
-    "language_simplified_chinese":{
-        "message":"简体"
+    "language_simplified_chinese": {
+        "message": "简体"
     },
-    "language_traditional_chinese":{
-        "message":"繁体"
+    "language_traditional_chinese": {
+        "message": "繁体"
     },
-    "language_japanese":{
-        "message":"日语"
+    "language_japanese": {
+        "message": "日语"
     },
-    "language_german":{
-        "message":"德语"
+    "language_german": {
+        "message": "德语"
     },
-    "language_korean":{
-        "message":"韩语"
+    "language_korean": {
+        "message": "韩语"
+    },
+    "language_russian": {
+        "message": "俄语"
+    },
+    "language_french": {
+        "message": "法语"
     }
 }

@@ -22,6 +22,8 @@ const TranslatorService = {
         ["zh-CN", getI18nMessage("language_simplified_chinese")],
         ["zh-TW", getI18nMessage("language_traditional_chinese")],
         ["ja", getI18nMessage("language_japanese")],
+        ["ru", getI18nMessage("language_russian")],
+        ["fr", getI18nMessage("language_french")],
         ["de", getI18nMessage("language_german")],
         ["ko", getI18nMessage("language_korean")],
     ]),
@@ -31,7 +33,7 @@ const TranslatorService = {
         if (aMap.has(code)) {
             return aMap.get(code);
         }
-        console.assert(this.LANGUAGE_CODE_MAP.has(code), "unsupport language code")
+        console.assert(this.LANGUAGE_CODE_MAP.has(code), "unsupported language code")
         return code;
     },
     "google": {
@@ -170,12 +172,13 @@ const TranslatorService = {
     ,
     "baidu": {
         host: "http://fanyi.baidu.com",
-        //不同翻译站点提供的语言代码会有所不同，需要映射到统一的语言代码
+        //不同翻译站点提供（支持）的语言代码会有所不同，需要映射翻译平台对应的语言代码
         LANGUAGE_CODE_MAP_BAIDU: new Map([
             ["zh-CN", "zh"],
             ["zh-TW", "cht"],
             ["ja", "jp"],
             ["ko", "kor"],
+            ["fr", "fra"],
         ]),
         getTokenAndGtk: function(html) {
             //http://fanyi.baidu.com

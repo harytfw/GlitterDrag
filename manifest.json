@@ -43,7 +43,7 @@
 
         "js": [
             "common.js",
-            "content_scripts/translatorservice.js",
+            "translatorservice.js",
             "content_scripts/ui.js",
             "content_scripts/content_script.js"
         ]

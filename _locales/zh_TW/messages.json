@@ -641,8 +641,8 @@
         "message": "",
         "description": ""
     },
-    "panel_Cancel":{
-        "message":""
+    "panel_Cancel": {
+        "message": ""
     },
     "elem_Translator": {
         "message": ""
@@ -665,22 +665,28 @@
     "provider_google": {
         "message": ""
     },
-    "language_english":{
-        "message":""
+    "language_english": {
+        "message": ""
     },
-    "language_simplified_chinese":{
-        "message":""
+    "language_simplified_chinese": {
+        "message": ""
     },
-    "language_traditional_chinese":{
-        "message":""
+    "language_traditional_chinese": {
+        "message": ""
     },
-    "language_japanese":{
-        "message":""
+    "language_japanese": {
+        "message": ""
     },
-    "language_german":{
-        "message":""
+    "language_german": {
+        "message": ""
     },
-    "language_korean":{
-        "message":""
+    "language_korean": {
+        "message": ""
+    },
+    "language_russian": {
+        "message": ""
+    },
+    "language_french": {
+        "message": ""
     }
 }

@@ -624,63 +624,69 @@
     },
     "elem_ImageReferrer": {
         "message": "Append referrer when download iamge",
-        "description":""
+        "description": ""
     },
-    "elem_EnableLockScrollbar":{
-        "message":"Lock scrollbar when dragging",
-        "description":""
+    "elem_EnableLockScrollbar": {
+        "message": "Lock scrollbar when dragging",
+        "description": ""
     },
-    "elem_PanelTips":{
-        "message":"Panel Tips",
-        "description":""
+    "elem_PanelTips": {
+        "message": "Panel Tips",
+        "description": ""
     },
-    "elem_PanelIcon":{
-        "message":"Panel Icon",
-        "description":""
+    "elem_PanelIcon": {
+        "message": "Panel Icon",
+        "description": ""
     },
-    "panel_Cancel":{
-        "message":"Cancel"
+    "panel_Cancel": {
+        "message": "Cancel"
     },
-    "elem_UpdateBaiduData":{
-        "message":"Update Baidu Data"
+    "elem_UpdateBaiduData": {
+        "message": "Update Baidu Data"
     },
-    "elem_Translator":{
-        "message":"Translator"
+    "elem_Translator": {
+        "message": "Translator"
     },
-    "elem_UpdateBaiduWarning":{
-        "message":"The extension wants access some data from Baidu Translation. Click button to accept"
+    "elem_UpdateBaiduWarning": {
+        "message": "The extension wants access some data from Baidu Translation. Click button to accept"
     },
-    "elem_UpdateBaiduSuccess":{
-        "message":"Update Success"
+    "elem_UpdateBaiduSuccess": {
+        "message": "Update Success"
     },
-    "translator_Provider":{
-        "message":"Provider"
+    "translator_Provider": {
+        "message": "Provider"
     },
-    "provider_baidu":{
-        "message":"Baidu"
+    "provider_baidu": {
+        "message": "Baidu"
     },
-    "provider_google":{
-        "message":"Google"
+    "provider_google": {
+        "message": "Google"
     },
-    "language_auto":{
-        "message":"Auto"
+    "language_auto": {
+        "message": "Auto"
     },
-    "language_english":{
-        "message":"English"
+    "language_english": {
+        "message": "English"
     },
-    "language_simplified_chinese":{
-        "message":"Chinese (S)"
+    "language_simplified_chinese": {
+        "message": "Chinese (S)"
     },
-    "language_traditional_chinese":{
-        "message":"Chinese (T)"
+    "language_traditional_chinese": {
+        "message": "Chinese (T)"
     },
-    "language_japanese":{
-        "message":"Japanese"
+    "language_japanese": {
+        "message": "Japanese"
     },
-    "language_german":{
-        "message":"German"
+    "language_german": {
+        "message": "German"
     },
-    "language_korean":{
-        "message":"Korean"
+    "language_korean": {
+        "message": "Korean"
+    },
+    "language_russian": {
+        "message": "Russian"
+    },
+    "language_french": {
+        "message": "French"
     }
 }
