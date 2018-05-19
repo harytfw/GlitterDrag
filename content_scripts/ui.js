@@ -466,11 +466,13 @@ class Panel extends UIClass {
         super.place_fix(x, y);
     }
     mount() {
+        super.mount();
         if (!this.updateFlag) {
             this.updateFlag = true;
-            this.update();
+            setTimeout(() => {//delay drawing icon
+                this.update();
+            }, 80);
         }
-        super.mount();
     }
 }
 
