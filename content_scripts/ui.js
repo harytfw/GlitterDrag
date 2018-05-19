@@ -1,3 +1,5 @@
+/* global translatePrompt:false */
+
 class BaseUIClass {
     constructor(node = document.body) {
         this.node = node;
@@ -24,7 +26,11 @@ class BaseUIClass {
 
     initContent(data) {
         if (typeof data === "string") {
-            this.node.innerHTML = data;
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data, "text/html");
+            while (doc.body.firstElementChild instanceof HTMLElement) {
+                this.node.appendChild(doc.body.firstElementChild);
+            }
         }
         else if (data instanceof Node) {
             this.node.appendChild(data);
@@ -126,8 +132,7 @@ class UIClass extends BaseUIClass {
 
 }
 
-
-class Prompt extends UIClass {
+class Prompt extends UIClass { // eslint-disable-line no-unused-vars
     constructor() {
         super("GDPrompt");
         this.text = new UIClass();
@@ -161,7 +166,7 @@ class Prompt extends UIClass {
 }
 
 
-class Indicator extends UIClass {
+class Indicator extends UIClass { // eslint-disable-line no-unused-vars
     constructor() {
         super("GDIndicator");
     }
@@ -207,61 +212,6 @@ const ICONS = {
     "BAN": "GD-fa-ban",
     "CUSTOM": "GD-fa-custom"
 }
-const PANEL_HTML_CONTENT = `
-<table id="GDPanel">
-    <tr id="GDHeader">
-        <th colspan=3>
-            动作
-        </th>
-    </tr>
-    <tr class="GDLabel" id="GDLabel-text">
-        <td class="GDLabel-content" colspan=3><span>文本：</span><span class="GDPanel-content">中国最强</span></td>
-    </tr>
-    <tr class="GDRow" id="GDRow-text">
-        <td class="GDCell" align="center">
-            <i />
-        </td>
-        <td class="GDCell" align="center">
-            <i />
-        </td>
-        <td class="GDCell" align="center">
-            <i />
-        </td>
-    </tr>
-    <tr class="GDLabel" id="GDLabel-link">
-        <td class="GDLabel-content" colspan=3><span >链接：</span><span class="GDPanel-content"></span></td>
-    <tr class="GDRow" id="GDRow-link">
-        <td class="GDCell" align="center">
-            <i />
-        </td>
-        <td class="GDCell" align="center">
-            <i />
-        </td>
-        <td class="GDCell" align="center">
-            <i />
-        </td>
-    </tr>
-    <tr class="GDLabel" id="GDLabel-image">
-        <td class="GDLabel-content" colspan=3><span>图片：</span><span class="GDPanel-content"></span></td>
-    </tr>
-    <tr class="GDRow" id="GDRow-image">
-        <td class="GDCell" align="center">
-            <i />
-        </td>
-        <td class="GDCell" align="center">
-            <i />
-        </td>
-        <td class="GDCell" align="center">
-            <i />
-        </td>
-    </tr>
-    <tr class="GDRow" id="GDFooter">
-        <td class="GDCell" id="GDCell-ban" colspan=2">
-        <i class="${ICONS.BAN}" aria-hidden="true"></i>
-        </td>
-    </tr>
-    
-</table>`;
 
 const PANEL_HTML = `
         <div id='GDPanelHeader'></div>
@@ -282,7 +232,7 @@ const PANEL_HTML = `
         <div id='GDPanelGrid9' class='GDPanelGrid GDPanelImageGrid'></div>
         <div id='GDPanelFooter' class='GDPanelGrid GD-fa ${ICONS.BAN}' ></div>
 `
-class Panel extends UIClass {
+class Panel extends UIClass { //eslint-disable-line no-unused-vars
     //TODO:内容长度自动裁剪
     //TODO:样式美观
     //TODO:完善图标自定义功能
@@ -305,14 +255,16 @@ class Panel extends UIClass {
         this.imageLink = "";
         this.actionType = null;
 
-        this.updateFlag = false;
+        this.updatedFlag = false;
     }
     ondragover(e) {
         if (e.target.classList.contains("GDPanelGrid") && this.lastdragovertarget != e.target) {
             this.lastdragovertarget && this.lastdragovertarget.classList.remove("GDPanelGridHover");
             this.lastdragovertarget = e.target;
             this.lastdragovertarget.classList.add("GDPanelGridHover");
-            this.updateHeader(e);
+            if (this.updatedFlag) {
+                this.updateHeader(e);
+            }
         }
     }
 
@@ -402,6 +354,7 @@ class Panel extends UIClass {
         }
         const setting = bgConfig[e.target.dataset["key"]][e.target.dataset["index"]];
         const tips = setting["panel_tips"];
+        // eslint-disable-next-line 
         if (tips !== "") this.header.textContent = translatePrompt(tips, setting);
         else this.header.textContent = translatePrompt("%g-%a", setting);
 
@@ -467,10 +420,10 @@ class Panel extends UIClass {
     }
     mount() {
         super.mount();
-        if (!this.updateFlag) {
-            this.updateFlag = true;
-            setTimeout(() => {//delay drawing icon
+        if (!this.updatedFlag) {
+            setTimeout(() => { //delay drawing icon
                 this.update();
+                this.updatedFlag = true;
             }, 80);
         }
     }
@@ -507,7 +460,7 @@ const TRANSLATOR_HTML = `
   <div id="GDProvider">
   </div>
  `
-class Translator extends UIClass {
+class Translator extends UIClass { //eslint-disable-line no-unused-vars
     constructor() {
         super("GDDict");
 

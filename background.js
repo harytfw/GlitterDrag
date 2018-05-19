@@ -635,7 +635,6 @@ class ExecutorClass {
 }
 
 var executor = new ExecutorClass();
-// var config = new ConfigClass();
 
 // config.load()
 
@@ -695,6 +694,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
         console.info("upgrade v1.55.0");
         for (const aKey of ["cmdPanel_textAction", "cmdPanel_linkAction", "cmdPanel_imageAction"]) {
             if (aKey in all) {
+                // eslint-disable-next-line no-unused-vars
                 const [a, b] = aKey.split("_");
                 all["Panel_" + b] = all[aKey];
                 await browser.storage.local.remove(aKey);

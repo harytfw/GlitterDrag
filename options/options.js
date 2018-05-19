@@ -1,3 +1,5 @@
+/* global ENGINES:false */
+
 var browserMajorVersion = 52;
 browser.runtime.getBrowserInfo().then(info => {
     browserMajorVersion = info.version.split(".")[0];
@@ -6,7 +8,7 @@ browser.runtime.getBrowserInfo().then(info => {
     // browserMajorVersion = 56;
 });
 
-window.addEventListener("beforeunload", e => {
+window.addEventListener("beforeunload", () => {
     LStorage.set({
         "version": browser.runtime.getManifest().version
     });
@@ -282,7 +284,7 @@ class ActionsWrapper {
         }
     }
 
-    async onupdate(e) {
+    async onupdate() {
 
         const engines = (await LStorage.get("Engines"))["Engines"];
         const options = Array.from(engines, (obj) => {
@@ -757,7 +759,7 @@ class ActionsView {
                 break
 
             case commons.ACT_TRANS:
-                hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".download-text",".copy-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
+                hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".download-text", ".copy-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
                 break;
             case commons.ACT_FIND:
                 hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes", ".copy-text");
@@ -861,7 +863,7 @@ class NewActionsWrapper {
             return this.actionType;
         });
 
-        this.parent.addEventListener("change", async (e) => {
+        this.parent.addEventListener("change", async () => {
             let res = (await LStorage.get(this.actionsKeyName));
             res[this.actionsKeyName][this.actionType][this.direction] = this.category.setting;
             res[this.controlKeyName] = (await LStorage.get(this.controlKeyName))[this.controlKeyName];
@@ -1008,7 +1010,7 @@ class PanelWrapper {
             this.dontsave = false;
         });
     }
-    onchange(e) {
+    onchange() {
         if (!this.dontsave) {
             //先获取再保存
             $D("Save panel setting：");
@@ -1046,7 +1048,7 @@ class downloadWrapper {
             eventUtil.attachEventS("#showDefaultDownloadDirectory", () => {
                 browser.downloads.showDefaultFolder();
             })
-            eventUtil.attachEventS("#savebtnOnDownloadDirectories", (e) => {
+            eventUtil.attachEventS("#savebtnOnDownloadDirectories", () => {
                 document.querySelectorAll(".directory-entry>input:nth-child(2)").forEach((el, index) => {
                     this.directories[index] = el.value;
                 });
@@ -1070,7 +1072,7 @@ class downloadWrapper {
     onChange() {
         $E("#SavebtnOnDownloadDirectories").removeAttribute("disabled");
     }
-    onSaveBtnClick(event) {
+    onSaveBtnClick() {
         // const index = event.target.getAttribute("index");
         // this.directories[index] = event.target.previousElementSibling.value;
         // config.set("downloadDirectories", this.directories);

@@ -12,16 +12,19 @@
         "eslint:recommended"
     ],
     "globals": {
+        "DOMRect": false,
         "commons": false,
         "getI18nMessage": false,
         "checkDragTargetType": false,
-        "DEFAULT_CONFIG":false,
-        "eventUtil":false,
-        "typeUtil":false,
-        "$E":false,
-        "$A":false,
-        "$H":false,
-        "$D":false
+        "DEFAULT_CONFIG": false,
+        "bgConfig": false,
+        "eventUtil": false,
+        "typeUtil": false,
+        "TranslatorService": false,
+        "$E": false,
+        "$A": false,
+        "$H": false,
+        "$D": false
     },
     "rules": {
         "no-console": 0,
@@ -32,9 +35,9 @@
         "constructor-super": "warn",
         "valid-typeof": "warn",
         "arrow-spacing": ["warn"],
-        "no-unused-vars": ["warn", { "vars": "all", "args": "all" } ],
+        "no-unused-vars": ["warn", { "vars": "all", "args": "all" }],
         "no-proto": ["error"],
         "prefer-arrow-callback": ["warn"],
         "prefer-spread": ["warn"]
-     }
+    }
 }

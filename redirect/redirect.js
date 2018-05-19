@@ -1,6 +1,3 @@
-function info(text) {
-    document.querySelector("#info").textContent = text;
-}
 
 function startAnimation() {
     uploading.style.visibility = "visible";

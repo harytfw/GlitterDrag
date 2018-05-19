@@ -38,22 +38,31 @@ async function showDebugTab() {
     ];
     const t = document.querySelector("#tab-debug table");
     for (const a of table) {
-        const elem = document.createElement("tr");
-        elem.innerHTML = `<td>${a}</td><td>${typeUtil.seemAsURL(a)}</td><td>${typeUtil.fixupSchemer(a)}</td>`
-        t.appendChild(elem);
+        const tr = document.createElement("tr");
+        const _td = document.createElement("td");
+        let td = _td.cloneNode();
+        td.textContent = a;
+        tr.appendChild(td);
+        td = _td.cloneNode();
+        td.textContent = typeUtil.seemAsURL(a);
+        tr.appendChild(td);
+        td = _td.cloneNode();
+        td.textContent = typeUtil.fixupSchemer(a);
+        tr.appendChild(td)
+        t.appendChild(tr);
     }
     document.querySelector("#_debug").style.display = "initial";
     // document.querySelector("#_debug").click();
     document.querySelector("#reload").addEventListener("click", () => {
-            browser.runtime.reload();
-        })
-        // $E("#debug").addEventListener("change", e => {
-        //     LStorage.set({ "debug": e.target.checked });
-        //     location.reload();
-        // });
-        // LStorage.get("debug").then(setting => {
-        //     $E("#debug").checked = setting["debug"];
-        // });
+        browser.runtime.reload();
+    })
+    // $E("#debug").addEventListener("change", e => {
+    //     LStorage.set({ "debug": e.target.checked });
+    //     location.reload();
+    // });
+    // LStorage.get("debug").then(setting => {
+    //     $E("#debug").checked = setting["debug"];
+    // });
     document.addEventListener("keypress", (evt) => {
         const char = evt.key.charAt(0);
         if (char >= "1" && char <= "9" && evt.target.nodeName !== "INPUT" && evt.target.nodeName !== "TEXTAREA") {
@@ -65,7 +74,7 @@ async function showDebugTab() {
             }
         }
     });
-    document.querySelector("#tab-debug").addEventListener("dragstart", (e) => {
+    document.querySelector("#tab-debug").addEventListener("dragstart", () => {
         // e.stopPropagation();
         // e.preventDefault();
     })

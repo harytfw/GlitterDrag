@@ -47,6 +47,7 @@ const TranslatorService = {
             return PROTOCOL + "translate.google.com";
         },
         getGoogleTK: function(str) {
+            /* eslint-disable */
             function b(a, b) {
                 for (var d = 0; d < b.length - 2; d += 3) {
                     var c = b.charAt(d + 2),
@@ -71,6 +72,7 @@ const TranslatorService = {
                 return a.toString() + "." + (a ^ h)
             }
             return tk(str);
+            /* eslint-enable */
         },
 
         queryTrans: async function(src = "", tar = "", query = "") {
@@ -182,7 +184,7 @@ const TranslatorService = {
         ]),
         getTokenAndGtk: function(html) {
             //http://fanyi.baidu.com
-            let gtk = html.match("window\.gtk = '(.+?)';")[1]
+            let gtk = html.match("window.gtk = '(.+?)';")[1]
             let token = html.match("token: '(.+?)',")[1];
             [gtk, token] = [gtk ? gtk : "", token ? token : ""];
             return [gtk, token]
@@ -279,8 +281,6 @@ const TranslatorService = {
             }
             else { // 单独的单词
                 const trans = [];
-                let data = null;
-
                 for (const x of src.dict_result.simple_means.symbols[0].parts) {
                     trans.push({ part: x.part, meaning: x.means });
                 }
@@ -306,6 +306,7 @@ const TranslatorService = {
             }
         },
         getSign: function(r, gtk) {
+            /* eslint-disable */
             //来自百度翻译
             function n(r, o) {
                 for (var t = 0; t < o.length - 2; t += 3) {
@@ -345,10 +346,12 @@ const TranslatorService = {
                 0 > p && (p = (2147483647 & p) + 2147483648),
                 p %= 1000000,
                 p.toString() + '.' + (p ^ m)
+            /* eslint-enable */
         },
 
 
     },
+    /* eslint-disable */
     "bing": {
         host: [],
         audioHost: [],
@@ -370,5 +373,6 @@ const TranslatorService = {
         queryHeader: {},
         queryTrans: function(sourceLang, destLang) {}
     },
+    /* eslint-enable */
 }
 Object.freeze(TranslatorService);

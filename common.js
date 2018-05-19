@@ -15,8 +15,8 @@ const commons = {
     TYPE_ELEM_A: 3, //超链接，a元素
     TYPE_ELEM_A_IMG: 6, //a元素里面包含图片
     TYPE_ELEM_IMG: 4, //图片
-    TYPE_BOOKMARK:7, //书签
-    
+    TYPE_BOOKMARK: 7, //书签
+
     textAction: "textAction",
     linkAction: "linkAction",
     imageAction: "imageAction",
@@ -133,6 +133,7 @@ const typeUtil = {
         else if (t === commons.TYPE_ELEM_IMG) return "imageAction";
         else alert("Not Support Type!");
     },
+    // eslint-disable-next-line no-unused-vars
     checkDragTargetType: (selection, textSelection, imageLink, target) => {
         if (!selection && selection.length === 0) {
             return commons.TYPE_ELEM
@@ -297,8 +298,9 @@ const $A = (s = "", context = document) => {
     //     console.trace("No Result: document.querySelectorAll", s)
     // }
     return r;
-}
 
+}
+// eslint-disable-next-line no-unused-vars
 const $H = (ss = [], value = "none", context = document) => {
     for (const s of ss) {
         const tt = $A(s, context);
@@ -314,11 +316,14 @@ if (window.top === window && browser.runtime.getBackgroundPage) {
         DEBUG_FLAG = _.debug;
     });
 }
+
+// eslint-disable-next-line no-unused-vars
 const $D = (message, ...obj) => {
     if (DEBUG_FLAG) console.log(message, ...obj);
     // browser.runtime.sendMessage("");
 }
 
+// eslint-disable-next-line no-unused-vars
 const getI18nMessage = (strName = "", placeholders) => {
     const message = browser.i18n.getMessage(strName, placeholders);
     if (message === "") {
@@ -338,6 +343,7 @@ const decodeBinaryData = (src = "")=>{
 }
 */
 
+// eslint-disable-next-line no-unused-vars
 const testCheckDragTargetType = () => {
     const assert = console.assert;
     const fn = typeUtil.checkDragTargetType;
@@ -380,6 +386,7 @@ const testCheckDragTargetType = () => {
 // testCheckDragTargetType()
 
 
+// eslint-disable-next-line no-unused-vars
 const ENGINES = [{
     groupName: "General",
     "Google Search": " https://www.google.com/search?q=%s",

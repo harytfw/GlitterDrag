@@ -1,7 +1,7 @@
-//TODO: 处理拖放区域为 input@type=text
+/* global Translator:false, Prompt:false, Panel:false */
+
 "use strict";
 console.info("Glitter Drag: Content script is injected by browser successfully");
-const isRunInOptionsContext = browser.runtime.getBackgroundPage !== undefined ? true : false;
 const IS_TOP_WINDOW = window.top === window;
 const FIREFOX_VERSION = navigator.userAgent.match(/Firefox\/(\d\d)\.\d/)[1]; //wrong method
 
@@ -193,6 +193,7 @@ class DragClass {
             this.translatorBox = RemoteBuilder("translatorBox", ["mount", "remove", "place", "translate"]);
         }
 
+        // eslint-disable-next-line no-undef
         this.indicatorBox = new Indicator();
 
         this.dragenter4panel = this.dragenter4panel.bind(this);
@@ -401,7 +402,7 @@ class DragClass {
         // }
         // console.info(`GlitterDrag: drag start, ${this.actionType} ${this.targetType}`);
     }
-    dragend(evt) {
+    dragend() {
         clearTimeout(this.timeoutId);
         // this.direction = this.getDirection();
         // what should we do if user release ctrl or shift key while dragging?
@@ -424,9 +425,10 @@ class DragClass {
                 if (action.act_name === commons.ACT_DL && [commons.DOWNLOAD_IMAGE, commons.DOWNLOAD_LINK].includes(action.download_type)) {
 
                     let _fetch = null;
+                    // eslint-disable-next-line no-undef
                     if (FIREFOX_VERSION >= 58 && content.fetch) {
                         //see https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Content_scripts#XHR_and_Fetch
-                        _fetch = content.fetch;
+                        _fetch = content.fetch; // eslint-disable-line no-undef
                     }
                     else {
                         _fetch = fetch;
@@ -998,14 +1000,6 @@ class DragClass {
 
 }
 
-function onConnect(port) {
-    if (port.name === "sendToContentScript") {
-        port.onMessage.addListener(CSlistener);
-    }
-}
-browser.runtime.onConnect.addListener(onConnect);
-
-
 let bgConfig = {};
 let maindrag = null;
 
@@ -1046,7 +1040,7 @@ const condition = true;
 if (condition === true) { //a storage bug that reported in #65,so using another way to load configuration.
     browser.storage.local.get().then(config => {
         console.info("GlitterDrag: loaded config from storage");
-        bgConfig = config;
+        bgConfig = config;// eslint-disable-line no-global-assign
         try {
             maindrag = new DragClass(document);
         }
@@ -1066,7 +1060,7 @@ else {
 
     bgPort.onMessage.addListener(response => {
         console.info("Glitter Drag: Receive response from background");
-        bgConfig = response;
+        bgConfig = response;// eslint-disable-line no-global-assign
         document.addEventListener('readystatechange', onReadyStateChange, false);
         document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
         doInit();
@@ -1075,11 +1069,10 @@ else {
 
 window.addEventListener("beforeunload", () => {
     browser.storage.onChanged.removeListener(onStorageChange);
-    browser.runtime.onConnect.removeListener(onConnect);
 });
 
 
-
+// eslint-disable-next-line no-unused-vars
 function checkInit() {
     if (!maindrag || !bgConfig) {
         if (confirm("Glitter Drag: Initializing extension faill, please report to the author of Glitter Drag")) {
