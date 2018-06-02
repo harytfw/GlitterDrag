@@ -1,6 +1,13 @@
 const TAB_ID_NONE = browser.tabs.TAB_ID_NONE;
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
 const DEFAULT_SEARCH_ENGINE = browser.i18n.getMessage("default_search_url");
+var browserMajorVersion = 52;
+browser.runtime.getBrowserInfo().then(info => {
+    browserMajorVersion = info.version.split(".")[0];
+    //$D("Browser Info:", info);
+    browserMajorVersion = parseInt(browserMajorVersion);
+    // browserMajorVersion = 56;
+});
 
 
 function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 3) {
@@ -407,10 +414,20 @@ class ExecutorClass {
                     this.previousTabId = tab.id;
 
                     if (this.action.tab_pos === commons.TAB_CUR) return browser.tabs.update(tab.id, { url });
-                    else return browser.tabs
-                        .create({ active: Boolean(this.action.tab_active), index: this.getTabIndex(tabs.length, tab.index), url, openerTabId: tab.id })
-                        .then(newTab => onCreateTab(newTab, tab))
-                        .catch(onError);
+                    else {
+                        const option = {
+                            active: Boolean(this.action.tab_active),
+                            index: this.getTabIndex(tabs.length, tab.index),
+                            url,
+                        };
+                        if (browserMajorVersion >= 57) {
+                            option["openerTabId"] = tab.id;
+                        }
+                        return browser.tabs
+                            .create(option)
+                            .then(newTab => onCreateTab(newTab, tab))
+                            .catch(onError);
+                    }
                 }
             }
             return Promise.reject("No active tab was found");
