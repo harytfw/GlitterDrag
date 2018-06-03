@@ -633,8 +633,8 @@ class ExecutorClass {
         else {
             const _date = new Date;
             const year = _date.getFullYear();
-            const month = _date.getMonth() + 1;
-            const date = _date.getDate();
+            const month = ((_date.getMonth() + 1) + '').padStart(2, '0');
+            const date = (_date.getDate() + '').padStart(2, '0');
             const today = year + '-' + month + '-' + date;
             const host = this.data.site;
             const pagetitle = this.data.pagetitle;

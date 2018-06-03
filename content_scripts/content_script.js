@@ -356,8 +356,8 @@ class DragClass {
             const filename = '${sended.imageLink.match(commons.fileExtension)[0]}';
             const host =  location.hostname;
             const year = _today.getFullYear();
-            const month = _today.getMonth()+1;
-            const date = _today.getDate();
+            const month = ((_today.getMonth()+1)+'').padStart(2,'0');
+            const date = (_today.getDate()+'').padStart(2,'0');
             const today = year + '-' + month + '-' + date;
             const action = ${JSON.stringify(currentAction)};
             const result = (${code})();
