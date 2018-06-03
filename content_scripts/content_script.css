@@ -317,21 +317,23 @@
 }
 
 .GDPanelGrid {
-    /*used for drawing icon*/
-    font-family: GDFontAwesome !important;
-    /*
-        used for drawing icon, the unit must be px
-        do not use literal font-size
-    */
-    --font-size: 48px; 
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    font: normal normal normal 14px/1 GDFontAwesome !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    /* the size of normal icon */
+    font-size: 2.4em !important;
     background-color: rgba(233, 233, 233) !important;
     border-radius: 3px !important;
     border: 1px solid #777777 !important;
     box-shadow: 0px 0px 1px 1px rgb(222, 222, 222) !important;
     place-self: stretch !important;
-    background-position: center;
-    /* the size of icon*/
-    background-size: 2.5em 2.5em;
+    background-position: center !important;
+    /* the size of image icon*/
+    background-size: 80% 80% !important;
     background-repeat: no-repeat !important;
 }
 

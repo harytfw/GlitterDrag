@@ -209,6 +209,7 @@ const ICONS = {
     "ACT_SEARCH": "GD-fa-search",
     "ACT_COPY": "GD-fa-clipboard",
     "ACT_FIND": "GD-fa-find",
+    "ACT_NONE": "GD-fa-ban",
     "BAN": "GD-fa-ban",
     "CUSTOM": "GD-fa-custom"
 }
@@ -278,7 +279,7 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
             ctx.font = `${CSS.getPropertyValue('--font-size')} ${CSS.fontFamily}`;
         }
         //remove the unit
-        const val = 48; //the size of icon;
+        const val = 48; //the size of canvas;
         const canvas = ctx.canvas;
         //reset width and height
         canvas.width = canvas.height = val;
@@ -302,13 +303,18 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
     update() {
         const that = this;
 
-        function getIcon(grid) {
-            const CSS = window.getComputedStyle(grid);
-            let char = CSS.getPropertyValue('--icon');
-            char = char.match(/\s*\\([\w\d]+)\s*/i)[1];
-            char = String.fromCharCode(parseInt(char, 16));
-            that.drawingIcon(ctx, char, CSS);
+        // eslint-disable-next-line no-unused-vars
+        function _getIcon(grid) {
+            that.drawingIcon(ctx, getIconCode(grid), CSS);
             return canvas.toDataURL();
+        }
+
+        function getIconCode(grid) {
+            const CSS = window.getComputedStyle(grid);
+            let code = CSS.getPropertyValue('--icon');
+            code = code.match(/\s*\\([\w\d]+)\s*/i)[1];
+            code = String.fromCharCode(parseInt(code, 16));
+            return code;
         }
 
         const map = {
@@ -336,14 +342,21 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
                 if (icon === "") {
                     grid.classList.add("GD-fa");
                     grid.classList.add(ICONS[act_name]);
-                    icon = getIcon(grid);
+                    // icon = getIcon(grid);
+                    const span = document.createElement('span');
+                    span.textContent = getIconCode(grid);
+                    grid.appendChild(span);
                 }
-                grid.style.backgroundImage = `url(${icon})`;
+                else {
+                    grid.style.backgroundImage = `url(${icon})`;
+                }
                 index++;
             }
         }
         const grid = this.$E('#GDPanelFooter');
-        grid.style.backgroundImage = `url(${getIcon(grid)})`;
+        const span = document.createElement('span');
+        span.textContent = getIconCode(grid);
+        grid.appendChild(span);
     }
 
 
@@ -368,48 +381,39 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
         this.selection = selection;
         this.textSelection = textSelection;
         this.imageLink = imageLink;
-        const that = this;
-
-        function changeDisplay(s = [], value) {
-            for (const ss of s) {
-                for (const el of that.$A(ss)) {
-                    el.style.setProperty("display", value, "important");
-                }
-            }
-        }
 
         this.node.classList.remove("GDPanelOnlyText", "GDPanelOnlyImage", "GDPanelTextAndLink", "GDPanelLinkAndImage");
 
-        changeDisplay([".GDPanelTextGrid,[id^=GDPanelText]", ".GDPanelLinkGrid,[id^=GDPanelLink]", ".GDPanelImageGrid,[id^=GDPanelImage]"], "none");
+        $H([".GDPanelTextGrid,[id^=GDPanelText]", ".GDPanelLinkGrid,[id^=GDPanelLink]", ".GDPanelImageGrid,[id^=GDPanelImage]"], "none", this.node);
         switch (actionkind) {
             case commons.textAction:
                 this.node.classList.add("GDPanelOnlyText");
                 this.$E("#GDPanelTextContent").textContent = trim(textSelection);
-                changeDisplay([".GDPanelTextGrid,[id^=GDPanelText]"], "");
+                $H([".GDPanelTextGrid,[id^=GDPanelText]"], "", this.node);
                 break;
             case commons.linkAction:
                 if (bgConfig.alwaysImage) {
                     this.node.classList.add("GDPanelOnlyImage");
                     this.$E("#GDPanelImageContent").textContent = trim(imageLink);
-                    changeDisplay([".GDPanelImageGrid,[id^=GDPanelImage]"], "");
+                    $H([".GDPanelImageGrid,[id^=GDPanelImage]"], "", this.node);
                 }
                 else if (targetkind === commons.TYPE_ELEM_A_IMG) {
                     this.node.classList.add("GDPanelLinkAndImage");
                     this.$E("#GDPanelImageContent").textContent = trim(imageLink);
-                    changeDisplay([".GDPanelLinkGrid,[id^=GDPanelLink]", ".GDPanelImageGrid,[id^=GDPanelImage]"], "");
+                    $H([".GDPanelLinkGrid,[id^=GDPanelLink]", ".GDPanelImageGrid,[id^=GDPanelImage]"], "", this.node);
                     this.$E("#GDPanelLinkContent").textContent = trim(selection);
                 }
                 else {
                     this.node.classList.add("GDPanelTextAndLink");
                     this.$E("#GDPanelTextContent").textContent = trim(textSelection);
-                    changeDisplay([".GDPanelTextGrid,[id^=GDPanelText]", ".GDPanelLinkGrid,[id^=GDPanelLink]"], "");
+                    $H([".GDPanelTextGrid,[id^=GDPanelText]", ".GDPanelLinkGrid,[id^=GDPanelLink]"], "", this.node);
                     this.$E("#GDPanelLinkContent").textContent = trim(selection);
                 }
                 break;
             case commons.imageAction:
                 this.node.classList.add("GDPanelOnlyImage");
                 this.$E("#GDPanelImageContent").textContent = trim(imageLink);
-                changeDisplay([".GDPanelImageGrid,[id^=GDPanelImage]"], "")
+                $H([".GDPanelImageGrid,[id^=GDPanelImage]"], "", this.node);
                 break;
             default:
                 break;
@@ -421,10 +425,8 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
     mount() {
         super.mount();
         if (!this.updatedFlag) {
-            setTimeout(() => { //delay drawing icon
-                this.update();
-                this.updatedFlag = true;
-            }, 80);
+            this.updatedFlag = true;
+            this.update();
         }
     }
 }

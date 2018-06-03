@@ -301,7 +301,7 @@ const $A = (s = "", context = document) => {
 
 }
 // eslint-disable-next-line no-unused-vars
-const $H = (ss = [], value = "none", context = document) => {
+const $H = (ss = [], value, context = document) => {
     for (const s of ss) {
         const tt = $A(s, context);
         for (const t of tt) {

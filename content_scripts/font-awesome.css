@@ -13,29 +13,27 @@
     font-style: normal;
 }
 
-
 .GD-fa-download {
-    /* 'icon' is used for draw icon, see 'drawingIcon' meathod in ui.js*/
-    --icon:\f019;
+    --icon: \f019;
 }
 
 .GD-fa-external-link {
-    --icon:\f35d;
+    --icon: \f35d;
 }
 
 .GD-fa-search {
-    --icon:\f002;
+    --icon: \f002;
 }
 
 .GD-fa-clipboard {
-    --icon:                     \f0c5                 ;
+    --icon: \f0c5;
 }
 
 .GD-fa-find {
-    --icon:\f002;
+    --icon: \f002;
     color: #ef0fff !important;
 }
 
 .GD-fa-ban {
-    --icon:\f05e;
+    --icon: \f05e;
 }
