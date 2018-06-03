@@ -650,7 +650,7 @@
     "elem_UpdateBaiduData": {
         "message": "更新百度数据"
     },
-    "elem_UpdateBaiduWarning": {
+    "elem_UpdateBaiduExplanation": {
         "message": "扩展需要获取您百度账号的一些数据(gtk和token)，才能使用百度翻译服务。这些数据仅仅用于调用百度翻译API，不作其他用途."
     },
     "elem_UpdateBaiduSuccess": {

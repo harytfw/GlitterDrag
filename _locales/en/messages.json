@@ -647,8 +647,8 @@
     "elem_Translator": {
         "message": "Translator"
     },
-    "elem_UpdateBaiduWarning": {
-        "message": "The extension wants access some data from Baidu Translation. Click button to accept"
+    "elem_UpdateBaiduExplanation": {
+        "message": "The extension wants to access some data from Baidu Translation. Click button to accept"
     },
     "elem_UpdateBaiduSuccess": {
         "message": "Update Success"
