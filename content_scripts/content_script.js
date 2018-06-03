@@ -1,10 +1,10 @@
-/* global Translator:false, Prompt:false, Panel:false */
+/* global Translator:false, Prompt:false, Panel:false, $log:false */
 
 "use strict";
 console.info("Glitter Drag: Content script is injected by browser successfully");
 const IS_TOP_WINDOW = window.top === window;
 const FIREFOX_VERSION = navigator.userAgent.match(/Firefox\/(\d\d)\.\d/)[1]; //wrong method
-
+const WE_UUID = browser.runtime.getURL('').match(/\/\/([\w-]+)\//i)[1];
 const MIME_TYPE = {
     ".gif": "image/gif",
     ".jpg": "image/jpeg",
@@ -131,6 +131,7 @@ function RemoteBuilder(name, exposeFunName = []) {
                 name,
                 fun,
                 argv,
+                uuid: WE_UUID
             }, "*");
         }.bind(null, name, fun);
     }
@@ -254,7 +255,9 @@ class DragClass {
         const name = event.data["name"],
             fun = event.data["fun"],
             argv = event.data["argv"];
-
+        const uuid = event.data["uuid"] || "";
+        // check uuid to prevent secure problem
+        if (uuid !== WE_UUID) { console.error("Wrong UUID"); return; }
         if (!name || !(name in this)) {
             return;
         }
@@ -1099,13 +1102,13 @@ browser.storage.onChanged.addListener(onStorageChange);
 const condition = true;
 if (condition === true) { //a storage bug that reported in #65,so using another way to load configuration.
     browser.storage.local.get().then(config => {
-        console.info("GlitterDrag: loaded config from storage");
+        console.info("Glitter Drag: loaded config from storage");
         bgConfig = config; // eslint-disable-line no-global-assign
         try {
             maindrag = new DragClass(document);
         }
         catch (error) {
-            console.error("GlitterDrag: Fail to initialize DragCLass");
+            console.error("Glitter Drag: Fail to initialize DragCLass");
             console.error(error);
         }
         document.addEventListener('readystatechange', onReadyStateChange, false);
