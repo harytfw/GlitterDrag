@@ -160,7 +160,10 @@ const GENERATE_DEFAULT_CONFIG = () => {
             recent_sourcelang: "auto",
             recent_targetlang: "auto",
         },
-        downloadDirectories: ["", "", "", "", "", "", "", ""],
+
+        downloadDirectories: ["", "${today}/", "${today}/${host}/", "", "", "", "", "",
+            "function(){\n    return `${host}/${today}/${filename}`\n}"
+        ],
         style: "",
         specialHosts: [], // ignore drag&drop detection on these hosts.
         allowExts: [".txt", ".jpg", ".jpeg", ".png"], // only allow the file with these extension names.

@@ -113,7 +113,7 @@ class ActionsWrapper {
 
                 d.appendChild(document.importNode(this.template4Direction.content, true))
             }
-
+            
             switch (subcontainer.className) {
                 case commons.textAction:
                     $H([".tab-pos", ".download-type", ".open-type", ".search-type", ".copy-type"], "none", subcontainer);
@@ -123,6 +123,7 @@ class ActionsWrapper {
                     break;
                 case commons.imageAction:
                     $H(["option[value=OPEN_TEXT]", "option[value=COPY_TEXT]", "option[value=SEARCH_TEXT]", "option[value=DOWNLOAD_TEXT]", "option[value=OPEN_IMAGE_LINK]", "option[value=SEARCH_IMAGE_LINK]", "option[value=DOWNLOAD_IMAGE_LINK]", "option[COPY_IMAGE_LINK]"], "none", subcontainer);
+                    $H([".download-directory option[value='8']"], "initial", subcontainer);
                     break;
                 default:
                     break;
@@ -701,6 +702,7 @@ class ActionsView {
             e.removeAttribute("disabled");
         });
         showTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".copy-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
+        $H([`.download-directory option[value='8']`], 'none', this.parent);
         switch (e.target.value) {
             case commons.ACT_NONE:
                 hideTR(".foreground", ".tab-pos", ".search-engine-select-group", ".search-engine-name", ".open-text", ".copy-text", ".download-text", ".download-saveas-yes", ".search-text", ".download-directory", ".search-onsite-yes");
@@ -740,6 +742,7 @@ class ActionsView {
                 }
                 else if (this.actionType === commons.imageAction) {
                     hideTR(".download-text");
+                    $H([`.download-directory option[value='8']`], '', this.parent);
                 }
                 else if (this.actionType === commons.textAction) {
                     hideTR(".download-type");
@@ -1049,7 +1052,7 @@ class downloadWrapper {
                 browser.downloads.showDefaultFolder();
             })
             eventUtil.attachEventS("#savebtnOnDownloadDirectories", () => {
-                document.querySelectorAll(".directory-entry>input:nth-child(2)").forEach((el, index) => {
+                document.querySelectorAll(".directory-entry>:nth-child(2)").forEach((el, index) => {
                     this.directories[index] = el.value;
                 });
                 LStorage.set({
@@ -1067,6 +1070,14 @@ class downloadWrapper {
                 tab.appendChild(cloned);
             }
 
+            const cloned = entry.cloneNode(true);
+            cloned.firstElementChild.value = getI18nMessage("CustomDirectory");
+            cloned.lastElementChild.remove();
+            const codearea = document.createElement("textarea");
+            codearea.id = ""
+            codearea.value = this.directories[8];
+            cloned.appendChild(codearea);
+            tab.appendChild(cloned);
         });
     }
     onChange() {

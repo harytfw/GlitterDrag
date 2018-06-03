@@ -691,5 +691,8 @@
     },
     "language_french": {
         "message": "法语"
+    },
+    "CustomDirectory": {
+        "message": "自定义目录"
     }
 }

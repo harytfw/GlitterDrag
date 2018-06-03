@@ -688,5 +688,8 @@
     },
     "language_french": {
         "message": ""
+    },
+    "CustomDirectory": {
+        "message": ""
     }
 }

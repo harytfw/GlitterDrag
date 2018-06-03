@@ -272,6 +272,19 @@ class DragClass {
     }
 
     post(extraOption = {}) {
+        const eventname = "recevier";
+
+        function listener(e) {
+            sended["downloadOption"] = {};
+            if (e.detail instanceof Object) {
+                Object.assign(sended.downloadOption, e.detail);
+            }
+            else {
+                sended.downloadOption["filename"] = e.detail;
+            }
+            window.removeEventListener(eventname, listener);
+            browser.runtime.sendMessage(sended);
+        }
         //sendMessage只能传递字符串化后（类似json）的数据
         //不能传递具体对象
         let sended = Object.assign({
@@ -285,11 +298,21 @@ class DragClass {
             fileInfo: null,
             imageData: null,
             bookmarks: null,
+            downloadOption: null,
+            pagetitle: document.title,
         }, extraOption);
 
-        // console.info(sended);
-
-        browser.runtime.sendMessage(sended);
+        const action = this.readCurrentAction();
+        const CUSTOM_CODE_ENTRY_INDEX = 8;
+        //TODO : more check
+        if (parseInt(action.download_directory) === CUSTOM_CODE_ENTRY_INDEX) {
+            const code = bgConfig.downloadDirectories[CUSTOM_CODE_ENTRY_INDEX];
+            window.addEventListener(eventname, listener);
+            this.injectCustomCode(eventname, code, action, sended);
+        }
+        else {
+            browser.runtime.sendMessage(sended);
+        }
     }
 
     postForBookmark(bookmarks) {
@@ -304,7 +327,44 @@ class DragClass {
             fileInfo: null,
             imageData: null,
             bookmarks,
+            downloadOption: null,
+            pagetitle: null
         })
+    }
+
+    injectCustomCode(eventname, code, currentAction, sended) {
+        code = code.replace(/\\n*/g, "\n");
+        const s = document.createElement("script");
+        const randomid = `GD-${Math.round(Math.random()*100)}`;
+        s.id = randomid;
+        s.text = `(function(){
+            const _id = "${randomid}";
+            const _today = new Date();
+            let _scope = window["_scope"];
+            if(!(_scope instanceof Object)){
+                _scope = window["_scope"]= {};
+                //initial variables used for persistence
+                _scope.index = 0;
+            }
+            else{
+                _scope.index++;
+            }
+
+            const index = (_scope.index+'').padStart(4,'0');
+            const pagetitle = document.title;
+            const url = '${sended.imageLink}';
+            const filename = '${sended.imageLink.match(commons.fileExtension)[0]}';
+            const host =  location.hostname;
+            const year = _today.getFullYear();
+            const month = _today.getMonth()+1;
+            const date = _today.getDate();
+            const today = year + '-' + month + '-' + date;
+            const action = ${JSON.stringify(currentAction)};
+            const result = (${code})();
+            window.dispatchEvent(new CustomEvent("${eventname}",{detail:result,bubbles:false}));
+            document.getElementById(_id).remove();
+        })()`;
+        document.body.appendChild(s);
     }
 
     cancel() {
@@ -1040,7 +1100,7 @@ const condition = true;
 if (condition === true) { //a storage bug that reported in #65,so using another way to load configuration.
     browser.storage.local.get().then(config => {
         console.info("GlitterDrag: loaded config from storage");
-        bgConfig = config;// eslint-disable-line no-global-assign
+        bgConfig = config; // eslint-disable-line no-global-assign
         try {
             maindrag = new DragClass(document);
         }
@@ -1060,7 +1120,7 @@ else {
 
     bgPort.onMessage.addListener(response => {
         console.info("Glitter Drag: Receive response from background");
-        bgConfig = response;// eslint-disable-line no-global-assign
+        bgConfig = response; // eslint-disable-line no-global-assign
         document.addEventListener('readystatechange', onReadyStateChange, false);
         document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
         doInit();

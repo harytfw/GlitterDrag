@@ -601,32 +601,55 @@ class ExecutorClass {
         for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
         return result;
     }
-    async download(url = "", filename = "") {
+    async download(url = "", aFilename = "") {
+
         let opt = {
             url,
             saveAs: this.action.download_saveas
         };
-        const directories = (await LStorage.get("downloadDirectories"))["downloadDirectories"];
         if (url.startsWith("blob:") && this.data.fileInfo) {
             this.lastDownloadObjectURL = url;
-            filename = this.data.fileInfo.name || "file.dat";
+            aFilename = this.data.fileInfo.name || "file.dat";
         }
         if (this.action.download_type !== commons.DOWNLOAD_TEXT) {
 
             let pathname = new URL(url).pathname;
             let parts = pathname.split("/");
-            if (parts[parts.length - 1] === "" && filename === "") {
+            if (parts[parts.length - 1] === "" && aFilename === "") {
                 //把文件名赋值为8个随机字符
                 //扩展名一定是html吗？
-                filename = this.randomString() + ".html";
+                aFilename = this.randomString() + ".html";
             }
-            else if (filename === "") {
-                filename = parts[parts.length - 1];
+            else if (aFilename === "") {
+                aFilename = parts[parts.length - 1];
             }
         }
-        opt.filename = directories[this.action.download_directory] + filename;
 
-        // console.log(opt.filename);
+        const CUSTOM_CODE_ENTRY_INDEX = 8;
+        if (parseInt(this.action.download_directory) === CUSTOM_CODE_ENTRY_INDEX) {
+            Object.assign(opt, this.data.downloadOption);
+            console.assert(typeof opt.filename === "string", "error type of downloadOption.filename");
+        }
+        else {
+            const _date = new Date;
+            const year = _date.getFullYear();
+            const month = _date.getMonth() + 1;
+            const date = _date.getDate();
+            const today = year + '-' + month + '-' + date;
+            const host = this.data.site;
+            const pagetitle = this.data.pagetitle;
+            const directories = (await LStorage.get("downloadDirectories"))["downloadDirectories"];
+            opt.filename = directories[this.action.download_directory]
+                .replace('${year}', year)
+                .replace('${month}', month)
+                .replace('${date}', date)
+                .replace('${today}', today)
+                .replace('${host}', host)
+                .replace('${pagetitle}', pagetitle);
+            //.replace('${filename}', aFilename);
+            opt.filename += aFilename;
+        }
+        //console.log(opt);
         return browser.downloads.download(opt).then(id => {
             this.lastDownloadItemID = id;
             return Promise.resolve();
