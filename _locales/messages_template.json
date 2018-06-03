@@ -5,7 +5,7 @@
     },
     "extensionName": {
         "message": "",
-        "description": ""
+        "description": "name of extension"
     },
     "browserActionTitle": {
         "message": "",
@@ -193,10 +193,6 @@
         "message": "",
         "description": "The tab opened in background."
     },
-    "OPEN_TEXT": {
-        "message": "",
-        "description": ""
-    },
     "OPEN_LINK": {
         "message": "",
         "description": ""
@@ -223,7 +219,7 @@
     },
     "SEARCH_IMAGE_LINK": {
         "message": "",
-        "description": ""
+        "description": "Search action"
     },
     "SEARCH_ONSITE_YES": {
         "message": "",
@@ -290,7 +286,7 @@
         "description": "tooltip on option"
     },
     "option_tooltip_search": {
-        "message": "，",
+        "message": "",
         "description": "tooltip on option"
     },
     "option_tooltip_open_type": {
@@ -321,13 +317,13 @@
         "message": "",
         "description": "tooltip on option"
     },
-    "search_name_tooltip": {
-        "message": "",
-        "description": "tooltip on Options - Search Template"
-    },
     "option_tooltip_download_saveas": {
         "message": "",
         "description": "tooltip on option"
+    },
+    "search_name_tooltip": {
+        "message": "",
+        "description": "tooltip on Options - Search Template"
     },
     "search_url_tooltip": {
         "message": "",
@@ -470,7 +466,6 @@
         "message": "",
         "description": "Element on Options page"
     },
-
     "elem_EnableTimeoutCancel": {
         "message": "",
         "description": "Element on Options page"
@@ -511,7 +506,7 @@
     },
     "elem_SettingDownloadDirectoryHelperText": {
         "message": "",
-        "description": ""
+        "description": "Element on Options page"
     },
     "elem_SavebtnOnDownloadDirectories": {
         "message": "",
@@ -526,7 +521,7 @@
         "description": "Element on Options page"
     },
     "elem_SaveDone": {
-        "message": "!",
+        "message": "",
         "description": "Element on Options page"
     },
     "elem_Command": {
@@ -596,7 +591,8 @@
         "description": ""
     },
     "elem_ShortcutSetting": {
-        "message": ": "
+        "message": "",
+        "description": ""
     },
     "elem_MaximumDistancePx": {
         "message": ""
@@ -620,5 +616,79 @@
     "elem_MaxProcessSize": {
         "message": "",
         "description": ""
+    },
+    "elem_SelectStyle": {
+        "message": "",
+        "description": ""
+    },
+    "elem_ImageReferrer": {
+        "message": "",
+        "description": ""
+    },
+    "elem_EnableLockScrollbar": {
+        "message": "",
+        "description": ""
+    },
+    "elem_PanelTips": {
+        "message": "",
+        "description": ""
+    },
+    "elem_PanelIcon": {
+        "message": "",
+        "description": ""
+    },
+    "panel_Cancel": {
+        "message": ""
+    },
+    "elem_UpdateBaiduData": {
+        "message": ""
+    },
+    "elem_Translator": {
+        "message": ""
+    },
+    "elem_UpdateBaiduExplanation": {
+        "message": ""
+    },
+    "elem_UpdateBaiduSuccess": {
+        "message": ""
+    },
+    "translator_Provider": {
+        "message": ""
+    },
+    "provider_baidu": {
+        "message": ""
+    },
+    "provider_google": {
+        "message": ""
+    },
+    "language_auto": {
+        "message": ""
+    },
+    "language_english": {
+        "message": ""
+    },
+    "language_simplified_chinese": {
+        "message": ""
+    },
+    "language_traditional_chinese": {
+        "message": ""
+    },
+    "language_japanese": {
+        "message": ""
+    },
+    "language_german": {
+        "message": ""
+    },
+    "language_korean": {
+        "message": ""
+    },
+    "language_russian": {
+        "message": ""
+    },
+    "language_french": {
+        "message": ""
+    },
+    "CustomDirectory": {
+        "message": ""
     }
 }

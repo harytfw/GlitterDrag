@@ -475,7 +475,7 @@
         "message": "Time to cancel (ms): ",
         "description": "Element on Options page"
     },
-    "elem_enableSync": {
+    "elem_EnableSync": {
         "message": "Sync with Firefox Account (v53+)",
         "description": "Element on Options page"
     },
@@ -602,7 +602,7 @@
         "message": "Always treat a link containing picture as image type",
         "description": ""
     },
-    "ToggleDebug": {
+    "elem_ToggleDebug": {
         "message": "Toggle Debug Mode",
         "description": ""
     },
