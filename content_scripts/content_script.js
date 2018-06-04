@@ -1,4 +1,4 @@
-/* global Translator:false, Prompt:false, Panel:false, $log:false */
+/* global Translator:false, Prompt:false, Panel:false */
 
 "use strict";
 console.info("Glitter Drag: Content script is injected by browser successfully");

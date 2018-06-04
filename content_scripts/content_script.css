@@ -70,21 +70,23 @@
 
 #GDPrompt {
     position: fixed !important;
-    color: black !important;
     z-index: 2147483600 !important;
     box-sizing: initial !important;
     border: initial !important;
-    border-radius: 4px !important;
-    background-color: rgba(30, 180, 180, 0.85) !important;
     line-height: initial !important;
     font-weight: initial !important;
     text-align: center !important;
     left: 40% !important;
     top: 40% !important;
     height: auto !important;
-    width: 200px !important;
     padding-bottom: 10px !important;
     pointer-events: none;
+    /* style */
+    background-color: rgba(9, 150, 248, 0.85) !important;
+    border-color: rgb(6, 112, 204) !important;
+    border-radius: 0px !important;
+    color: white !important;
+    width: 130px !important;
 }
 
 #GDPrompt>* {
@@ -96,15 +98,35 @@
 }
 
 #GDArrow {
-    display: block !important;
-    font-style: normal !important;
-    font-size: 30px !important;
-    height: 60px !important;
+    font: normal normal normal 20px GDFontAwesome !important;
+    line-height: 2em !important;
+    height: 40px !important;
+    border-radius: 0px !important;
+    width: 130px !important;
+}
+
+.GDArrow-UP-R::after,
+.GDArrow-U::after,
+.GDArrow-UP-L::after {
+    content: "\f062" !important;
+}
+
+.GDArrow-L::after {
+    content: "\f060" !important;
+}
+
+.GDArrow-R::after {
+    content: "\f061" !important;
+}
+
+.GDArrow-LOW-L::after,
+.GDArrow-D::after,
+.GDArrow-LOW-R::after {
+    content: "\f063" !important;
 }
 
 .GDArrow-UP-R::after {
     display: block !important;
-    content: "\2191" !important;
     transform: rotate(45deg) !important;
     /*
                            ^
@@ -114,7 +136,6 @@
 
 .GDArrow-U::after {
     display: block !important;
-    content: "\2191" !important;
     /*
                           ^
                           |
@@ -123,7 +144,6 @@
 
 .GDArrow-UP-L::after {
     display: block !important;
-    content: "\2191" !important;
     transform: rotate(-45deg) !important;
     /*
                          ^
@@ -133,7 +153,6 @@
 
 .GDArrow-L::after {
     display: block !important;
-    content: "\2190" !important;
     /*
                          <--
                           
@@ -142,7 +161,6 @@
 
 .GDArrow-R::after {
     display: block !important;
-    content: "\2192" !important;
     /*
                         -->
 
@@ -151,7 +169,6 @@
 
 .GDArrow-LOW-L::after {
     display: block !important;
-    content: "\2193" !important;
     transform: rotate(45deg) !important;
     /*
                          /
@@ -161,7 +178,6 @@
 
 .GDArrow-D::after {
     display: block !important;
-    content: "\2193" !important;
     /*
                         |
                         v
@@ -170,12 +186,16 @@
 
 .GDArrow-LOW-R::after {
     display: block !important;
-    content: "\2193" !important;
     transform: rotate(-45deg) !important;
     /*
                        \
                         v
     */
+}
+
+#GDIndicator {
+    border-style: solid !important;
+    border-color: rgba(0, 0, 0, 0.25) !important;
 }
 
 #GDPanel {
@@ -441,10 +461,9 @@
     justify-self: center !important;
 }
 
-.GDMeaning,
 #GDLongText {
     font-size: 0.8em;
     color: #3C3C3C !important;
-    line-height: 1.3em !important;
+    line-height: 1.5 !important;
     justify-self: left;
 }
