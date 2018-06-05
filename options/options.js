@@ -113,7 +113,7 @@ class ActionsWrapper {
 
                 d.appendChild(document.importNode(this.template4Direction.content, true))
             }
-            
+
             switch (subcontainer.className) {
                 case commons.textAction:
                     $H([".tab-pos", ".download-type", ".open-type", ".search-type", ".copy-type"], "none", subcontainer);
@@ -122,7 +122,17 @@ class ActionsWrapper {
                     $H(["option[value=OPEN_IMAGE]", "option[value=COPY_IMAGE]", "option[value=SEARCH_IMAGE]", "option[value=DOWNLOAD_IMAGE]"], "none", subcontainer);
                     break;
                 case commons.imageAction:
-                    $H(["option[value=OPEN_TEXT]", "option[value=COPY_TEXT]", "option[value=SEARCH_TEXT]", "option[value=DOWNLOAD_TEXT]", "option[value=OPEN_IMAGE_LINK]", "option[value=SEARCH_IMAGE_LINK]", "option[value=DOWNLOAD_IMAGE_LINK]", "option[COPY_IMAGE_LINK]"], "none", subcontainer);
+                    $H(["option[value=ACT_FIND]",
+                        "option[value=ACT_TRANS]",
+                        "option[value=OPEN_TEXT]",
+                        "option[value=COPY_TEXT]",
+                        "option[value=SEARCH_TEXT]",
+                        "option[value=DOWNLOAD_TEXT]",
+                        "option[value=OPEN_IMAGE_LINK]",
+                        "option[value=SEARCH_IMAGE_LINK]",
+                        "option[value=DOWNLOAD_IMAGE_LINK]",
+                        "option[COPY_IMAGE_LINK]"
+                    ], "none", subcontainer);
                     $H([".download-directory option[value='8']"], "initial", subcontainer);
                     break;
                 default:
@@ -819,6 +829,17 @@ class ActionsView {
     }
 
     set setting(data) {
+        if (this.actionType === "imageAction") {
+            for (let optionElem of $A('option[value=ACT_FIND],option[value=ACT_TRANS]', this.parent)) {
+                optionElem.setAttribute('disabled', '');
+            }
+        }
+        else {
+            for (let optionElem of $A('option[value=ACT_FIND],option[value=ACT_TRANS]', this.parent)) {
+                optionElem.removeAttribute('disabled');
+            }
+        }
+
         if (data["tab_active"] === commons.FORE_GROUND) {
             this.setAsRadioValue(".foreground")
         }
