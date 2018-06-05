@@ -257,7 +257,7 @@ class DragClass {
             argv = event.data["argv"];
         const uuid = event.data["uuid"] || "";
         // check uuid to prevent secure problem
-        if (uuid !== WE_UUID) { console.error("Wrong UUID"); return; }
+        if (uuid !== WE_UUID) { /*console.error("Wrong UUID");*/ return; }
         if (!name || !(name in this)) {
             return;
         }
@@ -609,6 +609,8 @@ class DragClass {
         }
         else {
             console.log("Not here!!!");
+            this.targetType = null;
+            this.actionType = null;
             return;
         }
         this.targetType = typeUtil.checkDragTargetType(this.selection, this.textSelection, this.imageLink, fakeNode);
@@ -638,17 +640,14 @@ class DragClass {
         else if (this.targetType === commons.TYPE_ELEM_A) {
             [this.selection, this.textSelection] = dt.getData("text/x-moz-url").split("\n");
         }
-        else { //TODO 没有符合的选项
-            return;
-        }
 
-        if (["textAction", "linkAction"].includes(this.actionType)) {
+        if ([commons.textAction, commons.linkAction].includes(this.actionType)) {
             this.post({
                 direction: commons.DIR_OUTER
             });
             return;
         }
-
+        console.assert(commons.imageAction === this.actionType, 'unknown action type');
         let action = null;
         if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
             action = bgConfig.Actions_CtrlKey.imageAction.DIR_OUTER;
