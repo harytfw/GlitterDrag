@@ -433,16 +433,16 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
 
 const TRANSLATOR_HTML = `
   <div id="GDInputBar">
-            <!-- <input id="GDTextInput" type=text> --><a id="GDSourceLang" href="javascript:void(0)">源语言</a><span>-></span><a id="GDTargetLang" href="javascript:void(0)">目标语言</a>
+            <!-- <input id="GDTextInput" type=text> --><a id="GDSourceLang" href="javascript:void(0)"></a><span>-></span><a id="GDTargetLang" href="javascript:void(0)"></a>
             <a href="javascript:void(0)" id="GDProviderName" provider=""></a>
   </div>
   <div id=GDResultBox>	
         <div id=GDTransContainer>
         
             <div id=GDPho>
-                <!-- <span id=GDENText>英</span>  -->
+                <!-- <span id=GDENText></span>  -->
                 <span id=GDENPho></span>
-                <!-- <span id=GDAMText>美</span> --> 
+                <!-- <span id=GDAMText></span> --> 
                 <span id=GDAMPho></span>
             </div>
             <div id=GDSingleWord>

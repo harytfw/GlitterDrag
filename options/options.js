@@ -473,7 +473,10 @@ class EngineWrapper {
             if (e.target.id === "tab-search-template") {
                 this.onRefresh();
             }
-        })
+        });
+        if (browser.i18n.getUILanguage().startsWith("zh")) {
+            $A("#builtin-engine select")[1].style.display = "inline-block";
+        }
     }
 
     onSaveAll() {
@@ -660,9 +663,13 @@ class ActionsView {
         //初始化搜索引擎
         const selectProtype = document.createElement("select");
         const optProtype = document.createElement("option");
+        let isChineseUI = browser.i18n.getUILanguage().startsWith("zh");
         for (const g of ENGINES) {
             let select = selectProtype.cloneNode();
             let opt = optProtype.cloneNode();
+            if (!isChineseUI && g.groupName === "Chinese") {
+                continue;
+            }
             opt.textContent = g.groupName;
             opt.disabled = 1;
 
