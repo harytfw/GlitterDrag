@@ -1099,7 +1099,7 @@ class downloadWrapper {
             }
 
             const cloned = entry.cloneNode(true);
-            cloned.firstElementChild.value = getI18nMessage("CustomDirectory");
+            cloned.firstElementChild.value = getI18nMessage("elem_CustomDirectory");
             cloned.lastElementChild.remove();
             const codearea = document.createElement("textarea");
             codearea.id = ""

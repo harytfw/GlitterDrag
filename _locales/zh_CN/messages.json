@@ -692,7 +692,10 @@
     "language_french": {
         "message": "法语"
     },
-    "CustomDirectory": {
+    "elem_CustomDirectory": {
         "message": "自定义目录"
+    },
+    "elem_VariablesInPath":{
+        "message":"查看下载路径中可用的变量"
     }
 }

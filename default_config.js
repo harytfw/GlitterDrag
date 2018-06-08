@@ -43,7 +43,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         enableAutoSelectPreviousTab: true,
         enableCtrlKey: false,
         enableShiftKey: false,
-        enableLockScrollbar: true,
+        enableLockScrollbar: false,
         timeoutCancel: 2000, // ms
         triggeredDistance: 20, // px
         maxTriggeredDistance: 9999, //px

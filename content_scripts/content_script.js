@@ -534,7 +534,9 @@ class DragClass {
 
         if (this.distance > bgConfig.maxTriggeredDistance) {
             this.hideBecauseExceedDistance = true;
+            this.lastDirection = this.direction = null;
             this.promptBox.remove();
+            this.panelBox.remove();
         }
         else if ((this.distance > bgConfig.triggeredDistance || this.direction === commons.DIR_OUTER)) {
             this.direction = this.getDirection();
@@ -576,13 +578,15 @@ class DragClass {
             this.panelBox.remove();
             if (property["act_name"] === commons.ACT_PANEL) {
                 this.panelBox.render(this.actionType, this.targetType, this.selection, this.textSelection, this.imageLink);
-                this.panelBox.place(evt.clientX, evt.clientY);
+                this.panelBox.place(evt.clientX, evt.clientY, this.getDirection(true));
                 this.panelBox.mount();
                 this.promptBox.remove();
             }
         }
         else {
             this.promptBox.remove();
+            this.panelBox.remove();
+            this.lastDirection = this.direction = null;
         }
     }
     dragenter(evt) { //TODO
@@ -690,7 +694,7 @@ class DragClass {
     }
     dragleave4panel() {
         // console.log(e);
-        // this.isPanelArea = false;
+        this.isPanelArea = false;
     }
     drop4panel(e, lastdragovertarget) {
         // console.info(e.);
@@ -923,6 +927,7 @@ class DragClass {
                 }
                 this.indicatorBox.remove();
                 this.promptBox.remove();
+                this.panelBox.remove();
                 this.lastDirection = null;
                 //dragend's target is things we are dragging, calling this.isNotAcceptable has not effect. However we have updated this.isInputArea in drop event, just use it.
                 if (this.isInputArea) {
@@ -949,7 +954,7 @@ class DragClass {
 
 
 
-    getDirection() {
+    getDirection(forceAll = false) {
         function BETW(a, b) {
             if (a < 0 || b < 0 || a > 360 || b > 360) alert("范围错误");
             return a < b && a <= scale && scale < b;
@@ -1012,6 +1017,8 @@ class DragClass {
         else if (BETW(13, 15)) d.all = commons.DIR_LOW_R;
         else d.all = commons.DIR_R;
         // return d.normal;
+        if (forceAll) return d.all;
+
         let controlObject = null;
         if (bgConfig.enableCtrlKey && this.modifierKey === commons.KEY_CTRL) {
             controlObject = bgConfig.directionControl_CtrlKey;

@@ -3,52 +3,9 @@
 #GDPrompt,
 #GDPanel,
 #GDDict {
-    background-color: transparent !important;
-    background-position: initial !important;
-    background-repeat: initial !important;
-    background-attachment: initial !important;
-    background-image: initial !important;
-    background-size: initial !important;
-    background-origin: initial !important;
-    background-clip: initial !important;
-    border: initial !important;
-    border-radius: initial !important;
-    border-spacing: initial !important;
-    border-collapse: initial !important;
-    direction: ltr !important;
-    flex-direction: initial !important;
-    font-weight: initial !important;
-    height: 1px;
-    letter-spacing: initial !important;
-    min-width: initial !important;
-    max-width: initial !important;
-    min-height: initial !important;
-    max-height: initial !important;
-    margin: auto !important;
-    outline: initial !important;
-    padding: initial !important;
-    position: fixed;
-    table-layout: initial !important;
-    text-align: initial !important;
-    text-shadow: initial !important;
-    width: 1px;
-    word-break: initial !important;
-    word-spacing: initial !important;
-    overflow-wrap: initial !important;
-    box-sizing: initial !important;
-    display: initial !important;
-    color: inherit !important;
-    font-family: X-LocaleSpecific, sans-serif, Tahoma !important;
-    vertical-align: top !important;
-    white-space: inherit !important;
-    border-collapse: initial !important;
-    empty-cells: initial !important;
-    box-sizing: initial !important;
-    font-weight: initial !important;
-    vertical-align: initial !important;
-    overflow: initial !important;
-    z-index: 2147470000;
-    transform: scale(1);
+    all: initial;
+    position: fixed !important;
+    z-index: 2147470000 !important;
 }
 
 #GDIndicator *,
@@ -205,40 +162,40 @@
     display: grid !important;
     place-items: center !important;
     font-size: 16px !important;
-    grid-column-gap: .6em !important;
-    grid-row-gap: .3em !important;
+    /* grid-column-gap: .4em !important; */
+    /* grid-row-gap: .15em !important; */
     grid-template-columns: 3em 3em 3em !important;
     padding: .6em !important;
     place-content: space-between;
-    width: 11em !important;
+    width: 10em !important;
 }
 
 .GDPanelFull {
-    height: 19em !important;
+    height: 18em !important;
     grid-template-rows: 1em 1em 3em 1em 3em 1em 3em 3em !important;
     grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "linklabel link link" "grid4 grid5 grid6" "imagelabel image image" "grid7 grid8 grid9" "footer footer ." !important;
 }
 
 .GDPanelOnlyText {
-    height: 11em !important;
+    height: 10em !important;
     grid-template-rows: 1em 1em 3em 3em !important;
     grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "footer footer ." !important;
 }
 
 .GDPanelTextAndLink {
-    height: 15em !important;
+    height: 14em !important;
     grid-template-rows: 1em 1em 3em 1em 3em 3em !important;
     grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "linklabel link link" "grid4 grid5 grid6" "footer footer ." !important;
 }
 
 .GDPanelOnlyImage {
-    height: 11em !important;
+    height: 10em !important;
     grid-template-rows: 1em 1em 3em 3em !important;
     grid-template-areas: "header header header" "imagelabel image image" "grid7 grid8 grid9" "footer footer ." !important;
 }
 
 .GDPanelLinkAndImage {
-    height: 15em !important;
+    height: 14em !important;
     grid-template-rows: 1em 1em 3em 1em 3em 3em !important;
     grid-template-areas: "header header header" "linklabel link link" "grid4 grid5 grid6" "imagelabel image image" "grid7 grid8 grid9" "footer footer ." !important;
 }
@@ -345,6 +302,7 @@
     -webkit-font-smoothing: antialiased !important;
     -moz-osx-font-smoothing: grayscale !important;
     /* the size of normal icon */
+    color: black;
     font-size: 2.4em !important;
     background-color: rgba(233, 233, 233) !important;
     border-radius: 3px !important;

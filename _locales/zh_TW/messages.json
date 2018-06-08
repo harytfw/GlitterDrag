@@ -689,7 +689,10 @@
     "language_french": {
         "message": ""
     },
-    "CustomDirectory": {
+    "elem_CustomDirectory": {
+        "message": ""
+    },
+    "elem_VariablesInPath": {
         "message": ""
     }
 }

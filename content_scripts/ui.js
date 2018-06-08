@@ -246,7 +246,17 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
         this.listener = listener;
         this.addListener("drop", e => this.listener.drop(e, this.lastdragovertarget));
         this.addListener("dragenter", this.listener.dragenter);
-        this.addListener("dragleave", this.listener.dragleave);
+        this.addListener("dragleave", (e) => {
+            const target = e.target;
+            if (target.id !== "GDPanel") {
+                return;
+            }
+            // this.listener.dragleave(e);
+            this.lastdragovertarget && this.lastdragovertarget.classList.remove("GDPanelGridHover");
+            this.lastdragovertarget = this.$E("#GDPanelFooter");
+            this.lastdragovertarget.classList.add("GDPanelGridHover");
+            this.updateHeader(this.lastdragovertarget);
+        });
         this.addListener("dragover", this.ondragover.bind(this));
 
 
@@ -259,13 +269,19 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
         this.updatedFlag = false;
     }
     ondragover(e) {
-        if (e.target.classList.contains("GDPanelGrid") && this.lastdragovertarget != e.target) {
+        let target = e.target;
+        if (this.lastdragovertarget === target) {
+            return;
+        }
+        if (!e.target.classList.contains("GDPanelGrid")) {
+            target = target.parentElement;
+        }
+        if (target && target.classList.contains("GDPanelGrid")) {
             this.lastdragovertarget && this.lastdragovertarget.classList.remove("GDPanelGridHover");
-            this.lastdragovertarget = e.target;
+            this.lastdragovertarget = target;
             this.lastdragovertarget.classList.add("GDPanelGridHover");
-            if (this.updatedFlag) {
-                this.updateHeader(e);
-            }
+            this.updatedFlag && this.updateHeader(target);
+
         }
     }
 
@@ -360,16 +376,19 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
     }
 
 
-    updateHeader(e) {
-        if (this.lastdragovertarget.id === "GDPanelFooter") {
+    updateHeader(target) {
+        if (target.id === "GDPanelFooter") {
             this.header.textContent = getI18nMessage("panel_Cancel"); //getI18nMessage("Cancel");
             return;
         }
-        const setting = bgConfig[e.target.dataset["key"]][e.target.dataset["index"]];
+        const setting = bgConfig[target.dataset["key"]][target.dataset["index"]];
         const tips = setting["panel_tips"];
         // eslint-disable-next-line 
-        if (tips !== "") this.header.textContent = translatePrompt(tips, setting);
+        if (typeof tips === typeof "") {
+            this.header.textContent = translatePrompt(tips, setting, this.actionType, this.selection);
+        }
         else this.header.textContent = translatePrompt("%g-%a", setting);
+
 
     }
 
@@ -378,6 +397,7 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
             if (str.length <= maxlen) return str;
             return `${str.substr(0,len1)}...${str.substr(str.length-len2,len2)}`
         }
+        this.actionType = actionkind;
         this.selection = selection;
         this.textSelection = textSelection;
         this.imageLink = imageLink;
@@ -419,8 +439,56 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
                 break;
         }
     }
-    place(x = 0, y = 0) {
-        super.place_fix(x, y);
+    place(x = 0, y = 0, direction = "") {
+        const rect = new DOMRect();
+        this.getRect(rect);
+
+        switch (direction) {
+            case commons.DIR_U:
+                x -= rect.width / 2;
+                y -= rect.height;
+                break;
+            case commons.DIR_D:
+                x -= rect.width / 2;
+                break;
+            case commons.DIR_UP_L:
+                x -= rect.width;
+                y -= rect.height / 2;
+                x *= 1.05;
+                break;
+            case commons.DIR_LOW_L:
+                x -= rect.width / 2;
+                // y *= 0.9;
+                break;
+            case commons.DIR_L:
+                y -= rect.height / 2;
+                x -= rect.width;
+                break;
+            case commons.DIR_UP_R:
+                y -= rect.height / 2;
+                x *= 0.95;
+                break;
+            case commons.DIR_LOW_R:
+                x -= rect.width / 2;
+                // y *= 0.9;
+                break;
+            case commons.DIR_R:
+                y -= rect.height / 2;
+                break;
+            default:
+                break;
+        }
+
+        const [width, height] = [window.innerWidth, window.innerHeight];
+        if (x < 0) x = 0;
+        else if (rect.width + x >= width) {
+            x = width - rect.width;
+        }
+        if (y < 0) y = 0;
+        else if (rect.height + y >= height) {
+            y = height - rect.height;
+        }
+        super.place(x, y);
     }
     mount() {
         super.mount();
