@@ -76,11 +76,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
             linkAction: clone(tempAction),
             imageAction: clone(tempAction)
         },
-        Engines: [{ "name": "Google Search", "url": "https://www.google.com/search?q=%s" },
-            { "name": "Bing Search", "url": "https://www.bing.com/search?q=%s" },
-            { "name": "DuckDuckGo Search", "url": "https://duckduckgo.com/?q=%s&ia=web" },
-            { "name": "Yandex Search", "url": "https://www.yandex.com/search/?text=%s" },
-        ],
+        Engines: [],
         directionControl: {
             textAction: commons.ALLOW_NORMAL,
             linkAction: commons.ALLOW_NORMAL,

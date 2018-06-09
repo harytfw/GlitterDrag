@@ -232,7 +232,7 @@ class ExecutorClass {
             this.action = await getAct(this.data.actionType, this.data.direction, this.data.modifierKey);
         }
         await this.execute();
-        this.data.imageData = null;
+        this.data = null;
 
     }
     async execute() {
@@ -303,7 +303,13 @@ class ExecutorClass {
                         }
                         break;
                     case commons.COPY_IMAGE:
-                        this.copy(this.data.imageData);
+                        if (this.data.imageData instanceof Uint8Array) {
+                            this.copy(this.data.imageData);
+                        }
+                        else {
+                            const imageData = await this.getImageData(this.data.imageLink);
+                            this.copy(new Uint8Array(imageData));
+                        }
                         break;
                     case commons.COPY_TEXT:
                         this.copy(this.data.textSelection);
@@ -672,6 +678,12 @@ class ExecutorClass {
         });
     }
 
+    async getImageData(url) {
+        const res = await fetch(url);
+        const ab = await res.arrayBuffer();
+        return Promise.resolve(ab);
+    }
+
 }
 
 var executor = new ExecutorClass();
@@ -771,6 +783,13 @@ browser.runtime.onInstalled.addListener(async (details) => {
     else if (details.reason === browser.runtime.OnInstalledReason.INSTALL) {
         changedflag = false;
         await browser.storage.local.set(DEFAULT_CONFIG);
+        await browser.storage.local.set({
+            Engines: [{ "name": "Google Search", "url": "https://www.google.com/search?q=%s" },
+                { "name": "Bing Search", "url": "https://www.bing.com/search?q=%s" },
+                { "name": "DuckDuckGo Search", "url": "https://duckduckgo.com/?q=%s&ia=web" },
+                { "name": "Yandex Search", "url": "https://www.yandex.com/search/?text=%s" }
+            ]
+        });
     }
 
     if (changedflag) {

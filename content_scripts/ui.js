@@ -183,6 +183,11 @@ class Indicator extends UIClass { // eslint-disable-line no-unused-vars
             super.display();
         }
     }
+    mount() {
+        if (bgConfig.enableIndicator === true) {
+            super.mount();
+        }
+    }
     hide() {
         if (bgConfig.enableIndicator === true) {
             super.hide();
