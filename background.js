@@ -6,6 +6,7 @@ browser.runtime.getBrowserInfo().then(info => {
     browserMajorVersion = info.version.split(".")[0];
     //$D("Browser Info:", info);
     browserMajorVersion = parseInt(browserMajorVersion);
+    browser.storage.local.set({ firefoxVersion: browserMajorVersion });
     // browserMajorVersion = 56;
 });
 
@@ -811,11 +812,4 @@ browser.runtime.onMessage.addListener((m) => {
     }
 });
 
-browser.runtime.onConnect.addListener(port => {
-    if (port.name === "initial") {
-        LStorage.get().then(all => {
-            port.postMessage(all);
-        });
-    }
-});
 console.info("Glitter Drag: background script executed.")

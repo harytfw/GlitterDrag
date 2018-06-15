@@ -3,7 +3,7 @@
 "use strict";
 console.info("Glitter Drag: Content script is injected by browser successfully");
 const IS_TOP_WINDOW = window.top === window;
-const FIREFOX_VERSION = navigator.userAgent.match(/Firefox\/(\d\d)\.\d/)[1]; //wrong method
+let FIREFOX_VERSION = 56;
 const WE_UUID = browser.runtime.getURL('').match(/\/\/([\w-]+)\//i)[1];
 const MIME_TYPE = {
     ".gif": "image/gif",
@@ -27,18 +27,7 @@ Object.freeze(EVENT_PAHSE);
 
 const specialSites = ["vk.com"];
 
-//remove highlighting when Escape is pressed
-document.addEventListener("keypress", (e) => {
-    if (e.key === "Escape") {
-        browser.runtime.sendMessage({
-            cmd: "removeHighlighting"
-        });
-        maindrag.translatorBox.remove();
-    }
-})
-
-
-let promptString = {
+const promptString = {
     "%a": {}, // action
     "%g": {}, // background foreground
     "%t": {}, // tabs position
@@ -69,7 +58,7 @@ function updatePromptString() {
         "linkAction": getI18nMessage("linkType"),
     }
 }
-updatePromptString();
+
 
 function translatePrompt(message, property, actionType, selection) {
     return message ? message
@@ -1104,12 +1093,47 @@ function onStorageChange(changes) {
     }
 }
 
-browser.storage.onChanged.addListener(onStorageChange);
+function excludeThisWindow() {
+    let ret = false;
+    if (IS_TOP_WINDOW) {
+        ret = false
+        return ret;
+    }
+
+    const frame = window.frameElement;
+    if (frame.tagName.toLowerCase() === 'object') ret = true;
+    const rect = frame.getBoundingClientRect();
+    if (rect.width <= 100) ret = true;
+    if (rect.height <= 100) ret = true;
+
+    // if (ret === true) console.log(window);
+    return ret;
+}
+
 const condition = true;
-if (condition === true) { //a storage bug that reported in #65,so using another way to load configuration.
+if (condition === true && !excludeThisWindow()) { //a storage bug that reported in #65,so using another way to load configuration.
+    
+    updatePromptString();
+
+    //remove highlighting when Escape is pressed
+    document.addEventListener("keypress", (e) => {
+        if (e.key === "Escape") {
+            browser.runtime.sendMessage({
+                cmd: "removeHighlighting"
+            });
+            maindrag.translatorBox.remove();
+        }
+    })
+
+    browser.storage.onChanged.addListener(onStorageChange);
+    // window.addEventListener("beforeunload", () => {
+    //     browser.storage.onChanged.removeListener(onStorageChange);
+    // });
+
     browser.storage.local.get().then(config => {
         console.info("Glitter Drag: loaded config from storage");
         bgConfig = config; // eslint-disable-line no-global-assign
+        FIREFOX_VERSION = config.firefoxVersion || 56;
         try {
             maindrag = new DragClass(document);
         }
@@ -1122,23 +1146,6 @@ if (condition === true) { //a storage bug that reported in #65,so using another 
         doInit();
     });
 }
-else {
-    const bgPort = browser.runtime.connect({
-        name: "initial"
-    });
-
-    bgPort.onMessage.addListener(response => {
-        console.info("Glitter Drag: Receive response from background");
-        bgConfig = response; // eslint-disable-line no-global-assign
-        document.addEventListener('readystatechange', onReadyStateChange, false);
-        document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
-        doInit();
-    });
-}
-
-window.addEventListener("beforeunload", () => {
-    browser.storage.onChanged.removeListener(onStorageChange);
-});
 
 
 // eslint-disable-next-line no-unused-vars
