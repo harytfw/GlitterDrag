@@ -97,15 +97,15 @@ const scrollbarLocker = {
     //https://stackoverflow.com/questions/13631730/how-to-lock-scrollbar-and-leave-it-visible
     x: 0,
     y: 0,
-    lock: function() {
+    lock: function () {
         this.x = window.scrollX;
         this.y = window.scrollY;
         window.addEventListener("scroll", this.doLock, false);
     },
-    free: function() {
+    free: function () {
         window.removeEventListener("scroll", this.doLock, false);
     },
-    doLock: function() {
+    doLock: function () {
         window.scrollTo(this.x, this.y);
     }
 
@@ -115,7 +115,7 @@ scrollbarLocker.doLock = scrollbarLocker.doLock.bind(scrollbarLocker);
 function RemoteBuilder(name, exposeFunName = []) {
     let obj = {};
     for (let fun of exposeFunName) {
-        obj[fun] = function(name, fun, ...argv) {
+        obj[fun] = function (name, fun, ...argv) {
             window.top.postMessage({
                 name,
                 fun,
@@ -327,7 +327,7 @@ class DragClass {
     injectCustomCode(eventname, code, currentAction, sended) {
         code = code.replace(/\\n*/g, "\n");
         const s = document.createElement("script");
-        const randomid = `GD-${Math.round(Math.random()*100)}`;
+        const randomid = `GD-${Math.round(Math.random() * 100)}`;
         s.id = randomid;
         s.text = `(function(){
             const _id = "${randomid}";
@@ -1101,10 +1101,10 @@ function excludeThisWindow() {
     }
 
     const frame = window.frameElement;
-    if (frame.tagName.toLowerCase() === 'object') ret = true;
-    const rect = frame.getBoundingClientRect();
-    if (rect.width <= 100) ret = true;
-    if (rect.height <= 100) ret = true;
+    const rect = (frame && frame.getBoundingClientRect()) || null;
+    if (frame && frame.tagName.toLowerCase() === 'object') ret = true;
+    else if (rect && rect.width <= 50) ret = true;
+    else if (rect && rect.height <= 50) ret = true;
 
     // if (ret === true) console.log(window);
     return ret;
@@ -1112,7 +1112,7 @@ function excludeThisWindow() {
 
 const condition = true;
 if (condition === true && !excludeThisWindow()) { //a storage bug that reported in #65,so using another way to load configuration.
-    
+
     updatePromptString();
 
     //remove highlighting when Escape is pressed
