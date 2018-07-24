@@ -799,9 +799,9 @@ browser.runtime.onInstalled.addListener(async (details) => {
 });
 
 //点击工具栏图标时打开选项页
-browser.browserAction.onClicked.addListener(() => {
-    browser.runtime.openOptionsPage();
-});
+// browser.browserAction.onClicked.addListener(() => {
+//     browser.runtime.openOptionsPage();
+// });
 
 browser.runtime.onMessage.addListener((m) => {
     if (m.cmd && m.cmd === "removeHighlighting") {

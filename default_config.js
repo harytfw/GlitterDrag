@@ -1,4 +1,3 @@
-//TODO:减少全局变量,修改变量名
 const ACTION_CONSTRUCTOR = (parameter = {}) => {
     return Object.assign({
         act_name: commons.ACT_OPEN,
@@ -164,6 +163,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         downloadDirectories: ["", "${today}/", "${today}/${host}/", "", "", "", "", "",
             "function(){\n    return `${host}/${today}/${filename}`\n}"
         ],
+        exclusionRules: [],
         style: "",
         specialHosts: [], // ignore drag&drop detection on these hosts.
         allowExts: [".txt", ".jpg", ".jpeg", ".png"], // only allow the file with these extension names.
@@ -232,7 +232,7 @@ const DEFAULT_CONFIG_A = (() => {
     });
 
     for (const p of Object.keys(a.Actions)) {
-        for (const k of ["DIR_U", "DIR_D", "DIR_L", "DIR_R", "DIR_LOW_L", "DIR_LOW_R", "DIR_UP_L", "DIR_UP_R", "DIR_OUTER", ]) {
+        for (const k of["DIR_U", "DIR_D", "DIR_L", "DIR_R", "DIR_LOW_L", "DIR_LOW_R", "DIR_UP_L", "DIR_UP_R", "DIR_OUTER", ]) {
             if (p === "textAction") {
                 Object.assign(a.Actions[p][k], {
                     open_type: commons.OPEN_TEXT,

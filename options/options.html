@@ -148,6 +148,7 @@
                 <a class="nav-a" toggle-target="#tab-panel" data-i18n="Panel" href="#"></a>
                 <a class="nav-a" toggle-target="#tab-style" data-i18n="Style" href="#"></a>
                 <a class="nav-a" toggle-target="#tab-translator" data-i18n="Translator" href="#"></a>
+                <a class="nav-a" toggle-target="#tab-exclusion" data-i18n="Exclusion" href="#"></a>
             </nav>
             <ul style="list-style:none">
                 <li class="tab-content" id="tab-debug" style="margin-left:12em">
@@ -601,7 +602,8 @@
                         <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled></option>
                         <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" disabled></option>
                     </select>
-                    <input id="tipsContentInput" type="text" not-config></input><a data-i18n="TipsContentUsage" style="font:caption" href="https://github.com/harytfw/GlitterDrag/wiki/Usage-for-Content-of-Tips"></a>
+                    <input id="tipsContentInput" type="text" not-config></input>
+                    <a data-i18n="TipsContentUsage" style="font:caption" href="https://github.com/harytfw/GlitterDrag/wiki/Usage-for-Content-of-Tips"></a>
                     <br>
                     <input type="checkbox" id="enableIndicator">
                     <label for="enableIndicator" data-i18n="EnableDistanceTip"></label>
@@ -684,6 +686,21 @@
                 <li class="tab-content" id="tab-translator">
                     <button id="updateBaiduData" data-i18n="UpdateBaiduData"></button>
                     <p data-i18n="UpdateBaiduExplanation"></p>
+                </li>
+                <li class="tab-content" id="tab-exclusion">
+                    <div style="display:flex; justify-content:space-between; width: 52em;">
+                        <div style="width: 30em;">
+                            <div data-i18n="ExclusionDescription"></div>
+                            <textarea id="exclusionRules" cols=50 rows=10></textarea>
+                        </div>
+                        <div style="width:20em;">
+                            <span>URL: </span>
+                            <input id="patterns-url-input" type="text" />
+                            <button id="patterns-test" type="button">Test</button><br>
+                            <span>Result: </span>
+                            <pre id="patterns-test-result"></pre>
+                        </div>
+                    </div>
                 </li>
             </ul>
 

@@ -470,7 +470,6 @@
         "message": "觸發距離（px）",
         "description": "Element on Options page"
     },
-
     "elem_EnableTimeoutCancel": {
         "message": "啟用逾時取消",
         "description": "Element on Options page"
@@ -694,5 +693,21 @@
     },
     "elem_VariablesInPath": {
         "message": ""
+    },
+    "elem_Exclusion": {
+        "message": "",
+        "description": ""
+    },
+    "elem_ExclusionDescription": {
+        "message": "",
+        "description": ""
+    },
+    "popup_AddRule": {
+        "message": "",
+        "description": ""
+    },
+    "popup_RemoveRule": {
+        "message": "",
+        "description": ""
     }
 }

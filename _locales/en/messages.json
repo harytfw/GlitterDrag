@@ -693,6 +693,22 @@
         "message": "CustomDirectory"
     },
     "elem_VariablesInPath":{
-        "message":"See the variables in download path"
+        "message":"View the available variables in the download path"
+    },
+    "elem_Exclusion": {
+        "message": "Exclusion",
+        "description": ""
+    },
+    "elem_ExclusionDescription": {
+        "message": "In some cases extended drag and drop may conflict with the drag and drop functionality of the site, then you can use matching rules to exclude these specific sites, so that extensions do not run on these sites. These matching rules should be regular expressions Each line represents a rule",
+        "description": ""
+    },
+    "popup_AddRule": {
+        "message": "Add this site to the exclusion list",
+        "description": ""
+    },
+    "popup_RemoveRule": {
+        "message": "Remove the rule from the exclusion list",
+        "description": ""
     }
 }

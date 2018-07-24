@@ -470,7 +470,6 @@
         "message": "触发距离 (px)",
         "description": "Element on Options page"
     },
-
     "elem_EnableTimeoutCancel": {
         "message": "启用超时取消",
         "description": "Element on Options page"
@@ -695,7 +694,23 @@
     "elem_CustomDirectory": {
         "message": "自定义目录"
     },
-    "elem_VariablesInPath":{
-        "message":"查看下载路径中可用的变量"
+    "elem_VariablesInPath": {
+        "message": "查看下载路径中可用的变量"
+    },
+    "elem_Exclusion": {
+        "message": "排除",
+        "description": ""
+    },
+    "elem_ExclusionDescription": {
+        "message": "在某些情况下扩展的拖拽可能会和网站的拖拽功能发生冲突，那么你可以使用匹配规则来排除这些特定的网站，让扩展不在这些网站上运行。这些匹配规则都应该是正则表达式，每一行代表一个规则",
+        "description": ""
+    },
+    "popup_AddRule": {
+        "message": "将此站点添加到排除列表",
+        "description": ""
+    },
+    "popup_RemoveRule": {
+        "message": "从排除列表中移除规则",
+        "description": ""
     }
 }

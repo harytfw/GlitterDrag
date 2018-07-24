@@ -97,15 +97,15 @@ const scrollbarLocker = {
     //https://stackoverflow.com/questions/13631730/how-to-lock-scrollbar-and-leave-it-visible
     x: 0,
     y: 0,
-    lock: function () {
+    lock: function() {
         this.x = window.scrollX;
         this.y = window.scrollY;
         window.addEventListener("scroll", this.doLock, false);
     },
-    free: function () {
+    free: function() {
         window.removeEventListener("scroll", this.doLock, false);
     },
-    doLock: function () {
+    doLock: function() {
         window.scrollTo(this.x, this.y);
     }
 
@@ -115,7 +115,7 @@ scrollbarLocker.doLock = scrollbarLocker.doLock.bind(scrollbarLocker);
 function RemoteBuilder(name, exposeFunName = []) {
     let obj = {};
     for (let fun of exposeFunName) {
-        obj[fun] = function (name, fun, ...argv) {
+        obj[fun] = function(name, fun, ...argv) {
             window.top.postMessage({
                 name,
                 fun,
@@ -174,7 +174,12 @@ class DragClass {
         if (IS_TOP_WINDOW) {
             this.translatorBox = new Translator();
             this.promptBox = new Prompt();
-            this.panelBox = new Panel({ dragenter: this.dragenter4panel.bind(this), dragleave: this.dragleave4panel.bind(this), drop: this.drop4panel.bind(this), dragover: this.dragover4panel.bind(this) });
+            this.panelBox = new Panel({
+                dragenter: this.dragenter4panel.bind(this),
+                dragleave: this.dragleave4panel.bind(this),
+                drop: this.drop4panel.bind(this),
+                dragover: this.dragover4panel.bind(this)
+            });
             window.addEventListener("message", this.onMessage.bind(this));
         }
         else {
@@ -246,7 +251,10 @@ class DragClass {
             argv = event.data["argv"];
         const uuid = event.data["uuid"] || "";
         // check uuid to prevent secure problem
-        if (uuid !== WE_UUID) { /*console.error("Wrong UUID");*/ return; }
+        if (uuid !== WE_UUID) { 
+            /*console.error("Wrong UUID");*/
+            return;
+        }
         if (!name || !(name in this)) {
             return;
         }
@@ -485,7 +493,9 @@ class DragClass {
                     else {
                         _fetch = fetch;
                     }
-                    _fetch(this.imageLink, { cache: "force-cache" })
+                    _fetch(this.imageLink, {
+                            cache: "force-cache"
+                        })
                         .then(a => a.arrayBuffer())
                         .then(arrayBuffer => {
                             const result = this.imageLink.match(commons.fileExtension);
@@ -619,7 +629,10 @@ class DragClass {
             const bookmarks = [];
             for (let i = 0; i < dt.mozItemCount; i++) {
                 let [url, title] = dt.mozGetDataAt("text/x-moz-url", i).split("\n");
-                bookmarks.push({ url, title });
+                bookmarks.push({
+                    url,
+                    title
+                });
             }
             this.postForBookmark(bookmarks);
             return;
@@ -1110,30 +1123,53 @@ function excludeThisWindow() {
     return ret;
 }
 
-const condition = true;
-if (condition === true && !excludeThisWindow()) { //a storage bug that reported in #65,so using another way to load configuration.
+function excludeThisSite(patterns) {
+    if (!Array.isArray(patterns)) {
+        return false;
+    }
 
-    updatePromptString();
-
-    //remove highlighting when Escape is pressed
-    document.addEventListener("keypress", (e) => {
-        if (e.key === "Escape") {
-            browser.runtime.sendMessage({
-                cmd: "removeHighlighting"
-            });
-            maindrag.translatorBox.remove();
+    let ret = false;
+    for (const r of patterns) {
+        try{
+            const pattern = new RegExp(r);
+            if (pattern.test(location.href)) {
+                ret = true;
+                break;
+            }
+        } catch(error){
+            console.error(error);
+            break;
         }
-    })
+        
+    }
+    return ret;
+}
 
-    browser.storage.onChanged.addListener(onStorageChange);
-    // window.addEventListener("beforeunload", () => {
-    //     browser.storage.onChanged.removeListener(onStorageChange);
-    // });
+if (!excludeThisWindow()) {
 
     browser.storage.local.get().then(config => {
         console.info("Glitter Drag: loaded config from storage");
         bgConfig = config; // eslint-disable-line no-global-assign
         FIREFOX_VERSION = config.firefoxVersion || 56;
+
+        if (excludeThisSite(bgConfig.exclusionRules)) {
+            console.info("Glitter Drag: The extension will not run because of exclusionRules")
+            return;
+        }
+
+        updatePromptString();
+        //remove highlighting when Escape Key is pressed
+        document.addEventListener("keypress", (e) => {
+            if (e.key === "Escape") {
+                browser.runtime.sendMessage({
+                    cmd: "removeHighlighting"
+                });
+                maindrag.translatorBox.remove();
+            }
+        })
+
+        browser.storage.onChanged.addListener(onStorageChange);
+
         try {
             maindrag = new DragClass(document);
         }
