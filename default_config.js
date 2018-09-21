@@ -4,7 +4,8 @@ const ACTION_CONSTRUCTOR = (parameter = {}) => {
         tab_active: commons.FORE_GROUND,
         tab_pos: commons.TAB_CRIGHT,
         engine_name: browser.i18n.getMessage("defaultText"),
-        engine_url: browser.i18n.getMessage("default_search_url"),
+        engine_url: browser.i18n.getMessage("default_search_url"),// when use_browser_search is true, this parameter has no effect since we directly call search API
+        is_browser_search: true,
         open_type: commons.OPEN_LINK,
         search_type: commons.SEARCH_TEXT,
         copy_type: commons.COPY_TEXT,
@@ -232,7 +233,7 @@ const DEFAULT_CONFIG_A = (() => {
     });
 
     for (const p of Object.keys(a.Actions)) {
-        for (const k of["DIR_U", "DIR_D", "DIR_L", "DIR_R", "DIR_LOW_L", "DIR_LOW_R", "DIR_UP_L", "DIR_UP_R", "DIR_OUTER", ]) {
+        for (const k of ["DIR_U", "DIR_D", "DIR_L", "DIR_R", "DIR_LOW_L", "DIR_LOW_R", "DIR_UP_L", "DIR_UP_R", "DIR_OUTER",]) {
             if (p === "textAction") {
                 Object.assign(a.Actions[p][k], {
                     open_type: commons.OPEN_TEXT,

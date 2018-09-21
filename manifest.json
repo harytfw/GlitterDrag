@@ -23,7 +23,8 @@
         "<all_urls>",
         "clipboardWrite",
         "downloads",
-        "find"
+        "find",
+        "search"
     ],
     "background": {
         "scripts": [

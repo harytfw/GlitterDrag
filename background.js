@@ -33,7 +33,7 @@ function onError(e) {
 const tabsRelation = {
     _parent: TAB_ID_NONE,
     children: [],
-    check: function(pid, cid = TAB_ID_NONE) {
+    check: function (pid, cid = TAB_ID_NONE) {
         //pid: id of parent tab.
         //cid: id of child tab.
         if (this.parent === pid) {
@@ -47,7 +47,7 @@ const tabsRelation = {
             return false;
         }
     },
-    switchToParent: function(id) {
+    switchToParent: function (id) {
         let isLastChildTab = this.children.length === 1 && this.children[0] === id;
         if (this.parent === id) {
             //父标签页被关闭，那么重置this.parent
@@ -72,7 +72,7 @@ const tabsRelation = {
 }
 
 Object.defineProperty(tabsRelation, "parent", {
-    set: function(value) {
+    set: function (value) {
         if (value !== this._parent || value === TAB_ID_NONE) {
             this._parent = value;
             this.children = [];
@@ -81,13 +81,13 @@ Object.defineProperty(tabsRelation, "parent", {
             this._parent = value;
         }
     },
-    get: function() {
+    get: function () {
         return this._parent;
     }
 });
 
 const flags = {
-    initialize: function() {
+    initialize: function () {
         browser.storage.onChanged.addListener(changes => {
             for (const k of Object.keys(changes)) {
                 if (k in this) this[k] = changes[k].newValue;
@@ -117,7 +117,7 @@ flags.initialize();
 
 const LStorage = {
     _buffer: {},
-    initialize: function() {
+    initialize: function () {
         browser.storage.onChanged.addListener(changes => {
             for (const k of Object.keys(changes)) {
                 this._buffer[k] = changes[k].newValue;
@@ -129,13 +129,13 @@ const LStorage = {
             }
         });
     },
-    get: async function(thing) {
+    get: async function (thing) {
         if (!thing) return Promise.resolve(this._buffer);
         let r = {};
         r[thing] = this._buffer[thing];
         return Promise.resolve(r);
     },
-    set: async function(things) {
+    set: async function (things) {
         return browser.storage.local.set(things);
     },
 };
@@ -352,7 +352,7 @@ class ExecutorClass {
                 else if (this.action.download_type === commons.DOWNLOAD_TEXT) {
                     const url = createBlobObjectURLForText(this.data.textSelection);
                     const date = new Date();
-                    this.download(url, `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.txt`);
+                    this.download(url, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.txt`);
                 }
                 else {
                     this.download(this.data.selection);
@@ -394,7 +394,7 @@ class ExecutorClass {
         $D(`getTabIndex: tabsLength=${tabsLength},
             currentTabIndex=${currentTabIndex},
             flags.disableAdjustTabSequence = ${flags.disableAdjustTabSequence},
-            this.action.tab_active =${this.action.tab_active },
+            this.action.tab_active =${this.action.tab_active},
             this.action.tab_pos=${this.action.tab_pos},
             this.backgroundChildTabCount = ${this.backgroundChildTabCount}
             finalIndex=${index}
@@ -404,16 +404,15 @@ class ExecutorClass {
 
     async openTab(url = "") {
 
-        const onCreateTab = (newTab, parentTab) => {
+        const onCreateTab = async (newTab, parentTab) => {
             // 只有当在右边前台打开才记录标签页id
             if (this.action.tab_pos === commons.TAB_CRIGHT && this.action.tab_active === commons.FORE_GROUND) {
                 this.newTabId = newTab.id;
             }
             tabsRelation.check(parentTab.id, newTab.id);
-            return Promise.resolve();
         }
 
-        const onQueryTab = tabs => {
+        const onQueryTab = async tabs => {
             for (let tab of tabs) {
                 if (tab.active === true) {
 
@@ -430,10 +429,9 @@ class ExecutorClass {
                         if (browserMajorVersion >= 57) {
                             option["openerTabId"] = tab.id;
                         }
-                        return browser.tabs
-                            .create(option)
-                            .then(newTab => onCreateTab(newTab, tab))
-                            .catch(onError);
+                        const newTab = await browser.tabs.create(option).catch(onError);
+                        await onCreateTab(newTab, tab)
+                        return newTab;
                     }
                 }
             }
@@ -443,15 +441,20 @@ class ExecutorClass {
         $D(`openTab: url=${url}`);
         this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
         if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.action.tab_pos)) {
-            return browser.windows.create({
+            const win = browser.windows.create({
                 incognito: this.action.tab_pos === commons.TAB_NEW_PRIVATE_WINDOW ? true : false,
                 url,
             }).catch(onError);
+            const tabs = await browser.tabs.query({
+                windowId: win.id
+            })
+            return tabs[0];
         }
-        else return browser.tabs
-            .query({ currentWindow: true })
-            .then(onQueryTab)
-            .catch(onError);
+        else {
+            const tabs = await browser.tabs.query({ currentWindow: true }).catch(onError);
+            const newTab = await onQueryTab(tabs);
+            return newTab;
+        }
     }
 
 
@@ -516,20 +519,41 @@ class ExecutorClass {
     }
 
     async searchText(keyword) {
-        let url = await this.getEngine();
 
-        if (url.startsWith("{redirect.html}")) {
-            this.openRedirectPage(keyword);
+        // check if browser.search API available and if I should use it?
+        if (browserMajorVersion >= 63 && Boolean(this.action.is_browser_search) === true) {
+            const tabHoldingSearch = await this.openTab('about:blank');
+            if (this.action.engine_name !== getI18nMessage('defaultText')) {
+                browser.search.search({
+                    query: keyword,
+                    engine: this.action.engine_name,
+                    tabId: tabHoldingSearch.id
+                });
+            }
+            else {
+                browser.search.search({
+                    query: keyword,
+                    tabId: tabHoldingSearch.id
+                });
+
+            }
         }
         else {
-            if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
-                url = url.replace("%s", "%x");
+            let url = await this.getEngine();
+
+            if (url.startsWith("{redirect.html}")) {
+                this.openRedirectPage(keyword);
             }
-            this.openTab(
-                url
-                .replace("%s", encodeURIComponent(keyword))
-                .replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
-            );
+            else {
+                if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
+                    url = url.replace("%s", "%x");
+                }
+                this.openTab(
+                    url
+                        .replace("%s", encodeURIComponent(keyword))
+                        .replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
+                );
+            }
         }
     }
 
@@ -542,8 +566,8 @@ class ExecutorClass {
         else {
             this.openTab(
                 url
-                .replace("%s", encodeURIComponent(imageFileURL))
-                .replace("%x", encodeURIComponent(`site:${this.data.site} ${imageFileURL}`))
+                    .replace("%s", encodeURIComponent(imageFileURL))
+                    .replace("%x", encodeURIComponent(`site:${this.data.site} ${imageFileURL}`))
             );
         }
 
@@ -756,6 +780,21 @@ browser.runtime.onInstalled.addListener(async (details) => {
         }
     }
 
+    async function upgrade_156() {
+        console.info("upgrade v1.56.0");
+        for (const aKey of Object.keys(all)) {
+            if (aKey.startsWith("Actions")) {
+                for (const bKey of Object.keys(all[aKey])) {
+                    for (const cKey of Object.keys(all[aKey][bKey])) {
+                        if ("use_browser_search" in all[aKey][bKey][cKey] === false) {
+                            all[aKey][bKey][cKey]["is_browser_search"] = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     console.info(details);
 
     if (details.reason === browser.runtime.OnInstalledReason.UPDATE) {
@@ -779,6 +818,10 @@ browser.runtime.onInstalled.addListener(async (details) => {
             await upgrade_155();
         }
 
+        if (midVer < 56) {// < 1.56.0
+            changedflag = true;
+            await upgrade_156();
+        }
         assign(all, DEFAULT_CONFIG);
     }
     else if (details.reason === browser.runtime.OnInstalledReason.INSTALL) {
@@ -786,9 +829,9 @@ browser.runtime.onInstalled.addListener(async (details) => {
         await browser.storage.local.set(DEFAULT_CONFIG);
         await browser.storage.local.set({
             Engines: [{ "name": "Google Search", "url": "https://www.google.com/search?q=%s" },
-                { "name": "Bing Search", "url": "https://www.bing.com/search?q=%s" },
-                { "name": "DuckDuckGo Search", "url": "https://duckduckgo.com/?q=%s&ia=web" },
-                { "name": "Yandex Search", "url": "https://www.yandex.com/search/?text=%s" }
+            { "name": "Bing Search", "url": "https://www.bing.com/search?q=%s" },
+            { "name": "DuckDuckGo Search", "url": "https://duckduckgo.com/?q=%s&ia=web" },
+            { "name": "Yandex Search", "url": "https://www.yandex.com/search/?text=%s" }
             ]
         });
     }

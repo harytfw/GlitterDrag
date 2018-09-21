@@ -19,6 +19,15 @@
         "message": "方向控制",
         "description": ""
     },
+    "currentEngine": {
+        "message": "当前: $C$ ",
+        "placeholders": {
+            "C": {
+                "content": "$1",
+                "example": "Google"
+            }
+        }
+    },
     "ALLOW_NORMAL": {
         "message": "普通4个方向",
         "description": ""

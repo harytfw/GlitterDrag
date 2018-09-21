@@ -19,6 +19,15 @@
         "message": "Direction Control",
         "description": ""
     },
+    "currentEngine": {
+        "message": "Current: $C$ ",
+        "placeholders": {
+            "C": {
+                "content": "$1",
+                "example": "Google"
+            }
+        }
+    },
     "ALLOW_NORMAL": {
         "message": "Normal 4 directions ",
         "description": ""
@@ -273,7 +282,6 @@
         "message": "Glitter Drag - Options",
         "description": "title of page"
     },
-
     "option_tooltip_act": {
         "message": "Perform the action",
         "description": "tooltip on option"
@@ -692,8 +700,8 @@
     "elem_CustomDirectory": {
         "message": "CustomDirectory"
     },
-    "elem_VariablesInPath":{
-        "message":"View the available variables in the download path"
+    "elem_VariablesInPath": {
+        "message": "View the available variables in the download path"
     },
     "elem_Exclusion": {
         "message": "Exclusion",

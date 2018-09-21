@@ -37,13 +37,6 @@ const ENGINES = [{
     "Tineye": "{redirect.html}?cmd=search&url={url}&engineName=tineye",
     "Yandex": "{redirect.html}?cmd=search&url={url}&engineName=yandex",
 }];
-var browserMajorVersion = 52;
-browser.runtime.getBrowserInfo().then(info => {
-    browserMajorVersion = info.version.split(".")[0];
-    $D("Browser Info:", info);
-    browserMajorVersion = parseInt(browserMajorVersion);
-    // browserMajorVersion = 56;
-});
 
 window.addEventListener("beforeunload", () => {
     LStorage.set({
@@ -118,20 +111,18 @@ document.addEventListener("radiochange", e => {
 
 class ActionsWrapper {
     constructor() {
+        this.parent = $E("#tab-actions");
+
         this.template4Direction = $E("#template-for-single-direction")
         this.template4Type = $E("#template-for-single-action-type")
         this.template4Container = $E("#template-for-actions-container")
-        this.parent = $E("#tab-actions");
-        this.fillContent();
-        document.addEventListener("tabshow", e => {
-            if (e.target.id === "tab-actions") {
-                //模拟点击单选按钮，最终跳转到 :190
-                $E(".Actions", this.parent).dispatchEvent(new Event("radiochange", {
-                    bubbles: true
-                }));
-            }
-        });
 
+        this.fillContent();
+        this.parent.addEventListener("tabshow", e => {
+            $E(".Actions", this.parent).dispatchEvent(new Event("radiochange", {
+                bubbles: true
+            }));
+        });
     }
     async fillContent() {
 
@@ -147,7 +138,6 @@ class ActionsWrapper {
 
             const dirs = subcontainer.querySelectorAll(".direction");
             for (const d of dirs) {
-
                 d.appendChild(document.importNode(this.template4Direction.content, true))
             }
 
@@ -280,7 +270,7 @@ class ActionsWrapper {
             this.onDirectionControlChange(e);
         }
         else if (e.target.className.indexOf("Actions") >= 0) {
-            this.onupdate();
+            await this.updateEngine();
             this.setting = (await LStorage.get([this.actionsKeyName]))[this.actionsKeyName];
             for (const x of $A(".act-name", this.parent)) {
                 this.onActionBehaviorChange({
@@ -296,7 +286,6 @@ class ActionsWrapper {
             }
         }
         else {
-
             if (e.target.className.indexOf("act-name") >= 0) {
                 this.onActionBehaviorChange(e);
             }
@@ -313,13 +302,17 @@ class ActionsWrapper {
                     res[key][kind][dirName][attribute] = false;
                 }
                 else if (attribute === "engine_name") {
-                    if (e.target.value.startsWith("*")) {
-                        res[key][kind][dirName][attribute] = e.target.value.subStr(1);
+                    const prefix = getI18nMessage('currentEngine');
+                    if (e.target.value.startsWith(prefix)) {
+                        res[key][kind][dirName][attribute] = e.target.value.subStr(prefix.length);
                     }
                     else {
                         res[key][kind][dirName][attribute] = e.target.value;
                     }
                     res[key][kind][dirName]["engine_url"] = e.target.options[e.target.selectedIndex].getAttribute("url");
+                    const isBrowserSearch = e.target.options[e.target.selectedIndex].getAttribute("is-browser-search") === "true" ? true : false;
+                    res[key][kind][dirName]["is_browser_search"] = isBrowserSearch;
+
                 }
                 else {
                     res[key][kind][dirName][attribute] = e.target.value;
@@ -332,22 +325,81 @@ class ActionsWrapper {
         }
     }
 
-    async onupdate() {
+    async updateEngine() {
+        // browser
+        let browserEngines = [];
+        if (browserMajorVersion >= 63) {
+            browserEngines = (await browser.search.get())
+        }
 
-        const engines = (await LStorage.get("Engines"))["Engines"];
-        const options = Array.from(engines, (obj) => {
+        const browserGroup = document.createElement('optgroup');
+        browserGroup.label = "Browser";
+        for (const obj of browserEngines) {
+            const elem = document.createElement("option");
+            elem.value = obj.name;
+            elem.textContent = obj.name;
+            elem.setAttribute("url", "about:about");// test purpose, TODO: remove
+            elem.setAttribute("is-browser-search", true);
+            browserGroup.appendChild(elem);
+        }
+        // builtin
+        const userEngines = (await LStorage.get("Engines"))["Engines"];
+        const userAddingGroup = document.createElement("optgroup");
+        userAddingGroup.label = "Your addition";
+        for (const obj of userEngines) {
             const elem = document.createElement("option");
             elem.value = obj.name;
             elem.textContent = obj.name;
             elem.setAttribute("url", obj.url);
-            return elem;
-        });
-        for (const elem of $A(".engine-name", this.parent)) {
-            while (elem.firstElementChild) {
-                elem.firstElementChild.remove();
+            elem.setAttribute("is-browser-search", false);
+            userAddingGroup.appendChild(elem);
+        }
+
+        // normal image search engine
+        // const imageEngines = ENGINES.filter(obj => {
+        //     return obj.groupName === 'Image Search';
+        // });
+        // const imageSearchGroup = document.createElement("optgroup");
+        // imageSearchGroup.label = "Image Search";
+        // for (const key of Object.keys(imageEngines)) {
+        //     const elem = document.createElement("option");
+        //     elem.value = key;
+        //     elem.textContent = key;
+        //     elem.setAttribute("url", imageEngines[key]);
+        //     elem.setAttribute("is-browser-search", false);
+        //     imageSearchGroup.appendChild(elem);
+        // }
+
+        // via upload
+        // const imageEngines2 = ENGINES.filter(obj => {
+        //     return obj.groupName === 'Image Search(via upload)';
+        // });
+        // const imageSearchGroup2 = document.createElement("optgroup");
+        // imageSearchGroup2.label = "Image Search";
+        // for (const key of Object.keys(imageEngines2)) {
+        //     const elem = document.createElement("option");
+        //     elem.value = key;
+        //     elem.textContent = key;
+        //     elem.setAttribute("url", imageEngines2[key]);
+        //     elem.setAttribute("is-browser-search", false);
+        //     imageSearchGroup2.appendChild(elem);
+        // }
+
+
+        for (const selectElem of $A(".engine-name", this.parent)) {
+            while (selectElem.firstElementChild) {
+                selectElem.firstElementChild.remove();
             }
-            for (const opt of options) {
-                elem.appendChild(opt.cloneNode(true));
+            selectElem.appendChild(browserGroup.cloneNode(true));
+            selectElem.appendChild(userAddingGroup.cloneNode(true));
+            // selectElem.appendChild(imageSearchGroup.cloneNode(true));
+            // selectElem.appendChild(imageSearchGroup2.cloneNode(true));
+
+            if (selectElem.parentElement.parentElement.parentElement.className === commons.imageAction) {
+                $H([
+                    "optgroup[label='Browser']",
+                    "option[value='默认'][is-browser-search='true']"
+                ], "none", selectElem);
             }
         }
     }
@@ -372,17 +424,27 @@ class ActionsWrapper {
                 $E(".search-type", context).value = action["search_type"];
                 $E(".download-type", context).value = action["download_type"];
                 $E(".tab-pos", context).value = action["tab_pos"];
-                const elem = $E(".engine-name", context);
-                elem.value = action["engine_name"];
-                let opt = document.createElement("option");
-                opt.textContent = "*" + action["engine_name"];
-                opt.value = action["engine_name"];
-
-                opt.setAttribute("url", action["engine_url"]);
-                elem.insertBefore(opt, elem.firstElementChild);
-                elem.title = action["engine_url"];
-                elem.selectedIndex = 0;
                 $E(".download-directory", context).value = action["download_directory"];
+
+                const engineSelector = $E(".engine-name", context);
+                engineSelector.value = action["engine_name"];
+
+                let opt = document.createElement("option")
+                opt.textContent = getI18nMessage("defaultText");
+                opt.value = getI18nMessage("defaultText");
+                opt.setAttribute("url", "about:blank");// only for test TODO: remove
+                opt.setAttribute("is-browser-search", true);
+                engineSelector.insertBefore(opt, engineSelector.firstElementChild);
+
+                opt = document.createElement("option");
+                opt.textContent = getI18nMessage("currentEngine", action["engine_name"]);
+                opt.value = action["engine_name"];
+                opt.setAttribute("url", action["engine_url"]);
+                opt.setAttribute("is-browser-search", action["is_browser_search"]);
+                engineSelector.insertBefore(opt, engineSelector.firstElementChild);
+
+                engineSelector.title = action["engine_url"];
+                engineSelector.selectedIndex = 0;
             }
         }
 
@@ -445,7 +507,7 @@ class EngineItemWrapper {
     }
 
     onchange() {
-        this.elem.classList.remove("saved"); // TODO: better if highlight the changed input only?
+        this.elem.classList.remove("saved");
     }
     get name() {
         return this.nameInput.value;
@@ -728,7 +790,16 @@ class ActionsView {
         const el = e.target;
         this.$E(".search-engine-name").value = el.children[el.selectedIndex].textContent;
         this.$E(".search-engine-url").value = el.children[el.selectedIndex].value;
-
+        if (el.children[0].textContent === "Browser") {
+            this.$E(".search-engine-name").setAttribute("is-browser-search", true);
+            this.$E(".search-engine-name").disabled = true;
+            this.$E('.search-engine-url').style.display = 'none';
+        }
+        else {
+            this.$E(".search-engine-name").setAttribute("is-browser-search", false);
+            this.$E(".search-engine-name").disabled = false;
+            this.$E('.search-engine-url').style.display = '';
+        }
         el.selectedIndex = 0;
     }
 
@@ -860,6 +931,7 @@ class ActionsView {
             tab_pos: this.$E(".tab-pos").value,
             engine_name: this.$E(".search-engine-name").value,
             engine_url: this.$E(".search-engine-url").value,
+            is_browser_search: this.$E(".search-engine-name").getAttribute("is-browser-search") === "true" ? true : false,
             download_directory: this.$E(".download-directory").value,
             tab_active: this.getRadioValue(".tab-active"),
             open_type: this.getRadioValue(".open-type"),
@@ -877,11 +949,13 @@ class ActionsView {
             for (let optionElem of $A('option[value=ACT_FIND],option[value=ACT_TRANS]', this.parent)) {
                 optionElem.setAttribute('disabled', '');
             }
+            this.$E('.search-engine-select-group').firstElementChild.style.display = 'none';
         }
         else {
             for (let optionElem of $A('option[value=ACT_FIND],option[value=ACT_TRANS]', this.parent)) {
                 optionElem.removeAttribute('disabled');
             }
+            this.$E('.search-engine-select-group').firstElementChild.style.display = '';
         }
 
         if (data["tab_active"] === commons.FORE_GROUND) {
@@ -917,7 +991,14 @@ class ActionsView {
 
         this.$E(".search-engine-name").value = data["engine_name"];
         this.$E(".search-engine-url").value = data["engine_url"];
-
+        if (data["is_browser_search"] === true) {
+            this.$E(".search-engine-name").disabled = true;
+            this.$E(".search-engine-url").style.display = 'none';
+        }
+        else {
+            this.$E(".search-engine-name").disabled = false;
+            this.$E(".search-engine-url").style.display = '';
+        }
         this.$E(".download-directory").value = data["download_directory"];
 
         this.$E(".action-name").dispatchEvent(new Event("change"));
@@ -1231,20 +1312,20 @@ class ExcludedRulesWrapper {
         $E("#exclusionRules").addEventListener("change", e => {
             const list = e.target.value.trim().split("\n").filter(val => val.length !== 0)
             $E("#exclusionRules").value = list.join("\n");
-            LStorage.set({exclusionRules: list})
+            LStorage.set({ exclusionRules: list })
         })
         $E("#patterns-test").addEventListener("click", async () => {
             const url = $E("#patterns-url-input").value;
             const regexps = (await LStorage.get("exclusionRules"))["exclusionRules"]
             let msg = "No Match";
-            for(const t of regexps){
-                try{
+            for (const t of regexps) {
+                try {
                     const r = new RegExp(t)
-                    if(r.exec(url)){
+                    if (r.exec(url)) {
                         msg = t;
                         break;
                     }
-                } catch(error){
+                } catch (error) {
                     msg = t;
                     msg += "\n" + error
                     break;
@@ -1256,65 +1337,49 @@ class ExcludedRulesWrapper {
 }
 
 
-const tabs = {
-    _tabs: [],
-    init: function() {
-        $E("#tabs nav").addEventListener("click", event => {
-            if (event.target.nodeName !== "A") return;
-            $E(".nav-active").classList.remove("nav-active");
-            event.target.classList.add("nav-active");
-            for (const el of $A(".active")) {
-                el.classList.remove("active");
-            }
-            const target = $E(`${event.target.getAttribute("toggle-target")}`);
-            target.classList.add("active");
-            //+tabshow event
-            target.dispatchEvent(new Event("tabshow", {
-                bubbles: true
-            }));
-        });
+
+function initTabs() {
 
 
-        try {
-            var w;
+    new ActionsWrapper();
+    new NewActionsWrapper();
 
-            new ActionsWrapper();
-            new NewActionsWrapper();
+    new EngineWrapper();
+    new generalSettingWrapper();
+    new downloadWrapper();
+    new styleWrapper();
+    new PanelWrapper();
+    new TranslatorWrapper();
+    new ExcludedRulesWrapper();
 
-            w = new EngineWrapper();
-            this._tabs.push(w);
+    doI18n();
 
-            w = new generalSettingWrapper();
-            this._tabs.push(w);
+    $E("#tabs nav").addEventListener("click", event => {
+        if (event.target.nodeName !== "A") return;
+        $E(".nav-active").classList.remove("nav-active");
+        event.target.classList.add("nav-active");
+    });
 
-            w = new downloadWrapper();
-            this._tabs.push(w);
-
-            w = new styleWrapper();
-            this._tabs.push(w);
-
-            w = new PanelWrapper();
-
-            w = new TranslatorWrapper();
-
-            w = new ExcludedRulesWrapper();
+    window.addEventListener('hashchange', () => {
+        if (!location.hash) return;
+        for (const el of $A(".active")) {
+            el.classList.remove("active");
         }
-        catch (e) {
-            console.error(e);
-        }
-
-        //do with i18n
-
-        doI18n();
-
-        $E(".nav-active").dispatchEvent(new Event("click", {
-            bubbles: true
-        }));
-    },
-
+        $E(location.hash).classList.add("active");
+        $E(location.hash).dispatchEvent(new Event("tabshow"));
+    })
+    if (location.hash) {
+        // 保证 hashchange 触发
+        const hash = location.hash
+        location.hash = '';
+        location.hash = hash;
+    }
+    else {
+        location.hash = '#tab-actions';
+    }
 }
 
-function initButton() {
+function initButtons() {
     const fileReader = new FileReader();
 
     eventUtil.attachEventS("#restore", () => {
@@ -1344,7 +1409,7 @@ function initButton() {
 
         browser.downloads.download({
             url: url,
-            filename: `GlitterDrag-${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.json`,
+            filename: `GlitterDrag-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.json`,
             conflictAction: 'uniquify',
             saveAs: true
         });
@@ -1368,5 +1433,23 @@ function initButton() {
         }
     })
 }
-initButton();
-tabs.init();
+var browserMajorVersion = 52;
+browser.runtime.getBrowserInfo().then(async info => {
+    browserMajorVersion = info.version.split(".")[0];
+    $D("Browser Info:", info);
+    browserMajorVersion = parseInt(browserMajorVersion);
+
+
+
+    if (browserMajorVersion >= 63) {
+        const browserEngines = await browser.search.get();
+        const browserEnginesObject = {};
+        for (const obj of browserEngines) {
+            browserEnginesObject[obj.name] = "about:blank";//TODO: remove
+        }
+        ENGINES.unshift(Object.assign({ groupName: "Browser" }, browserEnginesObject));
+    }
+
+    initButtons();
+    initTabs();
+});
