@@ -77,6 +77,7 @@ const commons = {
     TAB_LAST: "TAB_LAST", //最右边
     TAB_CLEFT: "TAB_CLEFT", //新建的标签页在当前标签页的左边
     TAB_CRIGHT: "TAB_CRIGHT", //右边
+    TAB_SIDE: "TAB_SIDE", // 侧栏
     // TAB_UNSPECIFIED:"TAB_UNSPECIFIED",
 
     FORE_GROUND: true, //前台打开
@@ -106,15 +107,15 @@ const commons = {
 Object.freeze(commons);
 
 const eventUtil = {
-    attachEventAll: function(selector = "body", func = () => {}, eventName = "click") {
+    attachEventAll: function (selector = "body", func = () => { }, eventName = "click") {
         for (let el of document.querySelectorAll(selector)) {
             this.attachEventT(el, func, eventName);
         }
     },
-    attachEventS: function(selector = "body", func = () => {}, eventName = "click") {
+    attachEventS: function (selector = "body", func = () => { }, eventName = "click") {
         this.attachEventT($E(selector), func, eventName);
     },
-    attachEventT: function(target = document, func = () => {}, eventName = "click") {
+    attachEventT: function (target = document, func = () => { }, eventName = "click") {
         target.addEventListener(eventName, func);
     }
 }
@@ -282,11 +283,19 @@ const typeUtil = {
 }
 Object.freeze(typeUtil);
 
+const PSTACK = () => {
+    try {
+        throw new Error("Print Stack");
+    } catch (e) {
+        console.trace(e);
+    }
+}
+
 const $E = (s = "", context = document) => {
     let r = context.querySelector(s);
-    // if (!r) {
-    //     console.trace("No Result: document.querySelector", s)
-    // }
+    if (!r) {
+        PSTACK();
+    }
     return r;
 }
 

@@ -1,4 +1,3 @@
-const TAB_ID_NONE = browser.tabs.TAB_ID_NONE;
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
 const DEFAULT_SEARCH_ENGINE = browser.i18n.getMessage("default_search_url");
 var browserMajorVersion = 52;
@@ -10,6 +9,14 @@ browser.runtime.getBrowserInfo().then(info => {
     // browserMajorVersion = 56;
 });
 
+
+function randomString(length = 8) {
+    // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
+    const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
+}
 
 function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 3) {
     const url = window.URL.createObjectURL(blob);
@@ -29,91 +36,9 @@ function onError(e) {
     console.error(e);
 }
 
-
-const tabsRelation = {
-    _parent: TAB_ID_NONE,
-    children: [],
-    check: function (pid, cid = TAB_ID_NONE) {
-        //pid: id of parent tab.
-        //cid: id of child tab.
-        if (this.parent === pid) {
-            if (cid !== TAB_ID_NONE) {
-                this.children.push(cid);
-            }
-            return true;
-        }
-        else {
-            this.parent = pid;
-            return false;
-        }
-    },
-    switchToParent: function (id) {
-        let isLastChildTab = this.children.length === 1 && this.children[0] === id;
-        if (this.parent === id) {
-            //父标签页被关闭，那么重置this.parent
-            this.parent = TAB_ID_NONE;
-        }
-        else {
-            //把被关闭的标签页id从children中删除
-            this.children = this.children.filter(v => {
-                return v !== id
-            });
-        }
-        // 切换到父标签页的条件：
-        // 1. 父标签页id不为TAB_ID_NONE
-        // 2. 所有子标签页已被全部关闭
-        // 3. 先前关闭的标签页是最后一个子标签页
-        $D("" + this._parent, this.children.join(","));
-        if (this.parent !== TAB_ID_NONE && this.children.length === 0 && isLastChildTab) {
-            return true; //需要切换到父标签页
-        }
-        return false; //不需要切换
-    }
-}
-
-Object.defineProperty(tabsRelation, "parent", {
-    set: function (value) {
-        if (value !== this._parent || value === TAB_ID_NONE) {
-            this._parent = value;
-            this.children = [];
-        }
-        else {
-            this._parent = value;
-        }
-    },
-    get: function () {
-        return this._parent;
-    }
-});
-
 const flags = {
-    initialize: function () {
-        browser.storage.onChanged.addListener(changes => {
-            for (const k of Object.keys(changes)) {
-                if (k in this) this[k] = changes[k].newValue;
-            }
-        });
-        browser.storage.local.get(all => {
-            for (const k of Object.keys(this)) {
-                if (k === "initialize") continue;
-                this[k] = all[k];
-            }
-        });
-    },
-    // enableSync: false,
-    // enableIndicator: false,
-    // enablePrompt: false,
-    // enableStyle: false,
-    // enableTimeoutCancel: false,
-    enableAutoSelectPreviousTab: true,
-    // enableCtrlKey: false,
-    // enableShiftKey: false,
-    // timeoutCancel: 2000,
-    // triggeredDistance: 20,
     disableAdjustTabSequence: false,
-    switchToParentTab: false,
 }
-flags.initialize();
 
 const LStorage = {
     _buffer: {},
@@ -121,11 +46,17 @@ const LStorage = {
         browser.storage.onChanged.addListener(changes => {
             for (const k of Object.keys(changes)) {
                 this._buffer[k] = changes[k].newValue;
+                if (k in flags) {
+                    flags[k] = changes[k].newValue;
+                }
             }
         });
-        browser.storage.local.get(all => {
+        browser.storage.local.get(null, all => {
             for (const k of Object.keys(all)) {
                 this._buffer[k] = all[k];
+                if (k in flags) {
+                    flags[k] = all[k];
+                }
             }
         });
     },
@@ -140,6 +71,7 @@ const LStorage = {
     },
 };
 LStorage.initialize();
+
 // const LStorage = browser.storage.local;
 async function getAct(type, dir, key) {
     let r = null;
@@ -173,47 +105,14 @@ class ExecutorClass {
             imageData: null,
         };
         this.action = {};
-
-        this.newTabId = TAB_ID_NONE;
-        this.previousTabId = TAB_ID_NONE;
-
         this.backgroundChildTabCount = 0;
-
         this.lastDownloadItemID = -1;
         this.lastDownloadObjectURL = ""; //prepare for revoke
-        browser.downloads.onChanged.addListener(item => {
-            if (item.id === this.lastDownloadItemID && item.state.current === browser.downloads.State.COMPLETE) {
-                window.URL.revokeObjectURL(this.lastDownloadObjectURL);
-                this.lastDownloadItemID = -1;
-                this.lastDownloadObjectURL = "";
-            }
-        })
-
-
-        browser.tabs.onRemoved.addListener((tabId) => {
-            if (flags.enableAutoSelectPreviousTab &&
-                !flags.switchToParentTab &&
-                this.backgroundChildTabCount === 0 &&
-                this.newTabId !== browser.tabs.TAB_ID_NONE &&
-                this.previousTabId !== browser.tabs.TAB_ID_NONE &&
-                this.newTabId === tabId) {
-                browser.tabs.update(this.previousTabId, {
-                    active: commons.FORE_GROUND
-                });
-            }
-            if (flags.switchToParentTab && tabsRelation.switchToParent(tabId)) {
-                browser.tabs.update(tabsRelation.parent, {
-                    active: commons.FORE_GROUND
-                });
-            }
-            this.backgroundChildTabCount = 0;
-        });
-        browser.tabs.onActivated.addListener(() => {
-            this.backgroundChildTabCount = 0;
-        });
-
         this.findFlag = false;
+
+        this.regEvent();
     }
+
     async DO(m) {
         this.data = m;
         // console.log(this.data);
@@ -234,191 +133,137 @@ class ExecutorClass {
         }
         await this.execute();
         this.data = null;
+        this.action = null;
 
     }
     async execute() {
         $D(this.action);
 
-        if (typeof this.data.imageData === "string") { //把imageData转换成File
-            this.data.imageData = new Uint8Array(this.data.imageData.split(","));
-            console.assert(this.data.imageData instanceof Uint8Array);
-            this.data.selection = createObjectURL(
-                new File([this.data.imageData], this.data.fileInfo.name, {
-                    type: this.data.fileInfo.type
-                })
-            );
-            $D("create object url: " + this.data.selection);
+
+        if (typeof this.data.imageData === "string" && this.data.imageData.length) { //把imageData转换成File
+            const { url, bin } = this.convertBase64ToObjectURL(this.data.imageData)
+            this.data.selection = url;
+            this.data.imageData = bin;
         }
 
         else if (this.data.actionType === commons.imageAction && this.data.imageData === null) {
-            const MIME_TYPE = {
-                ".gif": "image/gif",
-                ".jpg": "image/jpeg",
-                ".jpeg": "image/jpeg",
-                ".png": "image/png",
-                ".bmp": "image/bmp",
-            }
-            const result = this.data.selection.match(commons.fileExtension);
-            result && (result[1] = MIME_TYPE[result[1]]);
-            const [name, type] = result || ["image.jpg", "image/jpeg"];
-            this.data.fileInfo = { name, type };
+            this.data.fileInfo = this.parsefileInfo(this.data.selection);
         }
 
         if (this.data.selection === "" || this.data.selection === null || this.data.selection.length === 0) {
-            const e = "the selection is empty";
-            $D(e);
-            return Promise.reject(e);
+            throw new Error('the selection can not be empty');
         }
 
         switch (this.action.act_name) {
             case commons.ACT_OPEN:
-                if (this.data.actionType === commons.linkAction) {
-                    if (this.action.open_type === commons.OPEN_IMAGE_LINK && this.data.imageLink !== "") this.openURL(this.data.imageLink)
-                    else if (this.action.open_type == commons.OPEN_TEXT) this.openURL(this.data.textSelection);
-                    else this.openURL(this.data.selection)
-                }
-                else if (this.data.selection.startsWith("blob:")) { // blob url
-                    this.openRedirectPage({
-                        url: this.data.selection,
-                        cmd: "open"
-                    });
-                }
-                // else if (this.data.selection.startsWith("file:///") && typeUtil.seemAsURL(this.data.selection)) {
-                //     this.openRedirectPage({
-                //         cmd: "open",
-                //         url: this.data.selection
-                //     })
-                // }
-                else {
-                    this.openURL(this.data.selection)
-                }
+                await this.openHandler();
                 break;
             case commons.ACT_COPY:
-                switch (this.action.copy_type) {
-                    case commons.COPY_IMAGE_LINK:
-                        if (this.data.actionType === commons.linkAction && this.data.imageLink !== "") {
-                            this.copy(this.data.imageLink);
-                        }
-                        else {
-                            this.copy(this.data.selection);
-                        }
-                        break;
-                    case commons.COPY_IMAGE:
-                        if (this.data.imageData instanceof Uint8Array) {
-                            this.copy(this.data.imageData);
-                        }
-                        else {
-                            const imageData = await this.getImageData(this.data.imageLink);
-                            this.copy(new Uint8Array(imageData));
-                        }
-                        break;
-                    case commons.COPY_TEXT:
-                        this.copy(this.data.textSelection);
-                        break;
-                    case commons.COPY_LINK:
-                        this.copy(this.data.selection)
-                        break;
-                }
+                await this.copyHandler();
                 break;
             case commons.ACT_SEARCH:
-                if (this.data.actionType === commons.linkAction) {
-                    if (this.action.search_type === commons.SEARCH_IMAGE_LINK && this.data.imageLink !== "") {
-                        this.searchText(this.data.imageLink);
-                    }
-                    else if (this.action.search_type === commons.SEARCH_TEXT && this.data.textSelection !== "") {
-                        this.searchText(this.data.textSelection);
-                    }
-                    else {
-                        this.searchText(this.data.selection);
-                    }
-                }
-                else if (this.data.actionType === commons.imageAction) {
-                    this.searchImage(this.data.selection);
-                }
-                else if (this.action.search_type === commons.SEARCH_TEXT) {
-                    this.searchText(this.data.textSelection);
-                }
-                else if (this.action.search_type === commons.SEARCH_IMAGE) {
-                    this.searchImage(this.data.selection);
-                }
-                else {
-                    this.searchText(this.data.selection);
-                }
+                await this.searchHandler();
                 break;
             case commons.ACT_DL:
-                if (this.data.actionType === commons.linkAction && this.action.download_type === commons.DOWNLOAD_IMAGE_LINK && this.data.imageLink !== "") {
-                    this.download(this.data.imageLink);
-                }
-                else if (this.action.download_type === commons.DOWNLOAD_TEXT) {
-                    const url = createBlobObjectURLForText(this.data.textSelection);
-                    const date = new Date();
-                    this.download(url, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.txt`);
-                }
-                else {
-                    this.download(this.data.selection);
-                }
+                await this.downloadHandler();
                 break;
             case commons.ACT_FIND:
-                this.findText(this.data.textSelection);
+                await this.findText(this.data.textSelection);
                 break;
             case commons.ACT_TRANS:
-                this.translateText(this.data.textSelection);
+                await this.translateText(this.data.textSelection);
                 break;
         }
-        return Promise.resolve();
     }
-    getTabIndex(tabsLength = 0, currentTabIndex = 0) {
-        let index = 0;
-        if (flags.disableAdjustTabSequence || this.action.tab_active === commons.FORE_GROUND) {
-            this.backgroundChildTabCount = 0;
+
+    async openHandler() {
+        if (this.data.actionType === commons.linkAction) {
+            if (this.action.open_type === commons.OPEN_IMAGE_LINK && this.data.imageLink !== "") return this.openURL(this.data.imageLink)
+            else if (this.action.open_type == commons.OPEN_TEXT) return this.openURL(this.data.textSelection);
+            else return this.openURL(this.data.selection)
         }
-        switch (this.action.tab_pos) {
-            case commons.TAB_CLEFT:
-                index = currentTabIndex;
+        else if (this.data.selection.startsWith("blob:")) { // blob url
+            return this.openRedirectPage({
+                url: this.data.selection,
+                cmd: "open"
+            });
+        }
+        return this.openURL(this.data.selection);
+    }
+    async copyHandler() {
+        let s = ''
+        switch (this.action.copy_type) {
+            case commons.COPY_IMAGE_LINK:
+                if (this.data.actionType === commons.linkAction && this.data.imageLink !== "") {
+                    s = this.data.imageLink;
+                }
+                else {
+                    s = this.data.selection;
+                }
                 break;
-            case commons.TAB_CRIGHT:
-                index = currentTabIndex + this.backgroundChildTabCount + 1;
+            case commons.COPY_IMAGE:
+                if (this.data.imageData instanceof Uint8Array) {
+                    s = this.data.imageData;
+                }
+                else {
+                    const imageData = await (this.getImageDataFromUrl(this.data.imageLink));
+                    s = new Uint8Array(imageData)
+                }
                 break;
-            case commons.TAB_FIRST:
-                index = 0;
+            case commons.COPY_TEXT:
+                s = this.data.textSelection;
                 break;
-            case commons.TAB_LAST:
-                index = tabsLength;
-                break;
-            default:
+            case commons.COPY_LINK:
+                s = this.data.selection;
                 break;
         }
-        if (this.action.tab_active === commons.BACK_GROUND && this.action.tab_pos === commons.TAB_CRIGHT) {
-            this.backgroundChildTabCount += 1;
+        return this.copy(s);
+    }
+    async searchHandler() {
+        if (this.data.actionType === commons.linkAction) {
+            let s = '';
+            if (this.action.search_type === commons.SEARCH_IMAGE_LINK && this.data.imageLink !== "") {
+                s = this.data.imageLink;
+            }
+            else if (this.action.search_type === commons.SEARCH_TEXT && this.data.textSelection !== "") {
+                s = this.data.textSelection;
+            }
+            else {
+                s = this.data.selection;
+            }
+            return this.searchText(s);
         }
-        $D(`getTabIndex: tabsLength=${tabsLength},
-            currentTabIndex=${currentTabIndex},
-            flags.disableAdjustTabSequence = ${flags.disableAdjustTabSequence},
-            this.action.tab_active =${this.action.tab_active},
-            this.action.tab_pos=${this.action.tab_pos},
-            this.backgroundChildTabCount = ${this.backgroundChildTabCount}
-            finalIndex=${index}
-        `);
-        return index;
+        else if (this.data.actionType === commons.imageAction) {
+            return this.searchImage(this.data.selection);
+        }
+        else if (this.action.search_type === commons.SEARCH_IMAGE) {
+            return this.searchImage(this.data.selection);
+        }
+        else if (this.action.search_type === commons.SEARCH_TEXT) {
+            return this.searchText(this.data.textSelection);
+        }
+        else {
+            return this.searchText(this.data.selection);
+        }
+    }
+
+    async downloadHandler() {
+        if (this.data.actionType === commons.linkAction && this.action.download_type === commons.DOWNLOAD_IMAGE_LINK && this.data.imageLink !== "") {
+            return this.download(this.data.imageLink);
+        }
+        else if (this.action.download_type === commons.DOWNLOAD_TEXT) {
+            const url = createBlobObjectURLForText(this.data.textSelection);
+            const date = new Date();
+            return this.download(url, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.txt`);
+        }
+        return this.download(this.data.selection);
     }
 
     async openTab(url = "") {
 
-        const onCreateTab = async (newTab, parentTab) => {
-            // 只有当在右边前台打开才记录标签页id
-            if (this.action.tab_pos === commons.TAB_CRIGHT && this.action.tab_active === commons.FORE_GROUND) {
-                this.newTabId = newTab.id;
-            }
-            tabsRelation.check(parentTab.id, newTab.id);
-        }
-
         const onQueryTab = async tabs => {
             for (let tab of tabs) {
                 if (tab.active === true) {
-
-                    tabsRelation.check(tab.id);
-                    this.previousTabId = tab.id;
-
                     if (this.action.tab_pos === commons.TAB_CUR) return browser.tabs.update(tab.id, { url });
                     else {
                         const option = {
@@ -430,21 +275,19 @@ class ExecutorClass {
                             option["openerTabId"] = tab.id;
                         }
                         const newTab = await browser.tabs.create(option).catch(onError);
-                        await onCreateTab(newTab, tab)
                         return newTab;
                     }
                 }
             }
-            return Promise.reject("No active tab was found");
+            throw new Error("No active tab was found");
         }
 
         $D(`openTab: url=${url}`);
-        this.previousTabId = this.newTabId = browser.tabs.TAB_ID_NONE; // reset
         if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.action.tab_pos)) {
-            const win = browser.windows.create({
+            const win = await browser.windows.create({
                 incognito: this.action.tab_pos === commons.TAB_NEW_PRIVATE_WINDOW ? true : false,
                 url,
-            }).catch(onError);
+            });
             const tabs = await browser.tabs.query({
                 windowId: win.id
             })
@@ -457,48 +300,6 @@ class ExecutorClass {
         }
     }
 
-
-    openURL(url = "") {
-        function isValidURL(u) {
-            try {
-                new URL(u);
-                return true;
-            }
-            catch (e) {
-                return false;
-            }
-        }
-        if (isValidURL(url)) {
-            this.openTab(url);
-        }
-        else if (commons.urlPattern.test("http://" + url)) {
-            this.openTab("http://" + url);
-        }
-        else {
-            this.searchText(url);
-        }
-    }
-
-    copy(data) {
-        if (data instanceof Uint8Array) {
-            const len = "image/".length;
-            const ext = this.data.fileInfo.type.substring(len, len + 4);
-            //the file extendsion usually has 3 or 4 characters.
-            // console.log(ext);
-            if (browser.clipboard && ["png", "jpeg"].includes(ext)) {
-                browser.clipboard.setImageData(data.buffer, ext);
-            }
-            return;
-        }
-
-        const storage = document.createElement("textarea");
-        storage.value = data;
-        document.body.appendChild(storage);
-        storage.focus();
-        storage.setSelectionRange(0, storage.value.length);
-        document.execCommand("copy");
-        storage.remove();
-    }
 
     async getEngine() {
         let url = DEFAULT_SEARCH_ENGINE;
@@ -515,7 +316,7 @@ class ExecutorClass {
             }
         }
 
-        return Promise.resolve(url);
+        return url;
     }
 
     async searchText(keyword) {
@@ -524,14 +325,14 @@ class ExecutorClass {
         if (browserMajorVersion >= 63 && Boolean(this.action.is_browser_search) === true) {
             const tabHoldingSearch = await this.openTab('about:blank');
             if (this.action.engine_name !== getI18nMessage('defaultText')) {
-                browser.search.search({
+                return browser.search.search({
                     query: keyword,
                     engine: this.action.engine_name,
                     tabId: tabHoldingSearch.id
                 });
             }
             else {
-                browser.search.search({
+                return browser.search.search({
                     query: keyword,
                     tabId: tabHoldingSearch.id
                 });
@@ -542,13 +343,13 @@ class ExecutorClass {
             let url = await this.getEngine();
 
             if (url.startsWith("{redirect.html}")) {
-                this.openRedirectPage(keyword);
+                return this.openRedirectPage(keyword);
             }
             else {
                 if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
                     url = url.replace("%s", "%x");
                 }
-                this.openTab(
+                return this.openTab(
                     url
                         .replace("%s", encodeURIComponent(keyword))
                         .replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
@@ -561,10 +362,10 @@ class ExecutorClass {
         const url = await this.getEngine();
 
         if (url.startsWith("{redirect.html}")) {
-            this.openRedirectPage(imageFileURL)
+            return this.openRedirectPage(imageFileURL)
         }
         else {
-            this.openTab(
+            return this.openTab(
                 url
                     .replace("%s", encodeURIComponent(imageFileURL))
                     .replace("%x", encodeURIComponent(`site:${this.data.site} ${imageFileURL}`))
@@ -575,7 +376,6 @@ class ExecutorClass {
 
     async openRedirectPage(param) {
         const SUPPORT_CMD = ["open", "search"]
-
 
         const aUrl = new URL(REDIRECT_URL);
         if (typeof param === "string") {
@@ -598,42 +398,30 @@ class ExecutorClass {
             }
         }
         else {
-            $D("unknown type of redirect param", param);
-            return Promise.reject();
+            throw new Error('unknown type of redirect parameter: ' + param);
         }
 
         $D(aUrl.toString());
-        this.openTab(aUrl.toString());
-
-        return Promise.resolve();
+        return this.openTab(aUrl.toString());
     }
 
-    findText(text) {
+    async findText(text) {
         this.findFlag = true;
         if (text.length == 0 || !browser.find) return;
-        browser.find.find(text).then((result) => {
+        return browser.find.find(text).then((result) => {
             if (result.count > 0) {
                 browser.find.highlightResults();
             }
         });
     }
-    removeFind() {
+    async removeFind() {
         if (this.findFlag) { //可能有其他扩展也使用 browser.find，加一个判断
             this.findFlag = false;
-            browser.find.removeHighlighting();
+            return browser.find.removeHighlighting();
         }
     }
 
-
-    randomString(length = 8) {
-        // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
-        const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        let result = '';
-        for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-        return result;
-    }
     async download(url = "", aFilename = "") {
-
         let opt = {
             url,
             saveAs: this.action.download_saveas
@@ -643,13 +431,12 @@ class ExecutorClass {
             aFilename = this.data.fileInfo.name || "file.dat";
         }
         if (this.action.download_type !== commons.DOWNLOAD_TEXT) {
-
             let pathname = new URL(url).pathname;
             let parts = pathname.split("/");
             if (parts[parts.length - 1] === "" && aFilename === "") {
                 //把文件名赋值为8个随机字符
                 //扩展名一定是html吗？
-                aFilename = this.randomString() + ".html";
+                aFilename = randomString() + ".html";
             }
             else if (aFilename === "") {
                 aFilename = parts[parts.length - 1];
@@ -662,65 +449,178 @@ class ExecutorClass {
             console.assert(typeof opt.filename === "string", "error type of downloadOption.filename");
         }
         else {
-            const _date = new Date;
-            const year = _date.getFullYear();
-            const month = ((_date.getMonth() + 1) + '').padStart(2, '0');
-            const date = (_date.getDate() + '').padStart(2, '0');
-            const today = year + '-' + month + '-' + date;
-            const host = this.data.site;
-            const pagetitle = this.data.pagetitle;
             const directories = (await LStorage.get("downloadDirectories"))["downloadDirectories"];
-            opt.filename = directories[this.action.download_directory]
-                .replace('${year}', year)
-                .replace('${month}', month)
-                .replace('${date}', date)
-                .replace('${today}', today)
-                .replace('${host}', host)
-                .replace('${pagetitle}', pagetitle);
-            //.replace('${filename}', aFilename);
+            opt.filename = this.replaceVariables(directories[this.action.download_directory])
             opt.filename += aFilename;
         }
-        //console.log(opt);
-        return browser.downloads.download(opt).then(id => {
-            this.lastDownloadItemID = id;
-            return Promise.resolve();
-        });
+        try {
+            this.lastDownloadItemID = await browser.downloads.download(opt);
+        } catch (e) {
+            // 如果文件名包含非法字符，弹出提示
+            await browser.tabs.executeScript({
+                code: `alert(${opt.filename}\n${e.toString()})`
+            });
+        }
 
     }
-    translateText(text) {
+    async translateText(text) {
         const sended = {
             command: "translate",
             data: text
         }
 
         let portName = "sendToContentScript";
-        browser.tabs.query({
+        const tabs = await browser.tabs.query({
             currentWindow: true,
             active: true
-        }, (tabs) => {
-            let port = browser.tabs.connect(tabs[0].id, { name: portName });
-            port.postMessage(sended);
         });
+
+        let port = browser.tabs.connect(tabs[0].id, { name: portName });
+        return port.postMessage(sended);
     }
 
-    async getImageData(url) {
+    async getImageDataFromUrl(url) {
         const res = await fetch(url);
         const ab = await res.arrayBuffer();
         return Promise.resolve(ab);
     }
 
+    async copy(data) {
+        if (data instanceof Uint8Array) {
+            const len = "image/".length;
+            const ext = this.data.fileInfo.type.substring(len, len + 4);
+            //the file extendsion usually has 3 or 4 characters.
+            // console.log(ext);
+            if (browser.clipboard && ["png", "jpeg"].includes(ext)) {
+                browser.clipboard.setImageData(data.buffer, ext);
+            }
+            return;
+        }
+
+        const storage = document.createElement("textarea");
+        storage.value = data;
+        document.body.appendChild(storage);
+        storage.focus();
+        storage.setSelectionRange(0, storage.value.length);
+        document.execCommand("copy");
+        storage.remove();
+    }
+
+    async openURL(url = "") {
+        function isValidURL(u) {
+            try {
+                new URL(u);
+                return true;
+            }
+            catch (e) {
+                if (url.startsWith('about:')) return true;
+                return false;
+            }
+        }
+        if (isValidURL(url)) {
+            return this.openTab(url);
+        }
+        else if (commons.urlPattern.test("http://" + url)) {
+            return this.openTab("http://" + url);
+        }
+        return this.searchText(url);
+    }
+
+
+    convertBase64ToObjectURL(data = '', fileInfo = { name: '', type: '' }) {
+        const uint8s = new Uint8Array(data.split(","));
+        console.assert(uint8s instanceof Uint8Array);
+        const url = createObjectURL(
+            new File([uint8s], fileInfo.name, {
+                type: fileInfo.type
+            })
+        );
+        $D("create object url: " + url);
+        return {
+            url: url,
+            bin: uint8s,
+        }
+    }
+
+    parsefileInfo(url = '') {
+        const MIME_TYPE = {
+            ".gif": "image/gif",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".png": "image/png",
+            ".bmp": "image/bmp",
+        }
+        const result = url.match(commons.fileExtension);
+        result && (result[1] = MIME_TYPE[result[1]]);
+        const [name, type] = result || ["image.jpg", "image/jpeg"];
+        const fileInfo = { name, type };
+        return fileInfo;
+    }
+
+
+
+    getTabIndex(tabsLength = 0, currentTabIndex = 0) {
+
+        if (flags.disableAdjustTabSequence || this.action.tab_active === commons.FORE_GROUND) {
+            this.backgroundChildTabCount = 0;
+        }
+        let index = 0;
+        switch (this.action.tab_pos) {
+            case commons.TAB_CLEFT: index = currentTabIndex; break;
+            case commons.TAB_CRIGHT: index = currentTabIndex + this.backgroundChildTabCount + 1; break;
+            case commons.TAB_FIRST: index = 0; break;
+            case commons.TAB_LAST: index = tabsLength; break;
+            default: break;
+        }
+
+        if (this.action.tab_active === commons.BACK_GROUND && this.action.tab_pos === commons.TAB_CRIGHT) {
+            this.backgroundChildTabCount += 1;
+        }
+
+        $D(`getTabIndex: tabsLength=${tabsLength},
+            currentTabIndex=${currentTabIndex},
+            flags.disableAdjustTabSequence = ${flags.disableAdjustTabSequence},
+            this.action.tab_active =${this.action.tab_active},
+            this.action.tab_pos=${this.action.tab_pos},
+            this.backgroundChildTabCount = ${this.backgroundChildTabCount}
+            finalIndex=${index}
+        `);
+        return index;
+    }
+
+    replaceVariables(input) {
+        const _date = new Date;
+        const year = _date.getFullYear();
+        const month = ((_date.getMonth() + 1) + '').padStart(2, '0');
+        const date = (_date.getDate() + '').padStart(2, '0');
+        const today = year + '-' + month + '-' + date;
+        const host = this.data.site;
+        const pagetitle = this.data.pagetitle;
+        return input.replace('${year}', year)
+            .replace('${month}', month)
+            .replace('${date}', date)
+            .replace('${today}', today)
+            .replace('${host}', host)
+            .replace('${pagetitle}', pagetitle);
+    }
+    regEvent() {
+        browser.downloads.onChanged.addListener(item => {
+            if (item.id === this.lastDownloadItemID && item.state.current === browser.downloads.State.COMPLETE) {
+                window.URL.revokeObjectURL(this.lastDownloadObjectURL);
+                this.lastDownloadItemID = -1;
+                this.lastDownloadObjectURL = "";
+            }
+        })
+        browser.tabs.onRemoved.addListener(() => {
+            this.backgroundChildTabCount = 0;
+        });
+        browser.tabs.onActivated.addListener(() => {
+            this.backgroundChildTabCount = 0;
+        });
+    }
 }
 
 var executor = new ExecutorClass();
-
-// config.load()
-
-//保存到firefox的同步存储区
-// browser.storage.onChanged.addListener(async(changes) => {
-//     if (flags.enableSync || ("enableSync" in changes && changes["enableSync"].newValue === true)) {
-//         browser.storage.sync.set((await browser.storage.local.get()));
-//     }
-// });
 
 //在安装扩展时(含更新)触发，更新缺少的配置选项
 browser.runtime.onInstalled.addListener(async (details) => {
@@ -827,13 +727,13 @@ browser.runtime.onInstalled.addListener(async (details) => {
     else if (details.reason === browser.runtime.OnInstalledReason.INSTALL) {
         changedflag = false;
         await browser.storage.local.set(DEFAULT_CONFIG);
-        await browser.storage.local.set({
-            Engines: [{ "name": "Google Search", "url": "https://www.google.com/search?q=%s" },
-            { "name": "Bing Search", "url": "https://www.bing.com/search?q=%s" },
-            { "name": "DuckDuckGo Search", "url": "https://duckduckgo.com/?q=%s&ia=web" },
-            { "name": "Yandex Search", "url": "https://www.yandex.com/search/?text=%s" }
-            ]
-        });
+        // await browser.storage.local.set({
+        //     Engines: [{ "name": "Google Search", "url": "https://www.google.com/search?q=%s" },
+        //     { "name": "Bing Search", "url": "https://www.bing.com/search?q=%s" },
+        //     { "name": "DuckDuckGo Search", "url": "https://duckduckgo.com/?q=%s&ia=web" },
+        //     { "name": "Yandex Search", "url": "https://www.yandex.com/search/?text=%s" }
+        //     ]
+        // });
     }
 
     if (changedflag) {
