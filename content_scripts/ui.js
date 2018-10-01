@@ -62,8 +62,8 @@ class BaseUIClass {
         else {
             y -= rect.height / 2;
         }
-        this.setStyleProperty("left", x + "px");
-        this.setStyleProperty("top", y + "px");
+        this.setStyleProperty("left", Math.max(0, x) + "px");
+        this.setStyleProperty("top", Math.max(0, y) + "px");
     }
 
     hide() {

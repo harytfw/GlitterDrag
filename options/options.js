@@ -347,6 +347,9 @@ class ActionsWrapper {
             elem.setAttribute("is-browser-search", true);
             browserGroup.appendChild(elem);
         }
+        if (browserEngines.length == 0) {
+            browserGroup.style.display = "none";
+        }
         // builtin
         const userEngines = (await LStorage.get("Engines"))["Engines"];
         const userAddingGroup = document.createElement("optgroup");

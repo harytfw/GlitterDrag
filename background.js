@@ -691,7 +691,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
             if (aKey.startsWith("Actions")) {
                 for (const bKey of Object.keys(all[aKey])) {
                     for (const cKey of Object.keys(all[aKey][bKey])) {
-                        if ("use_browser_search" in all[aKey][bKey][cKey] === false) {
+                        if ("is_browser_search" in all[aKey][bKey][cKey] === false) {
                             all[aKey][bKey][cKey]["is_browser_search"] = false;
                         }
                     }
