@@ -168,6 +168,7 @@
     padding: .6em !important;
     place-content: space-between;
     width: 10em !important;
+    -moz-user-select: none;
 }
 
 .GDPanelFull {
@@ -176,10 +177,22 @@
     grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "linklabel link link" "grid4 grid5 grid6" "imagelabel image image" "grid7 grid8 grid9" "footer footer ." !important;
 }
 
+.GDPanelFull-6 {
+    height: 18em !important;
+    grid-template-rows: 1em 1em 3em 1em 3em 1em 3em 3em !important;
+    grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "grid1a grid2a grid3a" "linklabel link link" "grid4 grid5 grid6" "grid4a grid5a grid6a" "imagelabel image image" "grid7 grid8 grid9" "grid7a grid8a grid9a" "footer footer ." !important;
+}
+
 .GDPanelOnlyText {
     height: 10em !important;
     grid-template-rows: 1em 1em 3em 3em !important;
     grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "footer footer ." !important;
+}
+
+.GDPanelOnlyText-6 {
+    height: 13em !important;
+    grid-template-rows: 1em 1em 3em 3em 3em !important;
+    grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "grid1a grid2a grid3a" "footer footer ." !important;
 }
 
 .GDPanelTextAndLink {
@@ -188,16 +201,34 @@
     grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "linklabel link link" "grid4 grid5 grid6" "footer footer ." !important;
 }
 
+.GDPanelTextAndLink-6 {
+    height: 20em !important;
+    grid-template-rows: 1em 1em 3em 3em 1em 3em 3em 3em !important;
+    grid-template-areas: "header header header" "textlabel text text" "grid1 grid2 grid3" "grid1a grid2a grid3a" "linklabel link link" "grid4 grid5 grid6" "grid4a grid5a grid6a" "footer footer ." !important;
+}
+
 .GDPanelOnlyImage {
     height: 10em !important;
     grid-template-rows: 1em 1em 3em 3em !important;
     grid-template-areas: "header header header" "imagelabel image image" "grid7 grid8 grid9" "footer footer ." !important;
 }
 
+.GDPanelOnlyImage-6 {
+    height: 13em !important;
+    grid-template-rows: 1em 1em 3em 3em 3em !important;
+    grid-template-areas: "header header header" "imagelabel image image" "grid7 grid8 grid9" "grid7a grid8a grid9a" "footer footer ." !important;
+}
+
 .GDPanelLinkAndImage {
     height: 14em !important;
     grid-template-rows: 1em 1em 3em 1em 3em 3em !important;
     grid-template-areas: "header header header" "linklabel link link" "grid4 grid5 grid6" "imagelabel image image" "grid7 grid8 grid9" "footer footer ." !important;
+}
+
+.GDPanelLinkAndImage-6 {
+    height: 20em !important;
+    grid-template-rows: 1em 1em 3em 3em 1em 3em 3em 3em !important;
+    grid-template-areas: "header header header" "linklabel link link" "grid4 grid5 grid6" "grid4a grid5a grid6a" "imagelabel image image" "grid7 grid8 grid9" "grid7a grid8a grid9a" "footer footer ." !important;
 }
 
 #GDPanelHeader {
@@ -236,36 +267,72 @@
     grid-area: grid1
 }
 
+#GDPanelGrid1a {
+    grid-area: grid1a
+}
+
 #GDPanelGrid2 {
     grid-area: grid2
+}
+
+#GDPanelGrid2a {
+    grid-area: grid2a
 }
 
 #GDPanelGrid3 {
     grid-area: grid3
 }
 
+#GDPanelGrid3a {
+    grid-area: grid3a
+}
+
 #GDPanelGrid4 {
     grid-area: grid4
+}
+
+#GDPanelGrid4a {
+    grid-area: grid4a
 }
 
 #GDPanelGrid5 {
     grid-area: grid5
 }
 
+#GDPanelGrid5a {
+    grid-area: grid5a
+}
+
 #GDPanelGrid6 {
     grid-area: grid6
+}
+
+#GDPanelGrid6a {
+    grid-area: grid6a
 }
 
 #GDPanelGrid7 {
     grid-area: grid7
 }
 
+#GDPanelGrid7a {
+    grid-area: grid7a
+}
+
 #GDPanelGrid8 {
     grid-area: grid8
 }
 
+#GDPanelGrid8a {
+    grid-area: grid8a
+}
+
 #GDPanelGrid9 {
     grid-area: grid9
+}
+
+#GDPanelGrid9a {
+    grid-area: grid9a
 }
 
 #GDPanelHeader {

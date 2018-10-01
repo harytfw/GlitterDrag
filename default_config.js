@@ -4,7 +4,7 @@ const ACTION_CONSTRUCTOR = (parameter = {}) => {
         tab_active: commons.FORE_GROUND,
         tab_pos: commons.TAB_CRIGHT,
         engine_name: browser.i18n.getMessage("defaultText"),
-        engine_url: browser.i18n.getMessage("default_search_url"),// when use_browser_search is true, this parameter has no effect since we directly call search API
+        engine_url: "don't know", //browser.i18n.getMessage("default_search_url"), when use_browser_search is true, this parameter has no effect since we directly call search API
         is_browser_search: true,
         open_type: commons.OPEN_LINK,
         search_type: commons.SEARCH_TEXT,
@@ -51,6 +51,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         switchToParentTab: false,
         alwaysImage: false,
         imageReferrer: false,
+        extraCommands: false,
         tipsContent: {
             ACT_NONE: "%a",
             ACT_OPEN: "%a",
@@ -111,6 +112,21 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 icon: "",
                 panel_tips: "%g-%a"
             }),
+            ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
+                icon: "",
+                panel_tips: "%g-%a"
+            }),
+            ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
+                icon: "",
+                panel_tips: "%g-%a"
+            }),
+            ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
+                icon: "",
+                panel_tips: "%g-%a"
+            })
         ],
         Panel_linkAction: [
             ACTION_CONSTRUCTOR({
@@ -129,6 +145,21 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 icon: "",
                 panel_tips: "%g-%a"
             }),
+            ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
+                icon: "",
+                panel_tips: "%g-%a"
+            }),
+            ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
+                icon: "",
+                panel_tips: "%g-%a"
+            }),
+            ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
+                icon: "",
+                panel_tips: "%g-%a"
+            })
         ],
         Panel_imageAction: [
             ACTION_CONSTRUCTOR({
@@ -152,6 +183,21 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 icon: "",
                 panel_tips: "%g-%a"
             }),
+            ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
+                icon: "",
+                panel_tips: "%g-%a"
+            }),
+            ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
+                icon: "",
+                panel_tips: "%g-%a"
+            }),
+            ACTION_CONSTRUCTOR({
+                act_name: commons.ACT_COPY,
+                icon: "",
+                panel_tips: "%g-%a"
+            })
         ],
         translator: {
             baidu_gtk: "",

@@ -329,6 +329,15 @@
         "message": "是否需要另存檔案為... ?",
         "description": "tooltip on option"
     },
+    "option_tooltip_path_prefix": {
+        "message": "路径: $suffix$",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "/path/"
+            }
+        }
+    },
     "search_url_tooltip": {
         "message": "調用的鏈結",
         "description": "tooltip on Options - Search Template"
@@ -709,5 +718,29 @@
     "popup_RemoveRule": {
         "message": "",
         "description": ""
+    },
+    "header_Distance": {
+        "message": ""
+    },
+    "header_Promption": {
+        "message": ""
+    },
+    "header_Process": {
+        "message": ""
+    },
+    "header_Misc": {
+        "message": ""
+    },
+    "elem_ExtraCommands": {
+        "message": ""
+    },
+    "elem_GetIconFromLocal": {
+        "message": ""
+    },
+    "elem_GetIconFromURL": {
+        "message": ""
+    },
+    "elem_GetIconFromEngine": {
+        "message": ""
     }
 }

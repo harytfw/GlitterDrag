@@ -330,6 +330,15 @@
         "message": "Needs to save the file as ... ?",
         "description": "tooltip on option"
     },
+    "option_tooltip_path_prefix": {
+        "message": "Path: $suffix$",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "/path/"
+            }
+        }
+    },
     "search_name_tooltip": {
         "message": "Search engine name",
         "description": "tooltip on Options - Search Template"
@@ -646,6 +655,12 @@
         "message": "Panel Icon",
         "description": ""
     },
+    "elem_PanelIconSource": {
+        "message": "Icon Source"
+    },
+    "elem_PanelIconPreview": {
+        "message": "Preview"
+    },
     "panel_Cancel": {
         "message": "Cancel"
     },
@@ -718,5 +733,29 @@
     "popup_RemoveRule": {
         "message": "Remove the rule from the exclusion list",
         "description": ""
+    },
+    "header_Distance": {
+        "message": "Distance"
+    },
+    "header_Promption": {
+        "message": "Promption"
+    },
+    "header_Process": {
+        "message": "Process"
+    },
+    "header_Misc": {
+        "message": "Misc"
+    },
+    "elem_ExtraCommands": {
+        "message": "Expanded to six commands"
+    },
+    "elem_GetIconFromLocal": {
+        "message": "Pick icon from local"
+    },
+    "elem_GetIconFromURL": {
+        "message": "Get icon from url"
+    },
+    "elem_GetIconFromEngine": {
+        "message": "Use icon of engine"
     }
 }

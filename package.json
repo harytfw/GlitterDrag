@@ -3,7 +3,7 @@
     "description": "An drag extension for Firefox Browser.",
     "devDependencies": {
         "eslint": "^4.4.1",
-        "web-ext": "^2.0.0"
+        "web-ext": "^2.9.1"
     },
     "scripts": {
         "build": "npm run renew && web-ext build --overwrite-dest",
@@ -11,5 +11,6 @@
         "test": "npm run lint",
         "renew": "node ./_locales/renew_template.js"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {}
 }

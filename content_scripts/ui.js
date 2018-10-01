@@ -87,11 +87,11 @@ class BaseUIClass {
         this.node.setAttribute(name, value);
     }
 
-    addListener(name = "", listener = () => {}, option) {
+    addListener(name = "", listener = () => { }, option) {
         this.node.addEventListener(name, listener, option)
     }
 
-    removeListener(name = "", listener = () => {}, option) {
+    removeListener(name = "", listener = () => { }, option) {
         this.node.removeEventListener(name, listener, option);
     }
 
@@ -226,23 +226,29 @@ const PANEL_HTML = `
         <div id='GDPanelGrid1' class='GDPanelGrid GDPanelTextGrid'></div>
         <div id='GDPanelGrid2' class='GDPanelGrid GDPanelTextGrid'></div>
         <div id='GDPanelGrid3' class='GDPanelGrid GDPanelTextGrid'></div>
+        <div id='GDPanelGrid1a' class='GDPanelExtra  GDPanelGrid GDPanelTextGrid'></div>
+        <div id='GDPanelGrid2a' class='GDPanelExtra GDPanelGrid GDPanelTextGrid'></div>
+        <div id='GDPanelGrid3a' class='GDPanelExtra GDPanelGrid GDPanelTextGrid'></div>
         <div id='GDPanelLinkLabel'>${getI18nMessage("linkType")}</div>
         <div id='GDPanelLinkContent'></div>
         <div id='GDPanelGrid4' class='GDPanelGrid GDPanelLinkGrid'></div>
         <div id='GDPanelGrid5' class='GDPanelGrid GDPanelLinkGrid'></div>
         <div id='GDPanelGrid6' class='GDPanelGrid GDPanelLinkGrid'></div>
+        <div id='GDPanelGrid4a' class='GDPanelExtra GDPanelGrid GDPanelLinkGrid'></div>
+        <div id='GDPanelGrid5a' class='GDPanelExtra GDPanelGrid GDPanelLinkGrid'></div>
+        <div id='GDPanelGrid6a' class='GDPanelExtra GDPanelGrid GDPanelLinkGrid'></div>
         <div id='GDPanelImageLabel'>${getI18nMessage("imageType")}</div>
         <div id='GDPanelImageContent'></div>
         <div id='GDPanelGrid7' class='GDPanelGrid GDPanelImageGrid'></div>
         <div id='GDPanelGrid8' class='GDPanelGrid GDPanelImageGrid'></div>
         <div id='GDPanelGrid9' class='GDPanelGrid GDPanelImageGrid'></div>
+        <div id='GDPanelGrid7a' class='GDPanelExtra GDPanelGrid GDPanelImageGrid'></div>
+        <div id='GDPanelGrid8a' class='GDPanelExtra GDPanelGrid GDPanelImageGrid'></div>
+        <div id='GDPanelGrid9a' class='GDPanelExtra GDPanelGrid GDPanelImageGrid'></div>
         <div id='GDPanelFooter' class='GDPanelGrid GD-fa ${ICONS.BAN}' ></div>
 `
 class Panel extends UIClass { //eslint-disable-line no-unused-vars
-    //TODO:内容长度自动裁剪
-    //TODO:样式美观
-    //TODO:完善图标自定义功能
-    constructor(listener = { dragenter: () => {}, dragleave: () => {}, drop: () => {}, dragover: () => {} }) {
+    constructor(listener = { dragenter: () => { }, dragleave: () => { }, drop: () => { }, dragover: () => { } }) {
         super("GDPanel", "div");
         this.displayValue = "grid";
         this.initContent(PANEL_HTML)
@@ -272,6 +278,9 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
         this.actionType = null;
 
         this.updatedFlag = false;
+
+
+        this.extraCommands = ["#GDPanelGrid1a", "#GDPanelGrid2a", "#GDPanelGrid3a", "#GDPanelGrid4a", "#GDPanelGrid5a", "#GDPanelGrid6a", "#GDPanelGrid7a", "#GDPanelGrid8a", "#GDPanelGrid9a"].map(id => this.$E(id));
     }
     ondragover(e) {
         let target = e.target;
@@ -400,50 +409,111 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
     render(actionkind, targetkind, selection, textSelection, imageLink) {
         function trim(str = "", len1 = 6, len2 = 6, maxlen = 12) {
             if (str.length <= maxlen) return str;
-            return `${str.substr(0,len1)}...${str.substr(str.length-len2,len2)}`
+            return `${str.substr(0, len1)}...${str.substr(str.length - len2, len2)}`
         }
+
         this.actionType = actionkind;
         this.selection = selection;
         this.textSelection = textSelection;
         this.imageLink = imageLink;
 
-        this.node.classList.remove("GDPanelOnlyText", "GDPanelOnlyImage", "GDPanelTextAndLink", "GDPanelLinkAndImage");
+        this.node.classList.remove("GDPanelOnlyText", "GDPanelOnlyText-6", "GDPanelOnlyImage", "GDPanelOnlyImage-6", "GDPanelTextAndLink", "GDPanelTextAndLink-6", "GDPanelLinkAndImage", "GDPanelLinkAndImage-6");
 
-        $H([".GDPanelTextGrid,[id^=GDPanelText]", ".GDPanelLinkGrid,[id^=GDPanelLink]", ".GDPanelImageGrid,[id^=GDPanelImage]"], "none", this.node);
+        this.displayTextGrids("none");
+        this.displayTextGrids("none", true);
+        this.displayLinkGrids("none")
+        this.displayLinkGrids("none", true);
+        this.displayImageGrids("none");
+        this.displayImageGrids("none", true);
+
+        let suffix = "";
+        let displayValForExtraCommands = "none";
+        if (bgConfig.extraCommands) {
+            suffix = "-6";
+            displayValForExtraCommands = "";
+        }
+
         switch (actionkind) {
             case commons.textAction:
-                this.node.classList.add("GDPanelOnlyText");
-                this.$E("#GDPanelTextContent").textContent = trim(textSelection);
-                $H([".GDPanelTextGrid,[id^=GDPanelText]"], "", this.node);
+                this.node.classList.add("GDPanelOnlyText" + suffix);
+                this.textContent = trim(textSelection);
+                this.displayTextGrids();
+                this.displayTextGrids(displayValForExtraCommands, true)
                 break;
             case commons.linkAction:
                 if (bgConfig.alwaysImage) {
-                    this.node.classList.add("GDPanelOnlyImage");
-                    this.$E("#GDPanelImageContent").textContent = trim(imageLink);
-                    $H([".GDPanelImageGrid,[id^=GDPanelImage]"], "", this.node);
+                    this.node.classList.add("GDPanelOnlyImage" + suffix);
+                    this.imageContent = trim(imageLink);
+                    this.displayImageGrids();
+                    this.displayTextGrids(displayValForExtraCommands, true);
                 }
                 else if (targetkind === commons.TYPE_ELEM_A_IMG) {
-                    this.node.classList.add("GDPanelLinkAndImage");
-                    this.$E("#GDPanelImageContent").textContent = trim(imageLink);
-                    $H([".GDPanelLinkGrid,[id^=GDPanelLink]", ".GDPanelImageGrid,[id^=GDPanelImage]"], "", this.node);
-                    this.$E("#GDPanelLinkContent").textContent = trim(selection);
+                    this.node.classList.add("GDPanelLinkAndImage" + suffix);
+                    this.imageContent = trim(imageLink);
+                    this.linkContent = trim(selection);
+                    this.displayLinkGrids();
+                    this.displayImageGrids();
+
+                    this.displayLinkGrids(displayValForExtraCommands, true);
+                    this.displayImageGrids(displayValForExtraCommands, true);
                 }
                 else {
-                    this.node.classList.add("GDPanelTextAndLink");
-                    this.$E("#GDPanelTextContent").textContent = trim(textSelection);
-                    $H([".GDPanelTextGrid,[id^=GDPanelText]", ".GDPanelLinkGrid,[id^=GDPanelLink]"], "", this.node);
-                    this.$E("#GDPanelLinkContent").textContent = trim(selection);
+                    this.node.classList.add("GDPanelTextAndLink" + suffix);
+                    this.textContent = trim(textSelection);
+                    this.linkContent = trim(selection);
+                    this.displayLinkGrids();
+                    this.displayTextGrids();
+
+                    this.displayTextGrids(displayValForExtraCommands, true);
+                    this.displayLinkGrids(displayValForExtraCommands, true);
                 }
                 break;
             case commons.imageAction:
-                this.node.classList.add("GDPanelOnlyImage");
-                this.$E("#GDPanelImageContent").textContent = trim(imageLink);
-                $H([".GDPanelImageGrid,[id^=GDPanelImage]"], "", this.node);
+                this.node.classList.add("GDPanelOnlyImage" + suffix);
+                this.imageContent = trim(imageLink);
+                this.displayImageGrids();
+                this.displayImageGrids(displayValForExtraCommands, true);
                 break;
             default:
                 break;
         }
     }
+
+    set textContent(data) {
+        this.$E("#GDPanelTextContent").textContent = data
+        this.textTitle = data;
+    }
+
+    set linkContent(data) {
+        this.$E("#GDPanelLinkContent").textContent = data;
+    }
+    set imageContent(data) {
+        this.$E("#GDPanelImageContent").textContent = data;
+    }
+
+    displayTextGrids(value = "", isExtra = false) {
+        const suffix = isExtra ? "a" : "";
+        if (!isExtra) {
+            $H(["#GDPanelTextLabel", "#GDPanelTextContent"], value, this.node);
+        }
+        $H(["#GDPanelGrid1" + suffix, "#GDPanelGrid2" + suffix, "#GDPanelGrid3" + suffix], value, this.node);
+    }
+    displayLinkGrids(value = "", isExtra = false) {
+        const suffix = isExtra ? "a" : "";
+        if (!isExtra) {
+            $H(["#GDPanelLinkLabel", "#GDPanelLinkContent"], value, this.node);
+        }
+        $H([".GDPanelLinkGrid", "#GDPanelGrid4" + suffix, "#GDPanelGrid5" + suffix, "#GDPanelGrid6" + suffix], value, this.node);
+
+    }
+    displayImageGrids(value = "", isExtra = false) {
+        const suffix = isExtra ? "a" : "";
+        if (!isExtra) {
+            $H(["#GDPanelImageLabel", "#GDPanelImageContent"], value, this.node);
+        }
+        $H([".GDPanelImageGrid", "#GDPanelGrid7" + suffix, "#GDPanelGrid8" + suffix, "#GDPanelGrid9" + suffix], value, this.node);
+    }
+
     place(x = 0, y = 0, direction = "") {
         const rect = new DOMRect();
         this.getRect(rect);

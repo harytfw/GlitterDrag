@@ -1,42 +1,43 @@
-const ENGINES = [{
-    groupName: "General",
-    "Google Search": " https://www.google.com/search?q=%s",
-    "Bing Search": "https://www.bing.com/search?q=%s",
-    "DuckDuckGo Search": "https://duckduckgo.com/?q=%s&ia=web",
-    "Yahoo Search": "https://search.yahoo.com/search;?p=%s",
-    "Yandex Search": "https://www.yandex.com/search/?text=%s",
-    "Youtube Search": "https://www.youtube.com/results?search_query=%s",
-    "Wikipedia(English)": "https://en.wikipedia.org/wiki/%s",
-    "Amazon Search": "https://www.amazon.com/s/?field-keywords=%s",
-    "Qwant Search": "https://www.qwant.com/?q=%s&t=all",
-    "StartPage Search": "https://www.startpage.com/do/search?&cat=web&query=%s"
-}, {
-    groupName: "Chinese",
-    "百度搜索": "https://www.baidu.com/baidu?wd=%s",
-    "360 搜索": "https://www.so.com/s?q=%s",
-    "Acfun搜索": "http://www.acfun.cn/search/#query=%s",
-    "哔哩哔哩搜索": "https://search.bilibili.com/all?keyword=%s",
-    "优酷搜索": "http://www.soku.com/search_video/q_%s",
-    "网易云音乐搜索": "https://music.163.com/#/search/m/?s=%s",
-    "豆瓣搜索": "https://www.douban.com/search?q=",
-    "知乎搜索": "https://www.zhihu.com/search?q=%s",
-    "中文维基百科": "https://zh.wikipedia.org/wiki/%s",
-}, {
-    groupName: "Image Search",
-    "Baidu Image": "https://image.baidu.com/n/pc_search?queryImageUrl=%s",
-    "Bing Image": "https://www.bing.com/images/searchbyimage?FORM=IRSBIQ&cbir=sbi&imgurl=%s",
-    "Google Image": "https://www.google.com/searchbyimage?image_url=%s",
-    "IQDB": "https://iqdb.org/?url=%s",
-    "SauceNAO": "https://saucenao.com/search.php?db=999&url=%s",
-    "Sogou Image": "https://pic.sogou.com/ris?query=%s&flag=1",
-    "Yandex": "https://www.yandex.com/images/search?url=%s&rpt=imageview",
-}, {
-    groupName: "Image Search(via upload)",
-    "Baidu Image": "{redirect.html}?cmd=search&url={url}&engineName=baidu",
-    "Google Image": "{redirect.html}?cmd=search&url={url}&engineName=google",
-    "Tineye": "{redirect.html}?cmd=search&url={url}&engineName=tineye",
-    "Yandex": "{redirect.html}?cmd=search&url={url}&engineName=yandex",
-}];
+const ENGINES = {
+    "General": [
+        { name: "Google Search", url: " https://www.google.com/search?q=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Bing Search", url: "https://www.bing.com/search?q=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "DuckDuckGo Search", url: "https://duckduckgo.com/?q=%s&ia=web", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Yahoo Search", url: "https://search.yahoo.com/search;?p=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Yandex Search", url: "https://www.yandex.com/search/?text=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Youtube Search", url: "https://www.youtube.com/results?search_query=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Wikipedia(English)", url: "https://en.wikipedia.org/wiki/%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Amazon Search", url: "https://www.amazon.com/s/?field-keywords=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Qwant Search", url: "https://www.qwant.com/?q=%s&t=all", isBrowserSearch: false, favIconUrl: "" },
+        { name: "StartPage Search", url: "https://www.startpage.com/do/search?&cat=web&query=%s", isBrowserSearch: false, favIconUrl: "" }
+    ],
+    "Chinese": [
+        { name: "百度搜索", url: "https://www.baidu.com/baidu?wd=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "360 搜索", url: "https://www.so.com/s?q=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Acfun搜索", urL: "http://www.acfun.cn/search/#query=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "哔哩哔哩搜索", url: "https://search.bilibili.com/all?keyword=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "优酷搜索", url: "http://www.soku.com/search_video/q_%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "网易云音乐搜索", url: "https://music.163.com/#/search/m/?s=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "豆瓣搜索", url: "https://www.douban.com/search?q=", isBrowserSearch: false, favIconUrl: "" },
+        { name: "知乎搜索", url: "https://www.zhihu.com/search?q=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "中文维基百科", url: "https://zh.wikipedia.org/wiki/%s", isBrowserSearch: false, favIconUrl: "" },
+    ],
+    "Image Search": [
+        { name: "Baidu Image", url: "https://image.baidu.com/n/pc_search?queryImageUrl=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Bing Image", url: "https://www.bing.com/images/searchbyimage?FORM=IRSBIQ&cbir=sbi&imgurl=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Google Image", url: "https://www.google.com/searchbyimage?image_url=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "IQDB", url: "https://iqdb.org/?url=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "SauceNAO", url: "https://saucenao.com/search.php?db=999&url=%s", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Sogou Image", url: "https://pic.sogou.com/ris?query=%s&flag=1", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Yandex", url: "https://www.yandex.com/images/search?url=%s&rpt=imageview", isBrowserSearch: false, favIconUrl: "" },
+    ],
+    "Image Search(via upload)": [
+        { name: "Baidu Image", url: "{redirect.html}?cmd=search&url={url}&engineName=baidu", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Google Image", url: "{redirect.html}?cmd=search&url={url}&engineName=google", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Tineye", url: "{redirect.html}?cmd=search&url={url}&engineName=tineye", isBrowserSearch: false, favIconUrl: "" },
+        { name: "Yandex", url: "{redirect.html}?cmd=search&url={url}&engineName=yandex", isBrowserSearch: false, favIconUrl: "" },
+    ]
+}
 
 window.addEventListener("beforeunload", () => {
     LStorage.set({
@@ -109,6 +110,9 @@ document.addEventListener("radiochange", e => {
     }));
 })
 
+
+var imageSearchGroup1 = null;
+var imageSearchGroup2 = null;
 class ActionsWrapper {
     constructor() {
         this.parent = $E("#tab-actions");
@@ -118,7 +122,7 @@ class ActionsWrapper {
         this.template4Container = $E("#template-for-actions-container")
 
         this.fillContent();
-        this.parent.addEventListener("tabshow", e => {
+        this.parent.addEventListener("tabshow", () => {
             $E(".Actions", this.parent).dispatchEvent(new Event("radiochange", {
                 bubbles: true
             }));
@@ -259,8 +263,8 @@ class ActionsWrapper {
                 break;
         }
         $H(classList, "inline-block", context);
-
     }
+
     async onchange(e) {
 
         if (e.target.className.indexOf("direction-control") >= 0) {
@@ -321,8 +325,9 @@ class ActionsWrapper {
                 $D(res);
                 LStorage.set(res);
             });
-
         }
+        await this.applyDownloadDirTitle();
+        await this.applySearchTitle();
     }
 
     async updateEngine() {
@@ -338,7 +343,7 @@ class ActionsWrapper {
             const elem = document.createElement("option");
             elem.value = obj.name;
             elem.textContent = obj.name;
-            elem.setAttribute("url", "about:about");// test purpose, TODO: remove
+            elem.setAttribute("url", "unknown");
             elem.setAttribute("is-browser-search", true);
             browserGroup.appendChild(elem);
         }
@@ -346,66 +351,73 @@ class ActionsWrapper {
         const userEngines = (await LStorage.get("Engines"))["Engines"];
         const userAddingGroup = document.createElement("optgroup");
         userAddingGroup.label = "Your addition";
-        for (const obj of userEngines) {
-            const elem = document.createElement("option");
-            elem.value = obj.name;
-            elem.textContent = obj.name;
-            elem.setAttribute("url", obj.url);
-            elem.setAttribute("is-browser-search", false);
-            userAddingGroup.appendChild(elem);
+        if (userEngines.length === 0) {
+            userAddingGroup.style.display = 'none';
+        } else {
+            for (const obj of userEngines) {
+                const elem = document.createElement("option");
+                elem.value = obj.name;
+                elem.textContent = obj.name;
+                elem.title = obj.url;
+                elem.setAttribute("url", obj.url);
+                elem.setAttribute("is-browser-search", false);
+                userAddingGroup.appendChild(elem);
+            }
         }
 
-        // normal image search engine
-        // const imageEngines = ENGINES.filter(obj => {
-        //     return obj.groupName === 'Image Search';
-        // });
-        // const imageSearchGroup = document.createElement("optgroup");
-        // imageSearchGroup.label = "Image Search";
-        // for (const key of Object.keys(imageEngines)) {
-        //     const elem = document.createElement("option");
-        //     elem.value = key;
-        //     elem.textContent = key;
-        //     elem.setAttribute("url", imageEngines[key]);
-        //     elem.setAttribute("is-browser-search", false);
-        //     imageSearchGroup.appendChild(elem);
-        // }
+        // via get
+        if (imageSearchGroup1 === null) {
+            const imageEngines = ENGINES["Image Search"]
+            imageSearchGroup1 = document.createElement("optgroup");
+            imageSearchGroup1.className = 'imageSearchGroup1';
+            imageSearchGroup1.label = "Normal";
+            for (const engine of imageEngines) {
+                const elem = document.createElement("option");
+                elem.value = engine.name;
+                elem.textContent = engine.name;
+                elem.title = engine.name;
+                elem.setAttribute("url", engine.url);
+                elem.setAttribute("is-browser-search", engine.isBrowserSearch);
+                imageSearchGroup1.appendChild(elem);
+            }
+        }
+
 
         // via upload
-        // const imageEngines2 = ENGINES.filter(obj => {
-        //     return obj.groupName === 'Image Search(via upload)';
-        // });
-        // const imageSearchGroup2 = document.createElement("optgroup");
-        // imageSearchGroup2.label = "Image Search";
-        // for (const key of Object.keys(imageEngines2)) {
-        //     const elem = document.createElement("option");
-        //     elem.value = key;
-        //     elem.textContent = key;
-        //     elem.setAttribute("url", imageEngines2[key]);
-        //     elem.setAttribute("is-browser-search", false);
-        //     imageSearchGroup2.appendChild(elem);
-        // }
-
+        if (imageSearchGroup2 === null) {
+            const imageEngines2 = ENGINES["Image Search(via upload)"];
+            imageSearchGroup2 = document.createElement("optgroup");
+            imageSearchGroup2.className = "imageSearchGroup2";
+            imageSearchGroup2.label = "Via upload";
+            for (const engine of imageEngines2) {
+                const elem = document.createElement("option");
+                elem.value = engine.name;
+                elem.textContent = engine.name;
+                elem.title = engine.name;
+                elem.setAttribute("url", engine.url);
+                elem.setAttribute("is-browser-search", engine.isBrowserSearch);
+                imageSearchGroup2.appendChild(elem);
+            }
+        }
 
         for (const selectElem of $A(".engine-name", this.parent)) {
             while (selectElem.firstElementChild) {
                 selectElem.firstElementChild.remove();
             }
-            selectElem.appendChild(browserGroup.cloneNode(true));
-            selectElem.appendChild(userAddingGroup.cloneNode(true));
-            // selectElem.appendChild(imageSearchGroup.cloneNode(true));
-            // selectElem.appendChild(imageSearchGroup2.cloneNode(true));
 
             if (selectElem.parentElement.parentElement.parentElement.className === commons.imageAction) {
+                selectElem.appendChild(imageSearchGroup1.cloneNode(true));
+                selectElem.appendChild(imageSearchGroup2.cloneNode(true));
                 $H([
                     "optgroup[label='Browser']",
                     "option[value='默认'][is-browser-search='true']"
                 ], "none", selectElem);
             }
+            else {
+                selectElem.appendChild(browserGroup.cloneNode(true));
+                selectElem.appendChild(userAddingGroup.cloneNode(true));
+            }
         }
-    }
-
-    get setting() {
-
     }
 
     set setting(allSetting) {
@@ -421,7 +433,19 @@ class ActionsWrapper {
                 $E(".tab-pos", context).value = action["tab_pos"];
                 $E(".open-type", context).value = action["open_type"];
                 $E(".copy-type", context).value = action["copy_type"];
+
                 $E(".search-type", context).value = action["search_type"];
+                if (kind === commons.imageAction) {
+                    if (action["search_type"] === commons.SEARCH_IMAGE) {
+                        $E(".imageSearchGroup1", context).style.display = "none";
+                        $E(".imageSearchGroup2", context).style.display = "";
+                    }
+                    else if (action["search_type"] === commons.SEARCH_LINK) {
+                        $E(".imageSearchGroup1", context).style.display = "";
+                        $E(".imageSearchGroup2", context).style.display = "none";
+                    }
+                }
+
                 $E(".download-type", context).value = action["download_type"];
                 $E(".tab-pos", context).value = action["tab_pos"];
                 $E(".download-directory", context).value = action["download_directory"];
@@ -432,23 +456,45 @@ class ActionsWrapper {
                 let opt = document.createElement("option")
                 opt.textContent = getI18nMessage("defaultText");
                 opt.value = getI18nMessage("defaultText");
-                opt.setAttribute("url", "about:blank");// only for test TODO: remove
+                opt.setAttribute("url", "unknown");
                 opt.setAttribute("is-browser-search", true);
                 engineSelector.insertBefore(opt, engineSelector.firstElementChild);
+
 
                 opt = document.createElement("option");
                 opt.textContent = getI18nMessage("currentEngine", action["engine_name"]);
                 opt.value = action["engine_name"];
+                opt.title = action["engine_url"];
                 opt.setAttribute("url", action["engine_url"]);
                 opt.setAttribute("is-browser-search", action["is_browser_search"]);
                 engineSelector.insertBefore(opt, engineSelector.firstElementChild);
 
                 engineSelector.title = action["engine_url"];
                 engineSelector.selectedIndex = 0;
+
+
+
             }
         }
 
 
+    }
+
+    async applyDownloadDirTitle() {
+        const dirs = (await LStorage.get("downloadDirectories"))["downloadDirectories"];
+        const els = $A(".download-directory", this.parent);
+        for (const el of els) {
+            el.title = getI18nMessage("option_tooltip_path_prefix", dirs[parseInt(el.value)]);
+        }
+    }
+    async applySearchTitle() {
+        for (const el of $A(".engine-name", this.parent)) {
+            const opt = el.selectedOptions[0];
+            let title = "";
+            if (opt.getAttribute("is-browser-search") === "true") title = getI18nMessage("search_name_tooltip");
+            else title = el.selectedOptions[0].title;
+            el.title = title;
+        }
     }
 
     get actionsKeyName() {
@@ -746,38 +792,44 @@ class ActionsView {
         this.actionTypeGetter = actionTypeGetter;
         this.parent = parent;
 
-
         this.$E(".action-name").addEventListener("change", (e) => {
             this.onActionBehaviorChange(e);
         });
 
-
         this.initALL();
     }
+
     $E(str, context = this.parent) {
         return $E(str, context);
     }
 
     initALL() {
         //初始化搜索引擎
-        const selectProtype = document.createElement("select");
-        const optProtype = document.createElement("option");
+        const selectPrototype = document.createElement("select");
+        const optPrototype = document.createElement("option");
         let isChineseUI = browser.i18n.getUILanguage().startsWith("zh");
-        for (const g of ENGINES) {
-            let select = selectProtype.cloneNode();
-            let opt = optProtype.cloneNode();
-            if (!isChineseUI && g.groupName === "Chinese") {
+        for (const groupName of ENGINES.keys()) {
+            let select = selectPrototype.cloneNode();
+            if (!isChineseUI && groupName === "Chinese") {
                 continue;
             }
-            opt.textContent = g.groupName;
-            opt.disabled = 1;
+            let groupOpt = optPrototype.cloneNode();
+            groupOpt.textContent = groupName;
+            groupOpt.disabled = 1;
 
-            select.appendChild(opt);
-            for (const name of Object.keys(g)) {
-                if (name === "groupName") continue;
-                opt = optProtype.cloneNode();
-                opt.textContent = name;
-                opt.value = g[name];
+            if (groupName === "Image Search") {
+                select.className = "imageSearchGroup1";
+            }
+            else if (groupName === "Image Search(via upload)") {
+                select.className = "imageSearchGroup2";
+            }
+
+            select.appendChild(groupOpt);
+            for (const engine of ENGINES[groupName]) {
+                let opt = optPrototype.cloneNode();
+                opt.textContent = engine.name;
+                opt.value = engine.url ? engine.url : "";
+                opt.setAttribute("favIconUrl".toLowerCase(), engine.favIconUrl ? engine.favIconUrl : "");
                 select.appendChild(opt);
             }
             this.$E(".search-engine-select-group").appendChild(select);
@@ -788,17 +840,19 @@ class ActionsView {
 
     onEngineChange(e) {
         const el = e.target;
-        this.$E(".search-engine-name").value = el.children[el.selectedIndex].textContent;
-        this.$E(".search-engine-url").value = el.children[el.selectedIndex].value;
+        const selectedOpt = el.children[el.selectedIndex]
+        this.$E(".search-engine-name").value = selectedOpt.textContent;
+        this.$E(".search-engine-url").value = selectedOpt.value;
+        this.$E(".search-engine-icon").value = selectedOpt.getAttribute("favIconUrl".toLowerCase());
         if (el.children[0].textContent === "Browser") {
-            this.$E(".search-engine-name").setAttribute("is-browser-search", true);
             this.$E(".search-engine-name").disabled = true;
             this.$E('.search-engine-url').style.display = 'none';
+            this.$E(".search-engine-is-browser-search").value = true;
         }
         else {
-            this.$E(".search-engine-name").setAttribute("is-browser-search", false);
             this.$E(".search-engine-name").disabled = false;
             this.$E('.search-engine-url').style.display = '';
+            this.$E(".search-engine-is-browser-search").value = false;
         }
         el.selectedIndex = 0;
     }
@@ -931,7 +985,7 @@ class ActionsView {
             tab_pos: this.$E(".tab-pos").value,
             engine_name: this.$E(".search-engine-name").value,
             engine_url: this.$E(".search-engine-url").value,
-            is_browser_search: this.$E(".search-engine-name").getAttribute("is-browser-search") === "true" ? true : false,
+            is_browser_search: this.$E(".search-engine-is-browser-search").value === "true" ? true : false,
             download_directory: this.$E(".download-directory").value,
             tab_active: this.getRadioValue(".tab-active"),
             open_type: this.getRadioValue(".open-type"),
@@ -941,6 +995,8 @@ class ActionsView {
             download_saveas: this.getRadioValue(".download-saveas"),
             search_onsite: this.getRadioValue(".search-onsite"),
         });
+        this.checkActionChange(temp);
+        this.applyDownloadDirTitle();
         return temp;
     }
 
@@ -991,6 +1047,7 @@ class ActionsView {
 
         this.$E(".search-engine-name").value = data["engine_name"];
         this.$E(".search-engine-url").value = data["engine_url"];
+        this.$E(".search-engine-is-browser-search").value = data["is_browser_search"];
         if (data["is_browser_search"] === true) {
             this.$E(".search-engine-name").disabled = true;
             this.$E(".search-engine-url").style.display = 'none';
@@ -999,9 +1056,40 @@ class ActionsView {
             this.$E(".search-engine-name").disabled = false;
             this.$E(".search-engine-url").style.display = '';
         }
+        this.checkActionChange(data);
+
         this.$E(".download-directory").value = data["download_directory"];
+        this.applyDownloadDirTitle();
 
         this.$E(".action-name").dispatchEvent(new Event("change"));
+    }
+
+
+    checkActionChange(data) {
+        if (this.actionType === commons.imageAction && data["act_name"] === commons.ACT_SEARCH) {
+            if (data["search_type"] === commons.SEARCH_IMAGE) {
+                this.$E(".imageSearchGroup1").style.display = "none";
+                this.$E(".imageSearchGroup2").style.display = "";
+            }
+            else if (data["search_type"] === commons.SEARCH_LINK) {
+                this.$E(".imageSearchGroup1").style.display = "";
+                this.$E(".imageSearchGroup2").style.display = "none";
+            }
+        }
+        else {
+            this.$E(".imageSearchGroup1").style.display = "none";
+            this.$E(".imageSearchGroup2").style.display = "none";
+        }
+    }
+
+    async applyDownloadDirTitle() {
+        const dirs = (await LStorage.get("downloadDirectories"))["downloadDirectories"];
+        const els = this.parent.querySelectorAll(".download-directory option");
+        for (const el of els) {
+            el.title = getI18nMessage("option_tooltip_path_prefix", dirs[parseInt(el.value)]);
+        }
+        const select = this.$E("select.download-directory");
+        select.title = getI18nMessage("option_tooltip_path_prefix", dirs[parseInt(select.value)]);
     }
 }
 
@@ -1053,7 +1141,7 @@ class NewActionsWrapper {
             $E("#direction-category div:not(.category-item-disabled)", this.parent).click();
         });
 
-        document.addEventListener("tabshow", e => {
+        $E("#tab-new-actions").addEventListener("tabshow", e => {
             if (e.target.id === "tab-new-actions") {
                 $E("#type-category .category-item-selected").click();
             }
@@ -1121,26 +1209,84 @@ class NewActionsWrapper {
 
 class PanelWrapper {
     constructor() {
-        this.btns = $E("#panel-buttons");
         this.cmdType = null;
         this.cmdIndex = null;
-        this.btns.addEventListener("click", e => {
+        this.dontsave = false;
+
+        this.actionTypeGetter = this.actionTypeGetter.bind(this);
+        this.category = new ActionsView($E("#panel-actions"), this.actionTypeGetter);
+        this.category.parent.style.display = "none";
+
+        $E("#panel-buttons").addEventListener("click", e => {
             if (e.target.nodeName === "BUTTON") {
                 this.load(e);
             }
         });
 
-        this.actionTypeGetter = this.actionTypeGetter.bind(this);
-
-        this.category = new ActionsView(this.btns.nextElementSibling, this.actionTypeGetter);
-        this.btns.nextElementSibling.addEventListener("change", e => this.onchange(e));
-        this.category.parent.style.display = "none";
-        this.dontsave = false;
+        this.regEvent();
     }
-    actionTypeGetter() {
-        return this.cmdType.split("_")[1];
+    async regEvent() {
+
+        $E("#panel-actions").addEventListener("change", e => this.onchange(e));
+
+        $E("#getIconFromEngine").addEventListener("click", e => {
+            this.refreshIcon();
+            this.onchange();
+        });
+        $E("#iconChooser").addEventListener("change", async ({ target }) => {
+            const files = target.files;
+            if (!files[0]) return;
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                this.imgSrc = this.iconData = reader.result;
+                this.onchange();
+            })
+            reader.readAsDataURL(files[0]);
+        })
+        $E("#getIconFromLocal").addEventListener("click", e => {
+            $E("#iconChooser").click();
+        });
+        $E("#getIconFromURL").addEventListener("click", () => {
+            let url = prompt();
+            if (url && url.length && url.length > 0) {
+                try {
+                    new URL(url);
+                    fetch(url).then(res => res.blob()).then(blob => {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            this.imgSrc = this.iconData = reader.result;
+                            this.onchange();
+                        }
+                        reader.readAsDataURL(blob);
+                    })
+                }
+                catch (e) { alert(e) }
+            }
+        })
+        $E(".panel-icon").addEventListener("change", e => {
+            this.imgSrc = e.target.value;
+        });
+
+        (async () => {
+            const f = (target) => {
+                LStorage.set({ "extraCommands": Boolean(target.checked) });
+                const els = target.parentElement.querySelectorAll(`[index="3"],[index="4"],[index="5"]`);
+                const val = target.checked ? "" : "none";
+                for (const el of els) {
+                    el.style.display = val;
+                }
+                this.category.parent.style.display = "none";
+            }
+            $E("#extraCommands").checked = Boolean((await LStorage.get("extraCommands"))["extraCommands"]);
+            $E("#extraCommands").addEventListener("change", ({ target }) => { f(target) });
+            f($E("#extraCommands"))
+        })();
     }
     async load(e) {
+        // 清空搜索引擎图标内容，因为 reload 之后不能确定当前的引擎是否时跟已有的引擎匹配
+        this.category.$E(".search-engine-icon").value = "";
+
+
         this.category.parent.style.display = "none";
         if (e.target.className.indexOf("text") >= 0) {
             this.cmdType = "Panel_textAction";
@@ -1152,36 +1298,91 @@ class PanelWrapper {
             this.cmdType = "Panel_imageAction";
         }
         this.cmdIndex = e.target.getAttribute("index");
-        LStorage.get(this.cmdType).then((r) => {
-            this.dontsave = true;
-            this.setting = r[this.cmdType][this.cmdIndex];
-            this.category.parent.style.display = "block";
-            this.dontsave = false;
-        });
+
+        const res = await LStorage.get(this.cmdType);
+        this.dontsave = true;
+        this.setting = res[this.cmdType][this.cmdIndex];
+        this.applyButtonVisible(res[this.cmdType][this.cmdIndex]);
+        this.category.parent.style.display = "block";
+        this.dontsave = false;
     }
-    onchange() {
+
+    async onchange() {
+        const setting = this.setting;
         if (!this.dontsave) {
             //先获取再保存
             $D("Save panel setting：");
-            $D(this.category.setting);
-            LStorage.get(this.cmdType).then(r => {
-                r[this.cmdType][this.cmdIndex] = this.setting;
+            $D(setting);
+            await LStorage.get(this.cmdType).then(r => {
+                r[this.cmdType][this.cmdIndex] = setting;
                 LStorage.set(r);
             });
         }
+        this.applyButtonVisible(setting);
+    }
+
+    async applyButtonVisible(data) {
+        const node = this.category.$E("#getIconFromEngine")
+        if (data["act_name"] === commons.ACT_SEARCH) {
+            node.style.display = "";
+            if (this.category.$E(".search-engine-icon").value.length) {
+                node.classList.remove("disabled")
+                node.disabled = false;
+            }
+            else {
+                node.classList.add("disabled")
+                node.disabled = true;
+            }
+        }
+        else {
+            node.style.display = "none";
+        }
+    }
+
+
+    async refreshIcon() {
+        this.imgSrc = this.iconData = this.category.$E(".search-engine-icon").value;
     }
 
     set setting(data) {
         this.category.setting = data;
-        this.category.$E(".panel-icon").value = data["icon"];
+        this.imgSrc = this.iconData = data["icon"];
         this.category.$E(".panel-tips").value = data["panel_tips"];
     }
 
     get setting() {
         const data = this.category.setting;
-        data["icon"] = this.category.$E(".panel-icon").value;
+        data["icon"] = this.iconData;
         data["panel_tips"] = this.category.$E(".panel-tips").value;
         return data;
+    }
+
+    get isBrowserSearch() {
+        return this.category.$E(".search-engine-is-browser-search").value === "true";
+    }
+
+    set imgSrc(src) {
+        if (src.length === 0) {
+            this.category.$E("#imgIcon").style.border = "";
+        }
+        else {
+            this.category.$E("#imgIcon").style.border = "1px dotted #000";
+        }
+        this.category.$E("#imgIcon").src = src;
+    }
+    get imgSrc() {
+        return this.category.$E("#imgIcon").src;
+    }
+
+    set iconData(data) {
+        this.category.$E(".panel-icon").value = data;
+    }
+
+    get iconData() {
+        return this.category.$E(".panel-icon").value
+    }
+    actionTypeGetter() {
+        return this.cmdType.split("_")[1];
     }
 }
 
@@ -1354,25 +1555,18 @@ function initTabs() {
 
     doI18n();
 
-    $E("#tabs nav").addEventListener("click", event => {
-        if (event.target.nodeName !== "A") return;
-        $E(".nav-active").classList.remove("nav-active");
-        event.target.classList.add("nav-active");
-    });
-
     window.addEventListener('hashchange', () => {
         if (!location.hash) return;
         for (const el of $A(".active")) {
             el.classList.remove("active");
         }
+        $E(".nav-active").classList.remove("nav-active");
+        $E(`a[href="${location.hash}"]`).classList.add("nav-active");
         $E(location.hash).classList.add("active");
         $E(location.hash).dispatchEvent(new Event("tabshow"));
     })
     if (location.hash) {
-        // 保证 hashchange 触发
-        const hash = location.hash
-        location.hash = '';
-        location.hash = hash;
+        window.dispatchEvent(new Event('hashchange'));
     }
     else {
         location.hash = '#tab-actions';
@@ -1440,15 +1634,25 @@ browser.runtime.getBrowserInfo().then(async info => {
     browserMajorVersion = parseInt(browserMajorVersion);
 
 
-
+    // 控制ENGINES的keys的顺序
+    let keysOfEngines = Object.keys(ENGINES);
     if (browserMajorVersion >= 63) {
         const browserEngines = await browser.search.get();
-        const browserEnginesObject = {};
-        for (const obj of browserEngines) {
-            browserEnginesObject[obj.name] = "about:blank";//TODO: remove
+        for (const eng of browserEngines) {
+            eng.isBrowserSearch = true;
         }
-        ENGINES.unshift(Object.assign({ groupName: "Browser" }, browserEnginesObject));
+        ENGINES["Browser"] = browserEngines;
+        keysOfEngines.unshift("Browser");
     }
+
+    Object.defineProperty(ENGINES, "keys", {
+        get: function () {
+            return () => { return keysOfEngines }
+        },
+        set: function () { },
+        enumerable: false,
+        configurable: false,
+    })
 
     initButtons();
     initTabs();

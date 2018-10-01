@@ -19,6 +19,15 @@
         "message": "",
         "description": ""
     },
+    "currentEngine": {
+        "message": "",
+        "placeholders": {
+            "C": {
+                "content": "$1",
+                "example": "Google"
+            }
+        }
+    },
     "ALLOW_NORMAL": {
         "message": "",
         "description": ""
@@ -320,6 +329,15 @@
     "option_tooltip_download_saveas": {
         "message": "",
         "description": "tooltip on option"
+    },
+    "option_tooltip_path_prefix": {
+        "message": "",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "/path/"
+            }
+        }
     },
     "search_name_tooltip": {
         "message": "",
@@ -637,6 +655,12 @@
         "message": "",
         "description": ""
     },
+    "elem_PanelIconSource": {
+        "message": ""
+    },
+    "elem_PanelIconPreview": {
+        "message": ""
+    },
     "panel_Cancel": {
         "message": ""
     },
@@ -692,6 +716,46 @@
         "message": ""
     },
     "elem_VariablesInPath": {
+        "message": ""
+    },
+    "elem_Exclusion": {
+        "message": "",
+        "description": ""
+    },
+    "elem_ExclusionDescription": {
+        "message": "",
+        "description": ""
+    },
+    "popup_AddRule": {
+        "message": "",
+        "description": ""
+    },
+    "popup_RemoveRule": {
+        "message": "",
+        "description": ""
+    },
+    "header_Distance": {
+        "message": ""
+    },
+    "header_Promption": {
+        "message": ""
+    },
+    "header_Process": {
+        "message": ""
+    },
+    "header_Misc": {
+        "message": ""
+    },
+    "elem_ExtraCommands": {
+        "message": ""
+    },
+    "elem_GetIconFromLocal": {
+        "message": ""
+    },
+    "elem_GetIconFromURL": {
+        "message": ""
+    },
+    "elem_GetIconFromEngine": {
         "message": ""
     }
 }

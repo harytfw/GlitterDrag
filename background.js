@@ -18,6 +18,14 @@ function randomString(length = 8) {
     return result;
 }
 
+function safeFilename(filename) {
+    const pattern = /[<>:"|?*]/;
+    if (navigator.platform.startsWith("Win")) {
+        return filename.split(pattern).join("_");
+    }
+    return filename;
+}
+
 function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 3) {
     const url = window.URL.createObjectURL(blob);
     setTimeout(u => window.URL.revokeObjectURL(u), revokeTime, url); // auto revoke
@@ -453,14 +461,11 @@ class ExecutorClass {
             opt.filename = this.replaceVariables(directories[this.action.download_directory])
             opt.filename += aFilename;
         }
-        try {
-            this.lastDownloadItemID = await browser.downloads.download(opt);
-        } catch (e) {
-            // 如果文件名包含非法字符，弹出提示
-            await browser.tabs.executeScript({
-                code: `alert(${opt.filename}\n${e.toString()})`
-            });
-        }
+        opt.filename = decodeURIComponent(opt.filename);
+        opt.filename = safeFilename(opt.filename);
+
+        this.lastDownloadItemID = await browser.downloads.download(opt);
+
 
     }
     async translateText(text) {

@@ -330,6 +330,15 @@
         "message": "指定文件保存的目录",
         "description": "tooltip on option"
     },
+    "option_tooltip_path_prefix": {
+        "message": "路径: $suffix$",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "/path/"
+            }
+        }
+    },
     "search_name_tooltip": {
         "message": "搜索引擎的名称",
         "description": "tooltip on Options - Search Template"
@@ -649,6 +658,12 @@
         "message": "图标",
         "description": ""
     },
+    "elem_PanelIconSource": {
+        "message": "图标来源"
+    },
+    "elem_PanelIconPreview": {
+        "message": "预览"
+    },
     "panel_Cancel": {
         "message": "取消"
     },
@@ -721,5 +736,29 @@
     "popup_RemoveRule": {
         "message": "从排除列表中移除规则",
         "description": ""
+    },
+    "header_Distance": {
+        "message": "触发距离"
+    },
+    "header_Promption": {
+        "message": "提示动作内容"
+    },
+    "header_Process": {
+        "message": "拖拽过程"
+    },
+    "header_Misc": {
+        "message": "杂项"
+    },
+    "elem_ExtraCommands": {
+        "message": "扩充到6条命令"
+    },
+    "elem_GetIconFromLocal": {
+        "message": "从本地选择"
+    },
+    "elem_GetIconFromURL": {
+        "message": "从链接获得"
+    },
+    "elem_GetIconFromEngine": {
+        "message": "使用引擎自带图标"
     }
 }
