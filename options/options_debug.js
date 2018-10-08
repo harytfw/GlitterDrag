@@ -115,6 +115,12 @@ async function showDebugTab() {
         e.preventDefault();
         // log(e.defaultPrevented);
     })
+
+    document.querySelector("#keepui").addEventListener("change", (e) => {
+        browser.storage.local.set({ "keepui": e.target.checked });
+    })
+    const val = (await browser.storage.local.get("keepui"))["keepui"];
+    document.querySelector("#keepui").checked = val || false;
 }
 
 if (window.localStorage.getItem("_DEBUG") === "true") showDebugTab();

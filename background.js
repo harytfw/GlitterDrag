@@ -697,6 +697,13 @@ browser.runtime.onInstalled.addListener(async (details) => {
                     }
                 }
             }
+            else if (aKey.startsWith("Panel")) {
+                for (const action of all[aKey]) {
+                    if ("is_browser_search" in action === false) {
+                        action["is_browser_search"] = false;
+                    }
+                }
+            }
         }
     }
 

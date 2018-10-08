@@ -21,7 +21,9 @@ class BaseUIClass {
     }
 
     remove() {
-        this.node.remove();
+        if (!bgConfig.keepui) {
+            this.node.remove();
+        }
     }
 
     initContent(data) {
@@ -503,15 +505,14 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
         if (!isExtra) {
             $H(["#GDPanelLinkLabel", "#GDPanelLinkContent"], value, this.node);
         }
-        $H([".GDPanelLinkGrid", "#GDPanelGrid4" + suffix, "#GDPanelGrid5" + suffix, "#GDPanelGrid6" + suffix], value, this.node);
-
+        $H(["#GDPanelGrid4" + suffix, "#GDPanelGrid5" + suffix, "#GDPanelGrid6" + suffix], value, this.node);
     }
     displayImageGrids(value = "", isExtra = false) {
         const suffix = isExtra ? "a" : "";
         if (!isExtra) {
             $H(["#GDPanelImageLabel", "#GDPanelImageContent"], value, this.node);
         }
-        $H([".GDPanelImageGrid", "#GDPanelGrid7" + suffix, "#GDPanelGrid8" + suffix, "#GDPanelGrid9" + suffix], value, this.node);
+        $H(["#GDPanelGrid7" + suffix, "#GDPanelGrid8" + suffix, "#GDPanelGrid9" + suffix], value, this.node);
     }
 
     place(x = 0, y = 0, direction = "") {

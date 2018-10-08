@@ -893,11 +893,11 @@ class ActionsView {
                 hideTR(".copy-text", ".search-text", ".download-text", ".download-saveas-yes", ".download-directory", ".search-onsite-yes");
 
                 if (this.actionType === commons.linkAction) {
-                    hideTR(".search-text", ".search-onsite-yes");
+                    hideTR(".search-text", ".search-onsite-yes", ".search-engine-select-group", ".search-engine-name");
                     hideRadios(".open-text", ".open-image");
                 }
                 else if (this.actionType === commons.imageAction) {
-                    hideTR(".search-text", ".search-onsite-yes");
+                    hideTR(".search-text", ".search-onsite-yes", ".search-engine-select-group", ".search-engine-name");
                     hideRadios(".open-text", ".open-image-link");
                 }
                 else {
@@ -1191,7 +1191,6 @@ class NewActionsWrapper {
             default:
                 break;
         }
-
     }
     get actionType() {
         return $E("#type-category .category-item-selected").getAttribute("value");
