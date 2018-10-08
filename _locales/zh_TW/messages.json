@@ -19,6 +19,15 @@
         "message": "方向控制",
         "description": ""
     },
+    "currentEngine": {
+        "message": "目前: $C$ ",
+        "placeholders": {
+            "C": {
+                "content": "$1",
+                "example": "Google"
+            }
+        }
+    },
     "ALLOW_NORMAL": {
         "message": "普通4個方向",
         "description": ""
@@ -321,6 +330,15 @@
         "message": "指定檔案儲存的目錄",
         "description": "tooltip on option"
     },
+    "option_tooltip_path_prefix": {
+        "message": "路徑: $suffix$",
+        "placeholders": {
+            "suffix": {
+                "content": "$1",
+                "example": "\/path\/"
+            }
+        }
+    },
     "search_name_tooltip": {
         "message": "搜尋引擎的名稱",
         "description": "tooltip on Options - Search Template"
@@ -328,15 +346,6 @@
     "option_tooltip_download_saveas": {
         "message": "是否需要另存檔案為... ?",
         "description": "tooltip on option"
-    },
-    "option_tooltip_path_prefix": {
-        "message": "路径: $suffix$",
-        "placeholders": {
-            "suffix": {
-                "content": "$1",
-                "example": "/path/"
-            }
-        }
     },
     "search_url_tooltip": {
         "message": "調用的鏈結",
@@ -638,109 +647,118 @@
         "description": ""
     },
     "elem_EnableLockScrollbar": {
-        "message": "",
+        "message": "拖曳時鎖住捲軸",
         "description": ""
     },
     "elem_PanelTips": {
-        "message": "",
+        "message": "提示內容",
         "description": ""
     },
     "elem_PanelIcon": {
-        "message": "",
+        "message": "圖示",
         "description": ""
     },
+    "elem_PanelIconSource": {
+        "message": "圖示來源"
+    },
+    "elem_PanelIconPreview": {
+        "message": "預覽"
+    },
     "panel_Cancel": {
-        "message": ""
+        "message": "取消"
     },
     "elem_Translator": {
-        "message": ""
+        "message": "翻譯"
     },
     "elem_UpdateBaiduData": {
-        "message": ""
+        "message": "更新百度資料"
     },
     "elem_UpdateBaiduExplanation": {
-        "message": ""
+        "message": "套件需要取得您百度帳號的一些資料(gtk和token)，才能使用百度翻譯服務。這些資料僅僅用於調用百度翻譯API，不作其他用途。"
     },
     "elem_UpdateBaiduSuccess": {
-        "message": ""
+        "message": "資料更新成功！"
     },
     "translator_Provider": {
-        "message": ""
+        "message": "翻譯介面"
     },
     "provider_baidu": {
-        "message": ""
+        "message": "百度翻譯"
     },
     "provider_google": {
-        "message": ""
+        "message": "Google 翻譯"
+    },
+    "language_auto": {
+        "message": "自動"
     },
     "language_english": {
-        "message": ""
+        "message": "英語"
     },
     "language_simplified_chinese": {
-        "message": ""
+        "message": "簡體"
     },
     "language_traditional_chinese": {
-        "message": ""
+        "message": "繁體"
     },
     "language_japanese": {
-        "message": ""
+        "message": "日語"
     },
     "language_german": {
-        "message": ""
+        "message": "德語"
     },
     "language_korean": {
-        "message": ""
+        "message": "韓語"
     },
     "language_russian": {
-        "message": ""
+        "message": "俄語"
     },
     "language_french": {
-        "message": ""
+        "message": "法語"
     },
     "elem_CustomDirectory": {
-        "message": ""
+        "message": "自訂目錄"
     },
     "elem_VariablesInPath": {
-        "message": ""
+        "message": "檢視下載路徑中可用的變數"
     },
     "elem_Exclusion": {
-        "message": "",
+        "message": "排除",
         "description": ""
     },
     "elem_ExclusionDescription": {
-        "message": "",
+        "message": "在某些情況下套件的拖曳可能會和網站的拖曳功能發生衝突，那麼你可以使用比對規則來排除這些特定的網站，讓套件不在這些網站上執行。這些比對規則都應該是正規表示式，每一行代表一個規則",
         "description": ""
     },
     "popup_AddRule": {
-        "message": "",
+        "message": "將此網站新增至排除清單",
         "description": ""
     },
     "popup_RemoveRule": {
-        "message": "",
+        "message": "從排除清單中移除規則",
         "description": ""
     },
     "header_Distance": {
-        "message": ""
+        "message": "觸發距離"
     },
     "header_Promption": {
-        "message": ""
+        "message": "提示動作內容"
     },
     "header_Process": {
-        "message": ""
+        "message": "拖曳過程"
     },
     "header_Misc": {
-        "message": ""
+        "message": "雜項"
     },
     "elem_ExtraCommands": {
-        "message": ""
+        "message": "擴充到6條命令"
     },
     "elem_GetIconFromLocal": {
-        "message": ""
+        "message": "從本機選擇"
     },
     "elem_GetIconFromURL": {
-        "message": ""
+        "message": "從鏈結取得"
     },
     "elem_GetIconFromEngine": {
-        "message": ""
+        "message": "使用引擎自帶圖示"
     }
 }
