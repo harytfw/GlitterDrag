@@ -179,7 +179,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 act_name: commons.ACT_DL,
                 download_saveas: commons.DOWNLOAD_SAVEAS_NO,
                 search_type:commons.SEARCH_LINK,
-                download_directory: "0",
+                download_directory: 0,
                 icon: "",
                 panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
@@ -197,7 +197,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 act_name: commons.ACT_DL,
                 download_saveas: commons.DOWNLOAD_SAVEAS_NO,
                 search_type:commons.SEARCH_LINK,
-                download_directory:"4",
+                download_directory:4,
                 icon: "",
                 panel_tips: "%a-4"
             }),
@@ -205,7 +205,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 act_name: commons.ACT_DL,
                 download_saveas: commons.DOWNLOAD_SAVEAS_NO,
                 search_type:commons.SEARCH_LINK,
-                download_directory:"5",
+                download_directory:5,
                 icon: "",
                 panel_tips: "%a-5"
             }),
@@ -213,7 +213,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 act_name: commons.ACT_DL,
                 search_type:commons.SEARCH_LINK,
                 download_saveas: commons.DOWNLOAD_SAVEAS_NO,
-                download_directory:"6",
+                download_directory:6,
                 icon: "",
                 panel_tips: "%a-6"
             })
