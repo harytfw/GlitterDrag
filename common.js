@@ -203,9 +203,14 @@ const typeUtil = {
     },
 
     validate: (str) => {
+        str = str.toLowerCase()
         try {
-            new URL(str);
-            return true;
+            const url = new URL(str);
+            // fix #106
+            if (str.startsWith(`${url.protocol}//`)) {
+                return true;
+            }
+            return false;
         }
         catch (e) {
             return false;

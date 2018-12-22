@@ -172,13 +172,13 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 act_name: commons.ACT_OPEN,
                 tab_active: commons.FORE_GROUND,
                 tab_pos: commons.TAB_CRIGHT,
-                search_type:commons.SEARCH_LINK,
+                search_type: commons.SEARCH_LINK,
                 icon: "",
                 panel_tips: "%g-%a"
             }), ACTION_CONSTRUCTOR({
                 act_name: commons.ACT_DL,
                 download_saveas: commons.DOWNLOAD_SAVEAS_NO,
-                search_type:commons.SEARCH_LINK,
+                search_type: commons.SEARCH_LINK,
                 download_directory: 0,
                 icon: "",
                 panel_tips: "%g-%a"
@@ -186,7 +186,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
                 act_name: commons.ACT_SEARCH,
                 tab_active: commons.FORE_GROUND,
                 tab_pos: commons.TAB_CRIGHT,
-                search_type:commons.SEARCH_LINK,
+                search_type: commons.SEARCH_LINK,
                 engine_name: "Yandex Image",
                 is_browser_search: false,
                 engine_url: "https://www.yandex.com/images/search?url=%s&rpt=imageview",
@@ -196,24 +196,24 @@ const GENERATE_DEFAULT_CONFIG = () => {
             ACTION_CONSTRUCTOR({
                 act_name: commons.ACT_DL,
                 download_saveas: commons.DOWNLOAD_SAVEAS_NO,
-                search_type:commons.SEARCH_LINK,
-                download_directory:4,
+                search_type: commons.SEARCH_LINK,
+                download_directory: 4,
                 icon: "",
                 panel_tips: "%a-4"
             }),
             ACTION_CONSTRUCTOR({
                 act_name: commons.ACT_DL,
                 download_saveas: commons.DOWNLOAD_SAVEAS_NO,
-                search_type:commons.SEARCH_LINK,
-                download_directory:5,
+                search_type: commons.SEARCH_LINK,
+                download_directory: 5,
                 icon: "",
                 panel_tips: "%a-5"
             }),
             ACTION_CONSTRUCTOR({
                 act_name: commons.ACT_DL,
-                search_type:commons.SEARCH_LINK,
+                search_type: commons.SEARCH_LINK,
                 download_saveas: commons.DOWNLOAD_SAVEAS_NO,
-                download_directory:6,
+                download_directory: 6,
                 icon: "",
                 panel_tips: "%a-6"
             })
@@ -236,6 +236,7 @@ const GENERATE_DEFAULT_CONFIG = () => {
         maxProcessSize: 5, //unit is M; the file that larger than 5M won't be processed.
         debug: false,
         keepui: false,
+        middleButtonSelect: false,
         version: "0.0.0"
     };
 }

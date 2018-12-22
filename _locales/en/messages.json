@@ -757,5 +757,8 @@
     },
     "elem_GetIconFromEngine": {
         "message": "Use icon of engine"
+    },
+    "elem_MiddleButtonSelect": {
+        "message": "Let middle button can select text"
     }
 }

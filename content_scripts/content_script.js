@@ -97,15 +97,15 @@ const scrollbarLocker = {
     //https://stackoverflow.com/questions/13631730/how-to-lock-scrollbar-and-leave-it-visible
     x: 0,
     y: 0,
-    lock: function() {
+    lock: function () {
         this.x = window.scrollX;
         this.y = window.scrollY;
         window.addEventListener("scroll", this.doLock, false);
     },
-    free: function() {
+    free: function () {
         window.removeEventListener("scroll", this.doLock, false);
     },
-    doLock: function() {
+    doLock: function () {
         window.scrollTo(this.x, this.y);
     }
 
@@ -115,7 +115,7 @@ scrollbarLocker.doLock = scrollbarLocker.doLock.bind(scrollbarLocker);
 function RemoteBuilder(name, exposeFunName = []) {
     let obj = {};
     for (let fun of exposeFunName) {
-        obj[fun] = function(name, fun, ...argv) {
+        obj[fun] = function (name, fun, ...argv) {
             window.top.postMessage({
                 name,
                 fun,
@@ -126,6 +126,65 @@ function RemoteBuilder(name, exposeFunName = []) {
     }
     return obj;
 }
+
+function extendMiddleButton(enable = false) {
+    if (!enable) return
+    var x1 = 0.0, y1 = 0.0;
+    const MIN_MOVEMENT = 10;
+    const se = document.getSelection();
+    const LEFT_BUTTON = 0,
+        MIDDLE_BUTTON = 1;
+    const STATE_INIT = 0,
+        STATE_READY = 1,
+        STATE_WORKING = 2,
+        STATE_FINISH = 3;
+    let state = STATE_INIT;
+
+    function mousedown(e) {
+        if (e.button !== MIDDLE_BUTTON) {
+            return;
+        }
+        x1 = e.clientX;
+        y1 = e.clientY;
+        const range = document.caretPositionFromPoint(x1, y1);
+        se.setBaseAndExtent(range.offsetNode, range.offset, range.offsetNode, range.offset);
+        state = STATE_READY;
+    }
+    var x2 = 0.0, y2 = 0.0;
+    function mouseup(e) {
+        if (e.button === MIDDLE_BUTTON) {
+            if (state === STATE_WORKING) state = STATE_FINISH;
+            else state = STATE_INIT;
+        }
+    }
+    function mousemove(e) {
+        if (state === STATE_INIT) return;
+        x2 = e.clientX;
+        y2 = e.clientY;
+        if (Math.hypot(x1 - x2, y1 - y2) >= MIN_MOVEMENT) {
+            if (state === STATE_WORKING || state === STATE_READY) {
+                const range = document.caretPositionFromPoint(x2, y2);
+                if (se.anchorNode !== null) se.extend(range.offsetNode, range.offset);
+                state = STATE_WORKING;
+            }
+        }
+        else {
+            state = STATE_READY;
+        }
+    }
+    function click(e) {
+        if (e.button === MIDDLE_BUTTON && state == STATE_FINISH) {
+            e.preventDefault();
+        }
+        state = STATE_INIT;
+    }
+    document.addEventListener('mouseup', mouseup);
+    document.addEventListener('mousedown', mousedown);
+    document.addEventListener('mousemove', mousemove);
+    document.addEventListener('click', click);
+
+}
+
 class DragClass {
     constructor(elem) {
         this.running = false; // happend in browser
@@ -251,7 +310,7 @@ class DragClass {
             argv = event.data["argv"];
         const uuid = event.data["uuid"] || "";
         // check uuid to prevent secure problem
-        if (uuid !== WE_UUID) { 
+        if (uuid !== WE_UUID) {
             /*console.error("Wrong UUID");*/
             return;
         }
@@ -494,8 +553,8 @@ class DragClass {
                         _fetch = fetch;
                     }
                     _fetch(this.imageLink, {
-                            cache: "force-cache"
-                        })
+                        cache: "force-cache"
+                    })
                         .then(a => a.arrayBuffer())
                         .then(arrayBuffer => {
                             const result = this.imageLink.match(commons.fileExtension);
@@ -1130,17 +1189,17 @@ function excludeThisSite(patterns) {
 
     let ret = false;
     for (const r of patterns) {
-        try{
+        try {
             const pattern = new RegExp(r);
             if (pattern.test(location.href)) {
                 ret = true;
                 break;
             }
-        } catch(error){
+        } catch (error) {
             console.error(error);
             break;
         }
-        
+
     }
     return ret;
 }
@@ -1172,6 +1231,7 @@ if (!excludeThisWindow()) {
 
         try {
             maindrag = new DragClass(document);
+            extendMiddleButton(Boolean(bgConfig.middleButtonSelect));
         }
         catch (error) {
             console.error("Glitter Drag: Fail to initialize DragCLass");

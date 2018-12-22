@@ -760,5 +760,8 @@
     },
     "elem_GetIconFromEngine": {
         "message": "使用引擎自带图标"
+    },
+    "elem_MiddleButtonSelect": {
+        "message": "鼠标中键也可以选择文本"
     }
 }
