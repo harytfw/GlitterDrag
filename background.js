@@ -758,12 +758,23 @@ browser.runtime.onInstalled.addListener(async (details) => {
 //     browser.runtime.openOptionsPage();
 // });
 
-browser.runtime.onMessage.addListener((m) => {
-    if (m.cmd && m.cmd === "removeHighlighting") {
-        executor.removeFind();
-    }
-    else {
-        executor.DO(m);
+browser.runtime.onMessage.addListener((m, sender) => {
+    switch (m.cmd) {
+        case "removeHighlighting":
+            executor.removeFind();
+            break;
+        case "insertCSS":
+            browser.tabs.insertCSS(sender.tab.id, {
+                frameId: sender.frameId,
+                file: browser.runtime.getURL("content_scripts/content_script.css"),
+                runAt: "document_end"
+            });
+            bgConfig.enableStyle &&
+                browser.tabs.insertCSS(sender.tab.id, { frameId: sender.frameId, code: bgConfig.style, runAt: "document_end" });
+            break;
+        default:
+            executor.DO(m);
+            break;
     }
 });
 

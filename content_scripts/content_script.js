@@ -1132,31 +1132,31 @@ class DragClass {
 let bgConfig = {};
 let maindrag = null;
 
-function doInit() {
-    if (document.body && document.body.getAttribute("contenteditable") === null) {
-        injectStyle({
-            url: browser.runtime.getURL("content_scripts/content_script.css")
-        });
-        // injectStyle({
-        //     url: browser.runtime.getURL("content_scripts/font-awesome.css")
-        // })
-        if (bgConfig.enableStyle) {
-            injectStyle({
-                css: bgConfig.style
-            });
-        }
-        document.removeEventListener("readystatechange", onReadyStateChange);
-        document.removeEventListener("DOMContentLoaded", OnDOMContentLoaded);
-    }
-}
+// function doInit() {
+//     if (document.body && document.body.getAttribute("contenteditable") === null) {
+//         injectStyle({
+//             url: browser.runtime.getURL("content_scripts/content_script.css")
+//         });
+//         // injectStyle({
+//         //     url: browser.runtime.getURL("content_scripts/font-awesome.css")
+//         // })
+//         if (bgConfig.enableStyle) {
+//             injectStyle({
+//                 css: bgConfig.style
+//             });
+//         }
+//         document.removeEventListener("readystatechange", onReadyStateChange);
+//         document.removeEventListener("DOMContentLoaded", OnDOMContentLoaded);
+//     }
+// }
 
-function onReadyStateChange() {
-    if (document.readyState === "complete") doInit();
-}
+// function onReadyStateChange() {
+//     if (document.readyState === "complete") doInit();
+// }
 
-function OnDOMContentLoaded() {
-    doInit();
-}
+// function OnDOMContentLoaded() {
+//     doInit();
+// }
 
 function onStorageChange(changes) {
     for (const key of Object.keys(changes)) {
@@ -1233,14 +1233,17 @@ if (!excludeThisWindow()) {
             if (bgConfig.middleButtonSelect === true) {
                 extendMiddleButton();
             }
+            browser.runtime.sendMessage({
+                cmd:"insertCSS"
+            });
         }
         catch (error) {
             console.error("Glitter Drag: Fail to initialize DragCLass");
             console.error(error);
         }
-        document.addEventListener('readystatechange', onReadyStateChange, false);
-        document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
-        doInit();
+        // document.addEventListener('readystatechange', onReadyStateChange, false);
+        // document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
+        // doInit();
     });
 }
 
