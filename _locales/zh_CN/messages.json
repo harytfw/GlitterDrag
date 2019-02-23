@@ -763,5 +763,8 @@
     },
     "elem_MiddleButtonSelect": {
         "message": "鼠标中键也可以选择文本"
+    },
+    "elem_DisableFixURL": {
+        "message": "不尝试修复URL"
     }
 }

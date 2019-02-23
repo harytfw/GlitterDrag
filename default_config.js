@@ -237,7 +237,9 @@ const GENERATE_DEFAULT_CONFIG = () => {
         debug: false,
         keepui: false,
         middleButtonSelect: false,
-        version: "0.0.0"
+        disableFixURL: false,
+        version: "0.0.0",
+
     };
 }
 

@@ -760,5 +760,8 @@
     },
     "elem_MiddleButtonSelect": {
         "message": "Let middle button can select text"
+    },
+    "elem_DisableFixURL": {
+        "message": "Don't try to fix URL"
     }
 }
