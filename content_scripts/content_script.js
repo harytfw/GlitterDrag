@@ -127,8 +127,7 @@ function RemoteBuilder(name, exposeFunName = []) {
     return obj;
 }
 
-function extendMiddleButton(enable = false) {
-    if (!enable) return
+function extendMiddleButton() {
     var x1 = 0.0, y1 = 0.0;
     const MIN_MOVEMENT = 10;
     const se = document.getSelection();
@@ -1231,7 +1230,9 @@ if (!excludeThisWindow()) {
 
         try {
             maindrag = new DragClass(document);
-            extendMiddleButton(Boolean(bgConfig.middleButtonSelect));
+            if (bgConfig.middleButtonSelect === true) {
+                extendMiddleButton();
+            }
         }
         catch (error) {
             console.error("Glitter Drag: Fail to initialize DragCLass");
