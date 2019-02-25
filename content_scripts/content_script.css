@@ -150,6 +150,12 @@
     */
 }
 
+.GDArrow-OUTER::after{
+    display: block !important;
+    transform: rotate(-180deg) !important;
+    content:"\f35d" !important;
+}
+
 #GDIndicator {
     border-style: solid !important;
     border-color: rgba(0, 0, 0, 0.25) !important;

@@ -428,11 +428,15 @@ class DragClass {
     cancel() {
         clearTimeout(this.timeoutId);
         this.accepting = this.running = false;
-        this.notAccepting = true;
+        this.isInputArea = false;
+        this.isDropTouched = false;
+        this.isPanelArea = false;
+        this.notAccepting = false;
+        this.lastDirection = null;
         this.promptBox.remove();
         this.indicatorBox.remove();
+        this.panelBox.remove();
         scrollbarLocker.free();
-
     }
     updateModifierKey(evt) {
         console.assert(evt instanceof Event, "evt is not event");
@@ -829,7 +833,6 @@ class DragClass {
         //     console.log(evt.dataTransfer.types);
         //     if (!(SKIP_DRAGOVER && type === "dragover")) {
         //         console.log(type, evt.defaultPrevented, evt);
-
         //     }
         //     if (BREAK_MODE) {
         //         evt.preventDefault();
@@ -969,8 +972,8 @@ class DragClass {
 
                     else if (containPlainText || bgConfig.allowExts.includes(ext)) {
                         this.doDropPreventDefault = true;
-                        this.accepting = false;
                         this.drop(evt);
+                        this.cancel();
                     }
                 }
                 else if (this.running) {
@@ -1234,7 +1237,7 @@ if (!excludeThisWindow()) {
                 extendMiddleButton();
             }
             browser.runtime.sendMessage({
-                cmd:"insertCSS"
+                cmd: "insertCSS"
             });
         }
         catch (error) {
