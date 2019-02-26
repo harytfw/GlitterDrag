@@ -1,15 +1,15 @@
 {
-    "name": "GlitterDrag",
+    "name": "glitterdrag",
     "description": "An drag extension for Firefox Browser.",
     "devDependencies": {
         "eslint": "^4.4.1",
         "web-ext": "^2.9.1"
     },
     "scripts": {
-        "build": "npm run renew && web-ext build --overwrite-dest",
+        "build": "npm run renew && web-ext build -s ./src --overwrite-dest",
         "lint": "eslint . && web-ext lint",
         "test": "npm run lint",
-        "renew": "node ./_locales/renew_template.js"
+        "renew": "node ./src/_locales/renew_template.js"
     },
     "license": "MIT",
     "dependencies": {}
