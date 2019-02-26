@@ -758,20 +758,25 @@ browser.runtime.onInstalled.addListener(async (details) => {
 //     browser.runtime.openOptionsPage();
 // });
 
+async function insertCSS(sender) {
+    browser.tabs.insertCSS(sender.tab.id, {
+        frameId: sender.frameId,
+        file: browser.runtime.getURL("content_scripts/content_script.css"),
+        runAt: "document_end"
+    });
+    const storage = await (browser.storage.local.get(["enableStyle", "style"]));
+    if (storage["enableStyle"] === true) {
+        browser.tabs.insertCSS(sender.tab.id, { frameId: sender.frameId, code: storage.style, runAt: "document_end" });
+    }
+}
+
 browser.runtime.onMessage.addListener(async (m, sender) => {
     switch (m.cmd) {
         case "removeHighlighting":
             executor.removeFind();
             break;
         case "insertCSS":
-            browser.tabs.insertCSS(sender.tab.id, {
-                frameId: sender.frameId,
-                file: browser.runtime.getURL("content_scripts/content_script.css"),
-                runAt: "document_end"
-            });
-            if ((await LStorage.get("enableStyle"))["enableStyle"] === true) {
-                browser.tabs.insertCSS(sender.tab.id, { frameId: sender.frameId, code: bgConfig.style, runAt: "document_end" });
-            }
+            insertCSS(sender);
             break;
         default:
             executor.DO(m);

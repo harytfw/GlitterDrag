@@ -46,44 +46,23 @@ const TranslatorService = {
             }
             return PROTOCOL + "translate.google.com";
         },
-        getGoogleTK: function(str) {
-            /* eslint-disable */
-            function b(a, b) {
-                for (var d = 0; d < b.length - 2; d += 3) {
-                    var c = b.charAt(d + 2),
-                        c = "a" <= c ? c.charCodeAt(0) - 87 : Number(c),
-                        c = "+" == b.charAt(d + 1) ? a >>> c : a << c;
-                    a = "+" == b.charAt(d) ? a + c & 4294967295 : a ^ c
-                }
-                return a;
-            }
 
-            function tk(a) {
-                for (var e = ['406398', '2087938574'], h = Number(e[0]) || 0, g = [], d = 0, f = 0; f < a.length; f++) {
-                    var c = a.charCodeAt(f);
-                    128 > c ? g[d++] = c : (2048 > c ? g[d++] = c >> 6 | 192 : (55296 == (c & 64512) && f + 1 < a.length && 56320 == (a.charCodeAt(f + 1) & 64512) ? (c = 65536 + ((c & 1023) << 10) + (a.charCodeAt(++f) & 1023), g[d++] = c >> 18 | 240, g[d++] = c >> 12 & 63 | 128) : g[d++] = c >> 12 | 224, g[d++] = c >> 6 & 63 | 128), g[d++] = c & 63 | 128)
-                }
-                a = h;
-                for (d = 0; d < g.length; d++) a += g[d], a = b(a, "+-a^+6");
-                a = b(a, "+-3^+b+-f");
-                a ^= Number(e[1]) || 0;
-                0 > a && (a = (a & 2147483647) + 2147483648);
-                a %= 1E6;
-                return a.toString() + "." + (a ^ h)
-            }
-            return tk(str);
-            /* eslint-enable */
-        },
 
-        queryTrans: async function(src = "", tar = "", query = "") {
-            const url = `/translate_a/single?client=t&hl=auto&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&source=btn&srcrom=1&ssel=0&tsel=0&sl=${src}&tl=${tar}&tk=${this.getGoogleTK(query)}&q=${encodeURIComponent(query)}&getTime=`;
-            return fetch(this.host + url)
+        queryTrans: async function (src = "", tar = "", query = "") {
+            // const url = this.host+`/translate_a/single?client=t&hl=auto&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&source=btn&srcrom=1&ssel=0&tsel=0&sl=${src}&tl=${tar}&tk=${this.getGoogleTK(query)}&q=${encodeURIComponent(query)}&getTime=`;
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${src}&tl=${tar}&dt=t&q=${encodeURIComponent(query)}`
+            return fetch(url)
                 .then(res => {
                     return res.json();
                 })
                 .then(json => {
-                    json = this.transform(json);
-                    return Promise.resolve(json);
+                    return {
+                        type: TranslatorService.RESULT_TYPE.SENTENCE,
+                        host: this.host,
+                        trans: [{ part: "", meaning: json[0][0][0] }]
+                    }
+                    // json = this.transform(json);
+                    // return Promise.resolve(json);
                 });
 
             /** 对谷歌翻译返回的数组 分析
@@ -143,235 +122,54 @@ const TranslatorService = {
              */
         },
 
-        transform: function(json) {
-            const trans = [];
-            if (Array.isArray(json[1])) {
-                for (const x of json[1]) {
-                    const part = x[0];
-                    const meaning = [];
-                    for (const y of x[1]) {
-                        meaning.push(y);
-                    }
-                    trans.push({ part, meaning: meaning.join(", ") });
-                }
-                return {
-                    type: TranslatorService.RESULT_TYPE.WORD,
-                    host: this.host,
-                    trans,
-                    ph_am: json[0][1][3],
-                }
-            }
-            else {
-                return {
-                    type: TranslatorService.RESULT_TYPE.SENTENCE,
-                    host: this.host,
-                    trans: [{ part: "", meaning: json[0][0][0] }]
-                }
-            }
-        }
-    }
-
-    ,
-    "baidu": {
-        host: "http://fanyi.baidu.com",
-        //不同翻译站点提供（支持）的语言代码会有所不同，需要映射翻译平台对应的语言代码
-        LANGUAGE_CODE_MAP_BAIDU: new Map([
-            ["zh-CN", "zh"],
-            ["zh-TW", "cht"],
-            ["ja", "jp"],
-            ["ko", "kor"],
-            ["fr", "fra"],
-        ]),
-        getTokenAndGtk: function(html) {
-            //http://fanyi.baidu.com
-            let gtk = html.match("window.gtk = '(.+?)';")[1]
-            let token = html.match("token: '(.+?)',")[1];
-            [gtk, token] = [gtk ? gtk : "", token ? token : ""];
-            return [gtk, token]
-        },
-        detechLanguage(query = "") {
-            const url = `http://fanyi.baidu.com/langdetect`
-            const form = new FormData();
-            //baidu的检测语言api不接受超长的字符串
-            query = query.substr(0, 25);
-            form.append('query', query);
-            const request = new Request(url, {
-                method: 'POST',
-                body: form,
-                credentials: 'same-origin'
-            });
-            return fetch(request)
-                .then(res => res.json())
-                .then(json => {
-                    if (json.msg === "success") return Promise.resolve(json.lan)
-                    return Promise.reject("unknown error", json);
-                })
-        },
-        queryTrans: async function(from = "en", to = "zh", query = "") {
-
-            let isLongText = true;
-            query = query.trim();
-            if (/^\w+$/ig.test(query) === true && to === "zh-CN") { //只对简体生效
-                isLongText = false;
-            }
-
-            if (from === "auto") {
-                //
-                from = await this.detechLanguage(query);
-            }
-            else {
-                from = TranslatorService.transformLangCode(from, this.LANGUAGE_CODE_MAP_BAIDU);
-            }
-            if (to === "auto") {
-                to = TranslatorService.transformLangCode(navigator.language, this.LANGUAGE_CODE_MAP_BAIDU);
-            }
-            else {
-                to = TranslatorService.transformLangCode(to, this.LANGUAGE_CODE_MAP_BAIDU);
-            }
-
-            const data = {
-                from,
-                query,
-                // 在获取sign时, query 中的空格要替换成 '+'
-                sign: this.getSign(query, bgConfig.translator.baidu_gtk),
-                simple_means_flag: 3,
-                to,
-                token: bgConfig.translator.baidu_token,
-            }
-
-            //用FormData处理需要post的数据
-            const formData = new FormData();
-            for (const k of Object.keys(data)) {
-                formData.append(k, data[k]);
-            }
-
-            //创建POST请求
-            //用"same-origin" 可以同时发送浏览器拥有的同源cookie
-            const request = new Request("http://fanyi.baidu.com/v2transapi", {
-                method: "POST",
-                body: formData,
-                credentials: "same-origin",
-            });
-
-            return fetch(request)
-                .then(res => res.json())
-                .then(json => {
-                    //每个翻译网站返回的翻译结果可能不同
-                    //转换成统一的内容
-                    // console.info(json);
-                    const r = this.transform(json, isLongText);
-                    // console.info(r);
-                    return Promise.resolve(r);
-                });
-        },
-
-        transform: function(src, isLongText) {
-            const trans = [];
-            if (isLongText === true) { //句子
-                for (const x of src.trans_result.data) {
-                    trans.push({ part: "", meaning: x.dst })
-                }
-                return {
-                    type: TranslatorService.RESULT_TYPE.SENTENCE,
-                    host: this.host,
-                    from: src.trans_result.from, //源语言代码
-                    to: src.trans_result.to, //目标语言代码
-                    trans,
-                }
-            }
-            else { // 单独的单词
-                const trans = [];
-                for (const x of src.dict_result.simple_means.symbols[0].parts) {
-                    trans.push({ part: x.part, meaning: x.means });
-                }
-                return {
-                    type: TranslatorService.RESULT_TYPE.WORD, //翻译输入的类型
-                    host: this.host,
-                    //word_name: src.dict_result.simple_means.word_name, //词
-                    ph_am: src.dict_result.simple_means.symbols[0].ph_am, //美式音标
-                    // ph_am_mp3: src.dict_result.simple_means.symbols[0].ph_am_mp3, //美式发音
-                    ph_en: src.dict_result.simple_means.symbols[0].ph_en, //英式音标
-                    // ph_en_mp3: src.dict_result.simple_means.symbols[0].ph_en_mp3, //英式发音
-                    // ph_tts_mp3: null,
-                    trans, //最终翻译的内容，数组
-                    /*
-                     * trans:[
-                     *     {
-                     *         part:"" //词性,
-                     *         meaning:[] // 具体的翻译结果
-                     *     }
-                     * ]
-                     */
-                }
-            }
-        },
-        getSign: function(r, gtk) {
-            /* eslint-disable */
-            //来自百度翻译
-            function n(r, o) {
-                for (var t = 0; t < o.length - 2; t += 3) {
-                    var a = o.charAt(t + 2);
-                    a = a >= 'a' ? a.charCodeAt(0) - 87 : Number(a),
-                        a = '+' === o.charAt(t + 1) ? r >>> a : r << a,
-                        r = '+' === o.charAt(t) ? r + a & 4294967295 : r ^ a
-                }
-                return r
-            }
-            var o = r.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g);
-            if (null === o) {
-                var t = r.length;
-                t > 30 && (r = '' + r.substr(0, 10) + r.substr(Math.floor(t / 2) - 5, 10) + r.substr(-10, 10))
-            }
-            else {
-                for (var e = r.split(/[\uD800-\uDBFF][\uDC00-\uDFFF]/), C = 0, h = e.length, f = []; h > C; C++) '' !== e[C] && f.push.apply(f, a(e[C].split(''))),
-                    C !== h - 1 && f.push(o[C]);
-                var g = f.length;
-                g > 30 && (r = f.slice(0, 10).join('') + f.slice(Math.floor(g / 2) - 5, Math.floor(g / 2) + 5).join('') + f.slice(-10).join(''))
-            }
-            /* gtk是百度页面存放的一段字符串
-            下面这段是从百度获得的原始代码，目的是让u=gtk
-            var u = void 0,
-                l = '' + String.fromCharCode(103) + String.fromCharCode(116) + String.fromCharCode(107);
-            u = null !== i ? i : (i = window[l] || '') || '';
-            */
-            var u = gtk; //跳过上面的代码，直接赋值
-            for (var d = u.split('.'), m = Number(d[0]) || 0, s = Number(d[1]) || 0, S = [], c = 0, v = 0; v < r.length; v++) {
-                var A = r.charCodeAt(v);
-                128 > A ? S[c++] = A : (2048 > A ? S[c++] = A >> 6 | 192 : (55296 === (64512 & A) && v + 1 < r.length && 56320 === (64512 & r.charCodeAt(v + 1)) ? (A = 65536 + ((1023 & A) << 10) + (1023 & r.charCodeAt(++v)), S[c++] = A >> 18 | 240, S[c++] = A >> 12 & 63 | 128) : S[c++] = A >> 12 | 224, S[c++] = A >> 6 & 63 | 128), S[c++] = 63 & A | 128)
-            }
-            for (var p = m, F = '' + String.fromCharCode(43) + String.fromCharCode(45) + String.fromCharCode(97) + ('' + String.fromCharCode(94) + String.fromCharCode(43) + String.fromCharCode(54)), D = '' + String.fromCharCode(43) + String.fromCharCode(45) + String.fromCharCode(51) + ('' + String.fromCharCode(94) + String.fromCharCode(43) + String.fromCharCode(98)) + ('' + String.fromCharCode(43) + String.fromCharCode(45) + String.fromCharCode(102)), b = 0; b < S.length; b++) p += S[b],
-                p = n(p, F);
-            return p = n(p, D),
-                p ^= s,
-                0 > p && (p = (2147483647 & p) + 2147483648),
-                p %= 1000000,
-                p.toString() + '.' + (p ^ m)
-            /* eslint-enable */
-        },
-
-
+        // transform: function(json) {
+        //     const trans = [];
+        //     if (Array.isArray(json[1])) {
+        //         for (const x of json[1]) {
+        //             const part = x[0];
+        //             const meaning = [];
+        //             for (const y of x[1]) {
+        //                 meaning.push(y);
+        //             }
+        //             trans.push({ part, meaning: meaning.join(", ") });
+        //         }
+        //         return {
+        //             type: TranslatorService.RESULT_TYPE.WORD,
+        //             host: this.host,
+        //             trans,
+        //             ph_am: json[0][1][3],
+        //         }
+        //     }
+        //     else {
+        //         return {
+        //             type: TranslatorService.RESULT_TYPE.SENTENCE,
+        //             host: this.host,
+        //             trans: [{ part: "", meaning: json[0][0][0] }]
+        //         }
+        //     }
+        // }
     },
     /* eslint-disable */
     "bing": {
         host: [],
         audioHost: [],
         queryHeader: {},
-        queryAudio: function() {},
-        queryTrans: function(sourceLang, destLang) {}
+        queryAudio: function () { },
+        queryTrans: function (sourceLang, destLang) { }
 
     },
     "youdao": {
         host: [],
         audioHost: [],
         queryHeader: {},
-        queryAudio: function() {},
-        queryTrans: function(sourceLang, destLang) {}
+        queryAudio: function () { },
+        queryTrans: function (sourceLang, destLang) { }
     },
     "iciba": {
         host: [],
         audioHost: [],
         queryHeader: {},
-        queryTrans: function(sourceLang, destLang) {}
+        queryTrans: function (sourceLang, destLang) { }
     },
     /* eslint-enable */
 }
