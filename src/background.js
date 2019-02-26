@@ -185,6 +185,9 @@ class ExecutorClass {
     }
 
     async openHandler() {
+        if (this.data.actionType === commons.textAction) {
+            return this.searchHandler(this.data.selection);
+        }
         if (this.data.actionType === commons.linkAction) {
             if (this.action.open_type === commons.OPEN_IMAGE_LINK && this.data.imageLink !== "") return this.openURL(this.data.imageLink)
             else if (this.action.open_type == commons.OPEN_TEXT) return this.openURL(this.data.textSelection);
