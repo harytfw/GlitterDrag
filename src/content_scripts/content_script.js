@@ -1,7 +1,7 @@
 /* global Translator:false, Prompt:false, Panel:false */
 
 "use strict";
-console.info("Glitter Drag: Content script is injected by browser successfully");
+// console.info("Glitter Drag: Content script is injected by browser successfully");
 const IS_TOP_WINDOW = window.top === window;
 let FIREFOX_VERSION = 56;
 const WE_UUID = browser.runtime.getURL('').match(/\/\/([\w-]+)\//i)[1];
@@ -1209,7 +1209,7 @@ function excludeThisSite(patterns) {
 if (!excludeThisWindow()) {
 
     browser.storage.local.get().then(config => {
-        console.info("Glitter Drag: loaded config from storage");
+        // console.info("Glitter Drag: loaded config from storage");
         bgConfig = config; // eslint-disable-line no-global-assign
         FIREFOX_VERSION = config.firefoxVersion || 56;
 
