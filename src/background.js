@@ -360,11 +360,43 @@ class ExecutorClass {
                 if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
                     url = url.replace("%s", "%x");
                 }
-                return this.openTab(
-                    url
-                        .replace("%s", encodeURIComponent(keyword))
-                        .replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
-                );
+
+                // 二级域名 (host)
+                let secondaryDomain = '';
+                // 完整域名
+                let domainName = '';
+                // 参数部分
+                let parameter = '';
+                // protocol部分
+                let protocol = '';
+                let tmpIndex = -1;
+                tmpIndex = keyword.indexOf("/");
+                protocol = keyword.substr(0, tmpIndex);
+                domainName = keyword.substr(tmpIndex + 2);
+                tmpIndex = domainName.indexOf("/");
+                parameter = domainName.substr(tmpIndex + 1);
+                domainName = domainName.substr(0, tmpIndex);
+                let domainArr = domainName.split('.');
+                secondaryDomain = domainArr[domainArr.length - 2] + "." + domainArr[domainArr.length - 1]
+
+                // 大写的占位符表示此字段无需Base64编码(一般是非参数)
+                url = url
+                    .replace("%S", keyword)
+                    .replace("%X", `site:${this.data.site} ${keyword}`)
+                    .replace("%O", protocol)
+                    .replace("%D", domainName)
+                    .replace("%H", secondaryDomain)
+                    .replace("%P", parameter)
+
+                url = url
+                    .replace("%s", encodeURIComponent(keyword))
+                    .replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
+                    .replace("%o", encodeURIComponent(protocol))
+                    .replace("%d", encodeURIComponent(domainName))
+                    .replace("%h", encodeURIComponent(secondaryDomain))
+                    .replace("%p", encodeURIComponent(parameter))
+                
+                return this.openTab(url);
             }
         }
     }
