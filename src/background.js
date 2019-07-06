@@ -369,16 +369,22 @@ class ExecutorClass {
                 let parameter = '';
                 // protocol部分
                 let protocol = '';
-                let tmpIndex = -1;
-                tmpIndex = keyword.indexOf("/");
-                protocol = keyword.substr(0, tmpIndex);
-                domainName = keyword.substr(tmpIndex + 2);
-                tmpIndex = domainName.indexOf("/");
-                parameter = domainName.substr(tmpIndex + 1);
-                domainName = domainName.substr(0, tmpIndex);
-                let domainArr = domainName.split('.');
-                secondaryDomain = domainArr[domainArr.length - 2] + "." + domainArr[domainArr.length - 1]
-
+                try {
+                    let urlKeyword = new URL(keyword);
+                    protocol = urlKeyword.protocol;
+                    parameter = urlKeyword.pathname.substr(1) + urlKeyword.search;
+                    domainName = urlKeyword.hostname;
+                    let domainArr = domainName.split('.');
+                    if(domainArr.length < 2) {
+                        // 链接不包含二级域名(例如example.org, 其中example为二级域, org为顶级域) 使用domainName替代
+                        secondaryDomain = domainName;
+                    } else {
+                        secondaryDomain = domainArr[domainArr.length - 2] + "." + domainArr[domainArr.length - 1]
+                    }
+                } catch(Error) {
+                    // 这里的异常用作流程控制: 非链接 -> 不作处理(使用''替换可能存在的误用占位符即可)
+                }
+                
                 // 大写的占位符表示此字段无需Base64编码(一般是非参数)
                 url = url
                     .replace("%S", keyword)
