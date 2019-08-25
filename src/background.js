@@ -360,11 +360,49 @@ class ExecutorClass {
                 if (this.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
                     url = url.replace("%s", "%x");
                 }
-                return this.openTab(
-                    url
-                        .replace("%s", encodeURIComponent(keyword))
-                        .replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
-                );
+
+                // 二级域名 (host)
+                let secondaryDomain = '';
+                // 完整域名
+                let domainName = '';
+                // 参数部分
+                let parameter = '';
+                // protocol部分
+                let protocol = '';
+                try {
+                    let urlKeyword = new URL(keyword);
+                    protocol = urlKeyword.protocol;
+                    parameter = urlKeyword.pathname.substr(1) + urlKeyword.search;
+                    domainName = urlKeyword.hostname;
+                    let domainArr = domainName.split('.');
+                    if(domainArr.length < 2) {
+                        // 链接不包含二级域名(例如example.org, 其中example为二级域, org为顶级域) 使用domainName替代
+                        secondaryDomain = domainName;
+                    } else {
+                        secondaryDomain = domainArr[domainArr.length - 2] + "." + domainArr[domainArr.length - 1]
+                    }
+                } catch(Error) {
+                    // 这里的异常用作流程控制: 非链接 -> 不作处理(使用''替换可能存在的误用占位符即可)
+                }
+                
+                // 大写的占位符表示此字段无需Base64编码(一般是非参数)
+                url = url
+                    .replace("%S", keyword)
+                    .replace("%X", `site:${this.data.site} ${keyword}`)
+                    .replace("%O", protocol)
+                    .replace("%D", domainName)
+                    .replace("%H", secondaryDomain)
+                    .replace("%P", parameter)
+
+                url = url
+                    .replace("%s", encodeURIComponent(keyword))
+                    .replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
+                    .replace("%o", encodeURIComponent(protocol))
+                    .replace("%d", encodeURIComponent(domainName))
+                    .replace("%h", encodeURIComponent(secondaryDomain))
+                    .replace("%p", encodeURIComponent(parameter))
+                
+                return this.openTab(url);
             }
         }
     }
