@@ -52,6 +52,8 @@ const LStorage = browser.storage.local;
 console.info("UILanguage: " + browser.i18n.getUILanguage());
 
 function doI18n(scope = document) {
+    console.group('doI18n');
+    console.log('scope',scope);
     for (let elem of scope.querySelectorAll("[data-i18n]")) {
         let prefix = "elem_";
         if ("i18nPrefix" in elem.dataset) {
@@ -77,6 +79,7 @@ function doI18n(scope = document) {
             elem.textContent = content;
         }
     }
+    console.groupEnd('doI18n');
 }
 
 $A("template").forEach(t => {
@@ -1543,19 +1546,35 @@ class ExcludedRulesWrapper {
 
 function initTabs() {
 
-
-    new ActionsWrapper();
-    new NewActionsWrapper();
-
-    new EngineWrapper();
-    new generalSettingWrapper();
-    new downloadWrapper();
-    new styleWrapper();
-    new PanelWrapper();
-    new TranslatorWrapper();
-    new ExcludedRulesWrapper();
-
-    doI18n();
+    try {
+        console.group('initialize tabs');
+        console.log('actions wrapper');
+        new ActionsWrapper();
+        console.log('new actions wrapper');
+        new NewActionsWrapper();
+        console.log('engine wrapper');
+        new EngineWrapper();
+        console.log('general setting wrapper');
+        new generalSettingWrapper();
+        console.log('download wrapper')
+        new downloadWrapper();
+        console.log('style wrapper')
+        new styleWrapper();
+        console.log('panel wrapper')
+        new PanelWrapper();
+        console.log('translator wrapper')
+        new TranslatorWrapper();
+        console.log('excluded wrapper')
+        new ExcludedRulesWrapper();
+        console.groupEnd('initialize tabs')
+    } catch (e) {
+        console.error(e)
+    }
+    try {
+        doI18n();
+    } catch (e) {
+        console.error(e)
+    }
 
     window.addEventListener('hashchange', () => {
         if (!location.hash) return;
@@ -1576,6 +1595,7 @@ function initTabs() {
 }
 
 function initButtons() {
+    console.group('initialize buttons')
     const fileReader = new FileReader();
 
     eventUtil.attachEventS("#restore", () => {
@@ -1628,13 +1648,14 @@ function initButtons() {
             $D(removed.toString() + " were removed from storage");
         }
     })
+    console.groupEnd('initialize buttons')
 }
 var browserMajorVersion = 52;
+console.log('start get browserinfo');
 browser.runtime.getBrowserInfo().then(async info => {
     browserMajorVersion = info.version.split(".")[0];
-    $D("Browser Info:", info);
     browserMajorVersion = parseInt(browserMajorVersion);
-
+    console.log("Browser version: ", browserMajorVersion);
 
     // 控制ENGINES的keys的顺序
     let keysOfEngines = Object.keys(ENGINES);
