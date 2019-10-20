@@ -1,5 +1,6 @@
 
-class downloadWrapper {
+// eslint-disable-next-line no-unused-vars
+class DownloadWrapper {
     constructor() {
         const dirCount = 8;
         this.directories = null;

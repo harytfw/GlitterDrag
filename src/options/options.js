@@ -73,16 +73,6 @@ document.addEventListener("radiochange", e => {
     }));
 })
 
-
-var imageSearchGroup1 = null;
-var imageSearchGroup2 = null;
-
-
-
-
-
-
-
 function initTabs() {
 
     try {
@@ -94,11 +84,11 @@ function initTabs() {
         console.log('engine wrapper');
         new EngineWrapper();
         console.log('general setting wrapper');
-        new generalSettingWrapper();
+        new SettingWrapper();
         console.log('download wrapper')
-        new downloadWrapper();
+        new DownloadWrapper();
         console.log('style wrapper')
-        new styleWrapper();
+        new StyleWrapper();
         console.log('panel wrapper')
         new PanelWrapper();
         console.log('translator wrapper')

@@ -48,6 +48,7 @@ class Engines {
     async init(browserMajorVersion = 63) {
         // 控制ENGINES的keys的顺序
         this.key_names = Object.keys(_engines);
+        // TODO: remove limitation
         if (browserMajorVersion >= 63) {
             const browserEngines = await browser.search.get();
             for (const eng of browserEngines) {

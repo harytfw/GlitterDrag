@@ -34,10 +34,24 @@
         "no-unreachable": "warn",
         "constructor-super": "warn",
         "valid-typeof": "warn",
-        "arrow-spacing": ["warn"],
-        "no-unused-vars": ["warn", { "vars": "all", "args": "all" }],
-        "no-proto": ["error"],
-        "prefer-arrow-callback": ["warn"],
-        "prefer-spread": ["warn"]
+        "arrow-spacing": [
+            "warn"
+        ],
+        "no-unused-vars": [
+            "warn",
+            {
+                "vars": "all",
+                "args": "all"
+            }
+        ],
+        "no-proto": [
+            "error"
+        ],
+        "prefer-arrow-callback": [
+            "warn"
+        ],
+        "prefer-spread": [
+            "warn"
+        ]
     }
 }

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 class ActionsWrapper {
     constructor(doc) {
         this.doc = doc;

@@ -305,6 +305,7 @@ class ActionsView {
     }
 }
 
+// eslint-disable-next-line no-unused-vars
 class NewActionsWrapper {
     constructor() {
         this.parent = $E("#new-actions-container");

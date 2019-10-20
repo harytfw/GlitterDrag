@@ -1,0 +1,14 @@
+{
+    "globals": {
+        "ActionsWrapper": false,
+        "NewActionsWrapper": false,
+        "EngineWrapper": false,
+        "SettingWrapper": false,
+        "DownloadWrapper": false,
+        "StyleWrapper": false,
+        "PanelWrapper": false,
+        "TranslatorWrapper": false,
+        "ExcludedRulesWrapper": false,
+        "searchEngines": false
+    }
+}

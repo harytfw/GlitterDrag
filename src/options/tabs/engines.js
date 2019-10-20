@@ -68,6 +68,7 @@ class EngineItemWrapper {
 
 
 
+// eslint-disable-next-line no-unused-vars
 class EngineWrapper {
     constructor(doc = document) {
         this.doc = doc;

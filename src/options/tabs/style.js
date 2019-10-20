@@ -1,5 +1,6 @@
 
-class styleWrapper {
+// eslint-disable-next-line no-unused-vars
+class StyleWrapper {
     constructor() {
         let tab = document.querySelector("#tab-style");
 

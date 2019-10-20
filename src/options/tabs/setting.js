@@ -1,9 +1,7 @@
 
-class generalSettingWrapper {
+// eslint-disable-next-line no-unused-vars
+class SettingWrapper {
     constructor() {
-        if (browserMajorVersion >= 53) {
-            $E("#enableSync").removeAttribute("disabled");
-        }
         browserStorage.get("tipsContent").then(res => {
             const el = $E("#tipsContentSelect");
             const input = $E("#tipsContentInput");

@@ -1,4 +1,5 @@
 
+// eslint-disable-next-line no-unused-vars
 class PanelWrapper {
     constructor() {
         this.cmdType = null;
@@ -21,7 +22,7 @@ class PanelWrapper {
 
         $E("#panel-actions").addEventListener("change", e => this.onchange(e));
 
-        $E("#getIconFromEngine").addEventListener("click", e => {
+        $E("#getIconFromEngine").addEventListener("click", () => {
             this.refreshIcon();
             this.onchange();
         });
@@ -35,7 +36,7 @@ class PanelWrapper {
             })
             reader.readAsDataURL(files[0]);
         })
-        $E("#getIconFromLocal").addEventListener("click", e => {
+        $E("#getIconFromLocal").addEventListener("click", () => {
             $E("#iconChooser").click();
         });
         $E("#getIconFromURL").addEventListener("click", () => {

@@ -1,4 +1,5 @@
 
+// eslint-disable-next-line no-unused-vars
 class ExcludedRulesWrapper {
     constructor() {
         browserStorage.get("exclusionRules").then(res => {
