@@ -220,9 +220,7 @@ class ActionsWrapper {
     async updateEngine() {
         // browser
         let browserEngines = [];
-        if (browserMajorVersion >= 63) {
-            browserEngines = (await browser.search.get())
-        }
+        browserEngines = (await browser.search.get())
 
         const browserGroup = document.createElement('optgroup');
         browserGroup.label = "Browser";

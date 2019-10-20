@@ -13,7 +13,7 @@ console.info("UILanguage: " + browser.i18n.getUILanguage());
 
 function doI18n(scope = document) {
     console.group('doI18n');
-    console.log('scope',scope);
+    console.log('scope', scope);
     for (let elem of scope.querySelectorAll("[data-i18n]")) {
         let prefix = "elem_";
         if ("i18nPrefix" in elem.dataset) {
@@ -179,13 +179,11 @@ function initButtons() {
     })
     console.groupEnd('initialize buttons')
 }
-var browserMajorVersion = 52;
 console.log('start get browserinfo');
-browser.runtime.getBrowserInfo().then(async info => {
-    browserMajorVersion = info.version.split(".")[0];
-    browserMajorVersion = parseInt(browserMajorVersion);
-    console.log("Browser version: ", browserMajorVersion);
-    await searchEngines.init(browserMajorVersion);
+
+async function main() {
+    await searchEngines.init();
     initButtons();
     initTabs();
-});
+}
+main();

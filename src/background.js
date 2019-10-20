@@ -1,14 +1,5 @@
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
 const DEFAULT_SEARCH_ENGINE = browser.i18n.getMessage("default_search_url");
-var browserMajorVersion = 52;
-browser.runtime.getBrowserInfo().then(info => {
-    browserMajorVersion = info.version.split(".")[0];
-    //$D("Browser Info:", info);
-    browserMajorVersion = parseInt(browserMajorVersion);
-    browser.storage.local.set({ firefoxVersion: browserMajorVersion });
-    // browserMajorVersion = 56;
-});
-
 
 function randomString(length = 8) {
     // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
@@ -282,9 +273,7 @@ class ExecutorClass {
                             index: this.getTabIndex(tabs.length, tab.index),
                             url,
                         };
-                        if (browserMajorVersion >= 57) {
-                            option["openerTabId"] = tab.id;
-                        }
+                        option["openerTabId"] = tab.id;
                         const newTab = await browser.tabs.create(option).catch(onError);
                         return newTab;
                     }
@@ -333,7 +322,7 @@ class ExecutorClass {
     async searchText(keyword) {
 
         // check if browser.search API available and if I should use it?
-        if (browserMajorVersion >= 63 && Boolean(this.action.is_browser_search) === true) {
+        if (Boolean(this.action.is_browser_search) === true) {
             const tabHoldingSearch = await this.openTab('about:blank');
             if (this.action.engine_name !== getI18nMessage('defaultText')) {
                 return browser.search.search({
@@ -375,16 +364,16 @@ class ExecutorClass {
                     parameter = urlKeyword.pathname.substr(1) + urlKeyword.search;
                     domainName = urlKeyword.hostname;
                     let domainArr = domainName.split('.');
-                    if(domainArr.length < 2) {
+                    if (domainArr.length < 2) {
                         // 链接不包含二级域名(例如example.org, 其中example为二级域, org为顶级域) 使用domainName替代
                         secondaryDomain = domainName;
                     } else {
                         secondaryDomain = domainArr[domainArr.length - 2] + "." + domainArr[domainArr.length - 1]
                     }
-                } catch(Error) {
+                } catch (Error) {
                     // 这里的异常用作流程控制: 非链接 -> 不作处理(使用''替换可能存在的误用占位符即可)
                 }
-                
+
                 // 大写的占位符表示此字段无需Base64编码(一般是非参数)
                 url = url
                     .replace("%S", keyword)
@@ -401,7 +390,7 @@ class ExecutorClass {
                     .replace("%d", encodeURIComponent(domainName))
                     .replace("%h", encodeURIComponent(secondaryDomain))
                     .replace("%p", encodeURIComponent(parameter))
-                
+
                 return this.openTab(url);
             }
         }

@@ -45,18 +45,16 @@ class Engines {
         this.key_names = [];
     }
 
-    async init(browserMajorVersion = 63) {
+    async init() {
         // 控制ENGINES的keys的顺序
         this.key_names = Object.keys(_engines);
         // TODO: remove limitation
-        if (browserMajorVersion >= 63) {
-            const browserEngines = await browser.search.get();
-            for (const eng of browserEngines) {
-                eng.isBrowserSearch = true;
-            }
-            _engines["Browser"] = browserEngines;
-            this.key_names.unshift("Browser");
+        const browserEngines = await browser.search.get();
+        for (const eng of browserEngines) {
+            eng.isBrowserSearch = true;
         }
+        _engines["Browser"] = browserEngines;
+        this.key_names.unshift("Browser");
     }
     keys() {
         return this.key_names;
