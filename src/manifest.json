@@ -33,20 +33,21 @@
             "background.js"
         ]
     },
-    "content_scripts": [{
-        "run_at": "document_start",
-        "all_frames": true,
-        "matches": [
-            "<all_urls>"
-        ],
-
-        "js": [
-            "common.js",
-            "translatorservice.js",
-            "content_scripts/ui.js",
-            "content_scripts/content_script.js"
-        ]
-    }],
+    "content_scripts": [
+        {
+            "run_at": "document_start",
+            "all_frames": true,
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "common.js",
+                "translatorservice.js",
+                "content_scripts/ui.js",
+                "content_scripts/content_script.js"
+            ]
+        }
+    ],
     "options_ui": {
         "page": "options/options.html",
         "browser_style": true,
@@ -59,5 +60,14 @@
             "strict_min_version": "63.0"
         }
     },
-    "web_accessible_resources": ["icon/*", "content_scripts/*"]
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "glitterdrag@harytfw",
+            "strict_min_version": "63.0"
+        }
+    },
+    "web_accessible_resources": [
+        "icon/*",
+        "content_scripts/*"
+    ]
 }
