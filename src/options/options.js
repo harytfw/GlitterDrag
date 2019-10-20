@@ -28,9 +28,9 @@ function doI18n(scope = document) {
             content = getI18nMessage(`${prefix}${elem.dataset.i18n}`);
         }
 
-        if (content === elem.dataset.i18n) {
-            console.warn(elem, "misses i18n message");
-        }
+        // if (content === elem.dataset.i18n) {
+        //     console.warn(elem, "misses i18n message");
+        // }
 
         if ("i18nAttach" in elem.dataset) {
             elem[elem.dataset.i18nAttach] = content;
