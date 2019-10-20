@@ -2,25 +2,17 @@
     "description": "__MSG_extensionDescription__",
     "manifest_version": 2,
     "name": "__MSG_extensionName__",
-    "version": "1.56.7",
+    "version": "2.0.0",
     "homepage_url": "https://github.com/harytfw/GlitterDrag",
     "icons": {
         "128": "/icon/drag.png"
     },
     "author": "harytfw",
-    "browser_action": {
-        "default_title": "__MSG_browserActionTitle__",
-        "default_icon": {
-            "128": "/icon/drag.png"
-        },
-        "default_popup": "popup/popup.html",
-        "browser_style": true
-    },
     "permissions": [
-        "activeTab",
+        "http://*/*",
+        "https://*/*",
         "storage",
         "tabs",
-        "<all_urls>",
         "clipboardWrite",
         "downloads",
         "find",
@@ -28,36 +20,58 @@
     ],
     "background": {
         "scripts": [
-            "common.js",
-            "default_config.js",
-            "background.js"
+            "common/namespace.js",
+            "common/config.js",
+            "common/env.js",
+            "common/url_util.js",
+            "background/storage_upgrade.js",
+            "background/background.js"
         ]
     },
-    "content_scripts": [{
-        "run_at": "document_start",
-        "all_frames": true,
-        "matches": [
-            "<all_urls>"
-        ],
-
-        "js": [
-            "common.js",
-            "translatorservice.js",
-            "content_scripts/ui.js",
-            "content_scripts/content_script.js"
-        ]
-    }],
+    "content_scripts": [
+        {
+            "run_at": "document_start",
+            "all_frames": true,
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ],
+            "js": [
+                "common/namespace.js",
+                "common/config.js",
+                "common/env.js",
+                "common/i18n_util.js",
+                "common/url_util.js",
+                "common/console.js",
+                "component/prompt/prompt.js",
+                "content_scripts/wrapper.js",
+                "content_scripts/core.js",
+                "content_scripts/dimension_define.js",
+                "content_scripts/storage.js",
+                "content_scripts/features.js",
+                "content_scripts/cs.js"
+            ]
+        }
+    ],
     "options_ui": {
-        "page": "options/options.html",
-        "browser_style": true,
+        "page": "options/index.html",
+        "browser_style": false,
         "open_in_tab": true
     },
-    "default_locale": "en",
+    "default_locale": "zh_CN",
     "applications": {
         "gecko": {
             "id": "glitterdrag@harytfw",
             "strict_min_version": "63.0"
         }
     },
-    "web_accessible_resources": ["icon/*", "content_scripts/*"]
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "glitterdrag@harytfw",
+            "strict_min_version": "63.0"
+        }
+    },
+    "web_accessible_resources": [
+        "component/*"
+    ]
 }

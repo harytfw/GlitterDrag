@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link rel="stylesheet" href="../libs/bulma/bulma.min.css">
+    <link rel="stylesheet" href="../libs/pretty-checkbox/pretty-checkbox.min.css">
+    <link rel="stylesheet" href="../libs/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+    <config-manager>
+        <section class="section">
+            <div class="columns">
+                <div class="column">
+                    <div class="buttons">
+                        <button id="save" class="button is-success is-small" disabled>Save changes</button>
+                        <button id="discard" class="button is-danger is-small" disabled>Discard</button>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <custom-tabs></custom-tabs>
+                </div>
+            </div>
+        </section>
+        <action-group-modal></action-group-modal>
+        <search-engine-editor-modal id="action-detail-search-engine-editor" show-builtin="">
+        </search-engine-editor-modal>
+        <!-- <search-engine-editor-modal class="table-row-editor"></search-engine-editor-modal> -->
+    </config-manager>
+    <template id="template-tabs">
+        <div class="container">
+        </div>
+        <div class="tabs tabs-title">
+            <ul>
+                <li class="is-active" data-target="#no1"><a data-i18n="tabTitle-settings">Settings</a></li>
+                <li data-target="#no2"><a data-i18n="tabTitle-actions">Actions</a></li>
+                <!-- <li data-target="#no3"><a data-i18n="tabTitle-searchEngine">Search Engine</a></li> -->
+                <li data-target="#no5"><a data-i18n="tabTitle-configuration">Configuration</a></li>
+            </ul>
+        </div>
+        <div class="columns tabs-body">
+            <div id="no1" class="column">
+                <custom-settings></custom-settings>
+            </div>
+            <div id="no2" class="is-hidden column">
+                <custom-action-config></custom-action-config>
+            </div>
+            <!-- <div id="no3" class="is-hidden column">
+                <search-engine-manager></search-engine-manager>
+            </div> -->
+            <!-- <div id="no4" class="is-hidden column">
+                <directory-manager></directory-manager>
+            </div> -->
+            <div id="no5" class="is-hidden column">
+                <custom-configuration></custom-configuration>
+            </div>
+        </div>
+    </template>
+    <template id="template-settings">
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="enableIndicator">
+                            <div class="state">
+                                <label data-i18n="showIndicator">Show Indicator</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="enablePrompt">
+                            <div class="state">
+                                <label data-i18n="showPrompt">Show Prompt</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field is-narrow">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="enableTimeout">
+                            <div class="state">
+                                <label data-i18n="enableTimeout">Cancel after timeout</label>
+                            </div>
+
+                        </div>
+                        <input class="input is-small" style="width: 10rem;" type="text" name="timeout">
+                        <span> s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="features.extendMiddleButton">
+                            <div class="state">
+                                <label data-i18n="extendMiddleButton">Extend Middle Button</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="features.appendReferrer">
+                            <div class="state">
+                                <label data-i18n="appendReferrerInDownload">Append referrer in download</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="features.disableFixURL">
+                            <div class="state">
+                                <label data-i18n="notFixURL">Don't Fix URL</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="features.lockScrollbar">
+                            <div class="state">
+                                <label data-i18n="lockScrollbar">Lock Scrollbar</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </template>
+
+    <template id="template-action-config">
+
+        <!-- group dropdown -->
+        <div class="field is-horizontal">
+            <div class="field-label ">
+                <label data-i18n="actionGroup">action group</label>
+            </div>
+            <div class="field-body">
+                <div class="field is-narrow">
+                    <div class="control">
+                        <bulma-dropdown name="currentGroupName" id="group-dropdown" list="group-name-options">
+                        </bulma-dropdown>
+                        <datalist id="group-name-options">
+                        </datalist>
+                    </div>
+                </div>
+                <div class="field is-narrow">
+                    <button class="button is-small is-info" data-event="manage">
+                        Manage
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal is-hidden">
+            <div class="field-label ">
+                <label data-i18n="actionGroupName">group name </label>
+            </div>
+            <div class="field-body">
+                <div class="field is-narrow">
+                    <div class="control">
+                        <label class="group-name">Default</label>
+                    </div>
+                </div>
+                <div class="field is-narrow">
+                    <div class="control">
+                        <input type="hidden" name="shortcut" value="">
+                        <button class="button is-small shortcut-btn">Not Assign</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="field is-horizontal">
+            <div class="field-label ">
+                <label data-i18n="permitedDirection">Permit direction</label>
+            </div>
+            <div class="field-body">
+                <div class="field is-narrow">
+                    <div class="coltrol">
+                        <bulma-dropdown name="limitation" list="permit-direction-options"></bulma-dropdown>
+                        <datalist id="permit-direction-options">
+                            <option value="any" data-i18n="anyDirection">Any</option>
+                            <option value="four" data-i18n="normalFourDirections">Four</option>
+                            <option value="diagonal" data-i18n="diagonalDirections">Diagonal</option>
+                            <option value="v" data-i18n="verticalDirections">Vertical</option>
+                            <option value="h" data-i18n="horizontalDirections">Horizontal</option>
+                            <option value="rd" data-i18n="rightDiagonalDirections">Right Diagonal</option>
+                            <option value="ld" data-i18n="leftDiagonalDirections">Left Diagonal</option>
+                            <option value="all" data-i18n="allDirections">All</option>
+                        </datalist>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+
+        <!-- direction -->
+        <div class="field is-horizontal normal-direction">
+            <div class="field-label ">
+                <label data-i18n="normalDirections">Normal Direction</label>
+
+            </div>
+            <div class="field-body">
+
+                <div class="field is-narrow">
+                    <div class="pretty p-default p-round">
+                        <input data-permit="any" checked type="radio" value="" name="direction">
+                        <div class="state">
+                            <label data-i18n="direction-any">Any</label>
+                        </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                        <input data-permit="four,v,all" type="radio" value="up" name="direction">
+                        <div class="state">
+                            <label data-i18n="direction-up">Up</label>
+                        </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                        <input data-permit="four,v,all" type="radio" value="down" name="direction">
+                        <div class="state">
+                            <label data-i18n="direction-down">Down</label>
+                        </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                        <input data-permit="four,h,all" type="radio" value="left" name="direction">
+                        <div class="state">
+                            <label data-i18n="direction-left">Left</label>
+                        </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                        <input data-permit="four,h,all" type="radio" value="right" name="direction">
+                        <div class="state">
+                            <label data-i18n="direction-right">Right</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- diagonal -->
+        <div class="field is-horizontal diagonal-direction">
+            <div class="field-label ">
+                <label data-i18n="diagonalDirections">Diagonal</label>
+            </div>
+            <div class="field-body">
+                <div class="field is-narrow">
+
+                    <div class="pretty p-default p-round">
+                        <input data-permit="rd,diagonal,all" type="radio" value="upperLeft" name="direction">
+                        <div class="state">
+                            <label data-i18n="direction-upperLeft">UpperLeft</label>
+                        </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                        <input data-permit="rd,diagonal,all" type="radio" value="lowerRight" name="direction">
+                        <div class="state">
+                            <label data-i18n="direction-lowerRight">LowerRight</label>
+                        </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                        <input data-permit="ld,diagonal,all" type="radio" value="upperRight" name="direction">
+                        <div class="state">
+                            <label data-i18n="direction-upperRight">UpperRight</label>
+                        </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                        <input data-permit="ld,diagonal,all" type="radio" value="lowerLeft" name="direction">
+                        <div class="state">
+                            <label data-i18n="direction-lowerLeft">LowerLeft</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- action type-->
+        <div class="field is-horizontal">
+            <div class="field-label ">
+                <label data-i18n="actionType">Action type</label>
+                <div class="dropdown is-hidden is-hoverable has-text-left">
+                    <div class="dropdown-trigger">
+                        <span class="icon has-text-grey-light">
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-item">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="field-body">
+                <div class="field is-narrow">
+                    <div class="control">
+                        <div class="pretty p-default p-round">
+                            <input checked type="radio" value="text" name="actionType">
+                            <div class="state">
+                                <label data-i18n="textGroup">Text</label>
+                            </div>
+                        </div>
+                        <div class="pretty p-default p-round">
+                            <input type="radio" value="link" name="actionType">
+                            <div class="state">
+                                <label data-i18n="linkGroup">Link</label>
+                            </div>
+                        </div>
+                        <div class="pretty p-default p-round">
+                            <input type="radio" value="image" name="actionType">
+                            <div class="state">
+                                <label data-i18n="imageGroup">Image</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <div class="action-detail" style="transition: opacity ease .3s;">
+            <!-- action to do -->
+            <div class="field is-horizontal">
+                <div class="field-label ">
+                    <label data-i18n="performedCommand">Action to do</label>
+                    <div class="is-hidden dropdown is-hoverable has-text-left">
+                        <div class="dropdown-trigger">
+                            <span class="icon has-text-grey-light">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <bulma-dropdown list="command-options" name="command"></bulma-dropdown>
+                            <datalist id="command-options">
+                                <option value="" data-i18n="command-noop">No Operation</option>
+                                <option value="open" data-i18n="command-open">Open</option>
+                                <option value="search" data-i18n="command-search">Search</option>
+                                <option value="download" data-i18n="command-download">Download</option>
+                                <option value="copy" data-i18n="command-copy">Copy</option>
+                                <option value="find" data-i18n="command-find">Find Text</option>
+                                <!-- <option value="translate" data-event="command-translate" data-i18n="command-translate">
+                                    Translate
+                                </option> -->
+                                <option value="runScript" data-event="command-runScript" data-i18n="command-runScript">
+                                    Run Script</option>
+                            </datalist>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- prefer -->
+            <div class="field is-horizontal">
+                <div class="field-label ">
+                    <label data-i18n="preference">Preference</label>
+                    <div class="dropdown is-hoverable has-text-left">
+                        <div class="dropdown-trigger">
+                            <span class="icon has-text-grey-light">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item">
+                                    <span class="simple-pre" data-i18n="helpInfo-preference"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" name="commandTarget" value="text"
+                                    data-command-permit="open,search,download,copy">
+                                <div class="state">
+                                    <label data-i18n="preference-text">text</label>
+                                </div>
+                            </div>
+                            <div class="pretty p-default p-round">
+                                <input type="radio" name="commandTarget" value="link"
+                                    data-command-permit="open,search,download,copy">
+                                <div class="state">
+                                    <label data-i18n="preference-link">link</label>
+                                </div>
+                            </div>
+                            <div class="pretty p-default p-round">
+                                <input type="radio" name="commandTarget" value="image"
+                                    data-command-permit="open,search,download,copy">
+                                <div class="state">
+                                    <label data-i18n="preference-image">image</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- tab position -->
+            <div class="field is-horizontal">
+                <div class="field-label ">
+                    <label data-i18n="positionOfNewTab">tab position</label>
+                    <div class="dropdown is-hoverable has-text-left">
+                        <div class="dropdown-trigger">
+                            <span class="icon has-text-grey-light">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item">
+                                    <span class="simple-pre" data-i18n="helpInfo-tabPosition"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <bulma-dropdown list="tab-position-options" name="tabPosition"
+                                data-command-permit="open,search"></bulma-dropdown>
+                            <datalist id="tab-position-options">
+                                <option value="" data-i18n="tabPosition-notSet">Not Set</option>
+                                <option value="overrideCurrent" data-i18n="tabPosition-overrideCurrent">Override Current
+                                </option>
+                                <option value="left" data-i18n="tabPosition-left">Left</option>
+                                <option value="right" data-i18n="tabPosition-right">Right</option>
+                                <option value="start" data-i18n="tabPosition-start">Start</option>
+                                <option value="end" data-i18n="tabPosition-end">End</option>
+                                <option value="newWindow" data-i18n="tabPosition-newWindow">New Window</option>
+                                <option value="privateWindow" data-i18n="tabPosition-privateWindow">Private Window
+                                </option>
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field is-horizontal">
+                <div class="field-label ">
+                    <label data-i18n="activateTab">activate the tab</label>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <div class="pretty p-default">
+                                <input type="checkbox" name="activeTab" data-command-permit="open,search">
+                                <div class="state">
+                                    <label data-i18n="activate">active (Foregound)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- edit search engine -->
+            <div class="field is-horizontal">
+                <div class="field-label ">
+                    <label data-i18n="searchEngine">search engine</label>
+                    <div class="dropdown is-hoverable has-text-left">
+                        <div class="dropdown-trigger">
+                            <span class="icon has-text-grey-light">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item">
+                                    <span class="simple-pre" data-i18n="helpInfo-searchEngine"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <button class="button is-small" data-event="editSearchEngine" data-i18n="editSearchEngine"
+                                data-command-permit="search">Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- search engine name -->
+            <div class="field is-horizontal is-hidden">
+                <div class="field-label ">
+                    <label> search engine name </label>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <input type="text" name="searchEngine.name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- search engine url -->
+            <div class="field is-horizontal is-hidden">
+                <div class="field-label ">
+                    <label> search engine url </label>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <input type="text" name="searchEngine.url">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- search engine icon -->
+            <div class="field is-horizontal is-hidden">
+
+                <div class="field-label ">
+                    <label> search engine icon </label>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <input type="text" name="searchEngine.icon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field is-horizontal is-hidden">
+                <div class="field-label ">
+                    <label> search engine builtin </label>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <input type="checkbox" name="searchEngine.builtin">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- search method -->
+            <div class="field is-horizontal is-hidden">
+                <div class="field-label ">
+                    <label> search engine method </label>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <input type="text" name="searchEngine.method">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- directory name -->
+            <div class="field is-horizontal">
+                <div class="field-label ">
+                    <label data-i18n="downloadDirectory"> directory name </label>
+                    <div class="dropdown is-hoverable has-text-left">
+                        <div class="dropdown-trigger">
+                            <span class="icon has-text-grey-light">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item">
+                                    <span class="simple-pre" data-i18n="helpInfo-downloadDirectory"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <input class="input is-small" type="text" name="download.directory"
+                                data-command-permit="download">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="field is-horizontal">
+                <div class="field-label ">
+                    <label data-i18n="showSaveAsDialog"> show saveas dialog </label>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <div class="pretty p-default">
+                                <input type="checkbox" name="download.showSaveAsDialog" data-command-permit="download">
+                                <div class="state">
+                                    <label data-i18n="showSaveAsDialog">Default</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- prompt -->
+            <div class="field is-horizontal">
+                <div class="field-label ">
+                    <label data-i18n="prompt"> prompt </label>
+                    <div class="dropdown is-hoverable has-text-left">
+                        <div class="dropdown-trigger">
+                            <span class="icon has-text-grey-light">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item">
+                                    <span class="simple-pre" data-i18n="helpInfo-prompt"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <input class="input is-small" type="text" name="prompt">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="field is-horizontal">
+                <div class="field-label ">
+                    <label data-i18n="script">script</label>
+                    <div class="dropdown is-hoverable has-text-left">
+                        <div class="dropdown-trigger">
+                            <span class="icon has-text-grey-light">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item">
+                                    <span class="simple-pre" data-i18n="helpInfo-script"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <textarea rows="1" data-command-permit="runScript" class="textarea is-small" name="script"
+                                value=""></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="template-search-engine-manager">
+        <div class="columns">
+            <div class="column">
+                <div class="buttons">
+                    <button class="button is-success is-small" data-event="add">
+                        <span class="icon">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <label data-i18n="add">Add</label>
+                    </button>
+                    <!-- <button class="button">AAAA</button> -->
+                </div>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column">
+                <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th><span data-i18n="name"></span></th>
+                            <th><span data-i18n="url"></span></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+    <template id="template-directory-manager">
+        <div class="columns">
+            <div class="column">
+                <div class="buttons">
+                    <button class="button is-success is-small" data-event="add">
+                        <span class="icon">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <label data-i18n="add">Add</label>
+                    </button>
+                    <!-- <button class="button">AAAA</button> -->
+                </div>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column">
+                <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th><span data-i18n="name"></span></th>
+                            <th><span data-i18n="path"></span></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+    <template id="template-style-editor">
+
+    </template>
+
+    <template id="template-filter-editor">
+    </template>
+
+    <template id="template-translation-setting">
+    </template>
+
+    <template id="template-search-engine-editor-modal">
+        <input class="is-hidden" type="checkbox" name="searchEngineBuiltin">
+        <input type="hidden" name="searchEngineMethod">
+        <div class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title" data-i18n="editSearchEngine">Edit Search Engine</p>
+                    <button class="delete" aria-label="close" data-event="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="columns provider-container">
+                        <search-engine-provider groupname="Browser"></search-engine-provider>
+                        <search-engine-provider groupname="General"></search-engine-provider>
+                        <search-engine-provider groupname="Chinese"></search-engine-provider>
+                        <search-engine-provider groupname="Image Search"></search-engine-provider>
+                        <!-- <search-engine-provider groupname="Image Search(via upload)"></search-engine-provider> -->
+                    </div>
+
+                    <div class="columns">
+                        <div class="column is-8">
+                            <div class="columns">
+                                <div class="column">
+                                    <div class="field is-horizontal">
+                                        <div class="field-label has-text-left">
+                                            <label data-i18n="searchEngineName"> Name </label>
+                                        </div>
+                                        <div class="field-body">
+                                            <div class="field">
+                                                <div class="control">
+                                                    <input class="input is-small" type="text" name="searchEngineName">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="columns">
+                                <div class="column">
+                                    <div class="field is-horizontal">
+                                        <div class="field-label has-text-left">
+                                            <label data-i18n="searchEngineURL"> URL </label>
+                                        </div>
+                                        <div class="field-body">
+                                            <div class="field">
+                                                <div class="control">
+                                                    <input class="input is-small" type="text" name="searchEngineURL">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="column">
+                            <img class="preview" width="32" height="32">
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column is-8">
+                            <div class="field is-horizontal">
+                                <div class="field-label has-text-left">
+                                    <label data-i18n="icon"> icon </label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field is-narrow">
+                                        <div class="control">
+                                            <div class="file is-small">
+                                                <label class="file-label">
+                                                    <input class="file-input" type="file" name="iconInput"
+                                                        accept=".png, .jpg, .jpeg">
+                                                    <span class="file-cta">
+                                                        <span class="file-icon">
+                                                            <i class="fas fa-upload"></i>
+                                                        </span>
+                                                        <span class="file-label" data-i18n="chooseFile">
+                                                            Choose a file…
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="field is-horizontal">
+                                <div class="field-label has-text-left">
+                                    <label> </label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="control">
+                                            <textarea class="textarea is-small" cols="30" rows="10"
+                                                name="searchEngineIcon"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-success" data-event="confirm" data-i18n="saveChanges">Save changes</button>
+                    <button class="button" data-event="close" data-i18n="cancel">Cancel</button>
+                </footer>
+            </div>
+        </div>
+    </template>
+
+    <template id="template-table-cell-buttons">
+        <div class="buttons">
+            <button class="button is-info is-small" data-event="edit">
+                <span class="icon">
+                    <i class="fas fa-edit"></i>
+                </span>
+                <!-- <label>Edit</label> -->
+            </button>
+            <button class="button is-danger is-small" data-event="delete">
+                <span class="icon">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <!-- <label>Delete</label> -->
+            </button>
+        </div>
+    </template>
+
+    <template id="template-table-cell-delete-buttons">
+        <div class="buttons">
+            <button class="button is-danger is-small" data-event="delete">X</button>
+        </div>
+    </template>
+
+    <template id="template-search-engine-provider">
+        <bulma-dropdown></bulma-dropdown>
+    </template>
+
+    <template id="template-bulma-dropdown">
+        <div class="dropdown">
+            <div class="dropdown-trigger">
+                <button class="button is-small">
+                    <span></span>
+                    <span class="icon is-small">
+                        <i class="fas fa-angle-down"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="dropdown-menu">
+                <div class="dropdown-content">
+                    <!-- 
+                        <a href="#" class="dropdown-item">
+                            Foo
+                        </a>
+                    -->
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="template-search-engine-row">
+        <tr>
+            <td class="no">
+            </td>
+            <td>
+                <input name="icon" type="hidden">
+                <input name="name" type="hidden">
+                <div>
+                    <img class="search-engine-icon" src="">
+                    <span class="search-engine-name"></span>
+                </div>
+            </td>
+            <td>
+                <input name="url" type="hidden">
+                <span class="search-engine-url"></span>
+            </td>
+            <td>
+                <input name="method" type="hidden">
+                <div class="buttons">
+                    <button class="button is-info is-small" data-event="edit">
+                        <span class="icon">
+                            <i class="fas fa-edit"></i>
+                        </span>
+                        <!-- <label>Edit</label> -->
+                    </button>
+                    <button class="button is-danger is-small" data-event="delete">
+                        <span class="icon">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                        <!-- <label>Delete</label> -->
+                    </button>
+                </div>
+            </td>
+
+        </tr>
+    </template>
+
+    <template id="template-action-group-modal">
+        <div class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Modal title</p>
+                    <button class="delete" aria-label="close" data-event="close"></button>
+                </header>
+                <section class="modal-card-body" style="height:30rem">
+                    <div class="columns">
+                        <div class="column">
+                            <div class="buttons">
+                                <button class="button is-success is-small" data-event="add">
+                                    <span class="icon">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                    <label data-i18n="add">Add</label>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <table class="table is-narrow is-bordered is-striped is-hoverable is-fullwidth">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th><span data-i18n="name" /></th>
+                                        <th><span data-i18n="shortcut" /></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <!-- <footer class="modal-card-foot">
+                    <button class="button is-success" data-event="confirm">Save changes</button>
+                    <button class="button" data-event="close">Cancel</button>
+                </footer> -->
+            </div>
+        </div>
+    </template>
+
+    <template id="template-action-group-row">
+        <tr>
+            <td class="no">
+            </td>
+            <td>
+                <input class="input is-small" name="name" type="text" required>
+                <!-- <span class="group-name">Defautl</span> -->
+            </td>
+            <td>
+                <div class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="control has-icons-left">
+                                <input data-event="shortcut" class="input is-small" type="text" name="shortcut"
+                                    placeholder="Shortcut">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-keyboard"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <!-- <div class="level-item">
+                            <a class="has-text-grey-light">
+                                <span class="icon is-small">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                            </a>
+                        </div> -->
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="buttons">
+                    <button class="button is-danger is-small" data-event="delete">
+                        <span class="icon">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </template>
+
+    <template id="template-configuration">
+        <input class="is-hidden" type="file" accept="*.json">
+        <a class="is-hidden" download="foo.json" href=""></a>
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="buttons">
+                        <button class="button is-primary is-small" data-event="backup"
+                            data-i18n="backup">Backup</button>
+                        <button class="button is-info is-small" data-event="restore"
+                            data-i18n="restore">Restore</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="buttons">
+                        <button class="button is-primary is-small">Send to sync storage</button>
+                        <button class="button is-primary is-small">Override current</button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <hr>
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="buttons">
+                        <button class="button is-danger is-small" data-event="reset" data-i18n="reset">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </template>
+    <!-- <script src="index.js"></script> -->
+    <script src="../common/namespace.js"></script>
+    <script src="../common/i18n_util.js"></script>
+    <script src="../common/env.js"></script>
+    <script src="../common/config.js"></script>
+    <script src="../common/url_util.js"></script>
+    <script src="../common/simple_log.js"></script>
+    <script src="../common/query_util.js"></script>
+    <script src="../common/console.js"></script>
+    <script src="../component/distance_indicator/distance_indicator.js"></script>
+    <script src="../component/prompt/prompt.js"></script>
+    <script src="bulma.js"></script>
+    <script src="condense_template.js"></script>
+    <script src="search_engines.js"></script>
+    <script src="custom_elements/bulma_dropdown.js"></script>
+    <script src="custom_elements/search_engine_provider.js"></script>
+    <script src="custom_elements/configuration.js"></script>
+    <script src="custom_elements/action_group_modal.js"></script>
+    <script src="custom_elements/config_manager.js"></script>
+    <script src="custom_elements/search_engine_editor_modal.js"></script>
+    <script src="custom_elements/directory_manager.js"></script>
+    <script src="custom_elements/search_engine_manager.js"></script>
+    <script src="custom_elements/settings.js"></script>
+    <script src="custom_elements/action_config.js"></script>
+    <script src="custom_elements/tabs.js"></script>
+</body>
+
+</html>

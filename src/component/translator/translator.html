@@ -1,0 +1,57 @@
+<input type="hidden" name="provider">
+<input type="hidden" name="sourceLanguage">
+<input type="hidden" name="targetLanguage">
+<div>
+    <select name="source-lang">
+        <option data-i18n="auto" value="auto"></option>
+        <option data-i18n="en" value="en"></option>
+        <option data-i18n="sch" value="sch"></option>
+        <option data-i18n="tch" value="tch"></option>
+        <option data-i18n="de" value="de"></option>
+        <option data-i18n="ja" value="ja"></option>
+        <option data-i18n="ru" value="ru"></option>
+        <option data-i18n="fr" value="fr"></option>
+        <option data-i18n="ko" value="ko"></option>
+    </select>
+    <span>-></span>
+    <select id="target-lang">
+        <option data-i18n="auto" value="auto"></option>
+        <option data-i18n="en" value="en"></option>
+        <option data-i18n="szh" value="szh"></option>
+        <option data-i18n="tzh" value="tzh"></option>
+        <option data-i18n="de" value="de"></option>
+        <option data-i18n="ja" value="ja"></option>
+        <option data-i18n="ru" value="ru"></option>
+        <option data-i18n="fr" value="fr"></option>
+        <option data-i18n="ko" value="ko"></option>
+    </select>
+    <select class="is-hidden" name="provider-name">
+
+    </select>
+</div>
+<div>
+    <div id=container>
+        <div id=single-word>
+            <div id=Pho>
+                <!-- <span id=ENText></span>  -->
+                <span id=ENPho></span>
+                <!-- <span id=AMText></span> -->
+                <span id=AMPho></span>
+            </div>
+            <!-- 
+                <div class=Trans>
+                <span class=Part></span>
+                <span class=Meaning></span>
+                </div>
+            -->
+        </div>
+        <div id=long-text>
+        </div>
+    </div>
+</div>
+<div id="locale">
+
+</div>
+<div id="provider" class="is-hidden">
+
+</div>

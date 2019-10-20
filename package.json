@@ -11,6 +11,9 @@
         "test": "npm run lint",
         "renew": "node ./src/_locales/renew_template.js"
     },
+    "types": "types/index.d.ts",
     "license": "MIT",
-    "dependencies": {}
+    "dependencies": {
+        "handlebars": "^4.5.3"
+    }
 }

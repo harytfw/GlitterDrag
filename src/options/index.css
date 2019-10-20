@@ -1,0 +1,38 @@
+search-engine-manager table img {
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+.middle-img {
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+custom-settings .control label {
+  font-weight: 400;
+  margin-right: 0.5em;
+}
+
+hr {
+  margin: 0.5rem 0;
+}
+
+.tabs-body {
+  width: 60%;
+}
+
+.provider-container {
+    flex-wrap: wrap;
+    flex-direction: column;
+    height: 6rem;
+}
+
+.provider-container search-engine-provider {
+  margin-right: .8rem;
+  margin-bottom: 1rem;
+  width: 30%;
+}
+
+.simple-pre {
+  white-space: pre;
+}
