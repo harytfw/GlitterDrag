@@ -1,4 +1,8 @@
 // eslint-disable-next-line no-unused-vars
+
+
+let imageSearchGroup1 = null;
+let imageSearchGroup2 = null;
 class ActionsWrapper {
     constructor(doc) {
         this.doc = doc;
