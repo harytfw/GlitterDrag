@@ -2,116 +2,6 @@
 
 "use strict";
 // console.info("Glitter Drag: Content script is injected by browser successfully");
-const IS_TOP_WINDOW = window.top === window;
-let FIREFOX_VERSION = 56;
-const WE_UUID = browser.runtime.getURL('').match(/\/\/([\w-]+)\//i)[1];
-const MIME_TYPE = {
-    ".gif": "image/gif",
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".png": "image/png",
-    ".bmp": "image/bmp",
-    ".txt": "text/plain",
-    "Files": "Files"
-}
-Object.freeze(MIME_TYPE);
-
-// https://developer.mozilla.org/en-US/docs/Web/API/Event/eventPhase
-const EVENT_PAHSE = {
-    NONE: 0,
-    CAPTURING_PHASE: 1,
-    AT_TARGET: 2,
-    BUBBLING_PHASE: 3,
-}
-Object.freeze(EVENT_PAHSE);
-
-const specialSites = ["vk.com"];
-
-const promptString = {
-    "%a": {}, // action
-    "%g": {}, // background foreground
-    "%t": {}, // tabs position
-    "%d": {}, // download directory
-    "%s": null, // selection
-    "%e": null, // engines' name
-    "%y": {}, // type of action.
-};
-
-function updatePromptString() {
-    for (const key of Object.keys(commons)) {
-        if (/^ACT_/.test(key)) {
-            promptString["%a"][key] = getI18nMessage(key);
-        }
-        else if (/^(FORE|BACK)_GROUND/.test(key)) {
-            promptString["%g"][key] = getI18nMessage(key);
-        }
-        else if (/^TAB_/.test(key)) {
-            promptString["%t"][key] = getI18nMessage(key);
-        }
-    }
-    for (let i = 0; i < 8; i++) {
-        promptString["%d"][i.toString()] = browser.i18n.getMessage("DownloadDirectory", i);
-    }
-    promptString["%y"] = {
-        "textAction": getI18nMessage("textType"),
-        "imageAction": getI18nMessage("imageType"),
-        "linkAction": getI18nMessage("linkType"),
-    }
-}
-
-
-function translatePrompt(message, property, actionType, selection) {
-    return message ? message
-        .replace("%a", promptString["%a"][property["act_name"]])
-        .replace("%t", promptString["%t"][property["tab_pos"]])
-        .replace("%g", promptString["%g"][property["tab_active"] === true ? "FORE_GROUND" : "BACK_GROUND"])
-        .replace("%d", promptString["%d"][property["download_directory"]] || "")
-        .replace("%e", property["engine_name"])
-        .replace("%y", promptString["%y"][actionType])
-        .replace("%s", selection) : "Error Message!";
-}
-
-
-function injectStyle(opt = {
-    url: "",
-    css: ""
-}) {
-    let style;
-    if (opt.url && opt.url.length !== 0) {
-        style = document.createElement("link");
-        style.rel = "stylesheet";
-        style.type = "text/css";
-        style.href = opt.url;
-        document.head.appendChild(style);
-    }
-    else if (opt.css && opt.css.length !== 0) {
-        style = document.createElement("style");
-        style.id = "GDStyle-" + Math.round(Math.random() * 100);
-        style.type = "text/css";
-        style.textContent = opt.css;
-        document.head.appendChild(style);
-    }
-}
-
-const scrollbarLocker = {
-    //https://stackoverflow.com/questions/13631730/how-to-lock-scrollbar-and-leave-it-visible
-    x: 0,
-    y: 0,
-    lock: function () {
-        this.x = window.scrollX;
-        this.y = window.scrollY;
-        window.addEventListener("scroll", this.doLock, false);
-    },
-    free: function () {
-        window.removeEventListener("scroll", this.doLock, false);
-    },
-    doLock: function () {
-        window.scrollTo(this.x, this.y);
-    }
-
-}
-scrollbarLocker.doLock = scrollbarLocker.doLock.bind(scrollbarLocker);
-
 function RemoteBuilder(name, exposeFunName = []) {
     let obj = {};
     for (let fun of exposeFunName) {
@@ -126,64 +16,6 @@ function RemoteBuilder(name, exposeFunName = []) {
     }
     return obj;
 }
-
-function extendMiddleButton() {
-    var x1 = 0.0, y1 = 0.0;
-    const MIN_MOVEMENT = 10;
-    const se = document.getSelection();
-    const LEFT_BUTTON = 0,
-        MIDDLE_BUTTON = 1;
-    const STATE_INIT = 0,
-        STATE_READY = 1,
-        STATE_WORKING = 2,
-        STATE_FINISH = 3;
-    let state = STATE_INIT;
-
-    function mousedown(e) {
-        if (e.button !== MIDDLE_BUTTON) {
-            return;
-        }
-        x1 = e.clientX;
-        y1 = e.clientY;
-        const range = document.caretPositionFromPoint(x1, y1);
-        se.setBaseAndExtent(range.offsetNode, range.offset, range.offsetNode, range.offset);
-        state = STATE_READY;
-    }
-    var x2 = 0.0, y2 = 0.0;
-    function mouseup(e) {
-        if (e.button === MIDDLE_BUTTON) {
-            if (state === STATE_WORKING) state = STATE_FINISH;
-            else state = STATE_INIT;
-        }
-    }
-    function mousemove(e) {
-        if (state === STATE_INIT) return;
-        x2 = e.clientX;
-        y2 = e.clientY;
-        if (Math.hypot(x1 - x2, y1 - y2) >= MIN_MOVEMENT) {
-            if (state === STATE_WORKING || state === STATE_READY) {
-                const range = document.caretPositionFromPoint(x2, y2);
-                if (se.anchorNode !== null) se.extend(range.offsetNode, range.offset);
-                state = STATE_WORKING;
-            }
-        }
-        else {
-            state = STATE_READY;
-        }
-    }
-    function click(e) {
-        if (e.button === MIDDLE_BUTTON && state == STATE_FINISH) {
-            e.preventDefault();
-        }
-        state = STATE_INIT;
-    }
-    document.addEventListener('mouseup', mouseup);
-    document.addEventListener('mousedown', mousedown);
-    document.addEventListener('mousemove', mousemove);
-    document.addEventListener('click', click);
-
-}
-
 class DragClass {
     constructor(elem) {
         this.running = false; // happend in browser
@@ -265,14 +97,7 @@ class DragClass {
         this.hideBecauseExceedDistance = false;
 
         this.registerEvent();
-        /*
-        setTimeout(() => {
-            //延后函数的运行顺序 确保监听函数总是在最后执行
-            console.info("GD:re-register event")
-            this.unregisterEvent();
-            this.registerEvent();
-        }, 2333);
-        */
+
     }
     registerEvent() {
         for (const n of ["dragstart", "dragover", "dragenter", "dragend"]) {
@@ -477,9 +302,7 @@ class DragClass {
             this.selection = evt.dataTransfer.getData("text/x-moz-url-data").trim();
             this.imageLink = evt.dataTransfer.getData("application/x-moz-file-promise-url");
             this.textSelection = evt.dataTransfer.getData("text/plain").trim();
-
-        }
-        catch (e) {
+        } catch (e) {
             $D(e);
             return;
         }
@@ -548,13 +371,8 @@ class DragClass {
 
                     let _fetch = null;
                     // eslint-disable-next-line no-undef
-                    if (FIREFOX_VERSION >= 58 && content.fetch) {
-                        //see https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Content_scripts#XHR_and_Fetch
-                        _fetch = content.fetch; // eslint-disable-line no-undef
-                    }
-                    else {
-                        _fetch = fetch;
-                    }
+
+                    _fetch = fetch;
                     _fetch(this.imageLink, {
                         cache: "force-cache"
                     })
@@ -1135,83 +953,16 @@ class DragClass {
 let bgConfig = {};
 let maindrag = null;
 
-// function doInit() {
-//     if (document.body && document.body.getAttribute("contenteditable") === null) {
-//         injectStyle({
-//             url: browser.runtime.getURL("content_scripts/content_script.css")
-//         });
-//         // injectStyle({
-//         //     url: browser.runtime.getURL("content_scripts/font-awesome.css")
-//         // })
-//         if (bgConfig.enableStyle) {
-//             injectStyle({
-//                 css: bgConfig.style
-//             });
-//         }
-//         document.removeEventListener("readystatechange", onReadyStateChange);
-//         document.removeEventListener("DOMContentLoaded", OnDOMContentLoaded);
-//     }
-// }
-
-// function onReadyStateChange() {
-//     if (document.readyState === "complete") doInit();
-// }
-
-// function OnDOMContentLoaded() {
-//     doInit();
-// }
-
 function onStorageChange(changes) {
     for (const key of Object.keys(changes)) {
         bgConfig[key] = changes[key].newValue;
     }
 }
-
-function excludeThisWindow() {
-    let ret = false;
-    if (IS_TOP_WINDOW) {
-        ret = false
-        return ret;
-    }
-
-    const frame = window.frameElement;
-    const rect = (frame && frame.getBoundingClientRect()) || null;
-    if (frame && frame.tagName.toLowerCase() === 'object') ret = true;
-    else if (rect && rect.width <= 50) ret = true;
-    else if (rect && rect.height <= 50) ret = true;
-
-    // if (ret === true) console.log(window);
-    return ret;
-}
-
-function excludeThisSite(patterns) {
-    if (!Array.isArray(patterns)) {
-        return false;
-    }
-
-    let ret = false;
-    for (const r of patterns) {
-        try {
-            const pattern = new RegExp(r);
-            if (pattern.test(location.href)) {
-                ret = true;
-                break;
-            }
-        } catch (error) {
-            console.error(error);
-            break;
-        }
-
-    }
-    return ret;
-}
+browser.storage.onChanged.addListener(onStorageChange);
 
 if (!excludeThisWindow()) {
-
     browser.storage.local.get().then(config => {
-        // console.info("Glitter Drag: loaded config from storage");
         bgConfig = config; // eslint-disable-line no-global-assign
-        FIREFOX_VERSION = config.firefoxVersion || 56;
 
         if (excludeThisSite(bgConfig.exclusionRules)) {
             console.info("Glitter Drag: The extension will not run because of exclusionRules")
@@ -1229,8 +980,6 @@ if (!excludeThisWindow()) {
             }
         })
 
-        browser.storage.onChanged.addListener(onStorageChange);
-
         try {
             maindrag = new DragClass(document);
             if (bgConfig.middleButtonSelect === true) {
@@ -1244,22 +993,5 @@ if (!excludeThisWindow()) {
             console.error("Glitter Drag: Fail to initialize DragCLass");
             console.error(error);
         }
-        // document.addEventListener('readystatechange', onReadyStateChange, false);
-        // document.addEventListener("DOMContentLoaded", OnDOMContentLoaded);
-        // doInit();
     });
 }
-
-
-// eslint-disable-next-line no-unused-vars
-function checkInit() {
-    if (!maindrag || !bgConfig) {
-        if (confirm("Glitter Drag: Initializing extension faill, please report to the author of Glitter Drag")) {
-            location.replace("https://github.com/harytfw/GlitterDrag");
-        }
-    }
-    else {
-        console.info("Glitter Drag: Initializing done.");
-    }
-}
-// setTimeout(checkInit, 4800);
