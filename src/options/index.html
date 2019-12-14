@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" />
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+
+<body>
+    <section class="section">
+
+
+        <div class="card">
+            <div class="card-content">
+                <div class="content">
+                    <div class="columns">
+                        <div class="column is-2">
+                            <div class="field">
+                                <label class="label">Name</label>
+                                <div class="control">
+                                    <input class="input is-small" type="number" placeholder="Text input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="level">
+                        <div class="column is-2">
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input is-small" type="number" placeholder="Text input">
+                                </div>
+                                <label>Minimum Trigger Distance</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column is-2">
+                            <div class="field">
+                                <label class="label">Name</label>
+                                <div class="control">
+                                    <input class="input is-small" type="number" placeholder="Text input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <template id="template-tabs">
+        <div class="container">
+            <div class="tabs">
+                <ul>
+                    <li class="is-active"><a>Pictures</a></li>
+                    <li><a>Music</a></li>
+                    <li><a>Videos</a></li>
+                    <li><a>Documents</a></li>
+                </ul>
+            </div>
+            <div class="columns tabs-body">
+
+            </div>
+        </div>
+    </template>
+    <template id="template-setting">
+        <div class="columns">
+            <div class="column">
+                <div class="field">
+                    <label class="label">Name</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Text input">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 data-i18n="Distance" data-i18n-prefix="header_"></h3>
+        <label for="triggeredDistance" data-i18n="DistancePx"></label>
+        <input type="number" id="triggeredDistance" min=0 required>
+        <br>
+        <label for="maxTriggeredDistance" data-i18n="MaximumDistancePx"></label>
+        <input type="number" id="maxTriggeredDistance" min=0 required>
+        <br>
+        <h3 data-i18n="Promption" data-i18n-prefix="header_"></h3>
+        <label data-i18n="ModifyTipsContent"></label>
+        <select id="tipsContentSelect" not-config>
+            <option data-i18n="ACT_NONE" data-i18n-prefix="" value="ACT_NONE"></option>
+            <option data-i18n="ACT_OPEN" data-i18n-prefix="" value="ACT_OPEN"></option>
+            <option data-i18n="ACT_COPY" data-i18n-prefix="" value="ACT_COPY"></option>
+            <option data-i18n="ACT_SEARCH" data-i18n-prefix="" value="ACT_SEARCH"></option>
+            <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL"></option>
+            <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS"></option>
+            <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled></option>
+            <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" disabled></option>
+        </select>
+        <input id="tipsContentInput" type="text" not-config></input>
+        <a data-i18n="TipsContentUsage" style="font:caption"
+            href="https://github.com/harytfw/GlitterDrag/wiki/Usage-for-Content-of-Tips"></a>
+        <br>
+        <input type="checkbox" id="enablePrompt">
+        <label for="enablePrompt" data-i18n="ShowActionTip"></label>
+        <h3 data-i18n="Process" data-i18n-prefix="header_"></h3>
+        <input type="checkbox" id="enableIndicator">
+        <label for="enableIndicator" data-i18n="EnableDistanceTip"></label>
+        <br>
+        <input type="checkbox" id="enableTimeoutCancel">
+        <label for="enableTimeoutCancel" data-i18n="EnableTimeoutCancel"></label>
+        <br>
+        <label for="timeoutCancel" data-i18n="TimeoutCancel"></label>
+        <input type="number" id="timeoutCancel">
+        <br>
+        <input type="checkbox" id="enableCtrlKey">
+        <label for="enableCtrlKey" data-i18n="EnableCtrlKey"></label>
+        <br>
+        <input type="checkbox" id="enableShiftKey">
+        <label for="enableShiftKey" data-i18n="EnableShiftKey"></label>
+        <br>
+        <input type="checkbox" id="enableLockScrollbar">
+        <label for="enableLockScrollbar" data-i18n="EnableLockScrollbar"></label>
+        <br>
+        <h3 data-i18n="Misc" data-i18n-prefix="header_"></h3>
+        <input type="checkbox" id="disableAdjustTabSequence">
+        <label for="disableAdjustTabSequence" data-i18n="DisableAdjustTabSequence"></label>
+        <br>
+        <input type="checkbox" id="enableStyle">
+        <label for="enableStyle" data-i18n="EnableStyle"></label>
+        <br>
+        <input type="checkbox" id="alwaysImage">
+        <label for="alwaysImage" data-i18n="AlwaysImage"></label>
+        <br>
+        <input type="checkbox" id="imageReferrer">
+        <label for="imageReferrer" data-i18n="ImageReferrer"></label>
+        <br>
+        <input type="checkbox" id="middleButtonSelect">
+        <label for="middleButtonSelect" data-i18n="MiddleButtonSelect"></label>
+        <br>
+        <input type="checkbox" id="disableFixURL">
+        <label for="disableFixURL" data-i18n="DisableFixURL"></label>
+        <br>
+        <label for="specialHosts" data-i18n="SpecialHosts" style="display:none"></label>
+        <input type="text" id="specialHosts" not-config style="display:none">
+
+        <label for="allowExts" data-i18n="AllowExts"></label>
+        <input type="text" id="allowExts" not-config>
+        <br>
+        <label for="maxProcessSize" data-i18n="MaxProcessSize"></label>
+        <input type="number" id="maxProcessSize">
+        <br>
+        <input type="checkbox" id="enableSync" disabled>
+        <label for="enableSync" data-i18n="EnableSync" style="display:none"></label>
+        <br>
+        <input type="checkbox" id="debug">
+        <label for="debug" data-i18n="ToggleDebug">切换DEBUG</label>
+    </template>
+</body>
+
+</html>
