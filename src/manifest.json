@@ -45,8 +45,7 @@
                 "translatorservice.js",
                 "content_scripts/ui.js",
                 "content_scripts/util.js",
-                "content_scripts/scrollbarlocker.js",
-                "content_scripts/extend_middle_button.js",
+                "content_scripts/features.js",
                 "content_scripts/content_script.js"
             ]
         }

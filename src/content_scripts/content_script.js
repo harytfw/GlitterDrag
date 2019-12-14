@@ -10,7 +10,7 @@ function RemoteBuilder(name, exposeFunName = []) {
                 name,
                 fun,
                 argv,
-                uuid: WE_UUID
+                uuid: util.WE_UUID
             }, "*");
         }.bind(null, name, fun);
     }
@@ -61,7 +61,7 @@ class DragClass {
         // end: value that can be use in UI process
 
         // start: UI componment
-        if (IS_TOP_WINDOW) {
+        if (util.IS_TOP_WINDOW) {
             this.translatorBox = new Translator();
             this.promptBox = new Prompt();
             this.panelBox = new Panel({
@@ -134,7 +134,7 @@ class DragClass {
             argv = event.data["argv"];
         const uuid = event.data["uuid"] || "";
         // check uuid to prevent secure problem
-        if (uuid !== WE_UUID) {
+        if (uuid !== util.WE_UUID) {
             /*console.error("Wrong UUID");*/
             return;
         }
@@ -261,7 +261,7 @@ class DragClass {
         this.promptBox.remove();
         this.indicatorBox.remove();
         this.panelBox.remove();
-        scrollbarLocker.free();
+        features.scrollbarLocker.free();
     }
     updateModifierKey(evt) {
         console.assert(evt instanceof Event, "evt is not event");
@@ -274,11 +274,10 @@ class DragClass {
         else {
             this.modifierKey = commons.KEY_NONE;
         }
-
     }
     dragstart(evt) {
         if (bgConfig.enableLockScrollbar) {
-            scrollbarLocker.lock();
+            features.scrollbarLocker.lock();
         }
 
         this.indicatorBox.place(evt.pageX, evt.pageY, bgConfig.triggeredDistance);
@@ -383,7 +382,7 @@ class DragClass {
                             this.post({
                                 fileInfo: {
                                     name,
-                                    type: MIME_TYPE[ext]
+                                    type: util.MIME_TYPE[ext]
                                 },
                                 imageData: new Uint8Array(arrayBuffer).toString()
                             });
@@ -445,10 +444,10 @@ class DragClass {
                     (property["act_name"] === commons.ACT_COPY && property["copy_type"] === commons.COPY_TEXT) ||
                     (property["act_name"] === commons.ACT_SEARCH && property["search_type"] === commons.SEARCH_TEXT) ||
                     (property["act_name"] === commons.ACT_DL && property["download_type"] === commons.DOWNLOAD_TEXT)) {
-                    message = translatePrompt(message, property, commons.textAction, this.textSelection);
+                    message = util.translatePrompt(message, property, commons.textAction, this.textSelection);
                 }
                 else {
-                    message = translatePrompt(message, property, this.actionType, this.selection);
+                    message = util.translatePrompt(message, property, this.actionType, this.selection);
                 }
                 this.promptBox.render(this.direction, message);
             }
@@ -738,7 +737,7 @@ class DragClass {
                 }
 
                 this.isDropTouched = true; // assume it was tocuhed.
-                if (evt.eventPhase === EVENT_PAHSE.CAPTURING_PHASE) {
+                if (evt.eventPhase === util.EVENT_PAHSE.CAPTURING_PHASE) {
                     if (this.running || this.accepting) {
                         this.dragover(evt);
                     }
@@ -804,7 +803,7 @@ class DragClass {
                 break;
             case "dragend": // Bubbling
                 if (bgConfig.enableLockScrollbar) {
-                    scrollbarLocker.free();
+                    features.scrollbarLocker.free();
                 }
                 this.indicatorBox.remove();
                 this.promptBox.remove();
@@ -817,9 +816,9 @@ class DragClass {
                 // else if (this.isNotAcceptable(evt)) {
                 //     return
                 // }
-                if (evt.eventPhase === EVENT_PAHSE.BUBBLING_PHASE) {
+                if (evt.eventPhase === util.EVENT_PAHSE.BUBBLING_PHASE) {
                     // when the site is an exclusiveSite, ignore this.isDropTouched
-                    if (this.running && (this.isDropTouched === false || specialSites.includes(location.host) || (bgConfig.specialSites && bgConfig.specialSites.includes(location.host)))) {
+                    if (this.running && (this.isDropTouched === false || util.specialSites.includes(location.host) || (bgConfig.util.specialSites && bgConfig.util.specialSites.includes(location.host)))) {
                         this.running = false;
                         this.dragend(evt);
                     }
@@ -960,16 +959,16 @@ function onStorageChange(changes) {
 }
 browser.storage.onChanged.addListener(onStorageChange);
 
-if (!excludeThisWindow()) {
+if (!util.excludeThisWindow()) {
     browser.storage.local.get().then(config => {
         bgConfig = config; // eslint-disable-line no-global-assign
 
-        if (excludeThisSite(bgConfig.exclusionRules)) {
+        if (util.excludeThisSite(bgConfig.exclusionRules)) {
             console.info("Glitter Drag: The extension will not run because of exclusionRules")
             return;
         }
 
-        translatePromptString();
+
         //remove highlighting when Escape Key is pressed
         document.addEventListener("keypress", (e) => {
             if (e.key === "Escape") {
@@ -983,7 +982,7 @@ if (!excludeThisWindow()) {
         try {
             maindrag = new DragClass(document);
             if (bgConfig.middleButtonSelect === true) {
-                extendMiddleButton();
+                features.extendMiddleButton();
             }
             browser.runtime.sendMessage({
                 cmd: "insertCSS"

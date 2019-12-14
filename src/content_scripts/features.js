@@ -1,6 +1,5 @@
 
-
-function extendMiddleButton() {
+const extendMiddleButton = function () {
     var x1 = 0.0, y1 = 0.0;
     const MIN_MOVEMENT = 10;
     const se = document.getSelection();
@@ -55,3 +54,27 @@ function extendMiddleButton() {
     document.addEventListener('mousemove', mousemove);
     document.addEventListener('click', click);
 }
+
+const scrollbarLocker = {
+    //https://stackoverflow.com/questions/13631730/how-to-lock-scrollbar-and-leave-it-visible
+    x: 0,
+    y: 0,
+    lock: () => {
+        scrollbarLocker.x = window.scrollX;
+        scrollbarLocker.y = window.scrollY;
+        window.addEventListener("scroll", scrollbarLocker.doLock, false);
+    },
+    free: () => {
+        window.removeEventListener("scroll", scrollbarLocker.doLock, false);
+    },
+    doLock: () => {
+        window.scrollTo(scrollbarLocker.x, scrollbarLocker.y);
+    }
+}
+
+// expose global variable
+var features = {
+    extendMiddleButton,
+    scrollbarLocker,
+}
+Object.freeze(features)
