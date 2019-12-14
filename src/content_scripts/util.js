@@ -37,7 +37,7 @@ const promptString = {
 
 const specialSites = ["vk.com"];
 
-function updatePromptString() {
+function translatePromptString() {
     for (const key of Object.keys(commons)) {
         if (/^ACT_/.test(key)) {
             promptString["%a"][key] = getI18nMessage(key);

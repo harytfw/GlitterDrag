@@ -969,7 +969,7 @@ if (!excludeThisWindow()) {
             return;
         }
 
-        updatePromptString();
+        translatePromptString();
         //remove highlighting when Escape Key is pressed
         document.addEventListener("keypress", (e) => {
             if (e.key === "Escape") {
@@ -993,5 +993,6 @@ if (!excludeThisWindow()) {
             console.error("Glitter Drag: Fail to initialize DragCLass");
             console.error(error);
         }
+        console.log(this)
     });
 }
