@@ -1,133 +1,120 @@
 var DIRECTION = {
-    // DIR_P: "DIR_P", //PANEL
-    // DIR_ANY: "DIR_ANY", //treated as any direction
-    // DIR_U: "up",
-    // DIR_D: "down",
-    // DIR_L: "left",
-    // DIR_R: "right",
-    // DIR_UP_L: "upperLeft",
-    // DIR_UP_R: "upperRight",
-    // DIR_LOW_L: "lowerLeft",
-    // DIR_LOW_R: "lowerRight",
-    // DIR_OUTER: "external",
-    DIR_P: "DIR_P", //PANEL
-    DIR_ANY: "DIR_ANY", //treated as any direction
-    DIR_U: "DIR_U",
-    DIR_D: "DIR_D",
-    DIR_L: "DIR_L",
-    DIR_R: "DIR_R",
-    DIR_UP_L: "DIR_UP_L",
-    DIR_UP_R: "DIR_UP_R",
-    DIR_LOW_L: "DIR_LOW_L",
-    DIR_LOW_R: "DIR_LOW_R",
-    DIR_OUTER: "DIR_OUTER",
+    one: "one",
+    up: "up",
+    down: "down",
+    left: "left",
+    right: "right",
+    upperLeft: "upperLeft",
+    upperRight: "upperRight",
+    lowerLeft: "lowerLeft",
+    lowerRight: "lowerRight",
+    external: "external",
 }
 
 var DIMENSION = {
-
-    ALLOW_ONE: [
+    one: [
         {
             range: [0, 361],
-            value: DIRECTION.DIR_ANY
+            value: DIRECTION.one
         }
     ],
-    ALLOW_NORMAL: [
+    normal: [
         {
             range: [45, 135],
-            value: DIRECTION.DIR_U
+            value: DIRECTION.up
         },
         {
             range: [135, 225],
-            value: DIRECTION.DIR_L
+            value: DIRECTION.left
         },
         {
             range: [225, 315],
-            value: DIRECTION.DIR_D
+            value: DIRECTION.down
         },
         {
             range: [315, 360],
-            value: DIRECTION.DIR_R
+            value: DIRECTION.right
         },
         {
             range: [0, 45],
-            value: DIRECTION.DIR_R
+            value: DIRECTION.right
         },
     ],
-    ALLOW_V: [
+    vertical: [
         {
             range: [0, 180],
-            value: DIRECTION.DIR_U
+            value: DIRECTION.up
         },
         {
             range: [180, 360],
-            value: DIRECTION.DIR_D
+            value: DIRECTION.down
         }
     ],
-    ALLOW_H: [
+    horizontal: [
         {
             range: [90, 270],
-            value: DIRECTION.DIR_L
+            value: DIRECTION.left
         },
         {
             range: [270, 360],
-            value: DIRECTION.DIR_R
+            value: DIRECTION.right
         },
         {
             range: [0, 90],
-            value: DIRECTION.DIR_R
+            value: DIRECTION.right
         }
     ],
-    ALLOW_UP_L_LOW_R: [
+    rightDiagonal: [
         {
             range: [45, 225],
-            value: DIRECTION.DIR_UP_L
+            value: DIRECTION.upperLeft
         },
         {
             range: [225, 360],
-            value: DIRECTION.DIR_LOW_R,
+            value: DIRECTION.lowerRight,
 
         },
         {
             range: [0, 45],
-            value: DIRECTION.DIR_UP_L
+            value: DIRECTION.upperLeft
         }
     ],
-    ALLOW_LOW_L_UP_R: [
+    leftDiagonal: [
         {
             range: [135, 275],
-            value: DIRECTION.DIR_LOW_L
+            value: DIRECTION.lowerLeft
         },
         {
             range: [275, 360],
-            value: DIRECTION.DIR_UP_R
+            value: DIRECTION.upperRight
         },
         {
             range: [0, 135],
-            value: DIRECTION.DIR_UP_R
+            value: DIRECTION.upperRight
         }
     ],
-    ALLOW_QUADRANT: [
+    quadrant: [
         {
             range: [0, 90],
-            value: DIRECTION.DIR_UP_R
+            value: DIRECTION.upperRight
         },
         {
             range: [90, 180],
-            value: DIRECTION.DIR_UP_L
+            value: DIRECTION.upperLeft
         },
         {
             range: [180, 270],
-            value: DIRECTION.DIR_LOW_L
+            value: DIRECTION.lowerLeft
         },
         {
             range: [270, 360],
-            value: DIRECTION.DIR_LOW_R
+            value: DIRECTION.lowerRight
         }
     ],
-    ALLOW_ALL: [
+    all: [
         {
             range: [22.5, 22.5 * 3],
-            value: DIRECTION.DIR_LOW_R
+            value: DIRECTION.lowerRight
         },
         {
             range: [22.5 * 3, 22.5 * 5],
@@ -135,31 +122,31 @@ var DIMENSION = {
         },
         {
             range: [22.5 * 5, 22.5 * 7],
-            value: DIRECTION.DIR_UP_L
+            value: DIRECTION.upperLeft
         },
         {
             range: [22.5 * 7, 22.5 * 9],
-            value: DIRECTION.DIR_L
+            value: DIRECTION.left
         },
         {
             range: [22.5 * 9, 22.5 * 11],
-            value: DIRECTION.DIR_LOW_L
+            value: DIRECTION.lowerLeft
         },
         {
             range: [22.5 * 11, 22.5 * 13],
-            value: DIRECTION.DIR_D
+            value: DIRECTION.down
         },
         {
             range: [22.5 * 13, 22.5 * 15],
-            value: DIRECTION.DIR_LOW_R
+            value: DIRECTION.lowerRight
         },
         {
             range: [22.5 * 15, 360],
-            value: DIRECTION.DIR_R
+            value: DIRECTION.right
         },
         {
             range: [0, 22.5],
-            value: DIRECTION.DIR_R
+            value: DIRECTION.right
         }
     ]
 }

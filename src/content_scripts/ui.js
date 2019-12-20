@@ -528,7 +528,7 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
         this.getRect(rect);
 
         switch (direction) {
-            case commons.DIR_U:
+            case commons.directionUp:
                 x -= rect.width / 2;
                 y -= rect.height;
                 break;

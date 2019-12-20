@@ -90,3 +90,4 @@ var urlUtil = Object.freeze({
     validateUrl,
     fixSchemer
 })
+

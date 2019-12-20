@@ -98,4 +98,14 @@ interface ConfigInterface {
     scripts: ScriptItem[]
 };
 
-declare const templateConfig: ConfigInterface
+declare const templateConfig: ConfigInterface;
+
+
+interface DirectionDefine {
+    range: [number, number],
+    value: string,
+}
+
+declare const DIMENSION: {
+    
+};
