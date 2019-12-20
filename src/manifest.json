@@ -30,7 +30,8 @@
         "scripts": [
             "common.js",
             "default_config.js",
-            "background.js"
+            "background/storage_upgrade.js",
+            "background/background.js"
         ]
     },
     "content_scripts": [
@@ -42,11 +43,16 @@
             ],
             "js": [
                 "common.js",
-                "translatorservice.js",
+                "translator/service.js",
                 "content_scripts/ui.js",
                 "content_scripts/util.js",
+                "content_scripts/url_util.js",
+                "content_scripts/wrapper.js",
+                "content_scripts/core.js",
+                "content_scripts/dimension_define.js",
+                "content_scripts/storage.js",
                 "content_scripts/features.js",
-                "content_scripts/content_script.js"
+                "content_scripts/cs.js"
             ]
         }
     ],

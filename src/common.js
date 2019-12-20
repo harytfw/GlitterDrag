@@ -1,4 +1,4 @@
-const commons = {
+var commons = {
     // from superdrag   https://addons.mozilla.org/en-US/firefox/addon/super-drag/
     urlPattern: /^(https?:\/\/)?((\w|-)*\.){0,3}((\w|-)+)\.(com|net|org|gov|edu|mil|biz|cc|info|fm|mobi|tv|ag|am|asia|at|au|be|br|bz|ca|cn|co|de|do|ee|es|eu|fr|gd|gl|gs|im|in|it|jp|la|ly|me|mp|ms|mx|nl|pe|ph|ru|se|so|tk|to|tt|tw|us|uk|ws|xxx)(\/(\w|%|&|-|_|\||\?|\.|=|\/|#|~|!|\+|,|\*|@)*)?$/i,
     // this regex is from: https://stackoverflow.com/questions/14473180/regex-to-get-a-filename-from-a-url
@@ -121,7 +121,7 @@ const eventUtil = {
 }
 Object.freeze(eventUtil);
 
-const typeUtil = {
+var typeUtil = {
     getActionType: (t) => {
         if (t === commons.TYPE_UNKNOWN) {
             console.error("未知的拖拽目标类型！~");
@@ -324,7 +324,7 @@ const $H = (ss = [], value, context = document) => {
 }
 
 var DEBUG_FLAG = false;
-if (window.top === window && browser.runtime.getBackgroundPage) {
+if (window.top === window && window.browser !== undefined && browser.runtime.getBackgroundPage) {
     browser.storage.local.get("debug", _ => {
         DEBUG_FLAG = _.debug;
     });
@@ -337,8 +337,11 @@ const $D = (message, ...obj) => {
 }
 
 // eslint-disable-next-line no-unused-vars
-const getI18nMessage = (strName = "", placeholders) => {
-    const message = browser.i18n.getMessage(strName, placeholders);
+var getI18nMessage = (strName = "", placeholders) => {
+    if (window.browser === undefined) {
+        return strName
+    }
+    const message = window.browser.i18n.getMessage(strName, placeholders);
     if (message === "") {
         console.warn(`${strName} has not matched i18n message`);
         return strName;
@@ -385,5 +388,15 @@ const testCheckDragTargetType = () => {
     target = document.createElement("div");
     assert(fn(selection, textSelection, imageLink, target) === commons.TYPE_ELEM, "elem");
 }
+
+
+var environment = Object.freeze({
+    isFirefox: true,
+    isChrome: false,
+    isEdge: false,
+    isNode: false,
+    isWebExtension: typeof window.browser === 'undefined',
+    isNormalDocument: typeof window.browser === 'object'
+})
 
 // testCheckDragTargetType()

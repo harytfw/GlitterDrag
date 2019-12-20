@@ -12,5 +12,7 @@
         "renew": "node ./src/_locales/renew_template.js"
     },
     "license": "MIT",
-    "dependencies": {}
+    "dependencies": {
+        "handlebars": "^4.5.3"
+    }
 }

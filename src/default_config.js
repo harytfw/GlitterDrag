@@ -1,10 +1,18 @@
+
+function getI18n(s) {
+    if (window.browser !== undefined) {
+        return browser.i18n.getMessage(s)
+    }
+    return s
+}
+
 const ACTION_CONSTRUCTOR = (parameter = {}) => {
     return Object.assign({
         act_name: commons.ACT_OPEN,
         tab_active: commons.FORE_GROUND,
         tab_pos: commons.TAB_CRIGHT,
-        engine_name: browser.i18n.getMessage("defaultText"),
-        engine_url: browser.i18n.getMessage("default_search_url"),// when is_browser_search is set to true, this parameter has no effect since we directly call search API
+        engine_name: getI18n("defaultText"),
+        engine_url: getI18n("default_search_url"),// when is_browser_search is set to true, this parameter has no effect since we directly call search API
         is_browser_search: true,
         open_type: commons.OPEN_LINK,
         search_type: commons.SEARCH_TEXT,
@@ -327,7 +335,7 @@ const DEFAULT_CONFIG_B = () => {
     return DEFAULT_CONFIG_A;
 }
 
-const DEFAULT_CONFIG = DEFAULT_CONFIG_A;
+var DEFAULT_CONFIG = DEFAULT_CONFIG_A;
 Object.freeze(DEFAULT_CONFIG);
 
 //TODO: user can select built-in configuration
