@@ -1,5 +1,3 @@
-/* global translatePrompt:false */
-
 class BaseUIClass {
     constructor(node = document.body) {
         this.node = node;
@@ -401,9 +399,9 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
         const tips = setting["panel_tips"];
         // eslint-disable-next-line 
         if (typeof tips === typeof "") {
-            this.header.textContent = translatePrompt(tips, setting, this.actionType, this.selection);
+            this.header.textContent = util.translatePrompt(tips, setting, this.actionType, this.selection);
         }
-        else this.header.textContent = translatePrompt("%g-%a", setting);
+        else this.header.textContent = util.translatePrompt("%g-%a", setting);
 
 
     }

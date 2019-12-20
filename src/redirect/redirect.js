@@ -12,6 +12,7 @@ function stopAnimation() {
 function searchImageViaUploadImage(file = new File()) {
     if (file.length <= 0) return;
     else if (!(file instanceof Blob)) return;
+    const engineName = document.querySelector("select").value;
     const form = new FormData();
     const headers = new Headers();
     let server = "";
@@ -98,59 +99,28 @@ function searchImageViaUploadImage(file = new File()) {
     }
 
 }
-var gURL, url, cmd, engineName, fileName, fileType;
-var uploading = document.querySelector("#uploading");
-stopAnimation();
-async function main() {
-    gURL = new URL(location);
-    url = gURL.searchParams.get("url");
-    cmd = gURL.searchParams.get("cmd");
-    fileName = gURL.searchParams.get("fileName");
-    fileType = gURL.searchParams.get("fileType");
-    engineName = gURL.searchParams.get("engineName");
-    if (cmd === "open") {
-        location.href = url;
-        return;
-    }
-    else if (cmd === "search") {
-        document.querySelector("img").src = url;
-        if (url.length) {
-            if (url.startsWith("file:///")) {
-                // fetch data from local file
-                // sometimes it can't work.
-                var canvas = document.createElement("canvas");
-                var img = document.querySelector("img");
-                canvas.height = img.height;
-                canvas.width = img.width;
-                var context = canvas.getContext("2d");
-                context.drawImage(img, 0, 0);
-                canvas.toBlob(file => {
-                    img.src = (URL.createObjectURL(file));
-                    searchImageViaUploadImage(file);
-                }, gURL.searchParams.get("type") || "image/jpeg");
-            }
-            else {
-                fetch(url).then(response => {
-                    return response.blob();
-                }).then(file => {
 
-                    if (url.startsWith("blob")) {
-                        window.URL.revokeObjectURL(url);
-                    }
-                    searchImageViaUploadImage(new File([file], fileName, { type: fileType }));
-                })
-            }
-        }
+var uploading = document.querySelector("#uploading");
+async function main() {
+    stopAnimation();
+    const page = await browser.runtime.getBackgroundPage()
+    if (page === null) {
+        alert("the background page is null, maybe it is a private window")
+        return
     }
-    else {
-        console.log(url);
-    }
+    const key = new URL(location.href).searchParams.get("key")
+    const { executor } = page
+    //TODO
+    const { data, cmd } = executor.temporaryDataStorage.get(key)
+    executor.temporaryDataStorage.delete(key)
+    console.log(data, cmd)
 }
+
 document.querySelector("button").addEventListener("click", () => {
-    engineName = document.querySelector("select").value;
     searchImageViaUploadImage(document.querySelector("input").files[0]);
 });
 document.querySelector("input").addEventListener("change", (e) => {
     document.querySelector("img").src = window.URL.createObjectURL(e.target.files[0]);
 })
+
 main();
