@@ -336,15 +336,7 @@ const $D = (message, ...obj) => {
     // browser.runtime.sendMessage("");
 }
 
-// eslint-disable-next-line no-unused-vars
-const getI18nMessage = (strName = "", placeholders) => {
-    const message = browser.i18n.getMessage(strName, placeholders);
-    if (message === "") {
-        console.warn(`${strName} has not matched i18n message`);
-        return strName;
-    }
-    return message;
-}
+
 
 // eslint-disable-next-line no-unused-vars
 const testCheckDragTargetType = () => {

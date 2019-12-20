@@ -7,14 +7,13 @@
     <title>Hello Bulma!</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" />
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <!-- <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script> -->
 </head>
 
 <body>
     <section class="section">
-
-
-        <div class="card">
+        <custom-tabs></custom-tabs>
+        <!-- <div class="card">
             <div class="card-content">
                 <div class="content">
                     <div class="columns">
@@ -30,10 +29,10 @@
                     <div class="level">
                         <div class="column is-2">
                             <div class="field">
-                                <div class="control">
-                                    <input class="input is-small" type="number" placeholder="Text input">
-                                </div>
                                 <label>Minimum Trigger Distance</label>
+                                <span class="control">
+                                    <input class="input is-small" type="number" placeholder="Text input">
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -49,40 +48,205 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </section>
     <template id="template-tabs">
         <div class="container">
-            <div class="tabs">
+            <div class="tabs tabs-title">
                 <ul>
-                    <li class="is-active"><a>Pictures</a></li>
-                    <li><a>Music</a></li>
-                    <li><a>Videos</a></li>
-                    <li><a>Documents</a></li>
+                    <li class="is-active" data-target="#no1"><a>Pictures</a></li>
+                    <li data-target="#no2"><a>Music</a></li>
+                    <li data-target="#no3"><a>Videos</a></li>
+                    <li data-target="#no4"><a>Documents</a></li>
                 </ul>
             </div>
             <div class="columns tabs-body">
-
+                <div id="no1" class="column">
+                    <custom-settings></custom-settings>
+                </div>
+                <div id="no2" class="is-hidden column">
+                    <custom-action></custom-action>
+                </div>
+                <div id="no3" class="is-hidden column">3</div>
+                <div id="no4" class="is-hidden column">4</div>
             </div>
         </div>
     </template>
-    <template id="template-setting">
-        <div class="columns">
-            <div class="column">
+    <template id="template-settings">
+        <div class="field is-horizontal">
+            <div class="field-body">
                 <div class="field">
-                    <label class="label">Name</label>
                     <div class="control">
-                        <input class="input" type="text" placeholder="Text input">
+                        <label class="checkbox">
+                            <input type="checkbox" data-setting-name="enableIndicator">
+                            <span data-i18n="showIndicator">enableIndicator</span>
+                        </label>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" data-setting-name="enablePrompt">
+                            <span data-i18n="ShowActionTip">enablePrompt</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" data-setting-name="enableTimeout">
+                            <span data-i18n="EnableTimeoutCancel">enableTimeout</span>
+                        </label>
+                        <input type="number">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" data-setting-name="enableCtrlKey">
+                            <span data-i18n="EnableCtrlKey">enableCtrlKey</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" data-setting-name="enableShiftKey">
+                            <span data-i18n="EnableShifhtKey">enableShiftKey</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" data-setting-name="enableStyle">
+                            <span data-i18n="EnableStyle">enableStyle</span>>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" data-setting-name="alwaysImage">
+                            <span data-i18n="alwaysImage">alwaysImage</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" data-setting-name="imageReferrer">
+                            Checkbox
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" data-setting-name="disableFixURL">
+                            Checkbox
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox">
+                            Checkbox
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label">
+                <label class="label" for="triggeredDistance" data-i18n="DistancePx">
+                    Triggered Distance
+                </label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input type="number" id="triggeredDistance" min=0 required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field is-horizontal">
+            <div class="field-label">
+                <label class="label" for="maxTriggeredDistance" data-i18n="MaximumDistancePx">
+                    Max Triggered Distance
+                </label>
+            </div>
+            <label for="maxTriggeredDistance" data-i18n="MaximumDistancePx"></label>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input type="number" id="maxTriggeredDistance" min=0 required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
         <h3 data-i18n="Distance" data-i18n-prefix="header_"></h3>
-        <label for="triggeredDistance" data-i18n="DistancePx"></label>
-        <input type="number" id="triggeredDistance" min=0 required>
         <br>
-        <label for="maxTriggeredDistance" data-i18n="MaximumDistancePx"></label>
         <input type="number" id="maxTriggeredDistance" min=0 required>
         <br>
         <h3 data-i18n="Promption" data-i18n-prefix="header_"></h3>
@@ -156,6 +320,182 @@
         <input type="checkbox" id="debug">
         <label for="debug" data-i18n="ToggleDebug">切换DEBUG</label>
     </template>
+    <template id="template-action">
+        <div class="columns action-group">
+            <div class="dropdown">
+                <div class="dropdown-trigger">
+                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+                        <span>Click me</span>
+                        <span class="icon is-small">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class="dropdown-menu">
+                    <div class="dropdown-content">
+                        <a href="#" class="dropdown-item">
+                            Overview
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            Modifiers
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            Grid
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            Form
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            Elements
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            Components
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            Layout
+                        </a>
+                        <hr class="dropdown-divider">
+                        <a href="#" class="dropdown-item">
+                            More
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="columns action-type-group">
+            <div class="column">
+                <div class="pretty p-default p-round">
+                    <input type="radio" name="action-type">
+                    <div class="state">
+                        <label>Text</label>
+                    </div>
+                </div>
+                <div class="pretty p-default p-round">
+                    <input type="radio" name="action-type">
+                    <div class="state">
+                        <label>Link</label>
+                    </div>
+                </div>
+                <div class="pretty p-default p-round">
+                    <input type="radio" name="action-type">
+                    <div class="state">
+                        <label>Image</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="columns direction-group">
+            <div class="column">
+                <div class="pretty p-default p-round">
+                    <input type="radio" name="action-type">
+                    <div class="state">
+                        <label>Up</label>
+                    </div>
+                </div>
+                <div class="pretty p-default p-round">
+                    <input type="radio" name="action-type">
+                    <div class="state">
+                        <label>Down</label>
+                    </div>
+                </div>
+                <div class="pretty p-default p-round">
+                    <input type="radio" name="action-type">
+                    <div class="state">
+                        <label>Left</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="action-detail">
+            <div class="columns">
+
+            </div>
+            <div class="columns">
+                <div class="column field is-horizontal">
+                    <div class="field-label has-text-left">
+                        <label class="label">Action to do</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field is-narrow">
+                            <div class="control">
+                                <div class="pretty p-default p-round">
+                                    <input type="radio" name="action-type">
+                                    <div class="state">
+                                        <label>Up</label>
+                                    </div>
+                                </div>
+                                <div class="pretty p-default p-round">
+                                    <input type="radio" name="action-type">
+                                    <div class="state">
+                                        <label>Down</label>
+                                    </div>
+                                </div>
+                                <div class="pretty p-default p-round">
+                                    <input type="radio" name="action-type">
+                                    <div class="state">
+                                        <label>Left</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column field is-horizontal">
+                    <div class="field-label has-text-left">
+                        <label class="label">prefer open</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field is-narrow">
+                            <div class="control">
+                                <div class="pretty p-default p-round">
+                                    <input type="radio" name="action-type">
+                                    <div class="state">
+                                        <label>Up</label>
+                                    </div>
+                                </div>
+                                <div class="pretty p-default p-round">
+                                    <input type="radio" name="action-type">
+                                    <div class="state">
+                                        <label>Down</label>
+                                    </div>
+                                </div>
+                                <div class="pretty p-default p-round">
+                                    <input type="radio" name="action-type">
+                                    <div class="state">
+                                        <label>Left</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="template-search-editor">
+
+    </template>
+    <template id="template-download-editor">
+
+
+    </template>
+    <template id="template-style-editor">
+
+    </template>
+    <template id="template-filter-editor">
+
+    </template>
+    <template id="template-translation-setting">
+
+    </template>
+    <script src="../i18n_util.js"></script>
+    <script src="condense_template.js"></script>
+    <script src="custom_elements/settings.js"></script>
+    <script src="custom_elements/action.js"></script>
+    <script src="tabs.js"></script>
 </body>
 
 </html>

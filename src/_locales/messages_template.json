@@ -368,7 +368,7 @@
         "message": "",
         "description": "Add button on Options - Search Template"
     },
-    "elem_SavebtnOnEngines": {
+    "saveAllTemplate": {
         "message": "",
         "description": "Save button on Options - Search Template"
     },
@@ -376,31 +376,31 @@
         "message": "",
         "description": "Helper text on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_General": {
+    "searchTemplateClasses_General": {
         "message": "",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_Chinese": {
+    "searchTemplateClasses_Chinese": {
         "message": "",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_ImageUrl": {
+    "searchTemplateClasses_ImageUrl": {
         "message": "",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_ImageSearch": {
+    "searchTemplateClasses_ImageSearch": {
         "message": "",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_Backup": {
+    "backupSettings": {
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_Restore": {
+    "restoreSettings": {
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_Default": {
+    "restoreToDefault": {
         "message": "",
         "description": "Element on Options page"
     },
@@ -420,15 +420,15 @@
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_SearchTemplate": {
+    "searchTemplate": {
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_General": {
+    "generalSettings": {
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_Panel": {
+    "panel": {
         "message": "",
         "description": ""
     },
@@ -444,7 +444,7 @@
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_ShowActionTip": {
+    "showActionTip": {
         "message": "",
         "description": "Element on Options page"
     },
@@ -456,7 +456,7 @@
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_EnableDistanceTip": {
+    "enableDistanceIndicator": {
         "message": "",
         "description": "Element on Options page"
     },
@@ -480,11 +480,11 @@
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_DistancePx": {
+    "miniumDistance": {
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_EnableTimeoutCancel": {
+    "enableTimeoutCancel": {
         "message": "",
         "description": "Element on Options page"
     },
@@ -492,23 +492,23 @@
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_EnableSync": {
+    "enableSync": {
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_EnableStyle": {
+    "useCustomStyle": {
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_Download": {
+    "download": {
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_ShowDefaultDownloadDirectory": {
+    "exploreDefaultDownloadDirectory": {
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_SettingDownloadDirectory": {
+    "changeDownloadDirectory": {
         "message": "",
         "description": "Element on Options page"
     },
@@ -530,11 +530,11 @@
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_Style": {
+    "style": {
         "message": "",
         "description": "Element on Options page"
     },
-    "elem_SaveStyle": {
+    "saveStyle": {
         "message": "",
         "description": "Element on Options page"
     },
@@ -612,10 +612,10 @@
         "message": "",
         "description": ""
     },
-    "elem_MaximumDistancePx": {
+    "maximumDistance": {
         "message": ""
     },
-    "elem_AlwaysImage": {
+    "alwaysImage": {
         "message": "",
         "description": ""
     },
@@ -635,27 +635,27 @@
         "message": "",
         "description": ""
     },
-    "elem_SelectStyle": {
+    "selectStyle": {
         "message": "",
         "description": ""
     },
-    "elem_ImageReferrer": {
+    "appendImageReferrer": {
         "message": "",
         "description": ""
     },
-    "elem_EnableLockScrollbar": {
+    "lockScrollbar": {
         "message": "",
         "description": ""
     },
-    "elem_PanelTips": {
+    "actionTips": {
         "message": "",
         "description": ""
     },
-    "elem_PanelIcon": {
+    "icon": {
         "message": "",
         "description": ""
     },
-    "elem_PanelIconSource": {
+    "sourceOfIcon": {
         "message": ""
     },
     "elem_PanelIconPreview": {
@@ -746,16 +746,16 @@
     "header_Misc": {
         "message": ""
     },
-    "elem_ExtraCommands": {
+    "extraCommands": {
         "message": ""
     },
-    "elem_GetIconFromLocal": {
+    "pickIconFromLocalFile": {
         "message": ""
     },
-    "elem_GetIconFromURL": {
+    "getIconFromURL": {
         "message": ""
     },
-    "elem_GetIconFromEngine": {
+    "useIconFromSearchEngine": {
         "message": ""
     },
     "elem_MiddleButtonSelect": {

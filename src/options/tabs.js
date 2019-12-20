@@ -1,56 +1,38 @@
 class CustomTabs extends HTMLElement {
     constructor() {
         super()
-        const template = document.querySelector('#tempalte-tabs')
+        const template = document.querySelector('#template-tabs')
         const content = template.content
-        this.append(content.clone(true))
-
+        this.append(content.cloneNode(true))
+        this.addEventListener("click", (e) => this.onTitleClick(e))
     }
 
-    addTitle(name, active) {
-        const ul = this.querySelector('ul')
-        ul.insertAdjacentHTML('beforeend', `
-            <li><a data-target="${name}">${name}</a></li>
-        `)
-        if (active) {
-            const activeElement = this.querySelector('.is-active')
-            if (activeElement) {
-                activeElement.classList.remove('is-active')
-            }
-            ul.lastElementChild.classList.add('is-active')
+    /**
+     * 
+     * @param {MouseEvent} e 
+     */
+    onTitleClick(e) {
+        const { target } = e
+        if (!(target instanceof HTMLElement)) {
+            return
+        }
+        if (target.matches(".tabs-title li a")) {
+            const li = target.closest("li")
+            const targetElement = document.querySelector(li.dataset["target"])
+
+            const origin = document.querySelector(".tabs li.is-active")
+            const originTargetElement = document.querySelector(origin.dataset["target"])
+
+            origin.classList.remove("is-active")
+            originTargetElement.classList.add("is-hidden")
+
+            li.classList.add("is-active")
+            targetElement.classList.remove("is-hidden")
+
         }
     }
 
-    addTabItem(name, element) {
-        const body = this.querySelector('.tabs-body')
-        body.insertAdjacentHTML('beforeend', `
-            <div class='column' data-tab-name='${name}'></div>
-        `)
-        const column = body.lastElementChild
-        column.appendChild(element)
-    }
-
-    removeTabTitle(name) {
-        const ul = this.querySelector('ul')
-        // ul.
-    }
-
-    removeTabItem(name) {
-
-    }
-
-    addTab(name, element, active = true) {
-        this.addTitle(name)
-        this.addTabItem(name, element)
-    }
-
-    removeTab(name) {
-
-    }
-
-    active(name) {
-
-    }
 }
 
-customElements.get('custom-tabs', CustomTabs)
+
+customElements.define("custom-tabs", CustomTabs)

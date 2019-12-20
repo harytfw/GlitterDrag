@@ -28,111 +28,111 @@
             }
         }
     },
-    "ALLOW_NORMAL": {
+    "normalFourDirection": {
         "message": "普通4個方向",
         "description": ""
     },
-    "ALLOW_QUADRANT": {
+    "quadrantDirection": {
         "message": "傾斜4個方向",
         "description": ""
     },
-    "ALLOW_H": {
+    "horizontalDirection": {
         "message": "水平2個方向",
         "description": ""
     },
-    "ALLOW_V": {
+    "verticalDirection": {
         "message": "垂直2個方向",
         "description": ""
     },
-    "ALLOW_LOW_L_UP_R": {
+    "rightDiagonalDiection": {
         "message": "傾斜2個方向",
         "description": ""
     },
-    "ALLOW_UP_L_LOW_R": {
+    "leftDiagonalDiection": {
         "message": "另2個傾斜方向",
         "description": ""
     },
-    "ALLOW_ALL": {
+    "allDirection": {
         "message": "狂熱8個方向",
         "description": ""
     },
-    "ALLOW_ONE": {
+    "onlyOneDirection": {
         "message": "只有1個方向",
         "description": ""
     },
-    "ACT_OPEN": {
+    "actionOpen": {
         "message": "開啟",
         "description": "Action name"
     },
-    "ACT_COPY": {
+    "actionCopy": {
         "message": "複製",
         "description": "Action name"
     },
-    "ACT_SEARCH": {
+    "actionSearch": {
         "message": "搜尋",
         "description": "Action name"
     },
-    "ACT_DL": {
+    "actionDownload": {
         "message": "下載",
         "description": "Action name"
     },
-    "ACT_NONE": {
+    "noAction": {
         "message": "無動作",
         "description": "Action name"
     },
-    "ACT_TRANS": {
+    "actionTranslate": {
         "message": "翻譯",
         "description": "Action name"
     },
-    "ACT_QRCODE": {
+    "actionScanQrCode": {
         "message": "二維條碼",
         "description": "Action name"
     },
-    "ACT_BOOKMARK": {
+    "actionAddToBookmark": {
         "message": "加入書籤",
         "description": "Action name"
     },
-    "ACT_FIND": {
+    "actionFind": {
         "message": "尋找",
         "description": "Action name"
     },
-    "ACT_PANEL": {
+    "actionShowPanel": {
         "message": "面板",
         "description": "Action name"
     },
-    "DIR_U": {
+    "directionUp": {
         "message": "上",
         "description": "Direction"
     },
-    "DIR_D": {
+    "directionDown": {
         "message": "下",
         "description": "Direction"
     },
-    "DIR_L": {
+    "directionLeft": {
         "message": "左",
         "description": "Direction"
     },
-    "DIR_R": {
+    "directionRight": {
         "message": "右",
         "description": "Direction"
     },
-    "DIR_UP_L": {
+    "directionUpperLeft": {
         "message": "左上",
         "description": "Direction"
     },
-    "DIR_UP_R": {
+    "directionUpperRight": {
         "message": "右上",
         "description": "Direction"
     },
-    "DIR_LOW_L": {
+    "directionLowerLeft": {
         "message": "左下",
         "description": "Direction"
     },
-    "DIR_LOW_R": {
+    "directionLowerRight": {
         "message": "右下",
         "description": "Direction"
     },
-    "DIR_OUTER": {
+    "directionExternal": {
         "message": "外部",
         "description": "Direction"
     },
@@ -166,139 +166,139 @@
             }
         }
     },
-    "TAB_NEW_WINDOW": {
+    "newWindow": {
         "message": "新增視窗",
         "description": "Position of tab opened."
     },
-    "TAB_NEW_PRIVATE_WINDOW": {
+    "newPrivateWindow": {
         "message": "隱私視窗",
         "description": "Position of tab opened."
     },
-    "TAB_CUR": {
+    "currentTab": {
         "message": "目前",
         "description": "Position of tab opened."
     },
-    "TAB_LAST": {
+    "lastTab": {
         "message": "尾",
         "description": "Position of tab opened."
     },
-    "TAB_FIRST": {
+    "firstTab": {
         "message": "首",
         "description": "Position of tab opened."
     },
-    "TAB_CLEFT": {
+    "relativeLeftTab": {
         "message": "前",
         "description": "Position of tab opened."
     },
-    "TAB_CRIGHT": {
+    "relativeRightTab": {
         "message": "後",
         "description": "Position of tab opened."
     },
-    "FORE_GROUND": {
+    "foreground": {
         "message": "前景",
         "description": "The tab opened in foreground."
     },
-    "BACK_GROUND": {
+    "background": {
         "message": "背景",
         "description": "The tab opened in background."
     },
-    "OPEN_TEXT": {
+    "openText": {
         "message": "文字",
         "description": ""
     },
-    "OPEN_LINK": {
+    "openLink": {
         "message": "鏈結",
         "description": ""
     },
-    "OPEN_IMAGE": {
+    "openImage": {
         "message": "圖像本身",
         "description": ""
     },
-    "OPEN_IMAGE_LINK": {
+    "openLinkOfImage": {
         "message": "圖像鏈結",
         "description": ""
     },
-    "SEARCH_LINK": {
+    "searchLink": {
         "message": "鏈結",
         "description": "Search action"
     },
-    "SEARCH_TEXT": {
+    "searchText": {
         "message": "文字",
         "description": "Search action"
     },
-    "SEARCH_IMAGE": {
+    "searchImage": {
         "message": "圖像",
         "description": "Search action"
     },
-    "SEARCH_IMAGE_LINK": {
+    "searchLinkOfImage": {
         "message": "圖像鏈結",
         "description": ""
     },
-    "SEARCH_ONSITE_YES": {
+    "searchOnSite": {
         "message": "站內搜尋",
         "description": "Search action"
     },
-    "SEARCH_ONSITE_NO": {
+    "noSearchOnSite": {
         "message": "不處理",
         "description": "Search action"
     },
-    "COPY_TEXT": {
+    "copyText": {
         "message": "文字",
         "description": "Copy action"
     },
-    "COPY_LINK": {
+    "copyLink": {
         "message": "鏈結",
         "description": "Copy action"
     },
-    "COPY_IMAGE": {
+    "copyImage": {
         "message": "圖像",
         "description": "Copy action"
     },
-    "COPY_IMAGE_LINK": {
+    "copyLinkOfImage": {
         "message": "圖像鏈結",
         "description": ""
     },
-    "DOWNLOAD_TEXT": {
+    "downloadText": {
         "message": "文字",
         "description": "Copy action"
     },
-    "DOWNLOAD_LINK": {
+    "downloadLink": {
         "message": "鏈結",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE": {
+    "downloadImage": {
         "message": "圖像",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE_LINK": {
+    "downloadImageLink": {
         "message": "圖像鏈結",
         "description": "Copy action"
     },
-    "DOWNLOAD_SAVEAS_YES": {
+    "showSaveAsDialog": {
         "message": "另存為",
         "description": "Copy action"
     },
-    "DOWNLOAD_SAVEAS_NO": {
+    "notShowSaveAsDialog": {
         "message": "不另存為",
         "description": "Copy action"
     },
-    "option_page_title": {
+    "opetionPageTitle": {
         "message": "閃耀拖曳-選項",
         "description": "title of page"
     },
-    "option_tooltip_act": {
+    "actionToPerform": {
         "message": "要執行的動作",
         "description": "tooltip on option"
     },
-    "option_tooltip_active": {
+    "statusOfNewTab": {
         "message": "新增分頁的啟用狀態",
         "description": "tooltip on option"
     },
-    "option_tooltip_pos": {
+    "positionOfNewTab": {
         "message": "分頁的位置",
         "description": "tooltip on option"
     },
-    "option_tooltip_search": {
+    "useWhichSearchEngine": {
         "message": "調用的搜尋引擎，預設調用百度",
         "description": "tooltip on option"
     },
@@ -355,24 +355,24 @@
         "message": "https:\/\/www.baidu.com\/s?wd=%s",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     },
-    "elem_Text": {
+    "textGroup": {
         "message": "文字"
     },
-    "elem_Link": {
+    "linkGroup": {
         "message": "鏈結"
     },
-    "elem_Image": {
+    "imageGroup": {
         "message": "圖像"
     },
     "elem_RefreshbtnOnEngines": {
         "message": "重新整理",
         "description": "Reload button on Options - Search Template"
     },
-    "elem_AddbtnOnEngines": {
+    "addNewTemplate": {
         "message": "新增",
         "description": "Add button on Options - Search Template"
     },
-    "elem_SavebtnOnEngines": {
+    "saveAllTemplate": {
         "message": "儲存",
         "description": "Save button on Options - Search Template"
     },
@@ -380,31 +380,31 @@
         "message": "這裡是為你預先提供的搜尋引擎，選取後會自動新增在下方，不過還需要你自己點儲存按鈕：",
         "description": "Helper text on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_General": {
+    "searchTemplateClasses_General": {
         "message": "通用",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_Chinese": {
+    "searchTemplateClasses_Chinese": {
         "message": "中文",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_ImageUrl": {
+    "searchTemplateClasses_ImageUrl": {
         "message": "圖片搜尋(透過網址)",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_ImageSearch": {
+    "searchTemplateClasses_ImageSearch": {
         "message": "圖片搜尋(透過上傳)",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_Backup": {
+    "backupSettings": {
         "message": "匯出設定",
         "description": "Element on Options page"
     },
-    "elem_Restore": {
+    "restoreSettings": {
         "message": "匯入設定",
         "description": "Element on Options page"
     },
-    "elem_Default": {
+    "restoreToDefault": {
         "message": "還原預設",
         "description": "Element on Options page"
     },
@@ -424,15 +424,15 @@
         "message": "帶有 Shift 鍵的動作",
         "description": "Element on Options page"
     },
-    "elem_SearchTemplate": {
+    "searchTemplate": {
         "message": "搜尋範本",
         "description": "Element on Options page"
     },
-    "elem_General": {
+    "generalSettings": {
         "message": "一般",
         "description": "Element on Options page"
     },
-    "elem_Panel": {
+    "panel": {
         "message": "面板",
         "description": ""
     },
@@ -448,7 +448,7 @@
         "message": "用 %s 取代鏈結裡的關鍵字",
         "description": "Element on Options page"
     },
-    "elem_ShowActionTip": {
+    "showActionTip": {
         "message": "顯示動作提示",
         "description": "Element on Options page"
     },
@@ -460,7 +460,7 @@
         "message": "使用方法",
         "description": "Element on Options page"
     },
-    "elem_EnableDistanceTip": {
+    "enableDistanceIndicator": {
         "message": "啟用距離指示",
         "description": "Element on Options page"
     },
@@ -484,11 +484,11 @@
         "message": "當按下 Shift 鍵時使用不同的動作",
         "description": "Element on Options page"
     },
-    "elem_DistancePx": {
+    "miniumDistance": {
         "message": "觸發距離（px）",
         "description": "Element on Options page"
     },
-    "elem_EnableTimeoutCancel": {
+    "enableTimeoutCancel": {
         "message": "啟用逾時取消",
         "description": "Element on Options page"
     },
@@ -496,23 +496,23 @@
         "message": "逾時取消時間：",
         "description": "Element on Options page"
     },
-    "elem_EnableSync": {
+    "enableSync": {
         "message": "同步至 Firefox 帳號 (v53+)",
         "description": "Element on Options page"
     },
-    "elem_EnableStyle": {
+    "useCustomStyle": {
         "message": "啟用自訂樣式",
         "description": "Element on Options page"
     },
-    "elem_Download": {
+    "download": {
         "message": "下載",
         "description": "Element on Options page"
     },
-    "elem_ShowDefaultDownloadDirectory": {
+    "exploreDefaultDownloadDirectory": {
         "message": "開啟瀏覽器的預設下載目錄",
         "description": "Element on Options page"
     },
-    "elem_SettingDownloadDirectory": {
+    "changeDownloadDirectory": {
         "message": "設定下載目錄",
         "description": "Element on Options page"
     },
@@ -534,11 +534,11 @@
         "message": "儲存",
         "description": "Element on Options page"
     },
-    "elem_Style": {
+    "style": {
         "message": "樣式",
         "description": "Element on Options page"
     },
-    "elem_SaveStyle": {
+    "saveStyle": {
         "message": "儲存樣式",
         "description": "Element on Options page"
     },
@@ -615,10 +615,10 @@
     "elem_ShortcutSetting": {
         "message": "快速鍵設定: "
     },
-    "elem_MaximumDistancePx": {
+    "maximumDistance": {
         "message": "最大距離 (px)"
     },
-    "elem_AlwaysImage": {
+    "alwaysImage": {
         "message": "總是將含圖片的鏈結當成圖片類型",
         "description": ""
     },
@@ -638,27 +638,27 @@
         "message": "處理的最大檔案大小 (M)",
         "description": ""
     },
-    "elem_SelectStyle": {
+    "selectStyle": {
         "message": "選擇樣式",
         "description": ""
     },
-    "elem_ImageReferrer": {
+    "appendImageReferrer": {
         "message": "下載圖像時附加 Referrer",
         "description": ""
     },
-    "elem_EnableLockScrollbar": {
+    "lockScrollbar": {
         "message": "拖曳時鎖住捲軸",
         "description": ""
     },
-    "elem_PanelTips": {
+    "actionTips": {
         "message": "提示內容",
         "description": ""
     },
-    "elem_PanelIcon": {
+    "icon": {
         "message": "圖示",
         "description": ""
     },
-    "elem_PanelIconSource": {
+    "sourceOfIcon": {
         "message": "圖示來源"
     },
     "elem_PanelIconPreview": {
@@ -749,16 +749,16 @@
     "header_Misc": {
         "message": "雜項"
     },
-    "elem_ExtraCommands": {
+    "extraCommands": {
         "message": "擴充到6條命令"
     },
-    "elem_GetIconFromLocal": {
+    "pickIconFromLocalFile": {
         "message": "從本機選擇"
     },
-    "elem_GetIconFromURL": {
+    "getIconFromURL": {
         "message": "從鏈結取得"
     },
-    "elem_GetIconFromEngine": {
+    "useIconFromSearchEngine": {
         "message": "使用引擎自帶圖示"
     },
     "elem_MiddleButtonSelect": {

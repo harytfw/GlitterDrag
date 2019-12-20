@@ -1,7 +1,7 @@
 {
     "extensionDescription": {
         "message": "A drag extension that supports you drag text, link or image then helps you open or search it",
-        "description": ""
+        "": ""
     },
     "extensionName": {
         "message": "Glitter Drag",
@@ -28,111 +28,111 @@
             }
         }
     },
-    "ALLOW_NORMAL": {
+    "normalFourDirection": {
         "message": "Normal 4 directions ",
         "description": ""
     },
-    "ALLOW_QUADRANT": {
+    "quadrantDirection": {
         "message": "Inclined 4 directions",
         "description": ""
     },
-    "ALLOW_H": {
+    "horizontalDirection": {
         "message": "Horizontal 2 directions",
         "description": ""
     },
-    "ALLOW_V": {
+    "verticalDirection": {
         "message": "Vertical 2 directions",
         "description": ""
     },
-    "ALLOW_LOW_L_UP_R": {
+    "rightDiagonalDiection": {
         "message": "Inclined 2 directions",
         "description": ""
     },
-    "ALLOW_UP_L_LOW_R": {
+    "leftDiagonalDiection": {
         "message": "Another inclined 2 directions",
         "description": ""
     },
-    "ALLOW_ALL": {
+    "allDirection": {
         "message": "Crazy 8 directions",
         "description": ""
     },
-    "ALLOW_ONE": {
+    "onlyOneDirection": {
         "message": "Only 1 directions",
         "description": ""
     },
-    "ACT_OPEN": {
+    "actionOpen": {
         "message": "Open",
         "description": "Action name"
     },
-    "ACT_COPY": {
+    "actionCopy": {
         "message": "Copy",
         "description": "Action name"
     },
-    "ACT_SEARCH": {
+    "actionSearch": {
         "message": "Search",
         "description": "Action name"
     },
-    "ACT_DL": {
+    "actionDownload": {
         "message": "Download",
         "description": "Action name"
     },
-    "ACT_NONE": {
+    "noAction": {
         "message": "No action",
         "description": "Action name"
     },
-    "ACT_TRANS": {
+    "actionTranslate": {
         "message": "Translate",
         "description": "Action name"
     },
-    "ACT_QRCODE": {
+    "actionScanQrCode": {
         "message": "QR code",
         "description": "Action name"
     },
-    "ACT_BOOKMARK": {
+    "actionAddToBookmark": {
         "message": "Bookmark it",
         "description": "Action name"
     },
-    "ACT_FIND": {
+    "actionFind": {
         "message": "Find",
         "description": "Action name"
     },
-    "ACT_PANEL": {
+    "actionShowPanel": {
         "message": "Panel",
         "description": "Action name"
     },
-    "DIR_U": {
+    "directionUp": {
         "message": "Up",
         "description": "Direction"
     },
-    "DIR_D": {
+    "directionDown": {
         "message": "Down",
         "description": "Direction"
     },
-    "DIR_L": {
+    "directionLeft": {
         "message": "Left",
         "description": "Direction"
     },
-    "DIR_R": {
+    "directionRight": {
         "message": "Right",
         "description": "Direction"
     },
-    "DIR_UP_L": {
+    "directionUpperLeft": {
         "message": "Upper Left",
         "description": "Direction"
     },
-    "DIR_UP_R": {
+    "directionUpperRight": {
         "message": "Upper Right",
         "description": "Direction"
     },
-    "DIR_LOW_L": {
+    "directionLowerLeft": {
         "message": "Lower Left",
         "description": "Direction"
     },
-    "DIR_LOW_R": {
+    "directionLowerRight": {
         "message": "Lower Right",
         "description": "Direction"
     },
-    "DIR_OUTER": {
+    "directionExternal": {
         "message": "From external",
         "description": "Direction"
     },
@@ -166,135 +166,135 @@
             }
         }
     },
-    "TAB_NEW_WINDOW": {
+    "newWindow": {
         "message": "New win",
         "description": "Position of tab opened."
     },
-    "TAB_NEW_PRIVATE_WINDOW": {
+    "newPrivateWindow": {
         "message": "Private win",
         "description": "Position of tab opened."
     },
-    "TAB_CUR": {
+    "currentTab": {
         "message": "Current",
         "description": "Position of tab opened."
     },
-    "TAB_LAST": {
+    "lastTab": {
         "message": "Last",
         "description": "Position of tab opened."
     },
-    "TAB_FIRST": {
+    "firstTab": {
         "message": "First",
         "description": "Position of tab opened."
     },
-    "TAB_CLEFT": {
+    "relativeLeftTab": {
         "message": "Left",
         "description": "Position of tab opened."
     },
-    "TAB_CRIGHT": {
+    "relativeRightTab": {
         "message": "Right",
         "description": "Position of tab opened."
     },
-    "FORE_GROUND": {
+    "foreground": {
         "message": "Foreground",
         "description": "The tab opened in foreground."
     },
-    "BACK_GROUND": {
+    "background": {
         "message": "Background",
         "description": "The tab opened in background."
     },
-    "OPEN_LINK": {
+    "openLink": {
         "message": "Link",
         "description": ""
     },
-    "OPEN_IMAGE": {
+    "openImage": {
         "message": "Image",
         "description": ""
     },
-    "OPEN_IMAGE_LINK": {
+    "openLinkOfImage": {
         "message": "Image location first",
         "description": ""
     },
-    "SEARCH_LINK": {
+    "searchLink": {
         "message": "Link",
         "description": "Search action"
     },
-    "SEARCH_TEXT": {
+    "searchText": {
         "message": "Text",
         "description": "Search action"
     },
-    "SEARCH_IMAGE": {
+    "searchImage": {
         "message": "Image",
         "description": "Search action"
     },
-    "SEARCH_IMAGE_LINK": {
+    "searchLinkOfImage": {
         "message": "Image location first",
         "description": "Search action"
     },
-    "SEARCH_ONSITE_YES": {
+    "searchOnSite": {
         "message": "Search on site",
         "description": "Search action"
     },
-    "SEARCH_ONSITE_NO": {
+    "noSearchOnSite": {
         "message": "Don't process",
         "description": "Search action"
     },
-    "COPY_TEXT": {
+    "copyText": {
         "message": "Text",
         "description": "Copy action"
     },
-    "COPY_LINK": {
+    "copyLink": {
         "message": "Link",
         "description": "Copy action"
     },
-    "COPY_IMAGE": {
+    "copyImage": {
         "message": "Image",
         "description": "Copy action"
     },
-    "COPY_IMAGE_LINK": {
+    "copyLinkOfImage": {
         "message": "Image location first",
         "description": ""
     },
-    "DOWNLOAD_TEXT": {
+    "downloadText": {
         "message": "Text",
         "description": "Copy action"
     },
-    "DOWNLOAD_LINK": {
+    "downloadLink": {
         "message": "Link",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE": {
+    "downloadImage": {
         "message": "Image",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE_LINK": {
+    "downloadImageLink": {
         "message": "Image location first",
         "description": "Copy action"
     },
-    "DOWNLOAD_SAVEAS_YES": {
+    "showSaveAsDialog": {
         "message": "Save as",
         "description": "Copy action"
     },
-    "DOWNLOAD_SAVEAS_NO": {
+    "notShowSaveAsDialog": {
         "message": "Don't save as",
         "description": "Copy action"
     },
-    "option_page_title": {
+    "opetionPageTitle": {
         "message": "Glitter Drag - Options",
         "description": "title of page"
     },
-    "option_tooltip_act": {
+    "actionToPerform": {
         "message": "Perform the action",
         "description": "tooltip on option"
     },
-    "option_tooltip_active": {
+    "statusOfNewTab": {
         "message": "The activation status of the new tab",
         "description": "tooltip on option"
     },
-    "option_tooltip_pos": {
+    "positionOfNewTab": {
         "message": "The location of the tab",
         "description": "tooltip on option"
     },
-    "option_tooltip_search": {
+    "useWhichSearchEngine": {
         "message": "Call the search engine, the default call Google",
         "description": "tooltip on option"
     },
@@ -351,56 +351,56 @@
         "message": "https://www.google.com/search?q=%s",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     },
-    "elem_Text": {
+    "textGroup": {
         "message": "Text"
     },
-    "elem_Link": {
+    "linkGroup": {
         "message": "Link"
     },
-    "elem_Image": {
+    "imageGroup": {
         "message": "Image"
     },
     "elem_RefreshbtnOnEngines": {
         "message": "Refresh",
         "description": "Reload button on Options - Search Template"
     },
-    "elem_AddbtnOnEngines": {
+    "addNewTemplate": {
         "message": "Add",
         "description": "Add button on Options - Search Template"
     },
-    "elem_SavebtnOnEngines": {
+    "saveAllTemplate": {
         "message": "Save",
         "description": "Save button on Options - Search Template"
     },
-    "elem_BuiltinEngineHelperText": {
+    "searchEngineHelpMessage": {
         "message": "The built-in search engines that provided by addon, you need to click save button yourself after select one of engines: ",
         "description": "Helper text on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_General": {
+    "searchTemplateClasses_General": {
         "message": "General",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_Chinese": {
+    "searchTemplateClasses_Chinese": {
         "message": "Chinese",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_ImageUrl": {
+    "searchTemplateClasses_ImageUrl": {
         "message": "Image Search(via url)",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_ImageSearch": {
+    "searchTemplateClasses_ImageSearch": {
         "message": "Image Search(via upload)",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_Backup": {
+    "backupSettings": {
         "message": "Backup",
         "description": "Element on Options page"
     },
-    "elem_Restore": {
+    "restoreSettings": {
         "message": "Restore",
         "description": "Element on Options page"
     },
-    "elem_Default": {
+    "restoreToDefault": {
         "message": "Restore to default",
         "description": "Element on Options page"
     },
@@ -420,15 +420,15 @@
         "message": "Actions with Shift Key",
         "description": "Element on Options page"
     },
-    "elem_SearchTemplate": {
+    "searchTemplate": {
         "message": "Search template",
         "description": "Element on Options page"
     },
-    "elem_General": {
+    "generalSettings": {
         "message": "General",
         "description": "Element on Options page"
     },
-    "elem_Panel": {
+    "panel": {
         "message": "Panel",
         "description": ""
     },
@@ -444,7 +444,7 @@
         "message": "With %s as keyword in search url",
         "description": "Element on Options page"
     },
-    "elem_ShowActionTip": {
+    "showActionTip": {
         "message": "Show actions tip",
         "description": "Element on Options page"
     },
@@ -456,7 +456,7 @@
         "message": "Usage",
         "description": "Element on Options page"
     },
-    "elem_EnableDistanceTip": {
+    "enableDistanceIndicator": {
         "message": "Enable distance tip",
         "description": "Element on Options page"
     },
@@ -480,11 +480,11 @@
         "message": "Permit different actions when press Shift Key",
         "description": "Element on Options page"
     },
-    "elem_DistancePx": {
+    "miniumDistance": {
         "message": "Trigger distance (px)",
         "description": "Element on Options page"
     },
-    "elem_EnableTimeoutCancel": {
+    "enableTimeoutCancel": {
         "message": "Enable timeout cancel",
         "description": "Element on Options page"
     },
@@ -492,23 +492,23 @@
         "message": "Time to cancel (ms): ",
         "description": "Element on Options page"
     },
-    "elem_EnableSync": {
+    "enableSync": {
         "message": "Sync with Firefox Account (v53+)",
         "description": "Element on Options page"
     },
-    "elem_EnableStyle": {
+    "useCustomStyle": {
         "message": "Enable customize style",
         "description": "Element on Options page"
     },
-    "elem_Download": {
+    "download": {
         "message": "Download",
         "description": "Element on Options page"
     },
-    "elem_ShowDefaultDownloadDirectory": {
+    "exploreDefaultDownloadDirectory": {
         "message": "Show default download directory",
         "description": "Element on Options page"
     },
-    "elem_SettingDownloadDirectory": {
+    "changeDownloadDirectory": {
         "message": "Setting download directory",
         "description": "Element on Options page"
     },
@@ -530,11 +530,11 @@
         "message": "Save",
         "description": "Element on Options page"
     },
-    "elem_Style": {
+    "style": {
         "message": "Style",
         "description": "Element on Options page"
     },
-    "elem_SaveStyle": {
+    "saveStyle": {
         "message": "Save style",
         "description": "Element on Options page"
     },
@@ -612,10 +612,10 @@
         "message": "Shortcut Setting: ",
         "description": ""
     },
-    "elem_MaximumDistancePx": {
+    "maximumDistance": {
         "message": "Maximum Distance (px)"
     },
-    "elem_AlwaysImage": {
+    "alwaysImage": {
         "message": "Always treat a link containing picture as image type",
         "description": ""
     },
@@ -635,27 +635,27 @@
         "message": "Maximum Process Size (M)",
         "description": ""
     },
-    "elem_SelectStyle": {
+    "selectStyle": {
         "message": "Select Style",
         "description": ""
     },
-    "elem_ImageReferrer": {
+    "appendImageReferrer": {
         "message": "Append referrer when download iamge",
         "description": ""
     },
-    "elem_EnableLockScrollbar": {
+    "lockScrollbar": {
         "message": "Lock scrollbar when dragging",
         "description": ""
     },
-    "elem_PanelTips": {
+    "actionTips": {
         "message": "Panel Tips",
         "description": ""
     },
-    "elem_PanelIcon": {
+    "icon": {
         "message": "Panel Icon",
         "description": ""
     },
-    "elem_PanelIconSource": {
+    "sourceOfIcon": {
         "message": "Icon Source"
     },
     "elem_PanelIconPreview": {
@@ -746,16 +746,16 @@
     "header_Misc": {
         "message": "Misc"
     },
-    "elem_ExtraCommands": {
+    "extraCommands": {
         "message": "Expanded to six commands"
     },
-    "elem_GetIconFromLocal": {
+    "pickIconFromLocalFile": {
         "message": "Pick icon from local"
     },
-    "elem_GetIconFromURL": {
+    "getIconFromURL": {
         "message": "Get icon from url"
     },
-    "elem_GetIconFromEngine": {
+    "useIconFromSearchEngine": {
         "message": "Use icon of engine"
     },
     "elem_MiddleButtonSelect": {

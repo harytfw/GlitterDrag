@@ -28,111 +28,111 @@
             }
         }
     },
-    "ALLOW_NORMAL": {
+    "normalFourDirection": {
         "message": "普通4个方向",
         "description": ""
     },
-    "ALLOW_QUADRANT": {
+    "quadrantDirection": {
         "message": "斜向4个方向",
         "description": ""
     },
-    "ALLOW_H": {
+    "horizontalDirection": {
         "message": "水平2个方向",
         "description": ""
     },
-    "ALLOW_V": {
+    "verticalDirection": {
         "message": "垂直2个方向",
         "description": ""
     },
-    "ALLOW_LOW_L_UP_R": {
+    "rightDiagonalDiection": {
         "message": "斜向2个方向",
         "description": ""
     },
-    "ALLOW_UP_L_LOW_R": {
+    "leftDiagonalDiection": {
         "message": "另2个斜向方向",
         "description": ""
     },
-    "ALLOW_ALL": {
+    "allDirection": {
         "message": "狂热8个方向",
         "description": ""
     },
-    "ALLOW_ONE": {
+    "onlyOneDirection": {
         "message": "只有1个方向",
         "description": ""
     },
-    "ACT_OPEN": {
+    "actionOpen": {
         "message": "打开",
         "description": "Action name"
     },
-    "ACT_COPY": {
+    "actionCopy": {
         "message": "复制",
         "description": "Action name"
     },
-    "ACT_SEARCH": {
+    "actionSearch": {
         "message": "搜索",
         "description": "Action name"
     },
-    "ACT_DL": {
+    "actionDownload": {
         "message": "下载",
         "description": "Action name"
     },
-    "ACT_NONE": {
+    "noAction": {
         "message": "无动作",
         "description": "Action name"
     },
-    "ACT_TRANS": {
+    "actionTranslate": {
         "message": "翻译",
         "description": "Action name"
     },
-    "ACT_QRCODE": {
+    "actionScanQrCode": {
         "message": "二维码",
         "description": "Action name"
     },
-    "ACT_BOOKMARK": {
+    "actionAddToBookmark": {
         "message": "添加书签",
         "description": "Action name"
     },
-    "ACT_FIND": {
+    "actionFind": {
         "message": "查找",
         "description": "Action name"
     },
-    "ACT_PANEL": {
+    "actionShowPanel": {
         "message": "面板",
         "description": "Action name"
     },
-    "DIR_U": {
+    "directionUp": {
         "message": "上",
         "description": "Direction"
     },
-    "DIR_D": {
+    "directionDown": {
         "message": "下",
         "description": "Direction"
     },
-    "DIR_L": {
+    "directionLeft": {
         "message": "左",
         "description": "Direction"
     },
-    "DIR_R": {
+    "directionRight": {
         "message": "右",
         "description": "Direction"
     },
-    "DIR_UP_L": {
+    "directionUpperLeft": {
         "message": "左上",
         "description": "Direction"
     },
-    "DIR_UP_R": {
+    "directionUpperRight": {
         "message": "右上",
         "description": "Direction"
     },
-    "DIR_LOW_L": {
+    "directionLowerLeft": {
         "message": "左下",
         "description": "Direction"
     },
-    "DIR_LOW_R": {
+    "directionLowerRight": {
         "message": "右下",
         "description": "Direction"
     },
-    "DIR_OUTER": {
+    "directionExternal": {
         "message": "从外部",
         "description": "Direction"
     },
@@ -166,139 +166,139 @@
             }
         }
     },
-    "TAB_NEW_WINDOW": {
+    "newWindow": {
         "message": "新建窗口",
         "description": "Position of tab opened."
     },
-    "TAB_NEW_PRIVATE_WINDOW": {
+    "newPrivateWindow": {
         "message": "隐私窗口",
         "description": "Position of tab opened."
     },
-    "TAB_CUR": {
+    "currentTab": {
         "message": "当前",
         "description": "Position of tab opened."
     },
-    "TAB_LAST": {
+    "lastTab": {
         "message": "尾",
         "description": "Position of tab opened."
     },
-    "TAB_FIRST": {
+    "firstTab": {
         "message": "首",
         "description": "Position of tab opened."
     },
-    "TAB_CLEFT": {
+    "relativeLeftTab": {
         "message": "前",
         "description": "Position of tab opened."
     },
-    "TAB_CRIGHT": {
+    "relativeRightTab": {
         "message": "后",
         "description": "Position of tab opened."
     },
-    "FORE_GROUND": {
+    "foreground": {
         "message": "前台",
         "description": "The tab opened in foreground."
     },
-    "BACK_GROUND": {
+    "background": {
         "message": "后台",
         "description": "The tab opened in background."
     },
-    "OPEN_TEXT": {
+    "openText": {
         "message": "文本",
         "description": ""
     },
-    "OPEN_LINK": {
+    "openLink": {
         "message": "链接",
         "description": ""
     },
-    "OPEN_IMAGE": {
+    "openImage": {
         "message": "图像本身",
         "description": ""
     },
-    "OPEN_IMAGE_LINK": {
+    "openLinkOfImage": {
         "message": "图像地址优先",
         "description": ""
     },
-    "SEARCH_LINK": {
+    "searchLink": {
         "message": "链接",
         "description": "Search action"
     },
-    "SEARCH_TEXT": {
+    "searchText": {
         "message": "文本",
         "description": "Search action"
     },
-    "SEARCH_IMAGE": {
+    "searchImage": {
         "message": "图像",
         "description": "Search action"
     },
-    "SEARCH_IMAGE_LINK": {
+    "searchLinkOfImage": {
         "message": "图像地址优先",
         "description": ""
     },
-    "SEARCH_ONSITE_YES": {
+    "searchOnSite": {
         "message": "站内搜索",
         "description": "Search action"
     },
-    "SEARCH_ONSITE_NO": {
+    "noSearchOnSite": {
         "message": "不处理",
         "description": "Search action"
     },
-    "COPY_TEXT": {
+    "copyText": {
         "message": "文本",
         "description": "Copy action"
     },
-    "COPY_LINK": {
+    "copyLink": {
         "message": "链接",
         "description": "Copy action"
     },
-    "COPY_IMAGE": {
+    "copyImage": {
         "message": "图像",
         "description": "Copy action"
     },
-    "COPY_IMAGE_LINK": {
+    "copyLinkOfImage": {
         "message": "图像地址优先",
         "description": ""
     },
-    "DOWNLOAD_TEXT": {
+    "downloadText": {
         "message": "文本",
         "description": "Copy action"
     },
-    "DOWNLOAD_LINK": {
+    "downloadLink": {
         "message": "链接",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE": {
+    "downloadImage": {
         "message": "图像",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE_LINK": {
+    "downloadImageLink": {
         "message": "图像地址优先",
         "description": "Copy action"
     },
-    "DOWNLOAD_SAVEAS_YES": {
+    "showSaveAsDialog": {
         "message": "另存为",
         "description": "Copy action"
     },
-    "DOWNLOAD_SAVEAS_NO": {
+    "notShowSaveAsDialog": {
         "message": "不另存为",
         "description": "Copy action"
     },
-    "option_page_title": {
+    "opetionPageTitle": {
         "message": "闪耀拖拽-选项",
         "description": "title of page"
     },
-    "option_tooltip_act": {
+    "actionToPerform": {
         "message": "要执行的动作",
         "description": "tooltip on option"
     },
-    "option_tooltip_active": {
+    "statusOfNewTab": {
         "message": "新建标签页的激活状态",
         "description": "tooltip on option"
     },
-    "option_tooltip_pos": {
+    "positionOfNewTab": {
         "message": "标签页的位置",
         "description": "tooltip on option"
     },
-    "option_tooltip_search": {
+    "useWhichSearchEngine": {
         "message": "调用的搜索引擎，默认调用百度",
         "description": "tooltip on option"
     },
@@ -355,24 +355,24 @@
         "message": "https://www.baidu.com/s?wd=%s",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     },
-    "elem_Text": {
+    "textGroup": {
         "message": "文本"
     },
-    "elem_Link": {
+    "linkGroup": {
         "message": "链接"
     },
-    "elem_Image": {
+    "imageGroup": {
         "message": "图像"
     },
     "elem_RefreshbtnOnEngines": {
         "message": "刷新",
         "description": "Reload button on Options - Search Template"
     },
-    "elem_AddbtnOnEngines": {
+    "addNewTemplate": {
         "message": "添加",
         "description": "Add button on Options - Search Template"
     },
-    "elem_SavebtnOnEngines": {
+    "saveAllTemplate": {
         "message": "保存",
         "description": "Save button on Options - Search Template"
     },
@@ -380,31 +380,31 @@
         "message": "这里是扩展为你预先提供的搜索引擎，选中后会自动添加在下方，不过还需要你自己点保存按钮：",
         "description": "Helper text on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_General": {
+    "searchTemplateClasses_General": {
         "message": "通用",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_Chinese": {
+    "searchTemplateClasses_Chinese": {
         "message": "中文",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_ImageUrl": {
+    "searchTemplateClasses_ImageUrl": {
         "message": "图片搜索(通过网址)",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_SearchTemplateClasses_ImageSearch": {
+    "searchTemplateClasses_ImageSearch": {
         "message": "图片搜索(通过上传)",
         "description": "Select box classes on Options - Search Template"
     },
-    "elem_Backup": {
+    "backupSettings": {
         "message": "备份配置",
         "description": "Element on Options page"
     },
-    "elem_Restore": {
+    "restoreSettings": {
         "message": "恢复配置",
         "description": "Element on Options page"
     },
-    "elem_Default": {
+    "restoreToDefault": {
         "message": "恢复默认",
         "description": "Element on Options page"
     },
@@ -424,15 +424,15 @@
         "message": "带Shift键的动作",
         "description": "Element on Options page"
     },
-    "elem_SearchTemplate": {
+    "searchTemplate": {
         "message": "搜索模板",
         "description": "Element on Options page"
     },
-    "elem_General": {
+    "generalSettings": {
         "message": "常规",
         "description": "Element on Options page"
     },
-    "elem_Panel": {
+    "panel": {
         "message": "面板",
         "description": ""
     },
@@ -448,7 +448,7 @@
         "message": "用 %s 替代链接里的关键词",
         "description": "Element on Options page"
     },
-    "elem_ShowActionTip": {
+    "showActionTip": {
         "message": "显示动作提示",
         "description": "Element on Options page"
     },
@@ -460,7 +460,7 @@
         "message": "使用方法",
         "description": "Element on Options page"
     },
-    "elem_EnableDistanceTip": {
+    "enableDistanceIndicator": {
         "message": "启用距离指示",
         "description": "Element on Options page"
     },
@@ -484,11 +484,11 @@
         "message": "当按下 Shift 键时使用不同的动作",
         "description": "Element on Options page"
     },
-    "elem_DistancePx": {
+    "miniumDistance": {
         "message": "触发距离 (px)",
         "description": "Element on Options page"
     },
-    "elem_EnableTimeoutCancel": {
+    "enableTimeoutCancel": {
         "message": "启用超时取消",
         "description": "Element on Options page"
     },
@@ -496,23 +496,23 @@
         "message": "超时取消时间 (ms)：",
         "description": "Element on Options page"
     },
-    "elem_EnableSync": {
+    "enableSync": {
         "message": "同步到Firefox账户 (v53+)",
         "description": "Element on Options page"
     },
-    "elem_EnableStyle": {
+    "useCustomStyle": {
         "message": "启用自定义样式",
         "description": "Element on Options page"
     },
-    "elem_Download": {
+    "download": {
         "message": "下载",
         "description": "Element on Options page"
     },
-    "elem_ShowDefaultDownloadDirectory": {
+    "exploreDefaultDownloadDirectory": {
         "message": "打开浏览器的默认下载目录",
         "description": "Element on Options page"
     },
-    "elem_SettingDownloadDirectory": {
+    "changeDownloadDirectory": {
         "message": "设置下载目录",
         "description": "Element on Options page"
     },
@@ -534,11 +534,11 @@
         "message": "保存",
         "description": "Element on Options page"
     },
-    "elem_Style": {
+    "style": {
         "message": "样式",
         "description": "Element on Options page"
     },
-    "elem_SaveStyle": {
+    "saveStyle": {
         "message": "保存样式",
         "description": "Element on Options page"
     },
@@ -615,10 +615,10 @@
     "elem_ShortcutSetting": {
         "message": "快捷键设定: "
     },
-    "elem_MaximumDistancePx": {
+    "maximumDistance": {
         "message": "最大距离 (px)"
     },
-    "elem_AlwaysImage": {
+    "alwaysImage": {
         "message": "总是把含图片的链接当成图片类型",
         "description": ""
     },
@@ -638,27 +638,27 @@
         "message": "处理的最大文件大小 (M)",
         "description": ""
     },
-    "elem_SelectStyle": {
+    "selectStyle": {
         "message": "选择样式",
         "description": ""
     },
-    "elem_ImageReferrer": {
+    "appendImageReferrer": {
         "message": "下载图像时添加Referrer",
         "description": ""
     },
-    "elem_EnableLockScrollbar": {
+    "lockScrollbar": {
         "message": "拖拽时锁住滚动条",
         "description": ""
     },
-    "elem_PanelTips": {
+    "actionTips": {
         "message": "提示内容",
         "description": ""
     },
-    "elem_PanelIcon": {
+    "icon": {
         "message": "图标",
         "description": ""
     },
-    "elem_PanelIconSource": {
+    "sourceOfIcon": {
         "message": "图标来源"
     },
     "elem_PanelIconPreview": {
@@ -749,16 +749,16 @@
     "header_Misc": {
         "message": "杂项"
     },
-    "elem_ExtraCommands": {
+    "extraCommands": {
         "message": "扩充到6条命令"
     },
-    "elem_GetIconFromLocal": {
+    "pickIconFromLocalFile": {
         "message": "从本地选择"
     },
-    "elem_GetIconFromURL": {
+    "getIconFromURL": {
         "message": "从链接获得"
     },
-    "elem_GetIconFromEngine": {
+    "useIconFromSearchEngine": {
         "message": "使用引擎自带图标"
     },
     "elem_MiddleButtonSelect": {

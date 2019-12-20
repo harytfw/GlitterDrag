@@ -8,7 +8,7 @@ class DownloadWrapper {
             this.directories = res["downloadDirectories"];
             const tab = document.querySelector("#tab-download");
 
-            eventUtil.attachEventS("#showDefaultDownloadDirectory", () => {
+            eventUtil.attachEventS("#exploreDefaultDownloadDirectory", () => {
                 browser.downloads.showDefaultFolder();
             })
             eventUtil.attachEventS("#savebtnOnDownloadDirectories", () => {

@@ -1,0 +1,750 @@
+[extensionDescription]
+message = "A drag extension that supports you drag text, link or image then helps you open or search it"
+description = ""
+
+[extensionName]
+message = "Glitter Drag"
+description = "name of extension"
+
+[browserActionTitle]
+message = "Glitter Drag option"
+description = ""
+
+[defaultText]
+message = "default"
+description = ""
+
+[directionControl]
+message = "Direction Control"
+description = ""
+
+[currentEngine]
+message = "Current: $C$ "
+
+[normalFourDirection]
+message = "Normal 4 directions "
+description = ""
+
+[quadrantDirection]
+message = "Inclined 4 directions"
+description = ""
+
+[horizontalDirection]
+message = "Horizontal 2 directions"
+description = ""
+
+[verticalDirection]
+message = "Vertical 2 directions"
+description = ""
+
+[rightDiagonalDiection]
+message = "Inclined 2 directions"
+description = ""
+
+[leftDiagonalDiection]
+message = "Another inclined 2 directions"
+description = ""
+
+[allDirection]
+message = "Crazy 8 directions"
+description = ""
+
+[onlyOneDirection]
+message = "Only 1 directions"
+description = ""
+
+[actionOpen]
+message = "Open"
+description = "Action name"
+
+[actionCopy]
+message = "Copy"
+description = "Action name"
+
+[actionSearch]
+message = "Search"
+description = "Action name"
+
+[actionDownload]
+message = "Download"
+description = "Action name"
+
+[noAction]
+message = "No action"
+description = "Action name"
+
+[actionTranslate]
+message = "Translate"
+description = "Action name"
+
+[actionScanQrCode]
+message = "QR code"
+description = "Action name"
+
+[actionAddToBookmark]
+message = "Bookmark it"
+description = "Action name"
+
+[actionFind]
+message = "Find"
+description = "Action name"
+
+[actionShowPanel]
+message = "Panel"
+description = "Action name"
+
+[directionUp]
+message = "Up"
+description = "Direction"
+
+[directionDown]
+message = "Down"
+description = "Direction"
+
+[directionLeft]
+message = "Left"
+description = "Direction"
+
+[directionRight]
+message = "Right"
+description = "Direction"
+
+[directionUpperLeft]
+message = "Upper Left"
+description = "Direction"
+
+[directionUpperRight]
+message = "Upper Right"
+description = "Direction"
+
+[directionLowerLeft]
+message = "Lower Left"
+description = "Direction"
+
+[directionLowerRight]
+message = "Lower Right"
+description = "Direction"
+
+[directionExternal]
+message = "From external"
+description = "Direction"
+
+[textType]
+message = "Text$SUFFIX$"
+description = "An section of Options"
+
+[linkType]
+message = "Links$SUFFIX$"
+description = "An section of Options"
+
+[imageType]
+message = "Images$SUFFIX$"
+description = "An section of Options"
+
+[newWindow]
+message = "New win"
+description = "Position of tab opened."
+
+[newPrivateWindow]
+message = "Private win"
+description = "Position of tab opened."
+
+[currentTab]
+message = "Current"
+description = "Position of tab opened."
+
+[lastTab]
+message = "Last"
+description = "Position of tab opened."
+
+[firstTab]
+message = "First"
+description = "Position of tab opened."
+
+[relativeLeftTab]
+message = "Left"
+description = "Position of tab opened."
+
+[relativeRightTab]
+message = "Right"
+description = "Position of tab opened."
+
+[foreground]
+message = "Foreground"
+description = "The tab opened in foreground."
+
+[background]
+message = "Background"
+description = "The tab opened in background."
+
+[openLink]
+message = "Link"
+description = ""
+
+[openImage]
+message = "Image"
+description = ""
+
+[openLinkOfImage]
+message = "Image location first"
+description = ""
+
+[searchLink]
+message = "Link"
+description = "Search action"
+
+[searchText]
+message = "Text"
+description = "Search action"
+
+[searchImage]
+message = "Image"
+description = "Search action"
+
+[searchLinkOfImage]
+message = "Image location first"
+description = "Search action"
+
+[searchOnSite]
+message = "Search on site"
+description = "Search action"
+
+[noSearchOnSite]
+message = "Don't process"
+description = "Search action"
+
+[copyText]
+message = "Text"
+description = "Copy action"
+
+[copyLink]
+message = "Link"
+description = "Copy action"
+
+[copyImage]
+message = "Image"
+description = "Copy action"
+
+[copyLinkOfImage]
+message = "Image location first"
+description = ""
+
+[downloadText]
+message = "Text"
+description = "Copy action"
+
+[downloadLink]
+message = "Link"
+description = "Copy action"
+
+[downloadImage]
+message = "Image"
+description = "Copy action"
+
+[downloadImageLink]
+message = "Image location first"
+description = "Copy action"
+
+[showSaveAsDialog]
+message = "Save as"
+description = "Copy action"
+
+[notShowSaveAsDialog]
+message = "Don't save as"
+description = "Copy action"
+
+[opetionPageTitle]
+message = "Glitter Drag - Options"
+description = "title of page"
+
+[actionToPerform]
+message = "Perform the action"
+description = "tooltip on option"
+
+[statusOfNewTab]
+message = "The activation status of the new tab"
+description = "tooltip on option"
+
+[positionOfNewTab]
+message = "The location of the tab"
+description = "tooltip on option"
+
+[useWhichSearchEngine]
+message = "Call the search engine, the default call Google"
+description = "tooltip on option"
+
+[option_tooltip_open_type]
+message = "Specifies how to open a link. While Image location is not available, it will convert to normal link automatically"
+description = "tooltip on option"
+
+[option_tooltip_search_type]
+message = "Need to search for something, like text, link, etc."
+description = "tooltip on option"
+
+[option_tooltip_search_onsite]
+message = "Replace keyword with site:domain keyword"
+description = "tooltip on option"
+
+[option_tooltip_copy]
+message = "Specifies what needs to be copied, like text, links, or images. While Image location is not available, it will convert to normal link automatically. Copying images may have a lot of problems, careful to use"
+description = "tooltip on option"
+
+[option_tooltip_allow]
+message = "Limit direction to drag"
+description = "tooltip on option"
+
+[option_tooltip_download_type]
+message = "Specifies what needs to be downloaded. While Image location is not available, it will convert to normal link automatically"
+description = "tooltip on option"
+
+[option_tooltip_download_directory]
+message = "Specifies the directory to which the file is saved"
+description = "tooltip on option"
+
+[option_tooltip_download_saveas]
+message = "Needs to save the file as ... ?"
+description = "tooltip on option"
+
+[option_tooltip_path_prefix]
+message = "Path: $suffix$"
+
+[search_name_tooltip]
+message = "Search engine name"
+description = "tooltip on Options - Search Template"
+
+[search_url_tooltip]
+message = "Open the link"
+description = "tooltip on Options - Search Template"
+
+[default_search_url]
+message = "https://www.google.com/search?q=%s"
+description = "Default opened url for Search action - Default. Use %s as keyword placeholder"
+
+[textGroup]
+message = "Text"
+
+[linkGroup]
+message = "Link"
+
+[imageGroup]
+message = "Image"
+
+[elem_RefreshbtnOnEngines]
+message = "Refresh"
+description = "Reload button on Options - Search Template"
+
+[addNewTemplate]
+message = "Add"
+description = "Add button on Options - Search Template"
+
+[saveAllTemplate]
+message = "Save"
+description = "Save button on Options - Search Template"
+
+[elem_BuiltinEngineHelperText]
+message = "The built-in search engines that provided by addon, you need to click save button yourself after select one of engines: "
+description = "Helper text on Options - Search Template"
+
+[searchTemplateClasses_General]
+message = "General"
+description = "Select box classes on Options - Search Template"
+
+[searchTemplateClasses_Chinese]
+message = "Chinese"
+description = "Select box classes on Options - Search Template"
+
+[searchTemplateClasses_ImageUrl]
+message = "Image Search(via url)"
+description = "Select box classes on Options - Search Template"
+
+[searchTemplateClasses_ImageSearch]
+message = "Image Search(via upload)"
+description = "Select box classes on Options - Search Template"
+
+[backupSettings]
+message = "Backup"
+description = "Element on Options page"
+
+[restoreSettings]
+message = "Restore"
+description = "Element on Options page"
+
+[restoreToDefault]
+message = "Restore to default"
+description = "Element on Options page"
+
+[elem_Debug]
+message = "Debug"
+description = "Element on Options page"
+
+[elem_Actions]
+message = "Actions"
+description = "Element on Options page"
+
+[elem_ActionsCtrlKey]
+message = "Actions with Ctrl Key"
+description = "Element on Options page"
+
+[elem_ActionsShiftKey]
+message = "Actions with Shift Key"
+description = "Element on Options page"
+
+[searchTemplate]
+message = "Search template"
+description = "Element on Options page"
+
+[generalSettings]
+message = "General"
+description = "Element on Options page"
+
+[panel]
+message = "Panel"
+description = ""
+
+[elem_Baidu]
+message = "Baidu"
+description = "Element on Options page"
+
+[elem_Bing]
+message = "Bing"
+description = "Element on Options page"
+
+[elem_PlaceholderTip]
+message = "With %s as keyword in search url"
+description = "Element on Options page"
+
+[showActionTip]
+message = "Show actions tip"
+description = "Element on Options page"
+
+[elem_ModifyTipsContent]
+message = "Modify Tips Content: "
+description = "Element on Options page"
+
+[elem_TipsContentUsage]
+message = "Usage"
+description = "Element on Options page"
+
+[enableDistanceIndicator]
+message = "Enable distance tip"
+description = "Element on Options page"
+
+[elem_EnableAutoSelectPreviousTab]
+message = "After closing current tab, select previous tab automatically (Only work when you open a tab with foreground & right)"
+description = "Element on Options page"
+
+[elem_SwitchToParentTab]
+message = "After closing all children tabs，switch to parent tab. (It will override previous option) "
+description = "Element on Options page"
+
+[elem_DisableAdjustTabSequence]
+message = "Don't adjust tabs' open sequence"
+description = "Element on Options page"
+
+[elem_EnableCtrlKey]
+message = "Permit different actions when press Ctrl Key"
+description = "Element on Options page"
+
+[elem_EnableShiftKey]
+message = "Permit different actions when press Shift Key"
+description = "Element on Options page"
+
+[miniumDistance]
+message = "Trigger distance (px)"
+description = "Element on Options page"
+
+[enableTimeoutCancel]
+message = "Enable timeout cancel"
+description = "Element on Options page"
+
+[elem_TimeoutCancel]
+message = "Time to cancel (ms): "
+description = "Element on Options page"
+
+[enableSync]
+message = "Sync with Firefox Account (v53+)"
+description = "Element on Options page"
+
+[useCustomStyle]
+message = "Enable customize style"
+description = "Element on Options page"
+
+[download]
+message = "Download"
+description = "Element on Options page"
+
+[exploreDefaultDownloadDirectory]
+message = "Show default download directory"
+description = "Element on Options page"
+
+[changeDownloadDirectory]
+message = "Setting download directory"
+description = "Element on Options page"
+
+[DownloadDirectory]
+message = "DL Dir $NUM$"
+description = "Element on Options page"
+
+[elem_SettingDownloadDirectoryHelperText]
+message = "The directory sets can only be used as the subdirectory of the browser's download directory, and cannot use the absolute path. The second column is the directory path you can set. For example: \"image/\" represent the download directory is \"download directory/image/\". Leave blank field will use the default download directory."
+description = "Element on Options page"
+
+[elem_SavebtnOnDownloadDirectories]
+message = "Save"
+description = "Element on Options page"
+
+[style]
+message = "Style"
+description = "Element on Options page"
+
+[saveStyle]
+message = "Save style"
+description = "Element on Options page"
+
+[elem_SaveDone]
+message = "Saved!"
+description = "Element on Options page"
+
+[elem_Command]
+message = "Command $NUM$"
+description = ""
+
+[elem_PerformedAction]
+message = "Performed Action"
+description = ""
+
+[elem_TabStatus]
+message = "Tab Status"
+description = ""
+
+[elem_TabPosition]
+message = "Tab Position"
+description = ""
+
+[elem_SelectEngines]
+message = "Select Engines"
+description = ""
+
+[elem_EnginePreview]
+message = "Preview(Editable)"
+description = ""
+
+[elem_OpenType]
+message = "Open"
+description = ""
+
+[elem_SearchType]
+message = "Search"
+description = ""
+
+[elem_CopyType]
+message = "Copy"
+description = ""
+
+[elem_DownloadType]
+message = "Downlaod"
+description = ""
+
+[elem_Saveas]
+message = "Save As"
+description = ""
+
+[elem_DownloadDirectory]
+message = "Download Directory"
+description = ""
+
+[elem_SearchOnSite]
+message = "Search on Site"
+description = ""
+
+[elem_NewActions]
+message = "New Actions"
+description = ""
+
+[elem_DirectionRestriction]
+message = "Direction Restriction"
+description = ""
+
+[elem_ShortcutSetting]
+message = "Shortcut Setting: "
+description = ""
+
+[maximumDistance]
+message = "Maximum Distance (px)"
+
+[alwaysImage]
+message = "Always treat a link containing picture as image type"
+description = ""
+
+[elem_ToggleDebug]
+message = "Toggle Debug Mode"
+description = ""
+
+[elem_SpecialHosts]
+message = "Special Hosts"
+description = ""
+
+[elem_AllowExts]
+message = "Allow Exts"
+description = ""
+
+[elem_MaxProcessSize]
+message = "Maximum Process Size (M)"
+description = ""
+
+[selectStyle]
+message = "Select Style"
+description = ""
+
+[appendImageReferrer]
+message = "Append referrer when download iamge"
+description = ""
+
+[lockScrollbar]
+message = "Lock scrollbar when dragging"
+description = ""
+
+[actionTips]
+message = "Panel Tips"
+description = ""
+
+[icon]
+message = "Panel Icon"
+description = ""
+
+[sourceOfIcon]
+message = "Icon Source"
+
+[elem_PanelIconPreview]
+message = "Preview"
+
+[panel_Cancel]
+message = "Cancel"
+
+[elem_UpdateBaiduData]
+message = "Update Baidu Data"
+
+[elem_Translator]
+message = "Translator"
+
+[elem_UpdateBaiduExplanation]
+message = "The extension wants to access some data from Baidu Translation. Click button to accept"
+
+[elem_UpdateBaiduSuccess]
+message = "Update Success"
+
+[translator_Provider]
+message = "Provider"
+
+[provider_baidu]
+message = "Baidu"
+
+[provider_google]
+message = "Google"
+
+[language_auto]
+message = "Auto"
+
+[language_english]
+message = "English"
+
+[language_simplified_chinese]
+message = "Chinese (S)"
+
+[language_traditional_chinese]
+message = "Chinese (T)"
+
+[language_japanese]
+message = "Japanese"
+
+[language_german]
+message = "German"
+
+[language_korean]
+message = "Korean"
+
+[language_russian]
+message = "Russian"
+
+[language_french]
+message = "French"
+
+[elem_CustomDirectory]
+message = "CustomDirectory"
+
+[elem_VariablesInPath]
+message = "View the available variables in the download path"
+
+[elem_Exclusion]
+message = "Exclusion"
+description = ""
+
+[elem_ExclusionDescription]
+message = "In some cases extended drag and drop may conflict with the drag and drop functionality of the site, then you can use matching rules to exclude these specific sites, so that extensions do not run on these sites. These matching rules should be regular expressions Each line represents a rule"
+description = ""
+
+[popup_AddRule]
+message = "Add this site to the exclusion list"
+description = ""
+
+[popup_RemoveRule]
+message = "Remove the rule from the exclusion list"
+description = ""
+
+[header_Distance]
+message = "Distance"
+
+[header_Promption]
+message = "Promption"
+
+[header_Process]
+message = "Process"
+
+[header_Misc]
+message = "Misc"
+
+[extraCommands]
+message = "Expanded to six commands"
+
+[pickIconFromLocalFile]
+message = "Pick icon from local"
+
+[getIconFromURL]
+message = "Get icon from url"
+
+[useIconFromSearchEngine]
+message = "Use icon of engine"
+
+[elem_MiddleButtonSelect]
+message = "Let middle button can select text"
+
+[elem_DisableFixURL]
+message = "Don't try to fix URL"
+
+[currentEngine.placeholders.C]
+content = "$1"
+example = "Google"
+
+[textType.placeholders.suffix]
+content = "$1"
+example = "1"
+
+[linkType.placeholders.suffix]
+content = "$1"
+example = "1"
+
+[imageType.placeholders.suffix]
+content = "$1"
+example = "1"
+
+[option_tooltip_path_prefix.placeholders.suffix]
+content = "$1"
+example = "/path/"
+
+[DownloadDirectory.placeholders.num]
+content = "$1"
+example = "1"
+
+[elem_Command.placeholders.num]
+content = "$1"
+example = "1"

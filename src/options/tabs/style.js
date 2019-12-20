@@ -23,7 +23,7 @@ class StyleWrapper {
                 }).then(() => {
                     document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveDone');
                     setTimeout(() => {
-                        document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveStyle');
+                        document.querySelector("#saveStyle").textContent = getI18nMessage('saveStyle');
                     }, 2000);
                 })
             })
