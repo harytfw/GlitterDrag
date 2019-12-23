@@ -11,12 +11,11 @@ class BlobStorage {
     doRecycleTask(expired = 30 * 1000) {
         const now = Date.now()
         const entries = this.map.entries()
-        let cnt = 1
+        let cnt = 0
         for (const [key, data] of entries) {
-            const [url, time] = data
+            const [url, time, revoke] = data
             if (now - time > expired) {
-                if (url.protocol === 'blob:') {
-                    //TODO: 如果这个blob不是我们创建的，而由网站自己创建的，我们不应该调用 revoke
+                if (revoke === true && url.protocol === 'blob:') {
                     URL.revokeObjectURL(url.toString())
                 }
                 cnt += 1
@@ -30,7 +29,7 @@ class BlobStorage {
      * 
      * @param {URL} url 
      */
-    storeURL(url) {
+    storeURL(url, revoke = false) {
         if (!BlobStorage.SUPPORTED_PROTOCOL.includes(url.protocol)) {
             throw new Error('unsupported protocol')
         }
@@ -47,7 +46,7 @@ class BlobStorage {
         //         break
         // }
         const key = url.toString()
-        this.map.set(key, [url, Date.now()])
+        this.map.set(key, [url, Date.now(), revoke])
         return key
     }
 
@@ -58,11 +57,11 @@ class BlobStorage {
     storgeFile(file) {
         // 不使用的话，浏览器是否会一直保持这个文件的引用?
         const url = URL.createObjectURL(file)
-        return this.storeURL(url)
+        return this.storeURL(url, true)
     }
 
     async consume(key) {
-        const [url, time] = this.map.get(key)
+        const [url, time, _] = this.map.get(key)
         console.log(`consume: ${key}, url: ${url}`)
         // TODO: CORS
         const res = await fetch(url, {

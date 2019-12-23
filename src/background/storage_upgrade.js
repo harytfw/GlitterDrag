@@ -26,7 +26,7 @@ async function upgrade_153(all) {
             for (const bKey of Object.keys(all[aKey])) {
                 for (const cKey of Object.keys(all[aKey][bKey])) {
                     if ("engine_url" in all[aKey][bKey][cKey] === false) {
-                        let url = getI18nMessage("default_search_url");
+                        let url = i18nUtil.getI18n("default_search_url");
                         let n = all[aKey][bKey][cKey]["engine_name"];
                         for (let obj of engines) {
                             if (obj.name === n) {
@@ -122,6 +122,8 @@ browser.runtime.onInstalled.addListener(async (details) => {
         }
     }
     else if (details.reason === browser.runtime.OnInstalledReason.INSTALL) {
-        await browser.storage.local.set(DEFAULT_CONFIG);
+        console.log("new install")
+        await configUtil.save(configUtil.cloneDeep(configUtil.templateConfig));
+        
     }
 });

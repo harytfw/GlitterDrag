@@ -15,14 +15,14 @@ class EngineItemWrapper {
         this.nameInput = document.createElement("input");
         this.nameInput.className = "search-name-input";
         this.nameInput.type = "text";
-        this.nameInput.title = getI18nMessage("search_name_tooltip");
-        this.nameInput.placeholder = getI18nMessage("search_name_tooltip"); // Did not see the need for separate strings
+        this.nameInput.title = i18nUtil.getI18n("search_name_tooltip");
+        this.nameInput.placeholder = i18nUtil.getI18n("search_name_tooltip"); // Did not see the need for separate strings
         eventUtil.attachEventT(this.nameInput, this.onchange, "change");
 
         this.urlInput = this.nameInput.cloneNode();
         this.urlInput.className = "search-url-input";
-        this.urlInput.title = getI18nMessage("search_url_tooltip");
-        this.urlInput.placeholder = getI18nMessage("search_url_tooltip");
+        this.urlInput.title = i18nUtil.getI18n("search_url_tooltip");
+        this.urlInput.placeholder = i18nUtil.getI18n("search_url_tooltip");
         eventUtil.attachEventT(this.urlInput, this.onchange, "change");
 
         [this.removeBtn, this.nameInput, this.urlInput].forEach(t => this.elem.appendChild(t));

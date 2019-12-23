@@ -35,7 +35,7 @@ browser.storage.local.get().then(a => {
     Object.assign(bgConfig, a)
 })
 
-class DragController {
+class Controller {
 
     // static getFileExtension(filename) {
     //     const parts = filename.split(".")
@@ -75,34 +75,35 @@ class DragController {
 
     static computeDirection(angle, modifierKey, actionType) {
         let c = null;
-        if (bgConfig.enableCtrlKey && modifierKey === commons.KEY_CTRL) {
-            c = bgConfig.directionControl_CtrlKey;
-        } else if (bgConfig.enableShiftKey && modifierKey === commons.KEY_SHIFT) {
-            c = bgConfig.directionControl_ShiftKey;
-        } else {
-            c = bgConfig.directionControl;
-        }
-        return DragController.angleToDirection(angle, DIMENSION[c[actionType]])
+        // if (bgConfig.enableCtrlKey && modifierKey === commons.KEY_CTRL) {
+        //     c = bgConfig.directionControl_CtrlKey;
+        // } else if (bgConfig.enableShiftKey && modifierKey === commons.KEY_SHIFT) {
+        //     c = bgConfig.directionControl_ShiftKey;
+        // } else {
+        // c = bgConfig.directionControl;
+        // }
+        return Controller.angleToDirection(angle, DIMENSION["normal"])
     }
 
     static judgeActionType(selectionType, ) {
         switch (selectionType) {
             case SELECTION_TYPE.plainText:
-                return 'textAction'
+                return 'text'
             case SELECTION_TYPE.plainAnchor:
-                return 'linkAction'
+                return 'link'
             case SELECTION_TYPE.plainImage:
-                return 'imageAction'
+                return 'image'
             case SELECTION_TYPE.urlText:
-                return 'linkAction'
+                return 'link'
             case SELECTION_TYPE.anchorContainsImg:
-                if (bgConfig.alwaysImage === true) {
-                    return 'imageAction'
-                } else {
-                    return 'linkAction'
-                }
+                //TODO: check alwaysImage
+                // if (bgConfig.alwaysImage === true) {
+                //     return 'imageAction'
+                // } else {
+                return 'link'
+            // }
             default:
-                console.trace('unexpceted selection type')
+                console.trace('unknown selection type')
                 return
         }
     }
@@ -162,6 +163,7 @@ class DragController {
 
 
     clear() {
+        console.log("clear")
         this.selection.text = this.selection.plainUrl = this.selection.imageLink = null
         this.direction = null
         this.selectionType = SELECTION_TYPE.unknown
@@ -173,7 +175,7 @@ class DragController {
 
     checkDistanceRange() {
         let d = this.core.distance
-        if (bgConfig.triggeredDistance <= d && d < bgConfig.maxTriggeredDistance) {
+        if (bgConfig.minDistance <= d && d < bgConfig.maxDistance) {
             return true
         }
         return false
@@ -194,11 +196,11 @@ class DragController {
             (target.getAttribute("contenteditable") !== null ||
                 target.getAttribute("draggble") !== null)) {
             return false;
-        } else if (DragController.isText(target)) {
+        } else if (Controller.isText(target)) {
 
             return true
 
-        } else if (DragController.isAnchor(target)) {
+        } else if (Controller.isAnchor(target)) {
 
             if (target.href.startsWith("#")) {
                 return false;
@@ -206,13 +208,13 @@ class DragController {
 
             const JS_PREFIX = "javascript:"
             if (JS_PREFIX === target.href.substr(0, JS_PREFIX.length).toLowerCase()) {
-                return DragController.isImage(target.firstElementChild)
+                return Controller.isImage(target.firstElementChild)
             }
 
             return true
-        } else if (DragController.isImage(target)) {
+        } else if (Controller.isImage(target)) {
             return true
-        } else if (DragController.isTextInput(target)) {
+        } else if (Controller.isTextInput(target)) {
             return true
         }
 
@@ -237,9 +239,9 @@ class DragController {
      * @param {DataTransfer} dataTransfer 
      */
     allowExternal(dataTransfer) {
-        if (DragController.includesPlainText(dataTransfer)) {
+        if (Controller.includesPlainText(dataTransfer)) {
             return true
-        } else if (DragController.includesValidFile(dataTransfer)) {
+        } else if (Controller.includesValidFile(dataTransfer)) {
             return true
         }
         return false
@@ -265,7 +267,7 @@ class DragController {
     onStart(target, dataTransfer, isExternal) {
         this.clear()
         let type = SELECTION_TYPE.unknown
-        if (DragController.isText(target) || DragController.isTextInput(target)) {
+        if (Controller.isText(target) || Controller.isTextInput(target)) {
             // TODO: handle urlText
             this.selection.text = dataTransfer.getData("text/plain")
             if (urlUtil.seemAsURL(this.selection.text)) {
@@ -274,7 +276,7 @@ class DragController {
             } else {
                 type = SELECTION_TYPE.plainText
             }
-        } else if (DragController.isAnchorContainsImg(target)) {
+        } else if (Controller.isAnchorContainsImg(target)) {
             this.selection.plainUrl = dataTransfer.getData("text/uri-list")
             this.selection.text = target.textContent
             const imgElement = target.querySelector("img")
@@ -282,25 +284,25 @@ class DragController {
                 this.selection.imageLink = imgElement.src
             }
             type = SELECTION_TYPE.anchorContainsImg
-        } else if (DragController.isAnchor(target)) {
+        } else if (Controller.isAnchor(target)) {
             this.selection.plainUrl = dataTransfer.getData("text/uri-list")
             this.selection.text = target.textContent
             type = SELECTION_TYPE.plainAnchor
-        } else if (DragController.isImage(target)) {
+        } else if (Controller.isImage(target)) {
             this.selection.imageLink = target.src
             type = SELECTION_TYPE.plainImage
         } else if (isExternal) {
 
             const file = dataTransfer.files[0]
             if (file) {
-                const ext = DragController.getFileExtension(file.name)
+                const ext = Controller.getFileExtension(file.name)
                 if (IMAGE_EXTENSIONS.includes(ext)) {
                     type = SELECTION_TYPE.externalImage
                 } else if (TEXT_EXTENSIONS.includes(ext)) {
                     this.selection.text = dataTransfer.getData(MIME_PLAIN_TEXT)
                     type = SELECTION_TYPE.externalText
                 }
-            } else if (DragController.includesPlainText(dataTransfer)) {
+            } else if (Controller.includesPlainText(dataTransfer)) {
                 type = SELECTION_TYPE.plainText
             } else {
                 type = SELECTION_TYPE.unknown
@@ -326,10 +328,9 @@ class DragController {
             // let d = Object.keys(DIMENSION).map(key => `${key} = ${DragController.angleToDirection(this.core.angle, DIMENSION[key])}`)
             // console.log(this.core.angle, d)
 
-            this.direction = DragController.computeDirection(
+            this.direction = Controller.computeDirection(
                 this.core.angle,
-                this.core.modifierKey,
-                DragController.judgeActionType(this.selectionType)
+                Controller.judgeActionType(this.selectionType)
             )
             console.log('direction: ', this.direction)
 
@@ -337,7 +338,7 @@ class DragController {
                 this.ui.promptBox.mount()
             }
 
-        } else if (DragController.isTextInput(target)) {
+        } else if (Controller.isTextInput(target)) {
             this.ui.promptBox.remove()
             // 隐藏距离指示器
             // 隐藏动作提示框
@@ -360,44 +361,24 @@ class DragController {
             token: null,
             extension: '',
         }
+        builder.setActionType(Controller.judgeActionType(this.selectionType))
+
         switch (this.selectionType) {
-            case SELECTION_TYPE.plainText:
-                builder.setActionType('textAction')
-                break
-            case SELECTION_TYPE.plainAnchor:
-                builder.setActionType('linkAction')
-                break
             case SELECTION_TYPE.plainImage:
-                builder.setActionType('imageAction')
-                imageInfo.extension = DragController.getFileExtension(this.selection.imageLink)
+                imageInfo.extension = Controller.getFileExtension(this.selection.imageLink)
                 imageInfo.token = this.storage.storeURL(new URL(this.selection.imageLink))
-                break
-            case SELECTION_TYPE.urlText:
-                builder.setActionType('linkAction')
                 break
             case SELECTION_TYPE.anchorContainsImg:
-                if (bgConfig.alwaysImage === true) {
-                    builder.setActionType('imageAction')
-                } else {
-                    builder.setActionType('linkAction')
-                }
-                imageInfo.extension = DragController.getFileExtension(this.selection.imageLink)
+                imageInfo.extension = Controller.getFileExtension(this.selection.imageLink)
                 imageInfo.token = this.storage.storeURL(new URL(this.selection.imageLink))
-                break
-            case SELECTION_TYPE.externalText:
-                builder.setActionType('textAction')
                 break
             case SELECTION_TYPE.externalImage:
                 console.assert(this.selection.text === null, "text should be null")
                 console.assert(this.selection.imageLink === null, "imageLink should be null")
                 console.assert(this.selection.plainUrl === null, "plainUrl should be null")
-                builder.setActionType('imageAction')
-                imageInfo.extension = DragController.getFileExtension(dataTransfer.files[0].name)
+                imageInfo.extension = Controller.getFileExtension(dataTransfer.files[0].name)
                 imageInfo.token = this.storage.storeFile(dataTransfer.files[0])
                 break
-            default:
-                console.trace('unexpceted selection type')
-                return
         }
         /**
          * 1. dataURL
@@ -411,8 +392,7 @@ class DragController {
             .setSite(location.origin)
             .setPageTitle(document.title)
             .setModifierKey(this.core.modifierKey)
-            .complete(bgConfig /** TODO: */)
-            .post()
+            .post(bgConfig)
 
         this.clear()
     }
@@ -422,7 +402,7 @@ class DragController {
     }
 }
 
-var c = new DragController()
+var c = new Controller()
 
 browser.runtime.onConnect.addListener(port => {
     console.log(`new connection in ${location.href}`)

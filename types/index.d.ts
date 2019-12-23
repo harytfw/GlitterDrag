@@ -107,5 +107,7 @@ interface DirectionDefine {
 }
 
 declare const DIMENSION: {
-    
+
 };
+
+declare function proxyConfig(c: ConfigInterface): number

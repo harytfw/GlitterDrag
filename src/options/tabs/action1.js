@@ -26,7 +26,7 @@ class ActionsWrapper {
 
         for (const subcontainer of $A("#tab-actions #actions-container div")) {
             const label = document.createElement("h3");
-            label.textContent = getI18nMessage(subcontainer.className.split("Action")[0] + "Type");
+            label.textContent = i18nUtil.getI18n(subcontainer.className.split("Action")[0] + "Type");
             subcontainer.appendChild(label);
             const tclone = document.importNode(this.template4Type.content, true);
             subcontainer.appendChild(tclone);
@@ -197,7 +197,7 @@ class ActionsWrapper {
                     res[key][kind][dirName][attribute] = false;
                 }
                 else if (attribute === "engine_name") {
-                    const prefix = getI18nMessage('currentEngine');
+                    const prefix = i18nUtil.getI18n('currentEngine');
                     if (e.target.value.startsWith(prefix)) {
                         res[key][kind][dirName][attribute] = e.target.value.subStr(prefix.length);
                     }
@@ -346,15 +346,15 @@ class ActionsWrapper {
                 engineSelector.value = action["engine_name"];
 
                 let opt = document.createElement("option")
-                opt.textContent = getI18nMessage("defaultText");
-                opt.value = getI18nMessage("defaultText");
+                opt.textContent = i18nUtil.getI18n("defaultText");
+                opt.value = i18nUtil.getI18n("defaultText");
                 opt.setAttribute("url", "unknown");
                 opt.setAttribute("is-browser-search", true);
                 engineSelector.insertBefore(opt, engineSelector.firstElementChild);
 
 
                 opt = document.createElement("option");
-                opt.textContent = getI18nMessage("currentEngine", action["engine_name"]);
+                opt.textContent = i18nUtil.getI18n("currentEngine", action["engine_name"]);
                 opt.value = action["engine_name"];
                 opt.title = action["engine_url"];
                 opt.setAttribute("url", action["engine_url"]);
@@ -376,14 +376,14 @@ class ActionsWrapper {
         const dirs = (await browserStorage.get("downloadDirectories"))["downloadDirectories"];
         const els = $A(".download-directory", this.parent);
         for (const el of els) {
-            el.title = getI18nMessage("option_tooltip_path_prefix", dirs[parseInt(el.value)]);
+            el.title = i18nUtil.getI18n("option_tooltip_path_prefix", dirs[parseInt(el.value)]);
         }
     }
     async applySearchTitle() {
         for (const el of $A(".engine-name", this.parent)) {
             const opt = el.selectedOptions[0];
             let title = "";
-            if (opt.getAttribute("is-browser-search") === "true") title = getI18nMessage("search_name_tooltip");
+            if (opt.getAttribute("is-browser-search") === "true") title = i18nUtil.getI18n("search_name_tooltip");
             else title = el.selectedOptions[0].title;
             el.title = title;
         }

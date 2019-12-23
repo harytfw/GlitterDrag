@@ -20,7 +20,7 @@ class TranslatorWrapper {
                         return Promise.resolve("token or gtk is empty");
                     }
                 }).then(() => {
-                    target.nextElementSibling.textContent = getI18nMessage("elem_UpdateBaiduSuccess");
+                    target.nextElementSibling.textContent = i18nUtil.getI18n("elem_UpdateBaiduSuccess");
                 }).catch(e => {
                     target.nextElementSibling.textContent = "Update Error.";
                     console.error(e);

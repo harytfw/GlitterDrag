@@ -11,9 +11,7 @@ window.onunhandledrejection = function () {
     console.trace(...arguments)
 }
 
-
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
-const DEFAULT_SEARCH_ENGINE = browser.i18n.getMessage("default_search_url");
 
 function randomString(length = 8) {
     // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
@@ -44,9 +42,49 @@ function createBlobObjectURLForText(text = "") {
     return createObjectURL(blob);
 }
 
-function onError(e) {
-    $D(e);
-    console.error(e);
+function processURLPlaceholders(url, keyword, args) {
+    // 二级域名 (host)
+    let secondaryDomain = '';
+    // 完整域名
+    let domainName = '';
+    // 参数部分
+    let parameter = '';
+    // protocol部分
+    let protocol = '';
+    try {
+        let urlKeyword = new URL(keyword);
+        protocol = urlKeyword.protocol;
+        parameter = urlKeyword.pathname.substr(1) + urlKeyword.search;
+        domainName = urlKeyword.hostname;
+        let domainArr = domainName.split('.');
+        if (domainArr.length < 2) {
+            // 链接不包含二级域名(例如example.org, 其中example为二级域, org为顶级域) 使用domainName替代
+            secondaryDomain = domainName;
+        } else {
+            secondaryDomain = domainArr[domainArr.length - 2] + "." + domainArr[domainArr.length - 1]
+        }
+    } catch (Error) {
+        // 这里的异常用作流程控制: 非链接 -> 不作处理(使用''替换可能存在的误用占位符即可)
+    }
+
+    // 大写的占位符表示此字段无需Base64编码(一般是非参数)
+    url = url
+        .replace("%S", keyword)
+        .replace("%X", `site:${args.site} ${keyword}`)
+        .replace("%O", protocol)
+        .replace("%D", domainName)
+        .replace("%H", secondaryDomain)
+        .replace("%P", parameter)
+
+    url = url
+        .replace("%s", encodeURIComponent(keyword))
+        .replace("%x", encodeURIComponent(`site:${args.site} ${keyword}`))
+        .replace("%o", encodeURIComponent(protocol))
+        .replace("%d", encodeURIComponent(domainName))
+        .replace("%h", encodeURIComponent(secondaryDomain))
+        .replace("%p", encodeURIComponent(parameter))
+
+    return url;
 }
 
 class ExecutorClass {
@@ -58,6 +96,8 @@ class ExecutorClass {
         this.lastDownloadObjectURL = ""; //prepare for revoke
         this.findFlag = false;
         this.bgConfig = null;
+        this.sender = null
+        this.data = null
         this.temporaryDataStorage = new Map()
 
         browser.storage.local.get().then(a => {
@@ -79,113 +119,106 @@ class ExecutorClass {
         browser.tabs.onActivated.addListener(() => {
             this.backgroundChildTabCount = 0;
         });
-        this.sender = null
+
     }
 
     async DO(actionWrapper, sender) {
+        console.time("do action")
         this.data = actionWrapper
         this.sender = sender
-        if (this.data.direction === commons.DIR_P) {
-            // let panelAction = await LStorage.get(this.data.key);
-            // this.data.action = panelAction[this.data.key][this.data.index];
-        }
-        await this.execute();
-        this.data = null
-        this.sender = null
+        this.execute();
+        // this.data = null
+        // this.sender = null
+        console.timeEnd("do action")
     }
+
     async execute() {
-        console.log("execute")
-        switch (this.data.action.act_name) {
-            case commons.ACT_OPEN:
-                await this.openHandler();
-                break;
-            case commons.ACT_COPY:
-                await this.copyHandler();
-                break;
-            case commons.ACT_SEARCH:
-                await this.searchHandler();
-                break;
-            case commons.ACT_DL:
-                await this.downloadHandler();
-                break;
-            case commons.ACT_FIND:
-                await this.findText(this.data.selection.text);
-                break;
-            case commons.ACT_TRANS:
-                await this.translateText(this.data.selection.text);
-                break;
+        switch (this.data.command) {
+            case "open":
+                return this.openHandler();
+            case "copy":
+                return this.copyHandler();
+            case "search":
+                return this.searchHandler();
+            case "download":
+                return this.downloadHandler();
+            case "find":
+                return this.findText(this.data.selection.text);
+            case "translate":
+                return this.translateText(this.data.selection.text);
         }
     }
 
     async openHandler() {
         console.log("openHandler")
-        if (this.data.actionType === commons.textAction) {
-            return this.searchHandler();
+        console.time("handle open")
+        if (this.data.actionType === "text") {
+            this.searchHandler();
         }
-        else if (this.data.actionType === commons.linkAction) {
-            if (this.data.action.open_type === commons.OPEN_IMAGE_LINK) {
-                return this.openURL(this.data.selection.imageLink)
+        else if (this.data.actionType === "link") {
+            if (this.data.commandTarget === "image") {
+                // TODO remove below
+                this.openURL(this.data.selection.imageLink)
             }
-            else if (this.data.action.open_type === commons.OPEN_TEXT) {
-                return this.openURL(this.data.selection.text);
+            else if (this.data.commandTarget === "text") {
+                //TODO remove below
+                this.openURL(this.data.selection.text);
             }
-            else return this.openURL(this.data.selection.plainUrl)
+            else this.openURL(this.data.selection.plainUrl)
         }
-        else if (this.data.actionType === commons.imageAction) {
+        else if (this.data.actionType === "image") {
             if (this.data.selection.imageLink !== "") {
-                return this.openTab(this.data.selection.imageLink)
+                this.openTab(this.data.selection.imageLink)
             } else {
-                return this.fetchImagePromise(this.data.extraImageInfo)
+                this.fetchImagePromise(this.data.extraImageInfo)
                     .then(u8Array => {
                         this.openImageViewer(u8Array)
                     })
             }
         }
+        console.timeEnd("handle open")
     }
+
     async copyHandler() {
         console.log("copyHandler")
-        if (commons.linkAction === this.data.actionType) {
-            switch (this.data.action.copy_type) {
-                case commons.COPY_IMAGE_LINK:
+        if (this.data.actionType === "link") {
+            switch (this.data.commandTarget) {
+                case "image":
                     return this.copyText(this.data.selection.imageLink)
-                case commons.COPY_TEXT:
+                case "text":
                     return this.copyText(this.data.selection.text)
-                case commons.COPY_LINK:
+                case "link":
                     return this.copyText(this.data.selection.plainUrl)
             }
-        } else if (commons.textAction === this.data.actionType) {
+        } else if (this.data.actionType === "text") {
             return this.copyText(this.data.selection.text)
-        } else if (commons.imageAction === this.data.actionType) {
-            switch (this.data.action.copy_type) {
-                case commons.COPY_IMAGE:
+        } else if (this.data.actionType === "image") {
+            switch (this.data.commandTarget) {
+                case "image":
                     return this.fetchImagePromise(this.data.extraImageInfo)
                         .then((u8Array) => {
                             this.copyImage(u8Array)
                         })
-                case commons.COPY_IMAGE_LINK:
+                case "link":
                     return this.copyText(this.data.selection.imageLink)
-                case commons.COPY_LINK:
-                    //TODO
-                    break
             }
         }
-
     }
 
     async searchHandler() {
-        if (this.data.actionType === commons.linkAction) {
-            if (this.data.action.search_type === commons.SEARCH_IMAGE_LINK) {
+        if (this.data.actionType === "link") {
+            if (this.data.commandTarget === "image") {
                 return this.searchText(this.data.selection.imageLink);
             }
-            else if (this.data.action.search_type === commons.SEARCH_TEXT) {
+            else if (this.data.commandTarget === "text") {
                 return this.searchText(this.data.selection.text);
             }
             else {
                 return this.searchText(this.data.selection.plainUrl);
             }
         }
-        else if (this.data.actionType === commons.imageAction) {
-            if (this.data.action.search_type === commons.SEARCH_IMAGE) {
+        else if (this.data.actionType === "image") {
+            if (this.data.commandTarget === "image") {
                 if (this.data.selection.imageLink === null) {
                     return this.fetchImagePromise(this.data.extraImageInfo)
                         .then(u8Array => {
@@ -196,7 +229,7 @@ class ExecutorClass {
                 }
             }
         }
-        else if (this.data.action.search_type === commons.SEARCH_TEXT) {
+        else if (this.data.commandTarget === "text") {
             return this.searchText(this.data.selection.text);
         }
         else {
@@ -206,44 +239,28 @@ class ExecutorClass {
     }
 
     async downloadHandler() {
-        if (this.data.actionType === commons.linkAction && this.data.action.download_type === commons.DOWNLOAD_IMAGE_LINK) {
-            //TODO: 
-            return this.download(this.data.selection.imageLink);
+        if (this.data.actionType === "link") {
+            if (this.data.commandTarget === "image") {
+                return this.download(this.data.selection.imageLink);
+            }
         }
-        else if (this.data.action.download_type === commons.DOWNLOAD_TEXT) {
+        else if (this.data.actionType === "link") {
             //TODO: 
             const url = createBlobObjectURLForText(this.data.textSelection);
             const date = new Date();
             return this.download(url, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.txt`);
         }
-        return this.download(this.data.selection);
+        else if (this.data.actionType === "image") {
+            //TODO
+        }
     }
 
     async openTab(url = "") {
         console.log("open tab", url)
-        const onQueryTab = async tabs => {
-            for (let tab of tabs) {
-                if (tab.active === true) {
-                    if (this.data.action.tab_pos === commons.TAB_CUR) return browser.tabs.update(tab.id, { url });
-                    else {
-                        const option = {
-                            active: Boolean(this.data.action.tab_active),
-                            index: this.getTabIndex(tabs.length, tab.index),
-                            url,
-                        };
-                        option["openerTabId"] = tab.id;
-                        const newTab = await browser.tabs.create(option).catch(onError);
-                        return newTab;
-                    }
-                }
-            }
-            throw new Error("No active tab was found");
-        }
 
-        $D(`openTab: url=${url}`);
-        if ([commons.TAB_NEW_WINDOW, commons.TAB_NEW_PRIVATE_WINDOW].includes(this.data.action.tab_pos)) {
+        if (["newWindow", "newPrivateWindow"].includes(this.data.tabPosition)) {
             const win = await browser.windows.create({
-                incognito: this.data.action.tab_pos === commons.TAB_NEW_PRIVATE_WINDOW ? true : false,
+                incognito: this.data.tabPosition === "newPrivateWindow",
                 url,
             });
             const tabs = await browser.tabs.query({
@@ -252,117 +269,53 @@ class ExecutorClass {
             return tabs[0];
         }
         else {
-            const tabs = await browser.tabs.query({ currentWindow: true }).catch(onError);
-            const newTab = await onQueryTab(tabs);
-            return newTab;
-        }
-    }
-
-
-    async getEngine() {
-        //TODO: 
-        let url = DEFAULT_SEARCH_ENGINE;
-        if (this.data.action.engine_url && this.data.action.engine_url.length != 0) { //new engine_url property in v1.53
-            url = this.data.action.engine_url;
-        }
-        else { // old method
-            const engines = this.bgConfig["Engines"];
-            for (const e of engines) {
-                if (e.name === this.data.action.engine_name) {
-                    url = e.url;
-                    break;
-                }
+            console.time("query tabs")
+            const tabs = await browser.tabs.query({ currentWindow: true });
+            console.timeEnd("query tabs")
+            const activatedTab = tabs.find(t => t.active)
+            if (!activatedTab) {
+                throw new Error("No active tab was found");
+            }
+            if (this.data.tabPosition === "overrideCurrent") {
+                browser.tabs.update(activatedTab.id, { url });
+            }
+            else {
+                const option = {
+                    active: this.data.activeTab,
+                    index: this.getTabIndex(tabs.length, activatedTab.index),
+                    url,
+                    openerTabId: activatedTab.id
+                };
+                // console.time("create tab")
+                /*const newTab = */
+                return browser.tabs.create(option);
+                // console.timeEnd("create tab")
             }
         }
-
-        return url;
     }
 
     async searchText(keyword) {
-
-        // check if browser.search API available and if I should use it?
-        if (Boolean(this.data.action.is_browser_search) === true) {
+        if (this.data.searchEngine.builtin === true) {
             const tabHoldingSearch = await this.openTab('about:blank');
-            if (this.data.action.engine_name !== getI18nMessage('defaultText')) {
-                return browser.search.search({
-                    query: keyword,
-                    engine: this.data.action.engine_name,
-                    tabId: tabHoldingSearch.id
-                });
-            }
-            else {
-                return browser.search.search({
-                    query: keyword,
-                    tabId: tabHoldingSearch.id
-                });
-
-            }
+            //TODO: check error
+            return browser.search.search({
+                query: keyword,
+                engine: this.data.searchEngine.name,
+                tabId: tabHoldingSearch.id
+            });
         }
         else {
-            let url = await this.getEngine();
-
-            if (url.startsWith("{redirect.html}")) {
-                return this.openRedirectPage(keyword);
-            }
-            else {
-                if (this.data.action.search_onsite === commons.SEARCH_ONSITE_YES && this.data.actionType !== "imageAction") {
-                    url = url.replace("%s", "%x");
-                }
-
-                // 二级域名 (host)
-                let secondaryDomain = '';
-                // 完整域名
-                let domainName = '';
-                // 参数部分
-                let parameter = '';
-                // protocol部分
-                let protocol = '';
-                try {
-                    let urlKeyword = new URL(keyword);
-                    protocol = urlKeyword.protocol;
-                    parameter = urlKeyword.pathname.substr(1) + urlKeyword.search;
-                    domainName = urlKeyword.hostname;
-                    let domainArr = domainName.split('.');
-                    if (domainArr.length < 2) {
-                        // 链接不包含二级域名(例如example.org, 其中example为二级域, org为顶级域) 使用domainName替代
-                        secondaryDomain = domainName;
-                    } else {
-                        secondaryDomain = domainArr[domainArr.length - 2] + "." + domainArr[domainArr.length - 1]
-                    }
-                } catch (Error) {
-                    // 这里的异常用作流程控制: 非链接 -> 不作处理(使用''替换可能存在的误用占位符即可)
-                }
-
-                // 大写的占位符表示此字段无需Base64编码(一般是非参数)
-                url = url
-                    .replace("%S", keyword)
-                    .replace("%X", `site:${this.data.site} ${keyword}`)
-                    .replace("%O", protocol)
-                    .replace("%D", domainName)
-                    .replace("%H", secondaryDomain)
-                    .replace("%P", parameter)
-
-                url = url
-                    .replace("%s", encodeURIComponent(keyword))
-                    .replace("%x", encodeURIComponent(`site:${this.data.site} ${keyword}`))
-                    .replace("%o", encodeURIComponent(protocol))
-                    .replace("%d", encodeURIComponent(domainName))
-                    .replace("%h", encodeURIComponent(secondaryDomain))
-                    .replace("%p", encodeURIComponent(parameter))
-
-                return this.openTab(url);
-            }
+            return this.openTab(processURLPlaceholders(this.data.searchEngine.url, keyword, {
+                site: this.data.site
+            }))
         }
+
     }
 
     async searchImage(imageUrl) {
+        //TODO
         let url = await this.getEngine();
-
-        return this.openTab(
-            url
-                .replace("%s", encodeURIComponent(imageUrl))
-                .replace("%x", encodeURIComponent(`site:${this.data.site} ${imageUrl}`))
-        );
+        return this.openTab()
     }
 
     async searchImageByPostMethod(u8Array) {
@@ -376,15 +329,14 @@ class ExecutorClass {
         return this.openTab(REDIRECT_URL + "?key=" + key)
     }
 
-
     async findText(text) {
-        this.findFlag = true;
-        if (text.length == 0 || !browser.find) return;
-        return browser.find.find(text).then((result) => {
-            if (result.count > 0) {
-                browser.find.highlightResults();
-            }
-        });
+
+        if (text.length == 0) return;
+        const result = await browser.find.find(text)
+        if (result.count > 0) {
+            this.findFlag = true;
+            browser.find.highlightResults();
+        }
     }
 
     async removeFind() {
@@ -394,43 +346,8 @@ class ExecutorClass {
         }
     }
 
-    async download(url = "", aFilename = "") {
+    async download(url) {
         //TODO
-        let opt = {
-            url,
-            saveAs: this.data.action.download_saveas
-        };
-        if (url.startsWith("blob:") && this.data.fileInfo) {
-            this.lastDownloadObjectURL = url;
-            aFilename = this.data.fileInfo.name || "file.dat";
-        }
-        if (this.data.action.download_type !== commons.DOWNLOAD_TEXT) {
-            let pathname = new URL(url).pathname;
-            let parts = pathname.split("/");
-            if (parts[parts.length - 1] === "" && aFilename === "") {
-                //把文件名赋值为8个随机字符
-                //扩展名一定是html吗？
-                aFilename = randomString() + ".html";
-            }
-            else if (aFilename === "") {
-                aFilename = parts[parts.length - 1];
-            }
-        }
-
-        const CUSTOM_CODE_ENTRY_INDEX = 8;
-        if (parseInt(this.data.action.download_directory) === CUSTOM_CODE_ENTRY_INDEX) {
-            Object.assign(opt, this.data.downloadOption);
-            console.assert(typeof opt.filename === "string", "error type of downloadOption.filename");
-        }
-        else {
-            const directories = this.bgConfig["downloadDirectories"];
-            opt.filename = this.replaceVariables(directories[this.data.action.download_directory])
-            opt.filename += aFilename;
-        }
-        opt.filename = decodeURIComponent(opt.filename);
-        opt.filename = safeFilename(opt.filename);
-
-        this.lastDownloadItemID = await browser.downloads.download(opt);
 
     }
 
@@ -466,77 +383,38 @@ class ExecutorClass {
             this.data.extraImageInfo.extension === ".png" ? "png" : "jpeg");
     }
 
+    //TODO remove this method
     async openURL(url = "") {
-        function isValidURL(u) {
-            try {
-                new URL(u);
-                return true;
-            }
-            catch (e) {
-                if (url.startsWith('about:')) return true;
-                return false;
-            }
-        }
-        if (isValidURL(url)) {
-            return this.openTab(url);
-        }
-        else if (commons.urlPattern.test("http://" + url)) {
-            return this.openTab("http://" + url);
-        }
-        return this.searchText(url);
+        this.openTab(url);
+        // return this.searchText(url);
     }
 
     getTabIndex(tabsLength = 0, currentTabIndex = 0) {
 
-        if (this.bgConfig.disableAdjustTabSequence || this.data.action.tab_active === commons.FORE_GROUND) {
+        if (this.bgConfig.disableAdjustTabSequence || this.data.activeTab) {
             this.backgroundChildTabCount = 0;
         }
         let index = 0;
-        switch (this.data.action.tab_pos) {
-            case commons.TAB_CLEFT: index = currentTabIndex; break;
-            case commons.TAB_CRIGHT: index = currentTabIndex + this.backgroundChildTabCount + 1; break;
-            case commons.TAB_FIRST: index = 0; break;
-            case commons.TAB_LAST: index = tabsLength; break;
+        switch (this.data.tabPosition) {
+            case "left": index = currentTabIndex; break;
+            case "right": index = currentTabIndex + this.backgroundChildTabCount + 1; break;
+            case "start": index = 0; break;
+            case "end": index = tabsLength; break;
             default: break;
         }
 
-        if (this.data.action.tab_active === commons.BACK_GROUND && this.data.action.tab_pos === commons.TAB_CRIGHT) {
+        if (!this.data.activeTab && this.data.tabPosition === "right") {
             this.backgroundChildTabCount += 1;
         }
-
-        $D(`getTabIndex: tabsLength=${tabsLength},
-            currentTabIndex=${currentTabIndex},
-            flags.disableAdjustTabSequence = ${this.bgConfig.disableAdjustTabSequence},
-            this.data.action.tab_active =${this.data.action.tab_active},
-            this.data.action.tab_pos=${this.data.action.tab_pos},
-            this.backgroundChildTabCount = ${this.backgroundChildTabCount}
-            finalIndex=${index}
-        `);
         return index;
     }
-
-    replaceVariables(input) {
-        const _date = new Date;
-        const year = _date.getFullYear();
-        const month = ((_date.getMonth() + 1) + '').padStart(2, '0');
-        const date = (_date.getDate() + '').padStart(2, '0');
-        const today = year + '-' + month + '-' + date;
-        const host = this.data.site;
-        const pagetitle = this.data.pagetitle;
-        return input.replace('${year}', year)
-            .replace('${month}', month)
-            .replace('${date}', date)
-            .replace('${today}', today)
-            .replace('${host}', host)
-            .replace('${pagetitle}', pagetitle);
-    }
-
 
     async fetchImagePromise(extraImageInfo) {
         return new Promise((resolve, reject) => {
             const port = browser.tabs.connect(this.sender.tabId)
             if (port.error) {
                 console.trace(port, port.error)
+                reject(port.error)
                 return
             }
             port.onMessage.addListener(u8Array => {
@@ -574,14 +452,14 @@ async function insertCSS(sender) {
 }
 
 browser.runtime.onMessage.addListener(async (m, sender) => {
-    switch (m.cmd) {
+    switch (m.msgCmd) {
         case "removeHighlighting":
             executor.removeFind();
             break;
         case "insertCSS":
             insertCSS(sender);
             break;
-        default:
+        case "postAction":
             executor.DO(m, sender);
             break;
     }

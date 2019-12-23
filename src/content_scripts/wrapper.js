@@ -81,13 +81,14 @@ class ActionWrapper {
         return this
     }
 
-    complete(config) {
-        this.action = config[MODIFIERKEY_MAP.get(this.modifierKey)][this.actionType][this.direction]
-        return this
-    }
-
-    post() {
+    post(config) {
+        const actionDetail = config.actions[0].detail[this.actionType].find(detail => detail.direction === this.direction)
         console.log('post', this)
-        browser.runtime.sendMessage(this)
+        const msg = {
+            msgCmd: "postAction",
+        }
+        Object.assign(msg, this, actionDetail)
+        console.log("post",msg)
+        browser.runtime.sendMessage(msg)
     }
 }

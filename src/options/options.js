@@ -5,7 +5,7 @@ window.addEventListener("beforeunload", () => {
     });
 });
 
-document.title = getI18nMessage("option_page_title");
+document.title = i18nUtil.getI18n("option_page_title");
 
 const browserStorage = browser.storage.local;
 
@@ -22,10 +22,10 @@ function doI18n(scope = document) {
         let content = "";
         if ("i18nPlaceholders" in elem.dataset) {
             let placeholders = elem.dataset.i18nPlaceholders.split(",");
-            content = getI18nMessage(`${prefix}${elem.dataset.i18n}`, placeholders);
+            content = i18nUtil.getI18n(`${prefix}${elem.dataset.i18n}`, placeholders);
         }
         else {
-            content = getI18nMessage(`${prefix}${elem.dataset.i18n}`);
+            content = i18nUtil.getI18n(`${prefix}${elem.dataset.i18n}`);
         }
 
         // if (content === elem.dataset.i18n) {

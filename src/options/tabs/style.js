@@ -21,9 +21,9 @@ class StyleWrapper {
                 browserStorage.set({
                     "style": styleArea.value
                 }).then(() => {
-                    document.querySelector("#saveStyle").textContent = getI18nMessage('elem_SaveDone');
+                    document.querySelector("#saveStyle").textContent = i18nUtil.getI18n('elem_SaveDone');
                     setTimeout(() => {
-                        document.querySelector("#saveStyle").textContent = getI18nMessage('saveStyle');
+                        document.querySelector("#saveStyle").textContent = i18nUtil.getI18n('saveStyle');
                     }, 2000);
                 })
             })

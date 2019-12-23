@@ -221,7 +221,7 @@ const ICONS = {
 
 const PANEL_HTML = `
         <div id='GDPanelHeader'></div>
-        <div id='GDPanelTextLabel'>${getI18nMessage("textType")}</div>
+        <div id='GDPanelTextLabel'>${i18nUtil.getI18n("textType")}</div>
         <div id='GDPanelTextContent'></div>
         <div id='GDPanelGrid1' class='GDPanelGrid GDPanelTextGrid'></div>
         <div id='GDPanelGrid2' class='GDPanelGrid GDPanelTextGrid'></div>
@@ -229,7 +229,7 @@ const PANEL_HTML = `
         <div id='GDPanelGrid1a' class='GDPanelExtra  GDPanelGrid GDPanelTextGrid'></div>
         <div id='GDPanelGrid2a' class='GDPanelExtra GDPanelGrid GDPanelTextGrid'></div>
         <div id='GDPanelGrid3a' class='GDPanelExtra GDPanelGrid GDPanelTextGrid'></div>
-        <div id='GDPanelLinkLabel'>${getI18nMessage("linkType")}</div>
+        <div id='GDPanelLinkLabel'>${i18nUtil.getI18n("linkType")}</div>
         <div id='GDPanelLinkContent'></div>
         <div id='GDPanelGrid4' class='GDPanelGrid GDPanelLinkGrid'></div>
         <div id='GDPanelGrid5' class='GDPanelGrid GDPanelLinkGrid'></div>
@@ -237,7 +237,7 @@ const PANEL_HTML = `
         <div id='GDPanelGrid4a' class='GDPanelExtra GDPanelGrid GDPanelLinkGrid'></div>
         <div id='GDPanelGrid5a' class='GDPanelExtra GDPanelGrid GDPanelLinkGrid'></div>
         <div id='GDPanelGrid6a' class='GDPanelExtra GDPanelGrid GDPanelLinkGrid'></div>
-        <div id='GDPanelImageLabel'>${getI18nMessage("imageType")}</div>
+        <div id='GDPanelImageLabel'>${i18nUtil.getI18n("imageType")}</div>
         <div id='GDPanelImageContent'></div>
         <div id='GDPanelGrid7' class='GDPanelGrid GDPanelImageGrid'></div>
         <div id='GDPanelGrid8' class='GDPanelGrid GDPanelImageGrid'></div>
@@ -392,7 +392,7 @@ class Panel extends UIClass { //eslint-disable-line no-unused-vars
 
     updateHeader(target) {
         if (target.id === "GDPanelFooter") {
-            this.header.textContent = getI18nMessage("panel_Cancel"); //getI18nMessage("Cancel");
+            this.header.textContent = i18nUtil.getI18n("panel_Cancel"); //i18nUtil.getI18n("Cancel");
             return;
         }
         const setting = bgConfig[target.dataset["key"]][target.dataset["index"]];
@@ -634,7 +634,7 @@ class Translator extends UIClass { //eslint-disable-line no-unused-vars
         for (const name of TranslatorService.PROVIDER_LIST) {
             let a = document.createElement("a");
             a.href = "javascript:void(0)";
-            a.textContent = getI18nMessage("Provider_" + name);
+            a.textContent = i18nUtil.getI18n("Provider_" + name);
             a.setAttribute("provider", name);
             this.providerBox.node.appendChild(a);
         }
@@ -735,7 +735,7 @@ class Translator extends UIClass { //eslint-disable-line no-unused-vars
             name = "google"; //fallback
         }
         this._provider.setAttribute("provider", name);
-        this._provider.textContent = getI18nMessage("provider_" + name);
+        this._provider.textContent = i18nUtil.getI18n("provider_" + name);
     }
 
     get provider() {

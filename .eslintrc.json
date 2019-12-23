@@ -14,7 +14,7 @@
     "globals": {
         "DOMRect": false,
         "commons": false,
-        "getI18nMessage": false,
+        "i18nUtil.getI18n": false,
         "checkDragTargetType": false,
         "DEFAULT_CONFIG": false,
         "bgConfig": false,

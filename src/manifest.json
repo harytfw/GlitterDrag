@@ -28,8 +28,9 @@
     ],
     "background": {
         "scripts": [
-            "common.js",
-            "default_config.js",
+            "common/config.js",
+            "common/env.js",
+            "common/url_util.js",
             "background/storage_upgrade.js",
             "background/background.js"
         ]
@@ -42,11 +43,12 @@
                 "<all_urls>"
             ],
             "js": [
-                "common.js",
-                "translator/service.js",
+                "common/config.js",
+                "common/env.js",
+                "common/i18n_util.js",
+                "common/url_util.js",
+                // "translator/service.js",
                 "content_scripts/ui.js",
-                "content_scripts/util.js",
-                "content_scripts/url_util.js",
                 "content_scripts/wrapper.js",
                 "content_scripts/core.js",
                 "content_scripts/dimension_define.js",

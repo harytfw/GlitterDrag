@@ -31,7 +31,7 @@ class DownloadWrapper {
             }
 
             const cloned = entry.cloneNode(true);
-            cloned.firstElementChild.value = getI18nMessage("elem_CustomDirectory");
+            cloned.firstElementChild.value = i18nUtil.getI18n("elem_CustomDirectory");
             cloned.lastElementChild.remove();
             const codearea = document.createElement("textarea");
             codearea.id = ""

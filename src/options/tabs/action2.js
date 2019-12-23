@@ -298,10 +298,10 @@ class ActionsView {
         const dirs = (await browserStorage.get("downloadDirectories"))["downloadDirectories"];
         const els = this.parent.querySelectorAll(".download-directory option");
         for (const el of els) {
-            el.title = getI18nMessage("option_tooltip_path_prefix", dirs[parseInt(el.value)]);
+            el.title = i18nUtil.getI18n("option_tooltip_path_prefix", dirs[parseInt(el.value)]);
         }
         const select = this.$E("select.download-directory");
-        select.title = getI18nMessage("option_tooltip_path_prefix", dirs[parseInt(select.value)]);
+        select.title = i18nUtil.getI18n("option_tooltip_path_prefix", dirs[parseInt(select.value)]);
     }
 }
 

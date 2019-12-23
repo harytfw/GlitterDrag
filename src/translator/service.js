@@ -17,15 +17,15 @@ const TranslatorService = {
 */
     // see http://4umi.com/web/html/languagecodes.php
     LANGUAGE_CODE_MAP: new Map([
-        ["auto", getI18nMessage("language_auto")],
-        ["en", getI18nMessage("language_english")],
-        ["zh-CN", getI18nMessage("language_simplified_chinese")],
-        ["zh-TW", getI18nMessage("language_traditional_chinese")],
-        ["ja", getI18nMessage("language_japanese")],
-        ["ru", getI18nMessage("language_russian")],
-        ["fr", getI18nMessage("language_french")],
-        ["de", getI18nMessage("language_german")],
-        ["ko", getI18nMessage("language_korean")],
+        ["auto", i18nUtil.getI18n("language_auto")],
+        ["en", i18nUtil.getI18n("language_english")],
+        ["zh-CN", i18nUtil.getI18n("language_simplified_chinese")],
+        ["zh-TW", i18nUtil.getI18n("language_traditional_chinese")],
+        ["ja", i18nUtil.getI18n("language_japanese")],
+        ["ru", i18nUtil.getI18n("language_russian")],
+        ["fr", i18nUtil.getI18n("language_french")],
+        ["de", i18nUtil.getI18n("language_german")],
+        ["ko", i18nUtil.getI18n("language_korean")],
     ]),
     PROVIDER_LIST: ["google", "baidu"],
 
