@@ -7,3 +7,8 @@ search-engine-manager table img {
     vertical-align: middle;
     margin-right: .5rem;
 }
+
+custom-settings .control label {
+    font-weight: 400;
+    margin-right: .5em;
+}

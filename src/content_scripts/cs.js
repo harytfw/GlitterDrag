@@ -174,6 +174,7 @@ class Controller {
     }
 
     checkDistanceRange() {
+        return true
         let d = this.core.distance
         if (bgConfig.minDistance <= d && d < bgConfig.maxDistance) {
             return true

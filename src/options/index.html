@@ -38,10 +38,10 @@
         </div>
         <div class="tabs tabs-title">
             <ul>
-                <li class="is-active" data-target="#no1"><a>Pictures</a></li>
-                <li data-target="#no2"><a>Music</a></li>
-                <li data-target="#no3"><a>Videos</a></li>
-                <li data-target="#no4"><a>Documents</a></li>
+                <li class="is-active" data-target="#no1"><a>Settings</a></li>
+                <li data-target="#no2"><a>Action</a></li>
+                <li data-target="#no3"><a>Search Engine</a></li>
+                <li data-target="#no4"><a>Download Directory</a></li>
             </ul>
         </div>
         <div class="columns tabs-body">
@@ -58,17 +58,18 @@
                 <directory-manager></directory-manager>
             </div>
         </div>
-        </div>
     </template>
     <template id="template-settings">
         <div class="field is-horizontal">
             <div class="field-body">
                 <div class="field">
                     <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" data-setting-name="enableIndicator">
-                            <span data-i18n="showIndicator">enableIndicator</span>
-                        </label>
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="enableIndicator">
+                            <div class="state">
+                                <label data-i18n="showIndicator">Show Indicator</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -78,24 +79,12 @@
             <div class="field-body">
                 <div class="field">
                     <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" data-setting-name="enablePrompt">
-                            <span data-i18n="ShowActionTip">enablePrompt</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="field is-horizontal">
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" data-setting-name="enableTimeout">
-                            <span data-i18n="EnableTimeoutCancel">enableTimeout</span>
-                        </label>
-                        <input type="number">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="enablePrompt">
+                            <div class="state">
+                                <label data-i18n="showPrompt">Show Prompt</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,10 +95,88 @@
             <div class="field-body">
                 <div class="field">
                     <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" data-setting-name="enableCtrlKey">
-                            <span data-i18n="EnableCtrlKey">enableCtrlKey</span>
-                        </label>
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="enableTimeout">
+                            <div class="state">
+                                <label data-i18n="cancelAfterTimeout">Cancel after timeout</label>
+                            </div>
+
+                        </div>
+                        <input type="text" name="timeout">
+                        <span> s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="features.extendMiddleButton">
+                            <div class="state">
+                                <label data-i18n="extendMiddleButton">Extend Middle Button</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="features.appendReferrer">
+                            <div class="state">
+                                <label data-i18n="appendReferrerInDownload">Append referrer in download</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="features.disableFixURL">
+                            <div class="state">
+                                <label data-i18n="notFixURL">Don't Fix URL</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="features.lockScrollbar">
+                            <div class="state">
+                                <label data-i18n="lockScrollbar">Lock Scrollbar</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field is-narrow">
+                    <div class="control">
+                        <label>mininum distance</label>
+                        <input type="text" name="minDistance">
                     </div>
                 </div>
             </div>
@@ -118,195 +185,15 @@
 
         <div class="field is-horizontal">
             <div class="field-body">
-                <div class="field">
+                <div class="field is-narrow">
                     <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" data-setting-name="enableShiftKey">
-                            <span data-i18n="EnableShifhtKey">enableShiftKey</span>
-                        </label>
+                        <label>No padding</label>
+                        <input type="text" name="maxDistance">
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
-
-        <div class="field is-horizontal">
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" data-setting-name="enableStyle">
-                            <span data-i18n="EnableStyle">enableStyle</span>>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="field is-horizontal">
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" data-setting-name="alwaysImage">
-                            <span data-i18n="alwaysImage">alwaysImage</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="field is-horizontal">
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" data-setting-name="imageReferrer">
-                            Checkbox
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="field is-horizontal">
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" data-setting-name="disableFixURL">
-                            Checkbox
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="field is-horizontal">
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox">
-                            Checkbox
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="field is-horizontal">
-            <div class="field-label">
-                <label class="label" for="triggeredDistance" data-i18n="DistancePx">
-                    Triggered Distance
-                </label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <input type="number" id="triggeredDistance" min=0 required>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="field is-horizontal">
-            <div class="field-label">
-                <label class="label" for="maxTriggeredDistance" data-i18n="MaximumDistancePx">
-                    Max Triggered Distance
-                </label>
-            </div>
-            <label for="maxTriggeredDistance" data-i18n="MaximumDistancePx"></label>
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <input type="number" id="maxTriggeredDistance" min=0 required>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-        <h3 data-i18n="Distance" data-i18n-prefix="header_"></h3>
-        <br>
-        <input type="number" id="maxTriggeredDistance" min=0 required>
-        <br>
-        <h3 data-i18n="Promption" data-i18n-prefix="header_"></h3>
-        <label data-i18n="ModifyTipsContent"></label>
-        <select id="tipsContentSelect" not-config>
-            <option data-i18n="ACT_NONE" data-i18n-prefix="" value="ACT_NONE"></option>
-            <option data-i18n="ACT_OPEN" data-i18n-prefix="" value="ACT_OPEN"></option>
-            <option data-i18n="ACT_COPY" data-i18n-prefix="" value="ACT_COPY"></option>
-            <option data-i18n="ACT_SEARCH" data-i18n-prefix="" value="ACT_SEARCH"></option>
-            <option data-i18n="ACT_DL" data-i18n-prefix="" value="ACT_DL"></option>
-            <option data-i18n="ACT_TRANS" data-i18n-prefix="" value="ACT_TRANS"></option>
-            <option data-i18n="ACT_QRCODE" data-i18n-prefix="" value="ACT_QRCODE" disabled></option>
-            <option data-i18n="ACT_FIND" data-i18n-prefix="" value="ACT_FIND" disabled></option>
-        </select>
-        <input id="tipsContentInput" type="text" not-config></input>
-        <a data-i18n="TipsContentUsage" style="font:caption"
-            href="https://github.com/harytfw/GlitterDrag/wiki/Usage-for-Content-of-Tips"></a>
-        <br>
-        <input type="checkbox" id="enablePrompt">
-        <label for="enablePrompt" data-i18n="ShowActionTip"></label>
-        <h3 data-i18n="Process" data-i18n-prefix="header_"></h3>
-        <input type="checkbox" id="enableIndicator">
-        <label for="enableIndicator" data-i18n="EnableDistanceTip"></label>
-        <br>
-        <input type="checkbox" id="enableTimeoutCancel">
-        <label for="enableTimeoutCancel" data-i18n="EnableTimeoutCancel"></label>
-        <br>
-        <label for="timeoutCancel" data-i18n="TimeoutCancel"></label>
-        <input type="number" id="timeoutCancel">
-        <br>
-        <input type="checkbox" id="enableCtrlKey">
-        <label for="enableCtrlKey" data-i18n="EnableCtrlKey"></label>
-        <br>
-        <input type="checkbox" id="enableShiftKey">
-        <label for="enableShiftKey" data-i18n="EnableShiftKey"></label>
-        <br>
-        <input type="checkbox" id="enableLockScrollbar">
-        <label for="enableLockScrollbar" data-i18n="EnableLockScrollbar"></label>
-        <br>
-        <h3 data-i18n="Misc" data-i18n-prefix="header_"></h3>
-        <input type="checkbox" id="disableAdjustTabSequence">
-        <label for="disableAdjustTabSequence" data-i18n="DisableAdjustTabSequence"></label>
-        <br>
-        <input type="checkbox" id="enableStyle">
-        <label for="enableStyle" data-i18n="EnableStyle"></label>
-        <br>
-        <input type="checkbox" id="alwaysImage">
-        <label for="alwaysImage" data-i18n="AlwaysImage"></label>
-        <br>
-        <input type="checkbox" id="imageReferrer">
-        <label for="imageReferrer" data-i18n="ImageReferrer"></label>
-        <br>
-        <input type="checkbox" id="middleButtonSelect">
-        <label for="middleButtonSelect" data-i18n="MiddleButtonSelect"></label>
-        <br>
-        <input type="checkbox" id="disableFixURL">
-        <label for="disableFixURL" data-i18n="DisableFixURL"></label>
-        <br>
-        <label for="specialHosts" data-i18n="SpecialHosts" style="display:none"></label>
-        <input type="text" id="specialHosts" not-config style="display:none">
-
-        <label for="allowExts" data-i18n="AllowExts"></label>
-        <input type="text" id="allowExts" not-config>
-        <br>
-        <label for="maxProcessSize" data-i18n="MaxProcessSize"></label>
-        <input type="number" id="maxProcessSize">
-        <br>
-        <input type="checkbox" id="enableSync" disabled>
-        <label for="enableSync" data-i18n="EnableSync" style="display:none"></label>
-        <br>
-        <input type="checkbox" id="debug">
-        <label for="debug" data-i18n="ToggleDebug">切换DEBUG</label>
     </template>
     <template id="template-action-config">
 
@@ -735,7 +622,6 @@
             </div>
 
             <div class="field is-horizontal is-hidden">
-
                 <div class="field-label has-text-left">
                     <label class="label"> search engine builtin </label>
                 </div>
@@ -747,6 +633,20 @@
                     </div>
                 </div>
             </div>
+
+            <div class="field is-horizontal is-hidden">
+                <div class="field-label has-text-left">
+                    <label class="label"> search engine method </label>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <input type="text" name="searchEngine.method">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
 
             <!-- directory name -->
@@ -840,8 +740,13 @@
         <div class="columns">
             <div class="column">
                 <div class="buttons">
-                    <button id="add-search-engine" class="button is-success">AAAA</button>
-                    <button class="button">AAAA</button>
+                    <button class="button is-success" data-event="add">
+                        <span class="icon">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <label>Add</label>
+                    </button>
+                    <!-- <button class="button">AAAA</button> -->
                 </div>
             </div>
         </div>
@@ -871,8 +776,13 @@
         <div class="columns">
             <div class="column">
                 <div class="buttons">
-                    <button class="button is-success" data-event="add">AAAA</button>
-                    <button class="button">AAAA</button>
+                    <button class="button is-success" data-event="add">
+                        <span class="icon">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <label>Add</label>
+                    </button>
+                    <!-- <button class="button">AAAA</button> -->
                 </div>
             </div>
         </div>
@@ -991,7 +901,8 @@
                                         <div class="control">
                                             <div class="file is-small">
                                                 <label class="file-label">
-                                                    <input class="file-input" type="file" name="iconInput" accept=".png, .jpg, .jpeg">
+                                                    <input class="file-input" type="file" name="iconInput"
+                                                        accept=".png, .jpg, .jpeg">
                                                     <span class="file-cta">
                                                         <span class="file-icon">
                                                             <i class="fas fa-upload"></i>
@@ -1031,8 +942,18 @@
     </template>
     <template id="template-table-cell-buttons">
         <div class="buttons">
-            <button class="button is-info is-small" data-event="edit">E</button>
-            <button class="button is-danger is-small" data-event="delete">X</button>
+            <button class="button is-info is-small" data-event="edit">
+                <span class="icon">
+                    <i class="fas fa-edit"></i>
+                </span>
+                <!-- <label>Edit</label> -->
+            </button>
+            <button class="button is-danger is-small" data-event="delete">
+                <span class="icon">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <!-- <label>Delete</label> -->
+            </button>
         </div>
     </template>
     <template id="template-table-cell-delete-buttons">
@@ -1083,7 +1004,42 @@
             </div>
         </div>
     </template>
+    <template id="template-search-engine-row">
+        <tr>
+            <td class="no">
+            </td>
+            <td>
+                <input name="icon" type="hidden">
+                <input name="name" type="hidden">
+                <div>
+                    <img class="search-engine-icon" src="">
+                    <span class="search-engine-name">Bing Search</span>
+                </div>
+            </td>
+            <td>
+                <input name="url" type="hidden">
+                <span class="search-engine-url">https://www.bing.com/search?q=%s</span>
+            </td>
+            <td>
+                <input name="method" type="hidden">
+                <div class="buttons">
+                    <button class="button is-info is-small" data-event="edit">
+                        <span class="icon">
+                            <i class="fas fa-edit"></i>
+                        </span>
+                        <!-- <label>Edit</label> -->
+                    </button>
+                    <button class="button is-danger is-small" data-event="delete">
+                        <span class="icon">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                        <!-- <label>Delete</label> -->
+                    </button>
+                </div>
+            </td>
 
+        </tr>
+    </template>
     <script src="../common/i18n_util.js"></script>
     <script src="../common/env.js"></script>
     <script src="../common/config.js"></script>

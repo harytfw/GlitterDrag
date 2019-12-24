@@ -135,12 +135,18 @@ class ActinoConfiguration extends HTMLElement {
         this.editor.searchEngineName = this.querySelector(`[name='searchEngine.name']`).value
         this.editor.searchEngineURL = this.querySelector(`[name='searchEngine.url']`).value
         this.editor.searchEngineIcon = this.querySelector(`[name='searchEngine.icon']`).value
+        this.editor.searchEngineMethod = this.querySelector(`[name='searchEngine.method']`).value
+        
+        this.editor.searchEngineBuiltin = this.querySelector(`[name='searchEngine.builtin']`).checked
+        
         this.editor.addEventListener("result", (e) => {
             if (e.detail === "confirm") {
                 console.log("get searchEngineEditor result")
                 this.querySelector(`[name='searchEngine.name']`).value = this.editor.searchEngineName
                 this.querySelector(`[name='searchEngine.url']`).value = this.editor.searchEngineURL
                 this.querySelector(`[name='searchEngine.icon']`).value = this.editor.searchEngineIcon
+                this.querySelector(`[name='searchEngine.method']`).value = this.editor.searchEngineMethod
+                
                 this.querySelector(`[name='searchEngine.builtin']`).checked = this.editor.searchEngineBuiltin
 
                 this.saveDetail()
@@ -162,6 +168,8 @@ class ActinoConfiguration extends HTMLElement {
         this.querySelector(`[name='searchEngine.name']`).value = detail.searchEngine.name
         this.querySelector(`[name='searchEngine.url']`).value = detail.searchEngine.url
         this.querySelector(`[name='searchEngine.icon']`).value = detail.searchEngine.icon
+        this.querySelector(`[name='searchEngine.builtin']`).value = detail.searchEngine.builtin
+        this.querySelector(`[name='searchEngine.method']`).value = detail.searchEngine.method
         this.querySelector(`[name='download.showSaveAsDialog']`).checked = detail.download.showSaveAsDialog
         this.querySelector(`[name='download.directoryName']`).value = detail.download.directoryName
         this.querySelector(`[name=scriptName]`).value = detail.scriptName

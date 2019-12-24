@@ -10,11 +10,13 @@ class ConfigManager extends HTMLElement {
         this.saveBtn.addEventListener("click", () => {
             this.discardBtn.disabled = this.saveBtn.disabled = "disabled"
             this.save()
+            this.dispatchEvent(new Event("save", { bubbles: true }))
         })
 
         this.discardBtn.addEventListener("click", () => {
             this.discardBtn.disabled = this.saveBtn.disabled = "disabled"
             this.discard()
+            this.dispatchEvent(new Event("discard", { bubbles: true }))
         })
 
         this.addEventListener("configupdate", () => {

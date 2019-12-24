@@ -31,7 +31,6 @@ class SearchEngineEditorModal extends HTMLElement {
             if (icon.length !== 0) {
                 this.searchEngineIcon = icon
             }
-
         })
         this.addEventListener("change", (e) => {
             const { target } = e
@@ -49,6 +48,14 @@ class SearchEngineEditorModal extends HTMLElement {
             detail: resultType,
             bubbles: true
         }))
+    }
+
+    get modalTitle() {
+        this.querySelector(".modal-card-title").textContent
+    }
+
+    set modalTitle(value) {
+        this.querySelector(".modal-card-title").textContent = value
     }
 
     get searchEngineName() {
@@ -78,7 +85,7 @@ class SearchEngineEditorModal extends HTMLElement {
     }
 
     get searchEngineBuiltin() {
-        return this.querySelector("[name=searchEngineBuiltin]").value
+        return this.querySelector("[name=searchEngineBuiltin]").checked
     }
 
     set searchEngineBuiltin(value) {
@@ -107,8 +114,18 @@ class SearchEngineEditorModal extends HTMLElement {
         }
     }
 
-    active(name, url, icon) {
+    active(name, url, icon, showBuiltin = false) {
         console.info(this, "active")
+
+        const column = this.querySelector("[groupname=Browser]").closest(".column")
+        if (showBuiltin) {
+            column.classList.remove("is-hidden")
+            console.log("show builtin")
+        } else {
+            column.classList.add("is-hidden")
+            console.log("not show builtin")
+        }
+
         this.querySelector(".modal").classList.add("is-active")
         if (typeof name === "string") {
             this.searchEngineName = name
@@ -126,6 +143,7 @@ class SearchEngineEditorModal extends HTMLElement {
     close() {
         console.info(this, "close")
         this.querySelector(".modal").classList.remove("is-active")
+        this._dispatch("cancel")
     }
 
 
@@ -142,7 +160,7 @@ class SearchEngineEditorModal extends HTMLElement {
         const reader = new FileReader()
         reader.onloadend = () => {
             console.log("read file end")
-            this.searchEngineIcon = reader.result            
+            this.searchEngineIcon = reader.result
         }
         console.log("start read file")
         reader.readAsDataURL(file)

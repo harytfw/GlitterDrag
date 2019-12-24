@@ -100,15 +100,18 @@ class ExecutorClass {
         this.data = null
         this.temporaryDataStorage = new Map()
 
+        this.downloadIdSetToRevoke = new Map()
+
         browser.storage.local.get().then(a => {
             this.bgConfig = a
         })
 
         browser.downloads.onChanged.addListener(item => {
-            if (item.id === this.lastDownloadItemID && item.state.current === browser.downloads.State.COMPLETE) {
-                window.URL.revokeObjectURL(this.lastDownloadObjectURL);
-                this.lastDownloadItemID = -1;
-                this.lastDownloadObjectURL = "";
+            if (this.downloadIdSetToRevoke.has(item.id)) {
+                if (item.state.current === "interrupted" || item.state.current === "complete") {
+                    window.URL.revokeObjectURL(this.lastDownloadObjectURL);
+                    this.downloadIdSetToRevoke.delete(item.id)
+                }
             }
         })
 
@@ -146,6 +149,8 @@ class ExecutorClass {
                 return this.findText(this.data.selection.text);
             case "translate":
                 return this.translateText(this.data.selection.text);
+            default:
+                console.error(`unexcepted commond: "${this.data.command}"`)
         }
     }
 
@@ -242,16 +247,20 @@ class ExecutorClass {
         if (this.data.actionType === "link") {
             if (this.data.commandTarget === "image") {
                 return this.download(this.data.selection.imageLink);
+            } else if (this.data.commandTarget === "link") {
+                return this.download(this.data.selection.plainUrl);
             }
         }
-        else if (this.data.actionType === "link") {
-            //TODO: 
+        else if (this.data.actionType === "text") {
             const url = createBlobObjectURLForText(this.data.textSelection);
-            const date = new Date();
-            return this.download(url, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.txt`);
+            return this.download(url, `${Date.now()}.txt`);
         }
         else if (this.data.actionType === "image") {
-            //TODO
+            if (this.data.selection.imageLink !== null) {
+                return this.download(this.data.selection.imageLink)
+            } else {
+                // TODO 
+            }
         }
     }
 
@@ -295,6 +304,7 @@ class ExecutorClass {
     }
 
     async searchText(keyword) {
+        console.log("search text: ", keyword)
         if (this.data.searchEngine.builtin === true) {
             const tabHoldingSearch = await this.openTab('about:blank');
             //TODO: check error
@@ -330,7 +340,7 @@ class ExecutorClass {
     }
 
     async findText(text) {
-
+        console.log("find text:", text)
         if (text.length == 0) return;
         const result = await browser.find.find(text)
         if (result.count > 0) {
@@ -340,6 +350,7 @@ class ExecutorClass {
     }
 
     async removeFind() {
+        console.log("remove find")
         if (this.findFlag) { //可能有其他扩展也使用 browser.find，加一个判断
             this.findFlag = false;
             return browser.find.removeHighlighting();
@@ -347,8 +358,10 @@ class ExecutorClass {
     }
 
     async download(url) {
-        //TODO
-
+        console.log("download: ", url)
+        browser.downloads.download({
+            url,
+        })
     }
 
 
@@ -369,6 +382,7 @@ class ExecutorClass {
     }
 
     async copyText(data) {
+        console.log("copy text:", data)
         const storage = document.createElement("textarea");
         storage.value = data;
         document.body.appendChild(storage);
@@ -379,6 +393,7 @@ class ExecutorClass {
     }
 
     async copyImage(u8Array) {
+        console.log("copy image, length=" + u8Array)
         browser.clipboard.setImageData(u8Array,
             this.data.extraImageInfo.extension === ".png" ? "png" : "jpeg");
     }
@@ -410,6 +425,7 @@ class ExecutorClass {
     }
 
     async fetchImagePromise(extraImageInfo) {
+        console.log("fetach image promise")
         return new Promise((resolve, reject) => {
             const port = browser.tabs.connect(this.sender.tabId)
             if (port.error) {
@@ -418,7 +434,7 @@ class ExecutorClass {
                 return
             }
             port.onMessage.addListener(u8Array => {
-                console.log('get u8Array, start disconnect')
+                console.log('get u8Array, call disconnect then resolve promise')
                 port.disconnect()
                 resolve(u8Array)
             })

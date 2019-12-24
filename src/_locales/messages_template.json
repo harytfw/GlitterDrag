@@ -1,7 +1,7 @@
 {
     "extensionDescription": {
         "message": "",
-        "description": ""
+        "": ""
     },
     "extensionName": {
         "message": "",
@@ -28,111 +28,111 @@
             }
         }
     },
-    "ALLOW_NORMAL": {
+    "normalFourDirection": {
         "message": "",
         "description": ""
     },
-    "ALLOW_QUADRANT": {
+    "quadrantDirection": {
         "message": "",
         "description": ""
     },
-    "ALLOW_H": {
+    "horizontalDirection": {
         "message": "",
         "description": ""
     },
-    "ALLOW_V": {
+    "verticalDirection": {
         "message": "",
         "description": ""
     },
-    "ALLOW_LOW_L_UP_R": {
+    "rightDiagonalDiection": {
         "message": "",
         "description": ""
     },
-    "ALLOW_UP_L_LOW_R": {
+    "leftDiagonalDiection": {
         "message": "",
         "description": ""
     },
-    "ALLOW_ALL": {
+    "allDirection": {
         "message": "",
         "description": ""
     },
-    "ALLOW_ONE": {
+    "onlyOneDirection": {
         "message": "",
         "description": ""
     },
-    "ACT_OPEN": {
+    "actionOpen": {
         "message": "",
         "description": "Action name"
     },
-    "ACT_COPY": {
+    "actionCopy": {
         "message": "",
         "description": "Action name"
     },
-    "ACT_SEARCH": {
+    "actionSearch": {
         "message": "",
         "description": "Action name"
     },
-    "ACT_DL": {
+    "actionDownload": {
         "message": "",
         "description": "Action name"
     },
-    "ACT_NONE": {
+    "noAction": {
         "message": "",
         "description": "Action name"
     },
-    "ACT_TRANS": {
+    "actionTranslate": {
         "message": "",
         "description": "Action name"
     },
-    "ACT_QRCODE": {
+    "actionScanQrCode": {
         "message": "",
         "description": "Action name"
     },
-    "ACT_BOOKMARK": {
+    "actionAddToBookmark": {
         "message": "",
         "description": "Action name"
     },
-    "ACT_FIND": {
+    "actionFind": {
         "message": "",
         "description": "Action name"
     },
-    "ACT_PANEL": {
+    "actionShowPanel": {
         "message": "",
         "description": "Action name"
     },
-    "DIR_U": {
+    "directionUp": {
         "message": "",
         "description": "Direction"
     },
-    "DIR_D": {
+    "directionDown": {
         "message": "",
         "description": "Direction"
     },
-    "DIR_L": {
+    "directionLeft": {
         "message": "",
         "description": "Direction"
     },
-    "DIR_R": {
+    "directionRight": {
         "message": "",
         "description": "Direction"
     },
-    "DIR_UP_L": {
+    "directionUpperLeft": {
         "message": "",
         "description": "Direction"
     },
-    "DIR_UP_R": {
+    "directionUpperRight": {
         "message": "",
         "description": "Direction"
     },
-    "DIR_LOW_L": {
+    "directionLowerLeft": {
         "message": "",
         "description": "Direction"
     },
-    "DIR_LOW_R": {
+    "directionLowerRight": {
         "message": "",
         "description": "Direction"
     },
-    "DIR_OUTER": {
+    "directionExternal": {
         "message": "",
         "description": "Direction"
     },
@@ -166,135 +166,135 @@
             }
         }
     },
-    "TAB_NEW_WINDOW": {
+    "newWindow": {
         "message": "",
         "description": "Position of tab opened."
     },
-    "TAB_NEW_PRIVATE_WINDOW": {
+    "newPrivateWindow": {
         "message": "",
         "description": "Position of tab opened."
     },
-    "TAB_CUR": {
+    "currentTab": {
         "message": "",
         "description": "Position of tab opened."
     },
-    "TAB_LAST": {
+    "lastTab": {
         "message": "",
         "description": "Position of tab opened."
     },
-    "TAB_FIRST": {
+    "firstTab": {
         "message": "",
         "description": "Position of tab opened."
     },
-    "TAB_CLEFT": {
+    "relativeLeftTab": {
         "message": "",
         "description": "Position of tab opened."
     },
-    "TAB_CRIGHT": {
+    "relativeRightTab": {
         "message": "",
         "description": "Position of tab opened."
     },
-    "FORE_GROUND": {
+    "foreground": {
         "message": "",
         "description": "The tab opened in foreground."
     },
-    "BACK_GROUND": {
+    "background": {
         "message": "",
         "description": "The tab opened in background."
     },
-    "OPEN_LINK": {
+    "openLink": {
         "message": "",
         "description": ""
     },
-    "OPEN_IMAGE": {
+    "openImage": {
         "message": "",
         "description": ""
     },
-    "OPEN_IMAGE_LINK": {
+    "openLinkOfImage": {
         "message": "",
         "description": ""
     },
-    "SEARCH_LINK": {
+    "searchLink": {
         "message": "",
         "description": "Search action"
     },
-    "SEARCH_TEXT": {
+    "searchText": {
         "message": "",
         "description": "Search action"
     },
-    "SEARCH_IMAGE": {
+    "searchImage": {
         "message": "",
         "description": "Search action"
     },
-    "SEARCH_IMAGE_LINK": {
+    "searchLinkOfImage": {
         "message": "",
         "description": "Search action"
     },
-    "SEARCH_ONSITE_YES": {
+    "searchOnSite": {
         "message": "",
         "description": "Search action"
     },
-    "SEARCH_ONSITE_NO": {
+    "noSearchOnSite": {
         "message": "",
         "description": "Search action"
     },
-    "COPY_TEXT": {
+    "copyText": {
         "message": "",
         "description": "Copy action"
     },
-    "COPY_LINK": {
+    "copyLink": {
         "message": "",
         "description": "Copy action"
     },
-    "COPY_IMAGE": {
+    "copyImage": {
         "message": "",
         "description": "Copy action"
     },
-    "COPY_IMAGE_LINK": {
+    "copyLinkOfImage": {
         "message": "",
         "description": ""
     },
-    "DOWNLOAD_TEXT": {
+    "downloadText": {
         "message": "",
         "description": "Copy action"
     },
-    "DOWNLOAD_LINK": {
+    "downloadLink": {
         "message": "",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE": {
+    "downloadImage": {
         "message": "",
         "description": "Copy action"
     },
-    "DOWNLOAD_IMAGE_LINK": {
+    "downloadImageLink": {
         "message": "",
         "description": "Copy action"
     },
-    "DOWNLOAD_SAVEAS_YES": {
+    "showSaveAsDialog": {
         "message": "",
         "description": "Copy action"
     },
-    "DOWNLOAD_SAVEAS_NO": {
+    "notShowSaveAsDialog": {
         "message": "",
         "description": "Copy action"
     },
-    "option_page_title": {
+    "opetionPageTitle": {
         "message": "",
         "description": "title of page"
     },
-    "option_tooltip_act": {
+    "actionToPerform": {
         "message": "",
         "description": "tooltip on option"
     },
-    "option_tooltip_active": {
+    "statusOfNewTab": {
         "message": "",
         "description": "tooltip on option"
     },
-    "option_tooltip_pos": {
+    "positionOfNewTab": {
         "message": "",
         "description": "tooltip on option"
     },
-    "option_tooltip_search": {
+    "useWhichSearchEngine": {
         "message": "",
         "description": "tooltip on option"
     },
@@ -351,20 +351,20 @@
         "message": "",
         "description": "Default opened url for Search action - Default. Use %s as keyword placeholder"
     },
-    "elem_Text": {
+    "textGroup": {
         "message": ""
     },
-    "elem_Link": {
+    "linkGroup": {
         "message": ""
     },
-    "elem_Image": {
+    "imageGroup": {
         "message": ""
     },
     "elem_RefreshbtnOnEngines": {
         "message": "",
         "description": "Reload button on Options - Search Template"
     },
-    "elem_AddbtnOnEngines": {
+    "addNewTemplate": {
         "message": "",
         "description": "Add button on Options - Search Template"
     },
@@ -372,7 +372,7 @@
         "message": "",
         "description": "Save button on Options - Search Template"
     },
-    "elem_BuiltinEngineHelperText": {
+    "searchEngineHelpMessage": {
         "message": "",
         "description": "Helper text on Options - Search Template"
     },

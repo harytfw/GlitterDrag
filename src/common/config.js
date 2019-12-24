@@ -4,11 +4,8 @@ const templateConfig = {
     enableIndicator: false,
     enablePrompt: false,
 
-    enableTimeoutCancel: false,
-    timeoutCancel: 2000,
-
-    minDistance: 20,
-    maxDistance: 9999,
+    enableTimeout: false,
+    timeout: 2000,
 
     actions: [{
         name: "",
@@ -53,15 +50,12 @@ const templateConfig = {
 
     /* directories: [{
         name: "",
-        value: "",
+        path: "",
     }], */
     directories: [],
 
-    maxProcessSize: 5, //unit is M; the file that larger than 5M won't be processed.
-
     features: {
         disableFixURL: false,
-        appendImageReferrer: false,
         preventUiRemove: false,
         extendMiddleButton: false,
         lockScrollbar: false
@@ -86,15 +80,14 @@ const templateConfig = {
     }], */
     scripts: [],
 
-    /* searchEngineTemplate: [{
+    /* searchEngine: [{
         name: "",
         url: "",
         icon: "",
         method: "get",
-        searchOnSite: false,
     }]*/
 
-    searchEngineTemplates: [],
+    searchEngines: [],
 
     version: "0.0.0",
 };

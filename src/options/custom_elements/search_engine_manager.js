@@ -5,56 +5,142 @@ class SearchEngineManager extends HTMLElement {
         const content = template.content
         this.appendChild(content.cloneNode(true))
         this.table = this.querySelector("table")
-        this.rowEditor = this.querySelector(".row-editor")
-        this.querySelector("#add-search-engine").addEventListener("click", (e) => {
-            this.addSearchEngine("xx", "xxx", "xxxxxx")
-        })
+        this.editor = this.querySelector(".row-editor")
 
         this.addEventListener("click", (e) => {
             if (e.target instanceof HTMLElement) {
-                switch (e.target.dataset["event"]) {
-                    case "delete":
-                        e.target.closest("tr").remove()
-                        break
-                    case "edit":
-                        this.listenEditorResult(e.target.closest("tr"))
-                        break
+                const target = e.target.closest("button")
+                if (target instanceof HTMLButtonElement) {
+                    switch (target.dataset["event"]) {
+                        case "add":
+                            this.listenAdditionResult()
+                            break
+                        case "delete":
+                            this.deleteSearchEngine(target.closest("tr"))
+                            break
+                        case "edit":
+                            this.listenEditResult(target.closest("tr"))
+                            break
+                    }
                 }
             }
         })
+
+        this.configManager = null
+        document.addEventListener("configloaded", (e) => {
+            this.configManager = e.target
+            this.init()
+        })
     }
 
-    listenEditorResult(row) {
-        this.rowEditor.addEventListener("result", (e) => {
+    init() {
+        for (const s of this.configManager.get().searchEngines) {
+            this.addSearchEngineRow(s.name, s.url, s.icon, s.method)
+        }
+    }
+    listenAdditionResult() {
+        this.editor.modalTitle = "Add Search Engine"
+        this.editor.searchEngineName = ""
+        this.editor.searchEngineURL = ""
+        this.editor.searchEngineIcon = ""
+        this.editor.searchEngineMethod = ""
+        this.editor.addEventListener("result", (e) => {
             if (e.detail === "confirm") {
-                row.querySelector(".row-url").textContent = this.rowEditor.searchEngineURL
-                row.querySelector(".row-name").textContent = this.rowEditor.searchEngineName
-                row.querySelector(".row-icon").src = this.rowEditor.searchEngineIcon
+                this.addSearchEngine(
+                    this.editor.searchEngineName,
+                    this.editor.searchEngineURL,
+                    this.editor.searchEngineIcon,
+                    this.editor.searchEngineMethod)
+                this.dispatchEvent(new Event("configupdate", { bubbles: true }))
+            } else {
+                console.log("cancal addition")
+            }
+        }, { once: true })
+        this.editor.active()
+    }
+
+    listenEditResult(row) {
+        this.editor.searchEngineName = row.querySelector("[name=name]").value
+        this.editor.searchEngineURL = row.querySelector("[name=url]").value
+        this.editor.searchEngineIcon = row.querySelector("[name=icon]").value
+        this.editor.searchEngineMethod = row.querySelector("[name=method]").value
+        this.editor.addEventListener("result", (e) => {
+            if (e.detail === "confirm") {
+                this.updateSearchEngine(row, this.editor.searchEngineName, this.editor.searchEngineURL, this.editor.searchEngineIcon, this.editor.searchEngineMethod)
+                this.saveSearchEngine(row)
+                this.dispatchEvent(new Event("configupdate", { bubbles: true }))
             } else {
                 console.log(row, "cancal change")
             }
         }, { once: true })
-        this.rowEditor.active()
+        this.editor.active()
     }
 
-    addSearchEngine(name, url, icon) {
-        const row = document.createElement("tr")
-        const noCell = row.insertCell()
-        noCell.textContent = this.table.tBodies[0].childElementCount
+    addSearchEngineRow(name, url, icon, method) {
+        const row = document.querySelector("#template-search-engine-row").content.cloneNode(true)
 
-        const nameCell = row.insertCell()
-        nameCell.innerHTML = `<div><img class="row-icon" src="${icon}"><span class="row-name">${name}</span></div>`
+        row.querySelector(".no").textContent = this.table.tBodies[0].childElementCount
 
-        const urlCell = row.insertCell()
-        urlCell.classList.add("row-url")
-        urlCell.textContent = url
+        row.querySelector(".search-engine-icon").src = icon
+        row.querySelector(".search-engine-name").textContent = name
+        row.querySelector("[name=icon]").value = icon
+        row.querySelector("[name=name]").value = name
 
-        const operationCell = row.insertCell()
-        operationCell.appendChild(document.querySelector("#template-table-cell-buttons").content.cloneNode(true))
+        row.querySelector(".search-engine-url").textContent = url
+        row.querySelector("[name=url").value = url
+
+        row.querySelector("[name=method]").value = method
 
         this.table.tBodies[0].appendChild(row)
     }
 
+    saveSearchEngine(row) {
+        const index = Array.from(row.parentElement.children).findIndex(a => a === row)
+        const searchEngine = this.configManager.get().searchEngines[index]
+        searchEngine.name = row.querySelector("[name=name]").value
+        searchEngine.url = row.querySelector("[name=url]").value
+        searchEngine.icon = row.querySelector("[name=icon]").value
+        searchEngine.method = row.querySelector("[name=method]").value
+
+        console.log("save search engine")
+        this.dispatchEvent(new Event("configupdate", { bubbles: true }))
+    }
+
+    updateSearchEngine(row, name, url, icon, method) {
+        row.querySelector("[name=name]").value = name
+        row.querySelector(".search-engine-name").textContent = name
+
+        row.querySelector("[name=url").value = url
+        row.querySelector(".search-engine-url").textContent = url
+
+        row.querySelector("[name=icon]").value = icon
+        row.querySelector(".search-engine-icon").src = icon
+
+        row.querySelector("[name=method]").value = method
+
+        this.saveSearchEngine()
+    }
+
+    addSearchEngine(name, url, icon, method) {
+        this.configManager.get().searchEngines.push({
+            name,
+            url,
+            icon,
+            method
+        })
+        console.log("add search engine")
+        this.addSearchEngineRow(name, url, icon, method)
+        this.dispatchEvent(new Event("configupdate", { bubbles: true }))
+    }
+
+    deleteSearchEngine(row) {
+        const index = Array.from(row.parentElement.children).findIndex(a => a === row)
+        this.configManager.get().searchEngines.splice(index, 1)
+        console.log("delete search engine")
+        row.remove()
+
+        this.dispatchEvent(new Event("configupdate", { bubbles: true }))
+    }
 }
 
 customElements.define("search-engine-manager", SearchEngineManager)
