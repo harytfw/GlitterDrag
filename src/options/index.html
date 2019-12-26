@@ -4,12 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
+    <title>Glitter Drag</title>
+    <link rel="stylesheet" href="../libs/bulma/bulma.min.css">
+    <link rel="stylesheet" href="../libs/pretty-checkbox/pretty-checkbox.min.css">
     <link rel="stylesheet" href="../libs/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="./index.css">
-    <script defer src=""></script>
 </head>
 
 <body>
@@ -32,6 +31,10 @@
                 </div>
             </div>
         </footer>
+        <action-group-modal></action-group-modal>
+        <search-engine-editor-modal id="action-detail-search-engine-editor" show-builtin="">
+        </search-engine-editor-modal>
+        <search-engine-editor-modal class="table-row-editor"></search-engine-editor-modal>
     </config-manager>
     <template id="template-tabs">
         <div class="container">
@@ -42,6 +45,7 @@
                 <li data-target="#no2"><a>Action</a></li>
                 <li data-target="#no3"><a>Search Engine</a></li>
                 <li data-target="#no4"><a>Download Directory</a></li>
+                <li data-target="#no5"><a>Configuration</a></li>
             </ul>
         </div>
         <div class="columns tabs-body">
@@ -56,6 +60,9 @@
             </div>
             <div id="no4" class="is-hidden column">
                 <directory-manager></directory-manager>
+            </div>
+            <div id="no5" class="is-hidden column">
+                <custom-configuration></custom-configuration>
             </div>
         </div>
     </template>
@@ -169,81 +176,46 @@
                 </div>
             </div>
         </div>
-        <!-- 
-
-        <div class="field is-horizontal">
-            <div class="field-body">
-                <div class="field is-narrow">
-                    <div class="control">
-                        <label>mininum distance</label>
-                        <input type="text" name="minDistance">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="field is-horizontal">
-            <div class="field-body">
-                <div class="field is-narrow">
-                    <div class="control">
-                        <label>No padding</label>
-                        <input type="text" name="maxDistance">
-                    </div>
-                </div>
-            </div>
-        </div> -->
 
     </template>
+
     <template id="template-action-config">
 
-
-        <div class=" field is-horizontal">
-            <div class="field-label has-text-left">
-                <label class="label">action group</label>
+        <div class="field is-horizontal">
+            <div class="field-label ">
+                <label>action group</label>
             </div>
             <div class="field-body">
                 <div class="field is-narrow">
                     <div class="control">
-                        <div class="dropdown groupname-dropdown">
-                            <input type="hidden" name="originalGroupName" value="">
-                            <div class="dropdown-trigger">
-                                <button class="button is-small">
-                                    <span>GroupName</span>
-                                    <span class="icon is-small">
-                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                    </span>
-                                </button>
-                            </div>
-                            <div class="dropdown-menu">
-                                <div class="dropdown-content">
-                                    123
-                                </div>
-                            </div>
-                        </div>
+                        <bulma-dropdown list="group-name-options"></bulma-dropdown>
+                        <datalist id="group-name-options">
+                            <option value="AAA">aaa</option>
+                            <option value="bbb">AAA</option>
+                        </datalist>
                     </div>
                 </div>
                 <div class="field is-narrow">
-                    <button class="button is-small">
-                        <span>Click me</span>
+                    <button class="button is-small is-info" data-event="manage">
+                        Manage
                     </button>
                 </div>
             </div>
         </div>
         <div class="field is-horizontal">
-            <div class="field-label has-text-left">
-                <label class="label">group name </label>
+            <div class="field-label ">
+                <label>group name </label>
             </div>
             <div class="field-body">
                 <div class="field is-narrow">
                     <div class="control">
-                        <input type="text" name="groupName">
+                        <label class="group-name">Default</label>
                     </div>
                 </div>
                 <div class="field is-narrow">
                     <div class="control">
-                        <input type="hidden" name="hotkey" value="">
-                        <button class="button is-small hotkey-btn">Not Assign</button>
+                        <input type="hidden" name="shortcut" value="">
+                        <button class="button is-small shortcut-btn">Not Assign</button>
                     </div>
                 </div>
             </div>
@@ -252,43 +224,20 @@
 
 
         <div class="field is-horizontal">
-            <div class="field-label has-text-left">
-                <label class="label">Permit direction</label>
+            <div class="field-label ">
+                <label>Permit direction</label>
             </div>
             <div class="field-body">
                 <div class="field is-narrow">
                     <div class="coltrol">
-
-                        <div class="dropdown is-small">
-                            <input type="hidden" name="limitation" value="">
-                            <div class="dropdown-trigger">
-                                <button class="button is-small">
-                                    <span>Click me</span>
-                                    <span class="icon is-small">
-                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                    </span>
-                                </button>
-                            </div>
-                            <div class="dropdown-menu">
-                                <div class="dropdown-content">
-                                    <a href="#" class="dropdown-item" data-value="any">
-                                        any
-                                    </a>
-                                    <a href="#" class="dropdown-item" data-value="four">
-                                        four
-                                    </a>
-                                    <a href="#" class="dropdown-item" data-value="r">
-                                        right diagonal
-                                    </a>
-                                    <a href="#" class="dropdown-item" data-value="l">
-                                        left diagonal
-                                    </a>
-                                    <a href="#" class="dropdown-item" data-value="all">
-                                        all
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                        <bulma-dropdown list="permit-direction-options"></bulma-dropdown>
+                        <datalist id="permit-direction-options">
+                            <option value="any">Any</option>
+                            <option value="four">Four</option>
+                            <option value="r">Right Diagonal</option>
+                            <option value="l">Left Diagonal</option>
+                            <option value="all">All</option>
+                        </datalist>
                     </div>
                 </div>
             </div>
@@ -297,8 +246,8 @@
         <hr>
         <!-- action type-->
         <div class="field is-horizontal">
-            <div class="field-label has-text-left">
-                <label class="label">Action type</label>
+            <div class="field-label ">
+                <label>Action type</label>
             </div>
             <div class="field-body">
                 <div class="field is-narrow">
@@ -328,8 +277,8 @@
 
         <!-- direction -->
         <div class="field is-horizontal normal-direction">
-            <div class="field-label has-text-left">
-                <label class="label">Direction</label>
+            <div class="field-label ">
+                <label>Direction</label>
             </div>
             <div class="field-body">
                 <div class="field is-narrow">
@@ -363,8 +312,8 @@
 
         <!-- diagonal -->
         <div class="field is-horizontal diagonal-direction">
-            <div class="field-label has-text-left">
-                <label class="label">Diagonal</label>
+            <div class="field-label ">
+                <label>Diagonal</label>
             </div>
             <div class="field-body">
                 <div class="field is-narrow">
@@ -401,54 +350,23 @@
         <div class="action-detail">
             <!-- action to do -->
             <div class="field is-horizontal">
-                <div class="field-label has-text-left">
-                    <label class="label">Action to do</label>
+                <div class="field-label ">
+                    <label>Action to do</label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
                         <div class="control">
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="command" value="open">
-                                <div class="state">
-                                    <label>open</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="command" value="search">
-                                <div class="state">
-                                    <label>search</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="command" value="download">
-                                <div class="state">
-                                    <label>download</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="command" value="copy">
-                                <div class="state">
-                                    <label>copy</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="command" value="find">
-                                <div class="state">
-                                    <label>find</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="command" value="translate">
-                                <div class="state">
-                                    <label>translate</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="command" value="runScript">
-                                <div class="state">
-                                    <label>Run script</label>
-                                </div>
-                            </div>
+                            <bulma-dropdown list="command-options" name="command"></bulma-dropdown>
+                            <datalist id="command-options">
+                                <option value="open">Open</option>
+                                <option value="search">Search</option>
+                                <option value="download">Download</option>
+                                <option value="copy">Copy</option>
+                                <option value="find">Find Text</option>
+                                <option value="translate">Translate</option>
+                                <option value="runScript">Run Script</option>
+                            </datalist>
+
                         </div>
                     </div>
                 </div>
@@ -456,8 +374,8 @@
 
             <!-- prefer -->
             <div class="field is-horizontal">
-                <div class="field-label has-text-left">
-                    <label class="label">Prefer</label>
+                <div class="field-label ">
+                    <label>Prefer</label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -487,68 +405,31 @@
 
             <!-- tab position -->
             <div class="field is-horizontal">
-                <div class="field-label has-text-left">
-                    <label class="label">tab position</label>
+                <div class="field-label ">
+                    <label>tab position</label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
                         <div class="control">
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="tabPosition" value="notSpecific">
-                                <div class="state">
-                                    <label>not specific</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="tabPosition" value="left">
-                                <div class="state">
-                                    <label>left</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="tabPosition" value="right">
-                                <div class="state">
-                                    <label>right</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="tabPosition" value="overrideCurrent">
-                                <div class="state">
-                                    <label>override current</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="tabPosition" value="start">
-                                <div class="state">
-                                    <label>start</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="tabPosition" value="end">
-                                <div class="state">
-                                    <label>end</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="tabPosition" value="newWindow">
-                                <div class="state">
-                                    <label>new window</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="action-type" value="privateWindow">
-                                <div class="state">
-                                    <label>new private window</label>
-                                </div>
-                            </div>
+                            <bulma-dropdown list="tab-position-options" name="tabPosition"></bulma-dropdown>
+                            <datalist id="tab-position-options">
+                                <option value="notSpecific">Not Specific</option>
+                                <option value="overrideCurrent">Override Rurrent</option>
+                                <option value="left">Left</option>
+                                <option value="right">Right</option>
+                                <option value="start">Start</option>
+                                <option value="end">End</option>
+                                <option value="newWindow">New Window</option>
+                                <option value="privateWindow">Private Window</option>
+                            </datalist>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="field is-horizontal">
-                <div class="field-label has-text-left">
-                    <label class="label">active the tab</label>
+                <div class="field-label ">
+                    <label>active the tab</label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -566,8 +447,8 @@
 
             <!-- edit search engine -->
             <div class="field is-horizontal">
-                <div class="field-label has-text-left">
-                    <label class="label">Edit search engine</label>
+                <div class="field-label ">
+                    <label>Edit search engine</label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -580,8 +461,8 @@
 
             <!-- search engine name -->
             <div class="field is-horizontal is-hidden">
-                <div class="field-label has-text-left">
-                    <label class="label"> search engine name </label>
+                <div class="field-label ">
+                    <label> search engine name </label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -594,8 +475,8 @@
 
             <!-- search engine url -->
             <div class="field is-horizontal is-hidden">
-                <div class="field-label has-text-left">
-                    <label class="label"> search engine url </label>
+                <div class="field-label ">
+                    <label> search engine url </label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -609,8 +490,8 @@
             <!-- search engine icon -->
             <div class="field is-horizontal is-hidden">
 
-                <div class="field-label has-text-left">
-                    <label class="label"> search engine icon </label>
+                <div class="field-label ">
+                    <label> search engine icon </label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -622,8 +503,8 @@
             </div>
 
             <div class="field is-horizontal is-hidden">
-                <div class="field-label has-text-left">
-                    <label class="label"> search engine builtin </label>
+                <div class="field-label ">
+                    <label> search engine builtin </label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -635,8 +516,8 @@
             </div>
 
             <div class="field is-horizontal is-hidden">
-                <div class="field-label has-text-left">
-                    <label class="label"> search engine method </label>
+                <div class="field-label ">
+                    <label> search engine method </label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -651,8 +532,8 @@
 
             <!-- directory name -->
             <div class="field is-horizontal">
-                <div class="field-label has-text-left">
-                    <label class="label"> directory name </label>
+                <div class="field-label ">
+                    <label> directory name </label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -665,8 +546,8 @@
 
 
             <div class="field is-horizontal">
-                <div class="field-label has-text-left">
-                    <label class="label"> show saveas dialog </label>
+                <div class="field-label ">
+                    <label> show saveas dialog </label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -684,8 +565,8 @@
 
             <!-- prompt -->
             <div class="field is-horizontal">
-                <div class="field-label has-text-left">
-                    <label class="label"> prompt </label>
+                <div class="field-label ">
+                    <label> prompt </label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -699,8 +580,8 @@
             <!-- pick script -->
 
             <div class="field is-horizontal">
-                <div class="field-label has-text-left">
-                    <label class="label">pick script</label>
+                <div class="field-label ">
+                    <label>pick script</label>
                 </div>
                 <div class="field-body">
                     <div class="field is-narrow">
@@ -731,8 +612,6 @@
                 </div>
             </div>
 
-            <search-engine-editor-modal></search-engine-editor-modal>
-
         </div>
     </template>
 
@@ -740,7 +619,7 @@
         <div class="columns">
             <div class="column">
                 <div class="buttons">
-                    <button class="button is-success" data-event="add">
+                    <button class="button is-success is-small" data-event="add">
                         <span class="icon">
                             <i class="fas fa-plus"></i>
                         </span>
@@ -767,7 +646,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <search-engine-editor-modal class="row-editor"></search-engine-editor-modal>
             </div>
         </div>
     </template>
@@ -776,7 +654,7 @@
         <div class="columns">
             <div class="column">
                 <div class="buttons">
-                    <button class="button is-success" data-event="add">
+                    <button class="button is-success is-small" data-event="add">
                         <span class="icon">
                             <i class="fas fa-plus"></i>
                         </span>
@@ -808,11 +686,11 @@
     <template id="template-style-editor">
 
     </template>
+
     <template id="template-filter-editor">
-
     </template>
-    <template id="template-translation-setting">
 
+    <template id="template-translation-setting">
     </template>
 
     <template id="template-search-engine-editor-modal">
@@ -854,7 +732,7 @@
                                 <div class="column">
                                     <div class="field is-horizontal">
                                         <div class="field-label has-text-left">
-                                            <label class="label"> Name </label>
+                                            <label> Name </label>
                                         </div>
                                         <div class="field-body">
                                             <div class="field is-narrow">
@@ -871,7 +749,7 @@
                                 <div class="column">
                                     <div class="field is-horizontal">
                                         <div class="field-label has-text-left">
-                                            <label class="label"> URL </label>
+                                            <label> URL </label>
                                         </div>
                                         <div class="field-body">
                                             <div class="field is-narrow">
@@ -894,7 +772,7 @@
                         <div class="column is-8">
                             <div class="field is-horizontal">
                                 <div class="field-label has-text-left">
-                                    <label class="label"> icon </label>
+                                    <label> icon </label>
                                 </div>
                                 <div class="field-body">
                                     <div class="field is-narrow">
@@ -920,7 +798,7 @@
                             </div>
                             <div class="field is-horizontal">
                                 <div class="field-label has-text-left">
-                                    <label class="label"> </label>
+                                    <label> </label>
                                 </div>
                                 <div class="field-body">
                                     <div class="field is-narrow">
@@ -940,6 +818,7 @@
             </div>
         </div>
     </template>
+
     <template id="template-table-cell-buttons">
         <div class="buttons">
             <button class="button is-info is-small" data-event="edit">
@@ -956,33 +835,17 @@
             </button>
         </div>
     </template>
+
     <template id="template-table-cell-delete-buttons">
         <div class="buttons">
             <button class="button is-danger is-small" data-event="delete">X</button>
         </div>
     </template>
-    <template id="template-search-engine-provider">
-        <div class="dropdown">
-            <div class="dropdown-trigger">
-                <button class="button is-small">
-                    <span>Dropdown button</span>
-                    <span class="icon is-small">
-                        <i class="fas fa-angle-down" aria-hidden="true"></i>
-                    </span>
-                </button>
-            </div>
-            <div class="dropdown-menu">
 
-                <div class="dropdown-content">
-                    <!-- 
-                <a href="#" class="dropdown-item">
-                    Foo
-                </a>
-            -->
-                </div>
-            </div>
-        </div>
+    <template id="template-search-engine-provider">
+        <bulma-dropdown></bulma-dropdown>
     </template>
+
     <template id="template-bulma-dropdown">
         <div class="dropdown">
             <div class="dropdown-trigger">
@@ -1004,6 +867,7 @@
             </div>
         </div>
     </template>
+
     <template id="template-search-engine-row">
         <tr>
             <td class="no">
@@ -1040,23 +904,153 @@
 
         </tr>
     </template>
+
+    <template id="template-action-group-modal">
+        <div class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Modal title</p>
+                    <button class="delete" aria-label="close" data-event="close"></button>
+                </header>
+                <section class="modal-card-body" style="height:30rem">
+                    <div class="columns">
+                        <div class="column">
+                            <div class="buttons">
+                                <button class="button is-success is-small" data-event="add">
+                                    <span class="icon">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                    <label>Add</label>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <table class="table is-narrow is-bordered is-striped is-hoverable is-fullwidth">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Shortcut</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <!-- <footer class="modal-card-foot">
+                    <button class="button is-success" data-event="confirm">Save changes</button>
+                    <button class="button" data-event="close">Cancel</button>
+                </footer> -->
+            </div>
+        </div>
+    </template>
+
+    <template id="template-action-group-row">
+        <tr>
+            <td class="no">
+            </td>
+            <td>
+                <input class="input is-small" name="name" type="text" required>
+                <!-- <span class="group-name">Defautl</span> -->
+            </td>
+            <td>
+                <div class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="control has-icons-left">
+                                <input data-event="shortcut" class="input is-small" type="text" name="shortcut"
+                                    placeholder="Shortcut">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-keyboard"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <!-- <div class="level-item">
+                            <a class="has-text-grey-light">
+                                <span class="icon is-small">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                            </a>
+                        </div> -->
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="buttons">
+                    <button class="button is-danger is-small" data-event="delete">
+                        <span class="icon">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </template>
+
+    <template id="template-configuration">
+        <input class="is-hidden" type="file" accept="*.json">
+        <a class="is-hidden" download="foo.json" href=""></a>
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="buttons">
+                        <button class="button is-primary" data-event="backup">Backup</button>
+                        <button class="button is-info" data-event="restore">Restore</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="buttons">
+                        <button class="button is-primary">Send to sync storage</button>
+                        <button class="button is-primary">Override current</button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <hr>
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <div class="buttons">
+                        <button class="button is-danger" data-event="reset">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </template>
+    <script src="index.js"></script>
     <script src="../common/i18n_util.js"></script>
     <script src="../common/env.js"></script>
     <script src="../common/config.js"></script>
     <script src="../common/url_util.js"></script>
+    <script src="../common/simple_log.js"></script>
+    <script src="../common/query_util.js"></script>
     <script src="bulma.js"></script>
-    <script src="index.js"></script>
     <script src="condense_template.js"></script>
     <script src="search_engines.js"></script>
-    <script src="config_manager.js"></script>
     <script src="custom_elements/bulma_dropdown.js"></script>
     <script src="custom_elements/search_engine_provider.js"></script>
+    <script src="custom_elements/configuration.js"></script>
+    <script src="custom_elements/action_group_modal.js"></script>
+    <script src="custom_elements/config_manager.js"></script>
     <script src="custom_elements/search_engine_editor_modal.js"></script>
     <script src="custom_elements/directory_manager.js"></script>
     <script src="custom_elements/search_engine_manager.js"></script>
     <script src="custom_elements/settings.js"></script>
     <script src="custom_elements/action_config.js"></script>
-    <script src="tabs.js"></script>
+    <script src="custom_elements/tabs.js"></script>
 </body>
 
 </html>

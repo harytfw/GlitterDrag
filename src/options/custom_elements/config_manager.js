@@ -8,15 +8,11 @@ class ConfigManager extends HTMLElement {
         this.discardBtn = this.querySelector("#discard")
 
         this.saveBtn.addEventListener("click", () => {
-            this.discardBtn.disabled = this.saveBtn.disabled = "disabled"
             this.save()
-            this.dispatchEvent(new Event("save", { bubbles: true }))
         })
 
         this.discardBtn.addEventListener("click", () => {
-            this.discardBtn.disabled = this.saveBtn.disabled = "disabled"
             this.discard()
-            this.dispatchEvent(new Event("discard", { bubbles: true }))
         })
 
         this.addEventListener("configupdate", () => {
@@ -28,6 +24,7 @@ class ConfigManager extends HTMLElement {
         this.init()
 
         this.weakmap = new WeakMap()
+
     }
 
 
@@ -35,19 +32,20 @@ class ConfigManager extends HTMLElement {
         const c = await configUtil.load()
         this.stack.push(c)
         this.stack.push(this.cloneTop())
+        //TODO: 将所有configloaded关联的函数修改成可重复调用
         this.dispatchEvent(new Event("configloaded", {
             bubbles: true,
         }))
     }
 
     get() {
-        console.log(this, "get")
+        console.trace(this, "get")
         this.check()
         return this.stack[this.stack.length - 1]
     }
 
     getProxy() {
-        console.log(this, "get proxy")
+        console.trace(this, "get proxy")
         this.check()
         const top = this.stack[this.stack.length - 1]
         if (this.weakmap.has(top)) {
@@ -60,17 +58,48 @@ class ConfigManager extends HTMLElement {
 
     }
 
-    save() {
+    async save() {
         console.info(this, "save")
-        configUtil.save(this.stack[this.stack.length - 1])
+        await configUtil.save(this.stack[this.stack.length - 1])
         this.stack.shift()
         this.stack.push(this.cloneTop())
         this.check()
+
+        this.discardBtn.disabled = this.saveBtn.disabled = "disabled"
+        this.dispatchEvent(new Event("save", { bubbles: true }))
     }
 
     discard() {
         console.info(this, "discard")
         this.stack.pop()
+        this.stack.push(this.cloneTop())
+        this.check()
+
+        this.discardBtn.disabled = this.saveBtn.disabled = "disabled"
+        this.dispatchEvent(new Event("discard", { bubbles: true }))
+    }
+
+    async backupConfig() {
+        await this.save()
+        return this.cloneTop()
+    }
+
+    async resetConfig() {
+        await configUtil.clear()
+        await configUtil.save(templateConfig)
+
+        this.stack.length = 0
+        this.stack.push(configUtil.cloneDeep(templateConfig))
+        this.stack.push(this.cloneTop())
+        this.check()
+
+    }
+
+    async restoreConfig(config) {
+        await configUtil.clear(config)
+        await configUtil.save(config)
+        this.stack.length = 0
+        this.stack.push(configUtil.cloneDeep(config))
         this.stack.push(this.cloneTop())
         this.check()
     }

@@ -12,27 +12,34 @@ class ActinoConfiguration extends HTMLElement {
             initBulmaDropdown(dropdown)
         }
 
-        this.editor = this.querySelector("search-engine-editor-modal")
+        this.searchEngineEditor = document.querySelector("#action-detail-search-engine-editor")
+        this.groupModal = document.querySelector("action-group-modal")
 
         this.addEventListener("click", (e) => {
-            const { target } = e
+            const target = queryUtil.findEventElem(e.target)
             if (target instanceof HTMLElement) {
-                if (target.dataset.event === "editSearchEngine") {
-                    this.editor.active()
-                    this.listenEditorResult()
+                switch (target.dataset.event) {
+                    case "manage":
+                        this.groupModal.active()
+                        break
+                    case "editSearchEngine":
+                        this.searchEngineEditor.active()
+                        this.listenSearchEngineEditorResult()
+                        break
+                    default: break
                 }
             }
         })
 
         this.addEventListener("change", (e) => {
             const { target } = e
-
             if (target instanceof HTMLElement) {
                 switch (target.name) {
-                    case "originalGroupName":
-                        console.log(target, "originalGroupName change")
+                    case "currentGroupName":
+                        this.updateDisplayGroupName()
+                        this.loadDetail()
                         break
-                    case "hotkey":
+                    case "shortcut":
                     case "groupName":
                     case "limitation":
                         this.toggleDisplay()
@@ -45,12 +52,11 @@ class ActinoConfiguration extends HTMLElement {
                         target.dispatchEvent(new Event("configupdate", { bubbles: true }))
                         break
                     default:
-                        console.log(target, "normal change")
-                        this.saveDetail()
-                        target.dispatchEvent(new Event("configupdate", { bubbles: true }))
+                        console.log("unhandled change", target)
+                        // this.saveDetail()
+                        // target.dispatchEvent(new Event("configupdate", { bubbles: true }))
                         break
                 }
-
             }
         })
 
@@ -59,17 +65,14 @@ class ActinoConfiguration extends HTMLElement {
         document.addEventListener("configloaded", (e) => {
             this.configManager = e.target
             this.initGroupNameDropdown()
-            this.initHotkey()
+            this.initShortcut()
             this.loadDetail()
         }, { once: true })
     }
 
-    get originalGroupName() {
-        return this.querySelector("[name=originalGroupName]").value
-    }
-
-    get groupName() {
-        return this.querySelector("[name=groupName]").value
+    get currentGroupName() {
+        return "Default"
+        return this.querySelector("[name=currentGroupName]").value
     }
 
     get actionType() {
@@ -107,47 +110,51 @@ class ActinoConfiguration extends HTMLElement {
     }
 
     initGroupNameDropdown() {
-        const dropdown = this.querySelector(".dropdown.groupname-dropdown")
+        // const dropdown = this.querySelector(".dropdown.groupname-dropdown")
 
-        const groupNames = this.configManager.get().actions.map(a => a.name)
-        console.log("groupnames", groupNames)
-        const items = []
+        // const dropdownContent = dropdown.querySelector(".dropdown-content")
 
-        for (const name of groupNames) {
-            items.push(`<a href="#" class="dropdown-item">${name}</a>`)
-        }
+        // while (dropdownContent.firstElementChild instanceof HTMLElement) {
+        //     dropdownContent.firstElementChild.remove()
+        // }
 
-        dropdown.querySelector(".dropdown-content").innerHTML = items.join("")
+        // const groupNames = this.configManager.get().actions.map(a => a.name)
+        // console.log("groupnames", groupNames)
+        // const items = []
 
-        this.querySelector("[name=groupName]").value = this.querySelector("[name=originalGroupName]").value = groupNames[0]
+        // for (const name of groupNames) {
+        //     items.push(`<a class="dropdown-item" data-value="${name}">${name}</a>`)
+        // }
+
+        // dropdownContent.innerHTML = items.join("")
+
+        // this.querySelector("[name=currentGroupName]").value = groupNames[0]
+        // this.updateDisplayGroupName()
+
     }
 
-    initHotkey() {
-        const hotkey = this.querySelector("[name=hotkey]").value = this.configManager.getProxy().actions.find(this.originalGroupName).hotkey
-        this.querySelector(".hotkey-btn").textContent = hotkey === "" ? "no hotkey" : hotkey
+    initShortcut() {
+        // const shortcut = this.querySelector("[name=shortcut]").value = this.configManager.getProxy().actions.find(this.currentGroupName).shortcut
+        // this.querySelector(".shortcut-btn").textContent = shortcut === "" ? "no shortcut" : shortcut
     }
 
-    configurateHotkey() {
+    listenSearchEngineEditorResult() {
+        this.searchEngineEditor.searchEngineName = this.querySelector(`[name='searchEngine.name']`).value
+        this.searchEngineEditor.searchEngineURL = this.querySelector(`[name='searchEngine.url']`).value
+        this.searchEngineEditor.searchEngineIcon = this.querySelector(`[name='searchEngine.icon']`).value
+        this.searchEngineEditor.searchEngineMethod = this.querySelector(`[name='searchEngine.method']`).value
 
-    }
+        this.searchEngineEditor.searchEngineBuiltin = this.querySelector(`[name='searchEngine.builtin']`).checked
 
-    listenEditorResult() {
-        this.editor.searchEngineName = this.querySelector(`[name='searchEngine.name']`).value
-        this.editor.searchEngineURL = this.querySelector(`[name='searchEngine.url']`).value
-        this.editor.searchEngineIcon = this.querySelector(`[name='searchEngine.icon']`).value
-        this.editor.searchEngineMethod = this.querySelector(`[name='searchEngine.method']`).value
-        
-        this.editor.searchEngineBuiltin = this.querySelector(`[name='searchEngine.builtin']`).checked
-        
-        this.editor.addEventListener("result", (e) => {
+        this.searchEngineEditor.addEventListener("result", (e) => {
             if (e.detail === "confirm") {
                 console.log("get searchEngineEditor result")
-                this.querySelector(`[name='searchEngine.name']`).value = this.editor.searchEngineName
-                this.querySelector(`[name='searchEngine.url']`).value = this.editor.searchEngineURL
-                this.querySelector(`[name='searchEngine.icon']`).value = this.editor.searchEngineIcon
-                this.querySelector(`[name='searchEngine.method']`).value = this.editor.searchEngineMethod
-                
-                this.querySelector(`[name='searchEngine.builtin']`).checked = this.editor.searchEngineBuiltin
+                this.querySelector(`[name='searchEngine.name']`).value = this.searchEngineEditor.searchEngineName
+                this.querySelector(`[name='searchEngine.url']`).value = this.searchEngineEditor.searchEngineURL
+                this.querySelector(`[name='searchEngine.icon']`).value = this.searchEngineEditor.searchEngineIcon
+                this.querySelector(`[name='searchEngine.method']`).value = this.searchEngineEditor.searchEngineMethod
+
+                this.querySelector(`[name='searchEngine.builtin']`).checked = this.searchEngineEditor.searchEngineBuiltin
 
                 this.saveDetail()
                 this.dispatchEvent(new Event("configupdate", { bubbles: true }))
@@ -155,14 +162,18 @@ class ActinoConfiguration extends HTMLElement {
         }, { once: true })
     }
 
+    updateDisplayGroupName() {
+        this.querySelector(".group-name").textContent = this.currentGroupName
+    }
+
     loadDetail() {
-        const detail = this.configManager.getProxy().detail.find(this.groupName, this.actionType, this.direction)
+        const detail = this.configManager.getProxy().detail.find(this.currentGroupName, this.actionType, this.direction)
 
         console.log(detail)
-        this.querySelector(`[name=command][value=${detail.command || "open"}]`).checked = true
+        this.querySelector(`[name=command]`).value = detail.command
 
         this.querySelector(`[name=commandTarget][value=${detail.commandTarget || "link"}`).checked = true
-        this.querySelector(`[name=tabPosition][value=${detail.tabPosition || "overrideCurrent"}]`).checked = true
+        this.querySelector(`[name=tabPosition]`).value = detail.tabPosition
         this.querySelector(`[name=activeTab]`).checked = detail.activeTab
 
         this.querySelector(`[name='searchEngine.name']`).value = detail.searchEngine.name
@@ -180,7 +191,7 @@ class ActinoConfiguration extends HTMLElement {
         return {
             command: this.querySelector("[name=command]:checked").value,
             commandTarget: this.querySelector("[name=commandTarget]:checked").value,
-            tabPosition: this.querySelector("[name=tabPosition]:checked").value,
+            tabPosition: this.querySelector("[name=tabPosition]:checked").valuee,
             activeTab: this.querySelector("[name=activeTab]").checked,
             searchEngine: {
                 name: this.querySelector("[name='searchEngine.name']").value,
@@ -201,17 +212,14 @@ class ActinoConfiguration extends HTMLElement {
 
     saveActionProperty() {
         console.log("save action property")
-        this.configManager.getProxy().actions.update(this.originalGroupName, {
-            limitation: this.querySelector("[name=limitation]").value,
-            name: this.querySelector("[name=groupName]").value,
-            hotkey: this.querySelector("[name=hotkey]").value
+        this.configManager.getProxy().actions.update(this.currentGroupName, {
+            limitation: this.permitDirection,
+            name: this.currentGroupName,
         })
-        this.querySelector("[name=originalGroupName]").value = this.querySelector("[name=groupName]").value
     }
 
     saveDetail() {
-        this.configManager.getProxy().detail.update(this.groupName, this.actionType, this.direction, this.collectDetail())
-
+        this.configManager.getProxy().detail.update(this.currentGroupName, this.actionType, this.direction, this.collectDetail())
     }
 }
 

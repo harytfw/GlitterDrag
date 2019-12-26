@@ -5,24 +5,23 @@ class SearchEngineManager extends HTMLElement {
         const content = template.content
         this.appendChild(content.cloneNode(true))
         this.table = this.querySelector("table")
-        this.editor = this.querySelector(".row-editor")
+        this.editor = document.querySelector(".table-row-editor")
 
         this.addEventListener("click", (e) => {
-            if (e.target instanceof HTMLElement) {
-                const target = e.target.closest("button")
-                if (target instanceof HTMLButtonElement) {
-                    switch (target.dataset["event"]) {
-                        case "add":
-                            this.listenAdditionResult()
-                            break
-                        case "delete":
-                            this.deleteSearchEngine(target.closest("tr"))
-                            break
-                        case "edit":
-                            this.listenEditResult(target.closest("tr"))
-                            break
-                    }
+            let target = queryUtil.findEventElem(e.target)
+            if (target instanceof HTMLElement) {
+                switch (target.dataset.event) {
+                    case "add":
+                        this.listenAdditionResult()
+                        break
+                    case "delete":
+                        this.deleteSearchEngine(target.closest("tr"))
+                        break
+                    case "edit":
+                        this.listenEditResult(target.closest("tr"))
+                        break
                 }
+
             }
         })
 
@@ -30,7 +29,7 @@ class SearchEngineManager extends HTMLElement {
         document.addEventListener("configloaded", (e) => {
             this.configManager = e.target
             this.init()
-        })
+        }, { once: true })
     }
 
     init() {

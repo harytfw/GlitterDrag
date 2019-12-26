@@ -5,21 +5,17 @@ class SearchEngineProvider extends HTMLElement {
         const template = document.querySelector("#template-search-engine-provider")
         const content = template.content
         this.appendChild(content.cloneNode(true))
-        this.addEventListener("click", (e) => {
-            const { target } = e
-            let item = null
-            if (target instanceof HTMLElement) {
-                if (target.closest(".dropdown .dropdown-trigger") instanceof HTMLElement) {
-                    const dropdown = this.querySelector(".dropdown")
-                    dropdown.classList.add("is-active")
-                    dropdown.dataset.lastActive = true
-                } else if ((item = target.closest(".dropdown .dropdown-menu .dropdown-item")) instanceof HTMLElement) {
-                    const dropdown = target.closest(".dropdown")
-                    dropdown.classList.remove("is-active")
-                    this._dispatch(item.dataset.name, item.dataset.url, item.dataset.icon)
-                }
+
+        this.dropdown = this.querySelector("bulma-dropdown")
+
+
+        this.dropdown.addEventListener("change", (e) => {
+            const option = e.target.selectedOption
+            if (option instanceof HTMLOptionElement) {
+                this._dispatch(option.dataset.name, option.dataset.url, option.dataset.icon)
             }
         })
+
         this.updateDropdownList()
     }
 
@@ -42,31 +38,49 @@ class SearchEngineProvider extends HTMLElement {
         return this.getAttribute("groupname") === "Browser"
     }
 
-    updateDropdownList() {
+    async updateDropdownList() {
         const groupName = this.getAttribute("groupname")
+
+        const datalist = document.createElement("datalist")
+        datalist.id = `provider-${Math.floor(Math.random() * 100000)}`
+        this.appendChild(datalist)
+        this.dropdown.list = datalist.id
+
+
+        const options = []
+
         if (this.isBrowserGroup) {
-            return this.updateBrowserSearchEngine()
-        } 
-        if (!(groupName in searchEngines)) {
-            console.warn(this, `not found group: "${groupName}"`)
-            return
+            for (const se of (await browser.search.get())) {
+                const option = document.createElement("option")
+                option.value = se.name
+                option.dataset.name = se.name
+                option.dataset.icon = se.favIconUrl
+                option.innerHTML = `<img width="16" height="16" class="middle-img" src="${se.favIconUrl}"><span>${se.name}</span>`
+                options.push(option)
+            }
+        } else {
+
+            if (!(groupName in searchEngines)) {
+                console.warn(this, `not found search engine group: "${groupName}"`)
+                return
+            }
+
+            for (const searchEngine of searchEngines[groupName]) {
+                options.push(this.createOptionElement(searchEngine))
+            }
         }
-        const items = []
-        for (const searchEngine of searchEngines[groupName]) {
-            items.push(`<a href="#" class="dropdown-item" data-name="${searchEngine.name}" data-icon="${searchEngine.icon}" data-url="${searchEngine.url}">${searchEngine.name}</a>`)
-        }
-        this.querySelector(".dropdown-content").innerHTML = items.join("")
+        this.querySelector("bulma-dropdown").overrideWithOptions(options)
     }
 
-
-    async updateBrowserSearchEngine() {
-        const items = []
-        for (const se of (await browser.search.get())) {
-            items.push(`<a href="#" class="dropdown-item" data-name="${se.name}" data-icon="${se.favIconUrl}" data-url="${se.url}"><img width="16" height="16" class="middle-img" src="${se.favIconUrl}">${se.name}</a>`)
-        }
-        this.querySelector(".dropdown-content").innerHTML = items.join("")
+    createOptionElement(searchEngine) {
+        const option = document.createElement("option")
+        option.value = searchEngine.name
+        option.dataset.name = searchEngine.name
+        option.dataset.icon = searchEngine.icon
+        option.dataset.url = searchEngine.url
+        option.textContent = searchEngine.name
+        return option
     }
-
 }
 
 customElements.define("search-engine-provider", SearchEngineProvider)

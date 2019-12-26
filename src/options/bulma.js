@@ -1,25 +1,6 @@
-"use strict"
-document.addEventListener("click", () => {
-    for (const t of document.querySelectorAll(".dropdown.is-active")) {
-        if (t instanceof HTMLElement) {
-            if ("lastActive" in t.dataset) {
-                delete t.dataset.lastActive
-            } else {
-                t.classList.remove("is-active")
-            }
-        }
-    }
-})
-
-function closeBulmaDropdown(context) {
-
-}
-
-function addBulmaDropdownEvent(context, onTrigger, onClickItem) {
-
-}
 
 function initBulmaDropdown(context) {
+    return
     console.info(context, "init bulma dropdown")
     context.addEventListener("click", e => {
         const { target } = e

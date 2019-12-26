@@ -7,8 +7,9 @@ class SearchEngineEditorModal extends HTMLElement {
         this.appendChild(content.cloneNode(true))
 
         this.addEventListener("click", (e) => {
-            if (e.target instanceof HTMLElement) {
-                switch (e.target.dataset["event"]) {
+            const target = queryUtil.findEventElem(e.target)
+            if (target instanceof HTMLElement) {
+                switch (target.dataset.event) {
                     case "close":
                         this._dispatch("close")
                         this.close()
@@ -48,6 +49,10 @@ class SearchEngineEditorModal extends HTMLElement {
             detail: resultType,
             bubbles: true
         }))
+    }
+
+    get showBuiltin() {
+        return this.getAttribute("show-builtin") !== null
     }
 
     get modalTitle() {
@@ -114,11 +119,12 @@ class SearchEngineEditorModal extends HTMLElement {
         }
     }
 
-    active(name, url, icon, showBuiltin = false) {
+    active(name, url, icon) {
         console.info(this, "active")
 
         const column = this.querySelector("[groupname=Browser]").closest(".column")
-        if (showBuiltin) {
+        
+        if (this.showBuiltin) {
             column.classList.remove("is-hidden")
             console.log("show builtin")
         } else {

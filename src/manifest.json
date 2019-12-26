@@ -28,6 +28,7 @@
     ],
     "background": {
         "scripts": [
+            "common/namespace.js",
             "common/config.js",
             "common/env.js",
             "common/url_util.js",

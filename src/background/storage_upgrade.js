@@ -1,5 +1,3 @@
-const
-
 function compareVersion(a, b) {
     if (a[0] !== b[0]) {
         return a[0] > b[0] ? 1 : -1
@@ -22,14 +20,15 @@ const upgrade = {
 //在安装扩展时(含更新)触发，更新缺少的配置选项
 browser.runtime.onInstalled.addListener(async (details) => {
     console.info(details);
-    const currentVersion = [0, 0, 0]
-    const previoutVersion = [0, 0, 0]
+    let currentVersion = [0, 0, 0]
+    let previoutVersion = [0, 0, 0]
     try {
-        currentVersion = browser.getManifest().version.split(".").map(a => parseInt(a));
+        currentVersion = browser.runtime.getManifest().version.split(".").map(a => parseInt(a));
         previoutVersion = details.previousVersion.split(".").map(a => parseInt(a));
     }
     catch (error) {
         console.error(new Error("can not parse version"))
+        console.error(error)
         return
     }
 

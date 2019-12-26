@@ -63,7 +63,7 @@ interface ConfigInterface {
 
     actions: Array<{
         name: string,
-        hotkey: string,
+        shortcut: string,
         detail: {
             text: ActionDetail[],
             link: ActionDetail[],

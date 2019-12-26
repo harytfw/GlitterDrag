@@ -10,21 +10,19 @@ class DirectoryManager extends HTMLElement {
         this.table = this.querySelector("table")
 
         this.addEventListener("click", (e) => {
-            if (e.target instanceof HTMLElement) {
-                const target = e.target.closest("button")
-                if (target instanceof HTMLButtonElement) {
-                    switch (target.dataset.event) {
-                        case "add":
-                            this.addDirectory("", "")
-                            this.dispatchEvent(new Event("configupdate", { bubbles: true }))
-                            break
-                        case "delete":
-                            this.deleteDirectory(target.closest("tr"))
-                            this.dispatchEvent(new Event("configupdate", { bubbles: true }))
-                            break
-                        default:
-                            console.warn("unknown dataset event: " + target.dataset.event)
-                    }
+            const target = queryUtil.findEventElem(e.target)
+            if (target instanceof HTMLElement) {
+                switch (target.dataset.event) {
+                    case "add":
+                        this.addDirectory("", "")
+                        this.dispatchEvent(new Event("configupdate", { bubbles: true }))
+                        break
+                    case "delete":
+                        this.deleteDirectory(target.closest("tr"))
+                        this.dispatchEvent(new Event("configupdate", { bubbles: true }))
+                        break
+                    default:
+                        console.warn("unknown dataset event: " + target.dataset.event)
                 }
             }
         })
@@ -40,7 +38,7 @@ class DirectoryManager extends HTMLElement {
         document.addEventListener("configloaded", (e) => {
             this.configManager = e.target
             this.init()
-        })
+        },{once:true})
     }
 
     init() {
@@ -56,11 +54,11 @@ class DirectoryManager extends HTMLElement {
         noCell.textContent = this.table.tBodies[0].childElementCount
 
         const nameCell = row.insertCell()
-        nameCell.innerHTML = `<input class="input" type="text" name="directory.name" placeholder="Directory Name">`
+        nameCell.innerHTML = `<input class="input is-small" type="text" name="directory.name" placeholder="Directory Name">`
         nameCell.querySelector("input").value = name
 
         const pathCell = row.insertCell()
-        pathCell.innerHTML = `<input class="input" type="text" name="directory.path" placeholder="Directory Path">`
+        pathCell.innerHTML = `<input class="input is-small" type="text" name="directory.path" placeholder="Directory Path">`
         pathCell.querySelector("input").value = path
 
         const operationCell = row.insertCell()
