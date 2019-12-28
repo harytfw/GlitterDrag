@@ -8,9 +8,7 @@ class ActinoConfiguration extends HTMLElement {
         const content = template.content
         this.appendChild(content.cloneNode(true))
 
-        for (const dropdown of this.querySelectorAll(".dropdown")) {
-            initBulmaDropdown(dropdown)
-        }
+
 
         this.searchEngineEditor = document.querySelector("#action-detail-search-engine-editor")
         this.groupModal = document.querySelector("action-group-modal")
@@ -20,7 +18,7 @@ class ActinoConfiguration extends HTMLElement {
             if (target instanceof HTMLElement) {
                 switch (target.dataset.event) {
                     case "manage":
-                        this.groupModal.active()
+                        this.listenGroupModalClose()
                         break
                     case "editSearchEngine":
                         this.searchEngineEditor.active()
@@ -36,25 +34,40 @@ class ActinoConfiguration extends HTMLElement {
             if (target instanceof HTMLElement) {
                 switch (target.name) {
                     case "currentGroupName":
-                        this.updateDisplayGroupName()
+                        // loadDetail 依赖 方向限制
+                        this.updateLimitationStatus()
                         this.loadDetail()
+                        this.updateCommandPermitStatus()
                         break
-                    case "shortcut":
-                    case "groupName":
                     case "limitation":
-                        this.toggleDisplay()
                         this.saveActionProperty()
+                        this.updateLimitationStatus()
+                        this.loadDetail()
+                        this.updateCommandPermitStatus()
                         target.dispatchEvent(new Event("configupdate", { bubbles: true }))
                         break
                     case "actionType":
                     case "direction":
                         this.loadDetail()
+                        this.updateCommandPermitStatus()
+                        // target.dispatchEvent(new Event("configupdate", { bubbles: true }))
+                        break
+                    case "command":
+                        this.updateCommandPermitStatus()
+                        this.saveDetail()
+                        target.dispatchEvent(new Event("configupdate", { bubbles: true }))
+                        break
+                    case "activeTab":
+                    case "tabPosition":
+                    case "commandTarget":
+                    case "prompt":
+                    case "download.directory":
+                    case "download.showSaveAsDialog":
+                        this.saveDetail()
                         target.dispatchEvent(new Event("configupdate", { bubbles: true }))
                         break
                     default:
                         console.log("unhandled change", target)
-                        // this.saveDetail()
-                        // target.dispatchEvent(new Event("configupdate", { bubbles: true }))
                         break
                 }
             }
@@ -64,14 +77,15 @@ class ActinoConfiguration extends HTMLElement {
 
         document.addEventListener("configloaded", (e) => {
             this.configManager = e.target
-            this.initGroupNameDropdown()
-            this.initShortcut()
+            this.updateGroups()
+            this.updateLimitationStatus()
             this.loadDetail()
+            this.updateCommandPermitStatus()
+            i18nUtil.render(this)
         }, { once: true })
     }
 
     get currentGroupName() {
-        return "Default"
         return this.querySelector("[name=currentGroupName]").value
     }
 
@@ -83,59 +97,50 @@ class ActinoConfiguration extends HTMLElement {
         return this.querySelector("[name=direction]:checked").value
     }
 
-    get permitDirection() {
+    get permitedDirections() {
         return this.querySelector("[name=limitation]").value
     }
 
-    toggleDisplay() {
-        const normalDirection = this.querySelector(".normal-direction")
-        const diagonal = this.querySelector(".diagonal-direction")
-        switch (this.permitDirection) {
-            case "four":
-                normalDirection.classList.remove("is-hidden")
-                diagonal.classList.add("is-hidden")
-                break
-            case "l":
-            case "r":
-                normalDirection.classList.add("is-hidden")
-                diagonal.classList.remove("is-hidden")
-                break
-            case "all":
-            default:
-                normalDirection.classList.remove("is-hidden")
-                diagonal.classList.remove("is-hidden")
-                break
+    updateLimitationStatus() {
+        const limitation = this.permitedDirections
+
+        for (const input of this.querySelectorAll("[data-permit]")) {
+            const permitTable = input.dataset.permit.split(",").map(a => a.trim())
+            input.disabled = !permitTable.includes(limitation)
         }
 
+        for (const input of this.querySelectorAll("[name=direction]")) {
+            if (!input.disabled) {
+                input.checked = true
+                break
+            }
+        }
     }
 
-    initGroupNameDropdown() {
-        // const dropdown = this.querySelector(".dropdown.groupname-dropdown")
-
-        // const dropdownContent = dropdown.querySelector(".dropdown-content")
-
-        // while (dropdownContent.firstElementChild instanceof HTMLElement) {
-        //     dropdownContent.firstElementChild.remove()
-        // }
-
-        // const groupNames = this.configManager.get().actions.map(a => a.name)
-        // console.log("groupnames", groupNames)
-        // const items = []
-
-        // for (const name of groupNames) {
-        //     items.push(`<a class="dropdown-item" data-value="${name}">${name}</a>`)
-        // }
-
-        // dropdownContent.innerHTML = items.join("")
-
-        // this.querySelector("[name=currentGroupName]").value = groupNames[0]
-        // this.updateDisplayGroupName()
-
+    updateCommandPermitStatus() {
+        const command = this.querySelector("[name=command]").value
+        for (const input of this.querySelectorAll("[data-command-permit]")) {
+            const permitTable = input.dataset["commandPermit"].split(",").map(a => a.trim())
+            input.disabled = !permitTable.includes(command)
+        }
     }
 
-    initShortcut() {
-        // const shortcut = this.querySelector("[name=shortcut]").value = this.configManager.getProxy().actions.find(this.currentGroupName).shortcut
-        // this.querySelector(".shortcut-btn").textContent = shortcut === "" ? "no shortcut" : shortcut
+    applyLoadingAnimation() {
+        // const a = this.querySelector(".action-detail")
+        // a.style.opacity = .2
+        // setTimeout(() => {
+        //     if (parseInt(a.style.opacity) === 0) {
+        //         a.style.opacity = 1
+        //     }
+        // }, 300)
+    }
+
+    listenGroupModalClose() {
+        console.log("listen group modal close")
+        this.groupModal.addEventListener("close", () => {
+            this.updateGroups()
+        }, { once: true })
+        this.groupModal.active()
     }
 
     listenSearchEngineEditorResult() {
@@ -162,36 +167,54 @@ class ActinoConfiguration extends HTMLElement {
         }, { once: true })
     }
 
-    updateDisplayGroupName() {
-        this.querySelector(".group-name").textContent = this.currentGroupName
+    updateGroups() {
+        console.log('update group dropdown')
+        const dropdown = this.querySelector("#group-dropdown")
+        const actions = this.configManager.get().actions
+        const pairs = actions.map(a => [a.name, a.name])
+        dropdown.overrideWithKeyValuePairs(pairs)
+        if (actions.length === 0) {
+            console.error("group options is empty")
+            return
+        }
+
+        dropdown.updateSelectedOptionByIndex(0)
+        this.querySelector("[name=limitation]").value = actions[0].limitation
     }
 
     loadDetail() {
         const detail = this.configManager.getProxy().detail.find(this.currentGroupName, this.actionType, this.direction)
 
-        console.log(detail)
+        console.log("try load detail", detail)
+        if (!detail) {
+            console.error("detail is null")
+            return
+        }
+
         this.querySelector(`[name=command]`).value = detail.command
 
         this.querySelector(`[name=commandTarget][value=${detail.commandTarget || "link"}`).checked = true
         this.querySelector(`[name=tabPosition]`).value = detail.tabPosition
-        this.querySelector(`[name=activeTab]`).checked = detail.activeTab
 
         this.querySelector(`[name='searchEngine.name']`).value = detail.searchEngine.name
         this.querySelector(`[name='searchEngine.url']`).value = detail.searchEngine.url
         this.querySelector(`[name='searchEngine.icon']`).value = detail.searchEngine.icon
-        this.querySelector(`[name='searchEngine.builtin']`).value = detail.searchEngine.builtin
         this.querySelector(`[name='searchEngine.method']`).value = detail.searchEngine.method
-        this.querySelector(`[name='download.showSaveAsDialog']`).checked = detail.download.showSaveAsDialog
-        this.querySelector(`[name='download.directoryName']`).value = detail.download.directoryName
-        this.querySelector(`[name=scriptName]`).value = detail.scriptName
+        this.querySelector(`[name='download.directory']`).value = detail.download.directory
+        this.querySelector(`[name=script]`).value = detail.script
         this.querySelector(`[name=prompt]`).value = detail.prompt
+
+        this.querySelector(`[name=activeTab]`).checked = detail.activeTab
+        this.querySelector(`[name='searchEngine.builtin']`).checked = detail.searchEngine.builtin
+        this.querySelector(`[name='download.showSaveAsDialog']`).checked = detail.download.showSaveAsDialog
+
     }
 
     collectDetail() {
         return {
-            command: this.querySelector("[name=command]:checked").value,
+            command: this.querySelector("[name=command]").value,
             commandTarget: this.querySelector("[name=commandTarget]:checked").value,
-            tabPosition: this.querySelector("[name=tabPosition]:checked").valuee,
+            tabPosition: this.querySelector("[name=tabPosition]").value,
             activeTab: this.querySelector("[name=activeTab]").checked,
             searchEngine: {
                 name: this.querySelector("[name='searchEngine.name']").value,
@@ -203,9 +226,9 @@ class ActinoConfiguration extends HTMLElement {
             },
             download: {
                 showSaveAsDialog: this.querySelector("[name='download.showSaveAsDialog']").checked,
-                directoryName: this.querySelector("[name='download.directoryName']").value,
+                directory: this.querySelector("[name='download.directory']").value,
             },
-            scriptName: this.querySelector("[name='scriptName']").value,
+            script: this.querySelector("[name='script']").value,
             prompt: this.querySelector("[name='prompt']").value
         }
     }
@@ -213,12 +236,12 @@ class ActinoConfiguration extends HTMLElement {
     saveActionProperty() {
         console.log("save action property")
         this.configManager.getProxy().actions.update(this.currentGroupName, {
-            limitation: this.permitDirection,
-            name: this.currentGroupName,
+            limitation: this.permitedDirections,
         })
     }
 
     saveDetail() {
+        console.log("save detail")
         this.configManager.getProxy().detail.update(this.currentGroupName, this.actionType, this.direction, this.collectDetail())
     }
 }

@@ -8,19 +8,11 @@
         "128": "/icon/drag.png"
     },
     "author": "harytfw",
-    "browser_action": {
-        "default_title": "__MSG_browserActionTitle__",
-        "default_icon": {
-            "128": "/icon/drag.png"
-        },
-        "default_popup": "popup/popup.html",
-        "browser_style": true
-    },
     "permissions": [
-        "activeTab",
+        "http://*/*",
+        "https://*/*",
         "storage",
         "tabs",
-        "<all_urls>",
         "clipboardWrite",
         "downloads",
         "find",
@@ -41,15 +33,17 @@
             "run_at": "document_start",
             "all_frames": true,
             "matches": [
-                "<all_urls>"
+                "http://*/*",
+                "https://*/*"
             ],
             "js": [
+                "common/namespace.js",
                 "common/config.js",
                 "common/env.js",
                 "common/i18n_util.js",
                 "common/url_util.js",
-                // "translator/service.js",
-                "content_scripts/ui.js",
+                "common/console.js",
+                "component/prompt/prompt.js",
                 "content_scripts/wrapper.js",
                 "content_scripts/core.js",
                 "content_scripts/dimension_define.js",
@@ -64,7 +58,7 @@
         "browser_style": false,
         "open_in_tab": true
     },
-    "default_locale": "en",
+    "default_locale": "zh_CN",
     "applications": {
         "gecko": {
             "id": "glitterdrag@harytfw",
@@ -78,7 +72,6 @@
         }
     },
     "web_accessible_resources": [
-        "icon/*",
-        "content_scripts/*"
+        "component/*"
     ]
 }

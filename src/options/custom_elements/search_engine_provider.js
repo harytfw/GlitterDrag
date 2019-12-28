@@ -8,7 +8,6 @@ class SearchEngineProvider extends HTMLElement {
 
         this.dropdown = this.querySelector("bulma-dropdown")
 
-
         this.dropdown.addEventListener("change", (e) => {
             const option = e.target.selectedOption
             if (option instanceof HTMLOptionElement) {
@@ -17,10 +16,11 @@ class SearchEngineProvider extends HTMLElement {
         })
 
         this.updateDropdownList()
+        i18nUtil.render(this)
     }
 
     _dispatch(name, url, icon) {
-        console.info(this, "dispatch provideritemselect event")
+        console.log(this, "dispatch provideritemselect event")
         this.dispatchEvent(new CustomEvent("provideritemselect", {
             detail: {
                 name,
@@ -69,7 +69,9 @@ class SearchEngineProvider extends HTMLElement {
                 options.push(this.createOptionElement(searchEngine))
             }
         }
-        this.querySelector("bulma-dropdown").overrideWithOptions(options)
+        const dropdown = this.querySelector("bulma-dropdown")
+        dropdown.overrideWithOptions(options)
+        dropdown.updateButtonTextContent(i18nUtil.getI18n("selectSearchEngine"))
     }
 
     createOptionElement(searchEngine) {

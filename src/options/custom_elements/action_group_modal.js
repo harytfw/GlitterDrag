@@ -77,6 +77,7 @@ class ActionGroupModal extends HTMLElement {
         document.addEventListener("configloaded", (e) => {
             this.configManager = e.target
             this.init()
+            i18nUtil.render(this)
         }, { once: true })
     }
 
@@ -89,7 +90,7 @@ class ActionGroupModal extends HTMLElement {
 
 
     _dispatch(resultType) {
-        console.info(this, `dispatch result event with type:${resultType}`)
+        console.log(this, `dispatch result event with type:${resultType}`)
         this.dispatchEvent(new CustomEvent("result", {
             detail: resultType,
             bubbles: true
@@ -115,6 +116,7 @@ class ActionGroupModal extends HTMLElement {
     close() {
         console.log("close group modal")
         this.querySelector(".modal").classList.remove("is-active")
+        this.dispatchEvent(new Event("close", { bubbles: true }))
     }
 
     addGroup(name, shortcut, important) {
@@ -125,7 +127,7 @@ class ActionGroupModal extends HTMLElement {
             important,
         }
         //TODO: 添加其他东西
-        this.configManager.get().actions.push(group)
+        this.configManager.getProxy().actions.add(group)
 
         this.addGroupRow(name, shortcut, false)
         this.dispatchEvent(new Event("configupdate", { bubbles: true }))
@@ -133,7 +135,13 @@ class ActionGroupModal extends HTMLElement {
 
     addGroupRow(name, shortcut, important) {
         console.log("add group row")
+
+        const index = this.table.tBodies[0].children.length
+
         const row = document.querySelector("#template-action-group-row").content.cloneNode(true)
+
+        const noCell = row.querySelector(".no")
+        noCell.textContent = index
 
         const nameInput = row.querySelector("[name=name]")
         nameInput.value = name
@@ -185,7 +193,7 @@ class ActionGroupModal extends HTMLElement {
         let b = true
         for (const input of this.querySelectorAll("input")) {
             const q = input.reportValidity()
-            if(!q) {
+            if (!q) {
                 input.classList.add("is-danger")
                 input.focus()
             } else {

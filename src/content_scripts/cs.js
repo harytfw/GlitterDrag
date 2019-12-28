@@ -1,5 +1,7 @@
 "use strict"
 
+// consoleUtil.disableLog()
+
 window.onerror = function () {
     console.trace(...arguments)
 }
@@ -28,12 +30,6 @@ const MIME_URI_LIST = "text/uri-list"
 
 const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".txt"]
 const TEXT_EXTENSIONS = [".txt", ".text"]
-
-let bgConfig = {}
-
-browser.storage.local.get().then(a => {
-    Object.assign(bgConfig, a)
-})
 
 class Controller {
 
@@ -73,19 +69,7 @@ class Controller {
         throw new Error("failed to convert angle to direction:")
     }
 
-    static computeDirection(angle, modifierKey, actionType) {
-        let c = null;
-        // if (bgConfig.enableCtrlKey && modifierKey === commons.KEY_CTRL) {
-        //     c = bgConfig.directionControl_CtrlKey;
-        // } else if (bgConfig.enableShiftKey && modifierKey === commons.KEY_SHIFT) {
-        //     c = bgConfig.directionControl_ShiftKey;
-        // } else {
-        // c = bgConfig.directionControl;
-        // }
-        return Controller.angleToDirection(angle, DIMENSION["normal"])
-    }
-
-    static judgeActionType(selectionType, ) {
+    static predictActionType(selectionType, ) {
         switch (selectionType) {
             case SELECTION_TYPE.plainText:
                 return 'text'
@@ -104,7 +88,7 @@ class Controller {
             // }
             default:
                 console.trace('unknown selection type')
-                return
+                return ''
         }
     }
 
@@ -141,40 +125,99 @@ class Controller {
     }
 
     constructor() {
+
+
         this.core = new Core(this)
         this.storage = new BlobStorage()
+        this.actionWrapper = new ActionWrapper()
 
-        this.selection = Object.preventExtensions({
+        this.config = {}
+
+        this.selection = {
             text: null,
             plainUrl: null,
             imageLink: null,
-        })
+        }
 
         this.selectionType = SELECTION_TYPE.unknown
 
         this.direction = null //TODO: 
 
-        this.ui = Object.freeze({
-            indicator: new UIClass(),
-            promptBox: new UIClass(),
-            panelBox: new UIClass()
+        this.ui = {
+            // indicator: new UIClass(),
+            prompt: new Prompt(),
+            // panelBox: new UIClass()
+        }
+
+        this.shortcut = ""
+
+        browser.storage.onChanged.addListener((_, areaName) => {
+            if (areaName === "local") {
+                this.refreshPageConfig()
+            }
         })
+
+        document.addEventListener("keydown", (e) => {
+            if (e.isComposing === false) {
+                this.shortcut = e.key
+            }
+        })
+
+        document.addEventListener("keyup", () => {
+            this.shortcut = ""
+        })
+
+        this.refreshPageConfig()
+
     }
 
+    queryDirection() {
+        for (const action of this.config.actions) {
+            if (action.shortcut === this.shortcut) {
+                return Controller.angleToDirection(this.core.angle, DIMENSION[action.limitation])
+            }
+        }
+    }
+
+    queryActionDetail() {
+
+        const actionType = Controller.predictActionType(this.selectionType)
+        console.log("quertActionDetail", "selectionType:", this.selectionType, ", actionType:", actionType)
+        for (const action of this.config.actions) {
+            if (action.shortcut === this.shortcut) {
+                //TODO
+                console.log("action detail", action.detail, ", expceted direction:", this.direction)
+                return action.detail[actionType].find(detail => detail.direction === this.direction)
+            }
+        }
+
+        // 没有按键
+        //TODO
+        return null
+    }
+
+
+    async refreshPageConfig() {
+        console.log("refresh page config")
+        browser.storage.local.get().then(a => {
+            this.config = a
+        })
+    }
 
     clear() {
         console.log("clear")
         this.selection.text = this.selection.plainUrl = this.selection.imageLink = null
         this.direction = null
         this.selectionType = SELECTION_TYPE.unknown
-
-        this.ui.indicator.remove()
-        this.ui.promptBox.remove()
-        this.ui.panelBox.remove()
+        this.shortcut = ""
+        // this.ui.indicator.remove()
+        this.ui.prompt.remove()
+        // this.ui.panelBox.remove()
     }
 
     checkDistanceRange() {
         return true
+        //TODO
         let d = this.core.distance
         if (bgConfig.minDistance <= d && d < bgConfig.maxDistance) {
             return true
@@ -268,6 +311,7 @@ class Controller {
     onStart(target, dataTransfer, isExternal) {
         this.clear()
         let type = SELECTION_TYPE.unknown
+        console.log("onStart", target)
         if (Controller.isText(target) || Controller.isTextInput(target)) {
             // TODO: handle urlText
             this.selection.text = dataTransfer.getData("text/plain")
@@ -313,12 +357,6 @@ class Controller {
             type = SELECTION_TYPE.unknown
         }
         this.selectionType = type
-        //  dataTransfer.setData(MIME_SELECTION_TYPE, type)
-
-
-        if (true === bgConfig.enableIndicator) {
-            this.ui.indicator.mount()
-        }
     }
 
     /**
@@ -329,24 +367,27 @@ class Controller {
             // let d = Object.keys(DIMENSION).map(key => `${key} = ${DragController.angleToDirection(this.core.angle, DIMENSION[key])}`)
             // console.log(this.core.angle, d)
 
-            this.direction = Controller.computeDirection(
-                this.core.angle,
-                Controller.judgeActionType(this.selectionType)
-            )
+            this.direction = this.queryDirection()
             console.log('direction: ', this.direction)
 
-            if (true === bgConfig.enblePrompt) {
-                this.ui.promptBox.mount()
+            if (true === this.config.enablePrompt) {
+                const detail = this.queryActionDetail()
+                if (detail.prompt !== "") {
+                    this.ui.prompt.active()
+                    this.ui.prompt.render(this.selection, detail)
+                } else {
+                    this.ui.prompt.remove()
+                }
             }
 
         } else if (Controller.isTextInput(target)) {
-            this.ui.promptBox.remove()
+            // this.ui.prompt.remove()
             // 隐藏距离指示器
             // 隐藏动作提示框
             // 隐藏面板
         } else {
-            this.ui.promptBox.remove()
-            this.ui.panelBox.remove()
+            // this.ui.prompt.remove()
+            // this.ui.panelBox.remove()
         }
     }
 
@@ -357,12 +398,12 @@ class Controller {
         console.log('text/uri-list', dataTransfer.getData(MIME_URI_LIST))
         // console.log('text/image-link', dataTransfer.getData(MIME_IMAGE_LINK))
 
-        const builder = new ActionWrapper()
+
         const imageInfo = {
             token: null,
             extension: '',
         }
-        builder.setActionType(Controller.judgeActionType(this.selectionType))
+        this.actionWrapper.setActionType(Controller.predictActionType(this.selectionType))
 
         switch (this.selectionType) {
             case SELECTION_TYPE.plainImage:
@@ -387,13 +428,12 @@ class Controller {
          * 3. normal url
          * 4. 
          */
-        builder.setSelection(this.selection)
+        this.actionWrapper.setSelection(this.selection)
             .setDirection(this.direction)
             .setExtraImageInfo(imageInfo)
             .setSite(location.origin)
             .setPageTitle(document.title)
-            .setModifierKey(this.core.modifierKey)
-            .post(bgConfig)
+            .post(this.queryActionDetail())
 
         this.clear()
     }
@@ -401,6 +441,7 @@ class Controller {
     onExternal() {
 
     }
+
 }
 
 var c = new Controller()

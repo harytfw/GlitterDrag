@@ -6,7 +6,6 @@
     })
 })()
 
-
 class BulmaDropdown extends HTMLElement {
     static get observedAttributes() {
         return ["value"]
@@ -17,13 +16,13 @@ class BulmaDropdown extends HTMLElement {
 
         this.selectedOption = null
 
-        this.attachShadow({
-            mode: "open"
-        })
+        // this.attachShadow({
+        //     mode: "open"
+        // })
 
-        for (const style of document.styleSheets) {
-            this.shadowRoot.appendChild(style.ownerNode.cloneNode(true))
-        }
+        // for (const style of document.styleSheets) {
+        //     this.shadowRoot.appendChild(style.ownerNode.cloneNode(true))
+        // }
 
         this.closeDropdownNextTime = false
 
@@ -34,13 +33,13 @@ class BulmaDropdown extends HTMLElement {
             this.closeDropdownNextTime = false
         })
 
-        this.shadowRoot.addEventListener("click", (e) => {
+        this.addEventListener("click", (e) => {
             const { target } = e
             let itemElement
-            if (target instanceof HTMLAnchorElement && (itemElement = target.closest(".dropdown-item")) instanceof HTMLElement) {
+            if (target instanceof HTMLElement && (itemElement = target.closest(".dropdown-item")) instanceof HTMLElement) {
                 this.updateSelectedOptionByItem(itemElement)
                 this.close()
-                this.dispatchEvent(new Event("change"))
+                this.dispatchEvent(new Event("change", { bubbles: true }))
                 return
             }
             if (target instanceof HTMLElement && target.closest("button") instanceof HTMLButtonElement) {
@@ -52,12 +51,13 @@ class BulmaDropdown extends HTMLElement {
 
         const template = document.querySelector("#template-bulma-dropdown")
         const content = template.content
-        this.shadowRoot.appendChild(content.cloneNode(true))
+        this.appendChild(content.cloneNode(true))
 
         this.mutationObserver = new MutationObserver(this.onDataListMutation.bind(this))
 
         this.watchAndUpdate()
 
+        i18nUtil.render(this)
     }
 
     attributeChangedCallback(attr, value) {
@@ -67,16 +67,25 @@ class BulmaDropdown extends HTMLElement {
     }
 
     toggleActive() {
-        this.shadowRoot.querySelector(".dropdown").classList.toggle("is-active")
+        this.querySelector(".dropdown").classList.toggle("is-active")
     }
 
     active() {
-        this.shadowRoot.querySelector(".dropdown").classList.add("is-active")
+        this.querySelector(".dropdown").classList.add("is-active")
     }
 
     close() {
         this.closeDropdownNextTime = false
-        this.shadowRoot.querySelector(".dropdown").classList.remove("is-active")
+        this.querySelector(".dropdown").classList.remove("is-active")
+    }
+
+    get name() {
+        return this.getAttribute("name")
+    }
+
+    set name(value) {
+        this.setAttribute("name",value)
+        return value
     }
 
     get value() {
@@ -85,7 +94,6 @@ class BulmaDropdown extends HTMLElement {
 
     set value(val) {
         this.updateSelectedOptionByValue(val)
-        this.dispatchEvent(new Event("change", { bubbles: true }))
         return this.selectedOption
     }
 
@@ -106,6 +114,14 @@ class BulmaDropdown extends HTMLElement {
         return null
     }
 
+    set disabled(val) {
+        return this.querySelector("button").disabled = val
+    }
+
+    get disabled() {
+        return this.querySelector("button")
+    }
+
     overrideWithOptions(options) {
         this.mutationObserver.takeRecords()
         this.mutationObserver.disconnect()
@@ -123,7 +139,7 @@ class BulmaDropdown extends HTMLElement {
         this.watchAndUpdate()
     }
 
-    overrideWithKeyValuePair(pairs) {
+    overrideWithKeyValuePairs(pairs) {
         const options = pairs.map(pair => {
             const opt = document.createElement("option")
             opt.textContent = pair[0]
@@ -167,7 +183,7 @@ class BulmaDropdown extends HTMLElement {
         Array.from(this.datalist.children).forEach((option, index) => {
             items.push(`<a class="dropdown-item">${option.innerHTML}</a>`)
         })
-        this.shadowRoot.querySelector(".dropdown-content").innerHTML = items.join("")
+        this.querySelector(".dropdown-content").innerHTML = items.join("")
     }
 
     updateSelectedOptionByItem(itemElement) {
@@ -198,7 +214,7 @@ class BulmaDropdown extends HTMLElement {
     }
 
     updateButtonTextContent(text) {
-        this.shadowRoot.querySelector("button").firstElementChild.textContent = text
+        this.querySelector("button").firstElementChild.textContent = text
     }
 
 }

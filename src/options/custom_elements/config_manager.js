@@ -4,8 +4,10 @@ class ConfigManager extends HTMLElement {
         super()
         this.stack = []
         this.saveBtn = this.querySelector("#save")
+        this.saveBtn.textContent = i18nUtil.getI18n("saveChanges")
 
         this.discardBtn = this.querySelector("#discard")
+        this.discardBtn.textContent = i18nUtil.getI18n("discardChanges")
 
         this.saveBtn.addEventListener("click", () => {
             this.save()
@@ -59,7 +61,7 @@ class ConfigManager extends HTMLElement {
     }
 
     async save() {
-        console.info(this, "save")
+        console.log(this, "save")
         await configUtil.save(this.stack[this.stack.length - 1])
         this.stack.shift()
         this.stack.push(this.cloneTop())
@@ -70,7 +72,7 @@ class ConfigManager extends HTMLElement {
     }
 
     discard() {
-        console.info(this, "discard")
+        console.log(this, "discard")
         this.stack.pop()
         this.stack.push(this.cloneTop())
         this.check()
@@ -86,10 +88,10 @@ class ConfigManager extends HTMLElement {
 
     async resetConfig() {
         await configUtil.clear()
-        await configUtil.save(templateConfig)
+        await configUtil.save(configUtil.getTemplateConfig())
 
         this.stack.length = 0
-        this.stack.push(configUtil.cloneDeep(templateConfig))
+        this.stack.push(configUtil.cloneDeep(configUtil.getTemplateConfig()))
         this.stack.push(this.cloneTop())
         this.check()
 

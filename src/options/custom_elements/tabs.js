@@ -1,10 +1,17 @@
+"use strict"
 class CustomTabs extends HTMLElement {
     constructor() {
         super()
+
+        // consoleUtil.disableLog()
+        // consoleUtil.disableTrace()
+
         const template = document.querySelector('#template-tabs')
         const content = template.content
         this.append(content.cloneNode(true))
         this.addEventListener("click", (e) => this.onTitleClick(e))
+        document.title = i18nUtil.getI18n("optionPageTitle")
+        i18nUtil.render(this)
     }
 
     /**
@@ -33,6 +40,5 @@ class CustomTabs extends HTMLElement {
     }
 
 }
-
 
 customElements.define("custom-tabs", CustomTabs)

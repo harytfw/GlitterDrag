@@ -20,11 +20,13 @@ const upgrade = {
 //在安装扩展时(含更新)触发，更新缺少的配置选项
 browser.runtime.onInstalled.addListener(async (details) => {
     console.info(details);
-    let currentVersion = [0, 0, 0]
-    let previoutVersion = [0, 0, 0]
+    let currentVersion = [-1, -1, -1]
+    let previoutVersion = [-1, -1, -1]
     try {
         currentVersion = browser.runtime.getManifest().version.split(".").map(a => parseInt(a));
-        previoutVersion = details.previousVersion.split(".").map(a => parseInt(a));
+        if (details.reason === "update") {
+            previoutVersion = details.previousVersion.split(".").map(a => parseInt(a));
+        }
     }
     catch (error) {
         console.error(new Error("can not parse version"))
@@ -35,7 +37,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
     console.info("current version: ", currentVersion)
     console.info("previous version", previoutVersion)
 
-    if (details.reason === browser.runtime.OnInstalledReason.UPDATE) {
+    if (details.reason === "update") {
         const all = await (browser.storage.local.get())
         let isUpgrade = false
         if (compareVersion(previoutVersion, [2, 0, 0]) < 0) {

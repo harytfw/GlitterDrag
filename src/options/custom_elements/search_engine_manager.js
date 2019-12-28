@@ -29,6 +29,7 @@ class SearchEngineManager extends HTMLElement {
         document.addEventListener("configloaded", (e) => {
             this.configManager = e.target
             this.init()
+            i18nUtil.render(this)
         }, { once: true })
     }
 

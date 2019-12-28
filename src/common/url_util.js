@@ -47,7 +47,8 @@
     const seemAsURL = (url) => {
         //match both ipv4 and ipv6
         if (validateUrl(url)) return true;
-        if (bgConfig.disableFixURL === true) return false;
+        //TODO
+        // if (bgConfig.disableFixURL === true) return false;
 
         if (IsIPV4_Port_Query.test(url) || IsIPV6.test(url) || IsIPV6_Bracket_Query.test(url)) return true;
 

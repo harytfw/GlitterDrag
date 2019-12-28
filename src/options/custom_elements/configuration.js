@@ -37,7 +37,7 @@ class Configuration extends HTMLElement {
                 switch (target.dataset.event) {
                     case "reset":
                         await this.configManager.resetConfig()
-                        console.info("reload document")
+                        console.log("reload document")
                         location.reload()
                         break
                     case "backup":
@@ -55,6 +55,7 @@ class Configuration extends HTMLElement {
 
         document.addEventListener("configloaded", (e) => {
             this.configManager = e.target
+            i18nUtil.render(this)
         }, { once: true })
     }
 

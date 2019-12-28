@@ -1,5 +1,5 @@
 var DIRECTION = {
-    one: "one",
+    any: "any",
     up: "up",
     down: "down",
     left: "left",
@@ -12,13 +12,13 @@ var DIRECTION = {
 }
 
 var DIMENSION = {
-    one: [
+    any: [
         {
-            range: [0, 361],
-            value: DIRECTION.one
+            range: [0, 360],
+            value: DIRECTION.any
         }
     ],
-    normal: [
+    four: [
         {
             range: [45, 135],
             value: DIRECTION.up
@@ -40,7 +40,7 @@ var DIMENSION = {
             value: DIRECTION.right
         },
     ],
-    vertical: [
+    v: [
         {
             range: [0, 180],
             value: DIRECTION.up
@@ -50,7 +50,7 @@ var DIMENSION = {
             value: DIRECTION.down
         }
     ],
-    horizontal: [
+    h: [
         {
             range: [90, 270],
             value: DIRECTION.left
@@ -64,7 +64,7 @@ var DIMENSION = {
             value: DIRECTION.right
         }
     ],
-    rightDiagonal: [
+    r: [
         {
             range: [45, 225],
             value: DIRECTION.upperLeft
@@ -79,7 +79,7 @@ var DIMENSION = {
             value: DIRECTION.upperLeft
         }
     ],
-    leftDiagonal: [
+    l: [
         {
             range: [135, 275],
             value: DIRECTION.lowerLeft
@@ -93,7 +93,7 @@ var DIMENSION = {
             value: DIRECTION.upperRight
         }
     ],
-    quadrant: [
+    diagonal: [
         {
             range: [0, 90],
             value: DIRECTION.upperRight

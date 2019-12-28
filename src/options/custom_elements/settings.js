@@ -14,6 +14,7 @@ class SettingsContainer extends HTMLElement {
         document.addEventListener("configloaded", (e) => {
             this.configManager = e.target
             this.init()
+            i18nUtil.render(this)
         }, { once: true })
 
         document.addEventListener("discard", (e) => {
@@ -63,10 +64,10 @@ class SettingsContainer extends HTMLElement {
 
             if (settingName.startsWith("features")) {
                 const featuresName = settingName.split(".")[1]
-                console.info(`update features: ${featuresName}=val`)
+                console.log(`update features: ${featuresName}=val`)
                 this.configManager.getProxy().updateFeatures(settingName.split(".")[1], val)
             } else {
-                console.info(`setting change: ${settingName}=${val}`)
+                console.log(`setting change: ${settingName}=${val}`)
                 this.configManager.get()[settingName] = val
             }
         }

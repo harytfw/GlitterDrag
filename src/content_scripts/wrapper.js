@@ -1,38 +1,17 @@
-const MODIFIERKEY_MAP = new Map([
-    [-1, 'Actions'],
-    [0, 'Actions_CtrlKey'],
-    [1, 'Actions_ShiftKey'],
-])
-
 class ActionWrapper {
 
     constructor() {
-        this.action = null
 
-        this.direction = null
         this.selection = Object.preventExtensions({
-            text: '',
-            plainUrl: '',
-            imageLink: '',
-        })
-
-        this.site = null
-        this.actionType = null
-        this.modifierKey = null
-
-        this.fileInfo = Object.preventExtensions({
-            token: '',
-            name: '', // the file name
-            type: '' // the file mime type
+            text: null,
+            plainUrl: null,
+            imageLink: null,
         })
 
         this.extraImageInfo = Object.preventExtensions({
-            token: '', // the token to retrive data from page
-            extension: '', // the format of image
+            token: null, // the token to retrive data from page
+            extension: null, // the format of image
         })
-
-        this.downloadOption = {}
-        this.pageTitle = {}
 
     }
 
@@ -56,23 +35,8 @@ class ActionWrapper {
         return this
     }
 
-    setModifierKey(val) {
-        this.modifierKey = val
-        return this
-    }
-
-    setFileInfo(val) {
-        Object.assign(this.fileInfo, val)
-        return this
-    }
-
     setExtraImageInfo(val) {
         Object.assign(this.extraImageInfo, val)
-        return this
-    }
-
-    setDownloadOption(val) {
-        Object.assign(this.downloadOption, val)
         return this
     }
 
@@ -81,14 +45,28 @@ class ActionWrapper {
         return this
     }
 
-    post(config) {
-        const actionDetail = config.actions[0].detail[this.actionType].find(detail => detail.direction === this.direction)
-        console.log('post', this)
+    post(actionDetail) {
+        if (!actionDetail) {
+            console.warn("action detail is empty, replace it with no operation")
+            actionDetail = {
+                command: ""
+            }
+        }
         const msg = {
             msgCmd: "postAction",
         }
         Object.assign(msg, this, actionDetail)
-        console.log("post",msg)
+        console.log("post", msg)
         browser.runtime.sendMessage(msg)
+
+        this.direction = null
+        this.site = null
+        this.actionType = null
+        this.pageTitle = null
+        this.extraImageInfo.extension = null
+        this.extraImageInfo.token = null
+        this.selection.imageLink = null
+        this.selection.plainUrl = null
+        this.selection.text = null
     }
 }

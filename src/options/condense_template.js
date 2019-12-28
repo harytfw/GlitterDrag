@@ -16,13 +16,15 @@
         }
     }
 
+    console.groupCollapsed("strip whitespace")
     for (const t of document.querySelectorAll("template")) {
-        // console.info("strip whitespace of", t)
+        console.log(t)
         const content = t.content
         for (const node of Array.from(content.childNodes)) {
             stripWhitespateTextNode(node)
         }
     }
+    console.groupEnd("strip whitespace")
 
     console.timeEnd("condense whitespace")
 })()

@@ -38,10 +38,10 @@
     
                     download: {
                         showSaveAsDialog: false,
-                        directoryName: "",
+                        directory: "",
                     },
     
-                    scriptName: "",
+                    script: "",
     
                     prompt: "",
     
@@ -52,11 +52,6 @@
             }
         }],
 
-        /* directories: [{
-            name: "",
-            path: "",
-        }], */
-        directories: [],
 
         features: {
             disableFixURL: false,
@@ -72,26 +67,11 @@
         }], */
         styles: [],
 
-        translationSetting: {
-            lastProvider: "google",
-            sourcelang: "auto",
-            targetlang: "auto",
+        translation: {
+            provider: "google",
+            sourceLanguage: "auto",
+            targetLanguage: "auto",
         },
-
-        /* scripts: [{
-            name: "",
-            script: ""
-        }], */
-        scripts: [],
-
-        /* searchEngine: [{
-            name: "",
-            url: "",
-            icon: "",
-            method: "get",
-        }]*/
-
-        searchEngines: [],
 
         version: "0.0.0",
     };
@@ -100,9 +80,7 @@
         direction: "",
         command: "",
         commandTarget: "",
-
-        preferImage: false,
-
+        
         activeTab: false,
         tabPosition: "",
 
@@ -117,10 +95,10 @@
 
         download: {
             showSaveAsDialog: false,
-            directoryName: "",
+            directory: "",
         },
 
-        scriptName: "",
+        script: "",
 
         prompt: "",
     }
@@ -185,6 +163,9 @@
 
                 find(name, actionType, direction) {
                     const action = manipulator.actions.find(name)
+                    if (!action) {
+                        return null
+                    }
                     let ret = action.detail[actionType].find(obj => obj.direction === direction)
                     if (!ret) {
                         ret = cloneDeep(defaultActionDetail)

@@ -11,12 +11,10 @@ class SearchEngineEditorModal extends HTMLElement {
             if (target instanceof HTMLElement) {
                 switch (target.dataset.event) {
                     case "close":
-                        this._dispatch("close")
                         this.close()
                         break
                     case "confirm":
-                        this._dispatch("confirm")
-                        this.close()
+                        this.confirm()
                         break
                 }
             }
@@ -41,10 +39,12 @@ class SearchEngineEditorModal extends HTMLElement {
                 this.processIconInput()
             }
         })
+
+        i18nUtil.render(this)
     }
 
     _dispatch(resultType) {
-        console.info(this, `dispatch result event with type:${resultType}`)
+        console.log(this, `dispatch result event with type:${resultType}`)
         this.dispatchEvent(new CustomEvent("result", {
             detail: resultType,
             bubbles: true
@@ -120,17 +120,17 @@ class SearchEngineEditorModal extends HTMLElement {
     }
 
     active(name, url, icon) {
-        console.info(this, "active")
+        console.log(this, "active")
 
-        const column = this.querySelector("[groupname=Browser]").closest(".column")
-        
-        if (this.showBuiltin) {
-            column.classList.remove("is-hidden")
-            console.log("show builtin")
-        } else {
-            column.classList.add("is-hidden")
-            console.log("not show builtin")
-        }
+        // const column = this.querySelector("[groupname=Browser]").closest(".column")
+
+        // if (this.showBuiltin) {
+        //     column.classList.remove("is-hidden")
+        //     console.log("show builtin")
+        // } else {
+        //     column.classList.add("is-hidden")
+        //     console.log("not show builtin")
+        // }
 
         this.querySelector(".modal").classList.add("is-active")
         if (typeof name === "string") {
@@ -147,9 +147,15 @@ class SearchEngineEditorModal extends HTMLElement {
     }
 
     close() {
-        console.info(this, "close")
+        console.log(this, "close")
+        this._dispatch("close")
         this.querySelector(".modal").classList.remove("is-active")
-        this._dispatch("cancel")
+    }
+
+    confirm() {
+        console.log(this, "confirm")
+        this._dispatch("confirm")
+        this.querySelector(".modal").classList.remove("is-active")
     }
 
 
@@ -167,6 +173,9 @@ class SearchEngineEditorModal extends HTMLElement {
         reader.onloadend = () => {
             console.log("read file end")
             this.searchEngineIcon = reader.result
+        }
+        reader.onerror = (err) => {
+            console.error(err)
         }
         console.log("start read file")
         reader.readAsDataURL(file)

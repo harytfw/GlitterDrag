@@ -1,7 +1,0 @@
-{
-    "globals": {
-        "searchEngines": false,
-        "browserStorage": false,
-        "ActionsView": false
-    }
-}

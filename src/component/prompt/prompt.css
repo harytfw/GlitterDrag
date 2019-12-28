@@ -1,0 +1,13 @@
+#prompt {
+  all: initial;
+  font-size: 14px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 20px;
+  background: #ececec;
+  border: 1px solid #ccc;
+  box-shadow: 0px 0px 2px #eee;
+  z-index: 99999999;
+  font-family: sans-serif;
+}

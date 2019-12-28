@@ -64,6 +64,8 @@ class DirectoryManager extends HTMLElement {
         const operationCell = row.insertCell()
         operationCell.appendChild(document.querySelector("#template-table-cell-delete-buttons").content.cloneNode(true))
         this.table.tBodies[0].appendChild(row)
+
+        i18nUtil.render(this)
     }
 
 

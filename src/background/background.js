@@ -29,17 +29,11 @@ function safeFilename(filename) {
     return filename;
 }
 
-function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 3) {
-    const url = window.URL.createObjectURL(blob);
-    setTimeout(u => window.URL.revokeObjectURL(u), revokeTime, url); // auto revoke
-    return url;
-}
-
 function createBlobObjectURLForText(text = "") {
     let blob = new window.Blob([text], {
         type: "text/plain"
     });
-    return createObjectURL(blob);
+    return window.URL.createObjectURL(blob);
 }
 
 function processURLPlaceholders(url, keyword, args) {
@@ -87,6 +81,10 @@ function processURLPlaceholders(url, keyword, args) {
     return url;
 }
 
+function returnFirstNotNull() {
+    return [...arguments].find(a => a !== null && a !== undefined)
+}
+
 class ExecutorClass {
     constructor() {
         //template
@@ -102,8 +100,11 @@ class ExecutorClass {
 
         this.downloadIdSetToRevoke = new Map()
 
-        browser.storage.local.get().then(a => {
-            this.bgConfig = a
+
+        browser.storage.onChanged.addListener((_, areaName) => {
+            if (areaName === "local") {
+                this.refreshBackgroundConfig()
+            }
         })
 
         browser.downloads.onChanged.addListener(item => {
@@ -123,15 +124,24 @@ class ExecutorClass {
             this.backgroundChildTabCount = 0;
         });
 
+        this.refreshBackgroundConfig()
+
+    }
+
+    async refreshBackgroundConfig() {
+        console.info("refresh background config")
+        browser.storage.local.get().then(a => {
+            this.bgConfig = a
+        })
     }
 
     async DO(actionWrapper, sender) {
         console.time("do action")
         this.data = actionWrapper
         this.sender = sender
-        this.execute();
-        // this.data = null
-        // this.sender = null
+        await this.execute();
+        this.data = null
+        this.sender = null
         console.timeEnd("do action")
     }
 
@@ -149,39 +159,43 @@ class ExecutorClass {
                 return this.findText(this.data.selection.text);
             case "translate":
                 return this.translateText(this.data.selection.text);
+            case "runScript":
+                return this.runScript()
+            case "":
+                console.log("no operation")
+                return
             default:
                 console.error(`unexcepted commond: "${this.data.command}"`)
         }
     }
 
     async openHandler() {
-        console.log("openHandler")
-        console.time("handle open")
+        console.time("openHandler")
         if (this.data.actionType === "text") {
-            this.searchHandler();
+            await this.searchText(this.data.selection.text);
         }
         else if (this.data.actionType === "link") {
             if (this.data.commandTarget === "image") {
-                // TODO remove below
-                this.openURL(this.data.selection.imageLink)
+                // TODO
+                await this.openURL(this.data.selection.imageLink)
             }
             else if (this.data.commandTarget === "text") {
-                //TODO remove below
-                this.openURL(this.data.selection.text);
+                //TODO
+                await this.openURL(this.data.selection.text);
             }
-            else this.openURL(this.data.selection.plainUrl)
+            else await this.openURL(this.data.selection.plainUrl)
         }
         else if (this.data.actionType === "image") {
             if (this.data.selection.imageLink !== "") {
-                this.openTab(this.data.selection.imageLink)
+                await this.openURL(this.data.selection.imageLink)
             } else {
-                this.fetchImagePromise(this.data.extraImageInfo)
+                await this.fetchImagePromise(this.data.extraImageInfo)
                     .then(u8Array => {
                         this.openImageViewer(u8Array)
                     })
             }
         }
-        console.timeEnd("handle open")
+        console.timeEnd("openHandler")
     }
 
     async copyHandler() {
@@ -189,9 +203,17 @@ class ExecutorClass {
         if (this.data.actionType === "link") {
             switch (this.data.commandTarget) {
                 case "image":
-                    return this.copyText(this.data.selection.imageLink)
+                    return this.copyText(
+                        returnFirstNotNull(
+                            this.data.selection.imageLink,
+                            this.data.selection.link
+                        ))
                 case "text":
-                    return this.copyText(this.data.selection.text)
+                    return this.copyText(
+                        returnFirstNotNull(
+                            this.data.selection.text,
+                            this.data.selection.link
+                        ))
                 case "link":
                     return this.copyText(this.data.selection.plainUrl)
             }
@@ -224,21 +246,15 @@ class ExecutorClass {
         }
         else if (this.data.actionType === "image") {
             if (this.data.commandTarget === "image") {
-                if (this.data.selection.imageLink === null) {
-                    return this.fetchImagePromise(this.data.extraImageInfo)
-                        .then(u8Array => {
-                            this.searchImageByPostMethod(u8Array)
-                        })
-                } else {
-                    return this.searchImage(this.data.selection.imageLink);
-                }
+                return this.fetchImagePromise(this.data.extraImageInfo)
+                    .then(u8Array => {
+                        this.searchImageByPostMethod(u8Array)
+                    })
+            } else {
+                return this.searchImage(this.data.selection.imageLink);
             }
         }
         else if (this.data.commandTarget === "text") {
-            return this.searchText(this.data.selection.text);
-        }
-        else {
-            //TODO: 
             return this.searchText(this.data.selection.text);
         }
     }
@@ -264,49 +280,13 @@ class ExecutorClass {
         }
     }
 
-    async openTab(url = "") {
-        console.log("open tab", url)
-
-        if (["newWindow", "newPrivateWindow"].includes(this.data.tabPosition)) {
-            const win = await browser.windows.create({
-                incognito: this.data.tabPosition === "newPrivateWindow",
-                url,
-            });
-            const tabs = await browser.tabs.query({
-                windowId: win.id
-            })
-            return tabs[0];
-        }
-        else {
-            console.time("query tabs")
-            const tabs = await browser.tabs.query({ currentWindow: true });
-            console.timeEnd("query tabs")
-            const activatedTab = tabs.find(t => t.active)
-            if (!activatedTab) {
-                throw new Error("No active tab was found");
-            }
-            if (this.data.tabPosition === "overrideCurrent") {
-                browser.tabs.update(activatedTab.id, { url });
-            }
-            else {
-                const option = {
-                    active: this.data.activeTab,
-                    index: this.getTabIndex(tabs.length, activatedTab.index),
-                    url,
-                    openerTabId: activatedTab.id
-                };
-                // console.time("create tab")
-                /*const newTab = */
-                return browser.tabs.create(option);
-                // console.timeEnd("create tab")
-            }
-        }
-    }
-
     async searchText(keyword) {
         console.log("search text: ", keyword)
-        if (this.data.searchEngine.builtin === true) {
+        if (this.data.searchEngine.url === "" || this.data.searchEngine.builtin === true) {
             const tabHoldingSearch = await this.openTab('about:blank');
+            console.log("call browser search api",
+                ", engine name:", this.data.searchEngine.name,
+                ", tab holds search page:", tabHoldingSearch)
             //TODO: check error
             return browser.search.search({
                 query: keyword,
@@ -315,7 +295,8 @@ class ExecutorClass {
             });
         }
         else {
-            return this.openTab(processURLPlaceholders(this.data.searchEngine.url, keyword, {
+            console.log(`search engine name: "${this.data.searchEngine.name}" , url: "${this.data.searchEngine.url}"`)
+            return this.openURL(processURLPlaceholders(this.data.searchEngine.url, keyword, {
                 site: this.data.site
             }))
         }
@@ -324,7 +305,6 @@ class ExecutorClass {
 
     async searchImage(imageUrl) {
         //TODO
-        let url = await this.getEngine();
         return this.openTab()
     }
 
@@ -349,9 +329,9 @@ class ExecutorClass {
         }
     }
 
-    async removeFind() {
+    async removeHighlighting() {
         console.log("remove find")
-        if (this.findFlag) { //可能有其他扩展也使用 browser.find，加一个判断
+        if (this.findFlag) {
             this.findFlag = false;
             return browser.find.removeHighlighting();
         }
@@ -361,6 +341,8 @@ class ExecutorClass {
         console.log("download: ", url)
         browser.downloads.download({
             url,
+            saveAs: this.data.download.showSaveAsDialog,
+            headers: [{ name: "Referer", value: this.data.site }]
         })
     }
 
@@ -383,32 +365,93 @@ class ExecutorClass {
 
     async copyText(data) {
         console.log("copy text:", data)
-        const storage = document.createElement("textarea");
-        storage.value = data;
-        document.body.appendChild(storage);
-        storage.focus();
-        storage.setSelectionRange(0, storage.value.length);
-        document.execCommand("copy");
-        storage.remove();
+        return navigator.clipboard.writeText(data)
     }
 
     async copyImage(u8Array) {
-        console.log("copy image, length=" + u8Array)
+        console.log("copy image, length:", u8Array)
         browser.clipboard.setImageData(u8Array,
             this.data.extraImageInfo.extension === ".png" ? "png" : "jpeg");
     }
 
     //TODO remove this method
-    async openURL(url = "") {
-        this.openTab(url);
+    async openURL(url) {
+        if (typeof url !== "string") {
+            console.error(`url is ${url} rather than string`)
+            return
+        }
+        await this.openTab(url);
         // return this.searchText(url);
     }
 
-    getTabIndex(tabsLength = 0, currentTabIndex = 0) {
 
-        if (this.bgConfig.disableAdjustTabSequence || this.data.activeTab) {
+    async openTab(url) {
+        if (typeof url !== "string") {
+            console.error(`url is ${url} rather than string`)
+            return
+        }
+        console.trace("open tab: ", url, ", tabPosition: ", this.data.tabPosition, ", activeTab: ", this.data.activeTab)
+
+        if (["newWindow", "privateWindow"].includes(this.data.tabPosition)) {
+            let win
+            if ("newWindow" === this.data.tabPosition) {
+                console.log("create window")
+                win = await browser.windows.create();
+            } else {
+                console.log("attempt to reuse icongito window")
+                win = (await browser.windows.getAll({ windowTypes: ["normal"] })).find(w => w.incognito)
+                if (!win) {
+                    console.log("create new icongito window")
+                    win = await browser.windows.create({ incognito: true });
+                }
+            }
+            const tab = await browser.tabs.create({
+                url: url,
+                windowId: win.id,
+                active: this.data.activeTab
+            })
+            if (true === this.data.activeTab) {
+                browser.windows.update(win.id, { focused: true })
+            }
+            return tab;
+        }
+        else {
+            console.time("query tabs")
+            const tabs = await browser.tabs.query({ currentWindow: true });
+            console.timeEnd("query tabs")
+            const activatedTab = tabs.find(t => t.active)
+            if (!activatedTab) {
+                throw new Error("No actived tab is found");
+            }
+            if (this.data.tabPosition === "overrideCurrent") {
+                browser.tabs.update(activatedTab.id, { url });
+            }
+            else {
+                const option = {
+                    active: this.data.activeTab,
+                    url,
+                    openerTabId: activatedTab.id
+                };
+                if (this.data.tabPosition !== "") {
+                    option.index = this.getTabIndex(tabs.length, activatedTab.index)
+                }
+                // console.time("create tab")
+                /*const newTab = */
+                return browser.tabs.create(option);
+                // console.timeEnd("create tab")
+            }
+        }
+    }
+
+    getTabIndex(tabsLength = 0, currentTabIndex = 0) {
+        console.log("calc the index of new created tab",
+            ", tabsLength:", tabsLength,
+            ", currentTabIndex:", currentTabIndex,
+            ", backgroundChildCount:", this.backgroundChildTabCount)
+        if (this.data.activeTab) {
             this.backgroundChildTabCount = 0;
         }
+
         let index = 0;
         switch (this.data.tabPosition) {
             case "left": index = currentTabIndex; break;
@@ -420,12 +463,14 @@ class ExecutorClass {
 
         if (!this.data.activeTab && this.data.tabPosition === "right") {
             this.backgroundChildTabCount += 1;
+            console.log("increase backgroundChildTabCount: ", this.backgroundChildTabCount)
         }
+        console.log("the index of tab maybe: ", index)
         return index;
     }
 
     async fetchImagePromise(extraImageInfo) {
-        console.log("fetach image promise")
+        console.log("create fetch image promise")
         return new Promise((resolve, reject) => {
             const port = browser.tabs.connect(this.sender.tabId)
             if (port.error) {
@@ -442,6 +487,11 @@ class ExecutorClass {
         })
     }
 
+    async runScript() {
+        return browser.tabs.executeScript({
+            code: this.data.script
+        })
+    }
 
     async openImageViewer(u8Array) {
 
@@ -470,7 +520,7 @@ async function insertCSS(sender) {
 browser.runtime.onMessage.addListener(async (m, sender) => {
     switch (m.msgCmd) {
         case "removeHighlighting":
-            executor.removeFind();
+            executor.removeHighlighting();
             break;
         case "insertCSS":
             insertCSS(sender);
