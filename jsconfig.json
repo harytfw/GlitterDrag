@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "module": "none",
+        "target": "es2018",
+        "jsx": "preserve",
+        "plugins": [
+            {
+                "name": "typescript-tslint-plugin",
+                "alwaysShowRuleFailuresAsWarnings": false,
+                "ignoreDefinitionFiles": true,
+                "configFile": "./tslint.json",
+                "suppressWhileTypeErrorsPresent": false
+            }
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "**/node_modules/*"
+    ],
+    "include": [
+        "src/**/*"
+    ],
+    "typeAcquisition": {
+        "include": [
+            "firefox-webext-browser"
+        ]
+    }
+}

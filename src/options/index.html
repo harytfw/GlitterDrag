@@ -29,7 +29,7 @@
             </div>
         </section>
         <action-group-modal></action-group-modal>
-        <search-engine-editor-modal id="action-detail-search-engine-editor" show-builtin="">
+        <search-engine-editor-modal id="action-detail-search-engine-editor">
         </search-engine-editor-modal>
         <!-- <search-engine-editor-modal class="table-row-editor"></search-engine-editor-modal> -->
     </config-manager>
@@ -38,10 +38,10 @@
         </div>
         <div class="tabs tabs-title">
             <ul>
-                <li class="is-active" data-target="#no1"><a data-i18n="tabTitle-settings">Settings</a></li>
-                <li data-target="#no2"><a data-i18n="tabTitle-actions">Actions</a></li>
-                <!-- <li data-target="#no3"><a data-i18n="tabTitle-searchEngine">Search Engine</a></li> -->
-                <li data-target="#no5"><a data-i18n="tabTitle-configuration">Configuration</a></li>
+                <li class="is-active" data-target="#no1"><a data-i18n="tabtitle_settings">Settings</a></li>
+                <li data-target="#no2"><a data-i18n="tabtitle_actions">Actions</a></li>
+                <!-- <li data-target="#no3"><a data-i18n="tabtitle_searchEngine">Search Engine</a></li> -->
+                <li data-target="#no5"><a data-i18n="tabtitle_configuration">Configuration</a></li>
             </ul>
         </div>
         <div class="columns tabs-body">
@@ -63,20 +63,7 @@
         </div>
     </template>
     <template id="template-settings">
-        <div class="field is-horizontal">
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <div class="pretty p-default">
-                            <input type="checkbox" name="enableIndicator">
-                            <div class="state">
-                                <label data-i18n="showIndicator">Show Indicator</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
         <div class="field is-horizontal">
             <div class="field-body">
@@ -107,6 +94,39 @@
                         </div>
                         <input class="input is-small" style="width: 10rem;" type="text" name="timeout">
                         <span> s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field is-narrow">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="limitRange">
+                            <div class="state">
+                                <label data-i18n="limitRange">Limit Range</label>
+                            </div>
+                        </div>
+                        <input class="input is-small" style="width: 5rem;" type="number" name="range0">
+                        <span> - </span>
+                        <input class="input is-small" style="width: 5rem;" type="number" name="range1">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal" style="margin-left: 2rem;">
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="enableIndicator">
+                            <div class="state">
+                                <label data-i18n="showIndicator">Show Indicator</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -252,36 +272,35 @@
 
             </div>
             <div class="field-body">
-
-                <div class="field is-narrow">
+                <div class="control">
                     <div class="pretty p-default p-round">
                         <input data-permit="any" checked type="radio" value="" name="direction">
                         <div class="state">
-                            <label data-i18n="direction-any">Any</label>
+                            <label data-i18n="direction_any">Any</label>
                         </div>
                     </div>
                     <div class="pretty p-default p-round">
                         <input data-permit="four,v,all" type="radio" value="up" name="direction">
                         <div class="state">
-                            <label data-i18n="direction-up">Up</label>
+                            <label data-i18n="direction_up">Up</label>
                         </div>
                     </div>
                     <div class="pretty p-default p-round">
                         <input data-permit="four,v,all" type="radio" value="down" name="direction">
                         <div class="state">
-                            <label data-i18n="direction-down">Down</label>
+                            <label data-i18n="direction_down">Down</label>
                         </div>
                     </div>
                     <div class="pretty p-default p-round">
                         <input data-permit="four,h,all" type="radio" value="left" name="direction">
                         <div class="state">
-                            <label data-i18n="direction-left">Left</label>
+                            <label data-i18n="direction_left">Left</label>
                         </div>
                     </div>
                     <div class="pretty p-default p-round">
                         <input data-permit="four,h,all" type="radio" value="right" name="direction">
                         <div class="state">
-                            <label data-i18n="direction-right">Right</label>
+                            <label data-i18n="direction_right">Right</label>
                         </div>
                     </div>
                 </div>
@@ -294,37 +313,36 @@
                 <label data-i18n="diagonalDirections">Diagonal</label>
             </div>
             <div class="field-body">
-                <div class="field is-narrow">
-
+                <div class="control">
                     <div class="pretty p-default p-round">
                         <input data-permit="rd,diagonal,all" type="radio" value="upperLeft" name="direction">
                         <div class="state">
-                            <label data-i18n="direction-upperLeft">UpperLeft</label>
+                            <label data-i18n="direction_upperLeft">UpperLeft</label>
                         </div>
                     </div>
                     <div class="pretty p-default p-round">
                         <input data-permit="rd,diagonal,all" type="radio" value="lowerRight" name="direction">
                         <div class="state">
-                            <label data-i18n="direction-lowerRight">LowerRight</label>
+                            <label data-i18n="direction_lowerRight">LowerRight</label>
                         </div>
                     </div>
                     <div class="pretty p-default p-round">
                         <input data-permit="ld,diagonal,all" type="radio" value="upperRight" name="direction">
                         <div class="state">
-                            <label data-i18n="direction-upperRight">UpperRight</label>
+                            <label data-i18n="direction_upperRight">UpperRight</label>
                         </div>
                     </div>
                     <div class="pretty p-default p-round">
                         <input data-permit="ld,diagonal,all" type="radio" value="lowerLeft" name="direction">
                         <div class="state">
-                            <label data-i18n="direction-lowerLeft">LowerLeft</label>
+                            <label data-i18n="direction_lowerLeft">LowerLeft</label>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <!-- action type-->
-        <div class="field is-horizontal">
+        <div class="field is-horizontal is-narrow">
             <div class="field-label ">
                 <label data-i18n="actionType">Action type</label>
                 <div class="dropdown is-hidden is-hoverable has-text-left">
@@ -342,25 +360,29 @@
                 </div>
             </div>
             <div class="field-body">
-                <div class="field is-narrow">
-                    <div class="control">
-                        <div class="pretty p-default p-round">
-                            <input checked type="radio" value="text" name="actionType">
-                            <div class="state">
-                                <label data-i18n="textGroup">Text</label>
-                            </div>
+                <div class="control">
+                    <div class="pretty p-default p-round">
+                        <input checked type="radio" value="text" name="actionType">
+                        <div class="state">
+                            <label data-i18n="textGroup">Text</label>
                         </div>
-                        <div class="pretty p-default p-round">
-                            <input type="radio" value="link" name="actionType">
-                            <div class="state">
-                                <label data-i18n="linkGroup">Link</label>
-                            </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                        <input type="radio" value="link" name="actionType">
+                        <div class="state">
+                            <label data-i18n="linkGroup">Link</label>
                         </div>
-                        <div class="pretty p-default p-round">
-                            <input type="radio" value="image" name="actionType">
-                            <div class="state">
-                                <label data-i18n="imageGroup">Image</label>
-                            </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                        <input type="radio" value="image" name="actionType">
+                        <div class="state">
+                            <label data-i18n="imageGroup">Image</label>
+                        </div>
+                    </div>
+                    <div class="pretty p-default p-round is-hidden">
+                        <input type="radio" value="linkAndImage" name="actionType">
+                        <div class="state">
+                            <label data-i18n="linkAndImageGroup">Link & Image</label>
                         </div>
                     </div>
                 </div>
@@ -370,7 +392,7 @@
         <hr>
         <div class="action-detail" style="transition: opacity ease .3s;">
             <!-- action to do -->
-            <div class="field is-horizontal">
+            <div class="field is-horizontal is-narrow">
                 <div class="field-label ">
                     <label data-i18n="performedCommand">Action to do</label>
                     <div class="is-hidden dropdown is-hoverable has-text-left">
@@ -388,30 +410,40 @@
                     </div>
                 </div>
                 <div class="field-body">
-                    <div class="field is-narrow">
-                        <div class="control">
-                            <bulma-dropdown list="command-options" name="command"></bulma-dropdown>
-                            <datalist id="command-options">
-                                <option value="" data-i18n="command-noop">No Operation</option>
-                                <option value="open" data-i18n="command-open">Open</option>
-                                <option value="search" data-i18n="command-search">Search</option>
-                                <option value="download" data-i18n="command-download">Download</option>
-                                <option value="copy" data-i18n="command-copy">Copy</option>
-                                <option value="find" data-i18n="command-find">Find Text</option>
-                                <!-- <option value="translate" data-event="command-translate" data-i18n="command-translate">
+                    <div class="control">
+                        <bulma-dropdown list="command-options" name="command"></bulma-dropdown>
+                        <datalist id="command-options">
+                            <option value="" data-i18n="command_noop">No Operation</option>
+                            <option value="open" data-i18n="command_open" data-target-action-type="text,link,image">
+                                Open
+                            </option>
+                            <option value="search" data-i18n="command_search" data-target-action-type="text,image">
+                                Search
+                            </option>
+                            <option value="find" data-i18n="command_find" data-target-action-type="text"
+                                data-target-browser="firefox">
+                                Find Text
+                            </option>
+                            <option value="copy" data-i18n="command_copy" data-target-action-type="text,link">
+                                Copy
+                            </option>
+                            <option value="download" data-i18n="command_download" data-target-action-type="image">
+                                Download
+                            </option>
+                            <!-- <option value="translate" data-i18n="command_translate">
                                     Translate
                                 </option> -->
-                                <option value="runScript" data-event="command-runScript" data-i18n="command-runScript">
-                                    Run Script</option>
-                            </datalist>
-
-                        </div>
+                            <!-- <option value="query" data-i18n="command_query">Query</option> -->
+                            <!-- <option value="runScript" data-event="command-runScript" data-i18n="command_runScript">
+                                Run Script
+                            </option> -->
+                        </datalist>
                     </div>
                 </div>
             </div>
 
             <!-- prefer -->
-            <div class="field is-horizontal">
+            <div class="field is-horizontal is-narrow is-hidden">
                 <div class="field-label ">
                     <label data-i18n="preference">Preference</label>
                     <div class="dropdown is-hoverable has-text-left">
@@ -423,35 +455,33 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-content">
                                 <div class="dropdown-item">
-                                    <span class="simple-pre" data-i18n="helpInfo-preference"></pre>
+                                    <span class="simple-pre" data-i18n="helpInfo_preference"></pre>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="field-body">
-                    <div class="field is-narrow">
-                        <div class="control">
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="commandTarget" value="text"
-                                    data-command-permit="open,search,download,copy">
-                                <div class="state">
-                                    <label data-i18n="preference-text">text</label>
-                                </div>
+                    <div class="control">
+                        <div class="pretty p-default p-round">
+                            <input type="radio" name="commandTarget" value="text"
+                                data-command-permit="open,search,download,copy">
+                            <div class="state">
+                                <label data-i18n="preference_text">text</label>
                             </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="commandTarget" value="link"
-                                    data-command-permit="open,search,download,copy">
-                                <div class="state">
-                                    <label data-i18n="preference-link">link</label>
-                                </div>
+                        </div>
+                        <div class="pretty p-default p-round">
+                            <input type="radio" name="commandTarget" value="link"
+                                data-command-permit="open,search,download,copy">
+                            <div class="state">
+                                <label data-i18n="preference_link">link</label>
                             </div>
-                            <div class="pretty p-default p-round">
-                                <input type="radio" name="commandTarget" value="image"
-                                    data-command-permit="open,search,download,copy">
-                                <div class="state">
-                                    <label data-i18n="preference-image">image</label>
-                                </div>
+                        </div>
+                        <div class="pretty p-default p-round">
+                            <input type="radio" name="commandTarget" value="image"
+                                data-command-permit="open,search,download,copy">
+                            <div class="state">
+                                <label data-i18n="preference_image">image</label>
                             </div>
                         </div>
                     </div>
@@ -459,7 +489,7 @@
             </div>
 
             <!-- tab position -->
-            <div class="field is-horizontal">
+            <div class="field is-horizontal is-narrow">
                 <div class="field-label ">
                     <label data-i18n="positionOfNewTab">tab position</label>
                     <div class="dropdown is-hoverable has-text-left">
@@ -471,46 +501,43 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-content">
                                 <div class="dropdown-item">
-                                    <span class="simple-pre" data-i18n="helpInfo-tabPosition"></pre>
+                                    <span class="simple-pre" data-i18n="helpInfo_tabPosition"></pre>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="field-body">
-                    <div class="field is-narrow">
-                        <div class="control">
-                            <bulma-dropdown list="tab-position-options" name="tabPosition"
-                                data-command-permit="open,search"></bulma-dropdown>
-                            <datalist id="tab-position-options">
-                                <option value="" data-i18n="tabPosition-notSet">Not Set</option>
-                                <option value="overrideCurrent" data-i18n="tabPosition-overrideCurrent">Override Current
-                                </option>
-                                <option value="left" data-i18n="tabPosition-left">Left</option>
-                                <option value="right" data-i18n="tabPosition-right">Right</option>
-                                <option value="start" data-i18n="tabPosition-start">Start</option>
-                                <option value="end" data-i18n="tabPosition-end">End</option>
-                                <option value="newWindow" data-i18n="tabPosition-newWindow">New Window</option>
-                                <option value="privateWindow" data-i18n="tabPosition-privateWindow">Private Window
-                                </option>
-                            </datalist>
-                        </div>
+                    <div class="control">
+                        <bulma-dropdown list="tab-position-options" name="tabPosition"
+                            data-command-permit="open,search">
+                        </bulma-dropdown>
+                        <datalist id="tab-position-options">
+                            <option value="" data-i18n="tabPosition_notSet">Not Set</option>
+                            <option value="overrideCurrent" data-i18n="tabPosition_overrideCurrent">Override Current
+                            </option>
+                            <option value="left" data-i18n="tabPosition_left">Left</option>
+                            <option value="right" data-i18n="tabPosition_right">Right</option>
+                            <option value="start" data-i18n="tabPosition_start">Start</option>
+                            <option value="end" data-i18n="tabPosition_end">End</option>
+                            <option value="newWindow" data-i18n="tabPosition_newWindow">New Window</option>
+                            <option value="privateWindow" data-i18n="tabPosition_privateWindow">Private Window
+                            </option>
+                        </datalist>
                     </div>
                 </div>
             </div>
 
-            <div class="field is-horizontal">
+            <div class="field is-horizontal is-narrow">
                 <div class="field-label ">
                     <label data-i18n="activateTab">activate the tab</label>
                 </div>
                 <div class="field-body">
-                    <div class="field is-narrow">
-                        <div class="control">
-                            <div class="pretty p-default">
-                                <input type="checkbox" name="activeTab" data-command-permit="open,search">
-                                <div class="state">
-                                    <label data-i18n="activate">active (Foregound)</label>
-                                </div>
+                    <div class="control">
+                        <div class="pretty p-default">
+                            <input type="checkbox" name="activeTab" data-command-permit="open,search">
+                            <div class="state">
+                                <label data-i18n="activate">active (Foregound)</label>
                             </div>
                         </div>
                     </div>
@@ -530,17 +557,27 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-content">
                                 <div class="dropdown-item">
-                                    <span class="simple-pre" data-i18n="helpInfo-searchEngine"></span>
+                                    <span class="simple-pre" data-i18n="helpInfo_searchEngine"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="field-body">
-                    <div class="field is-narrow">
-                        <div class="control">
-                            <button class="button is-small" data-event="editSearchEngine" data-i18n="editSearchEngine"
-                                data-command-permit="search">Edit</button>
+                    <div class="control">
+                        <button class="button is-small" data-event="editSearchEngine" data-i18n="editSearchEngine"
+                            data-command-permit="search">Edit</button>
+                        <div class="dropdown is-hoverable has-text-left" style="margin-left: 1rem;">
+                            <div class="dropdown-trigger"><span class="icon has-text-grey-light"><i
+                                        class="fas fa-info-circle"></i></span></div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-content">
+                                    <div class="dropdown-item">
+                                        <span class="simple-pre searchEngineURLPreview">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -631,7 +668,7 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-content">
                                 <div class="dropdown-item">
-                                    <span class="simple-pre" data-i18n="helpInfo-downloadDirectory"></span>
+                                    <span class="simple-pre" data-i18n="helpInfo_downloadDirectory"></span>
                                 </div>
                             </div>
                         </div>
@@ -679,7 +716,7 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-content">
                                 <div class="dropdown-item">
-                                    <span class="simple-pre" data-i18n="helpInfo-prompt"></span>
+                                    <span class="simple-pre" data-i18n="helpInfo_prompt"></span>
                                 </div>
                             </div>
                         </div>
@@ -695,7 +732,7 @@
             </div>
 
 
-            <div class="field is-horizontal">
+            <div class="field is-horizontal is-hidden">
                 <div class="field-label ">
                     <label data-i18n="script">script</label>
                     <div class="dropdown is-hoverable has-text-left">
@@ -707,7 +744,7 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-content">
                                 <div class="dropdown-item">
-                                    <span class="simple-pre" data-i18n="helpInfo-script"></span>
+                                    <span class="simple-pre" data-i18n="helpInfo_script"></span>
                                 </div>
                             </div>
                         </div>
@@ -815,7 +852,8 @@
                 </header>
                 <section class="modal-card-body">
                     <div class="columns provider-container">
-                        <search-engine-provider groupname="Browser"></search-engine-provider>
+                        <search-engine-provider data-target-browser="firefox" groupname="Browser">
+                        </search-engine-provider>
                         <search-engine-provider groupname="General"></search-engine-provider>
                         <search-engine-provider groupname="Chinese"></search-engine-provider>
                         <search-engine-provider groupname="Image Search"></search-engine-provider>
@@ -868,7 +906,7 @@
                         <div class="column is-8">
                             <div class="field is-horizontal">
                                 <div class="field-label has-text-left">
-                                    <label data-i18n="icon"> icon </label>
+                                    <label data-i18n="icon"> icon URL </label>
                                 </div>
                                 <div class="field-body">
                                     <div class="field is-narrow">
@@ -899,7 +937,7 @@
                                 <div class="field-body">
                                     <div class="field">
                                         <div class="control">
-                                            <textarea class="textarea is-small" cols="30" rows="10"
+                                            <input class="input is-small" type="text"
                                                 name="searchEngineIcon"></textarea>
                                         </div>
                                     </div>
@@ -1130,6 +1168,7 @@
 
     </template>
     <!-- <script src="index.js"></script> -->
+    <script src="../libs/webextension-polyfill/browser-polyfill.min.js"></script>
     <script src="../common/namespace.js"></script>
     <script src="../common/i18n_util.js"></script>
     <script src="../common/env.js"></script>
@@ -1138,8 +1177,11 @@
     <script src="../common/simple_log.js"></script>
     <script src="../common/query_util.js"></script>
     <script src="../common/console.js"></script>
-    <script src="../component/distance_indicator/distance_indicator.js"></script>
-    <script src="../component/prompt/prompt.js"></script>
+    <script src="../content_scripts/component/range_indicator/range_indicator.js"></script>
+    <script src="../content_scripts/bridge.js"></script>
+    <script src="../content_scripts/component/prompt/prompt.js"></script>
+    <script src="../content_scripts/component/query_window/namespace.js"></script>
+    <script src="../content_scripts/component/query_window/service/dict_bing.js"></script>
     <script src="bulma.js"></script>
     <script src="condense_template.js"></script>
     <script src="search_engines.js"></script>

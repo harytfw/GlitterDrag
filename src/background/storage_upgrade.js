@@ -20,6 +20,7 @@ const upgrade = {
 //在安装扩展时(含更新)触发，更新缺少的配置选项
 browser.runtime.onInstalled.addListener(async (details) => {
     console.info(details);
+    // if (details.temporary && details.reason === "update") return
     let currentVersion = [-1, -1, -1]
     let previoutVersion = [-1, -1, -1]
     try {
@@ -46,7 +47,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
     }
     else if (details.reason === browser.runtime.OnInstalledReason.INSTALL) {
         console.log("new install")
-        await configUtil.save(configUtil.cloneDeep(configUtil.templateConfig));
-
+        await configUtil.save(configUtil.cloneDeep(configUtil.getTemplateConfig()));
+        
     }
 });

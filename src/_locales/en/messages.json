@@ -11,13 +11,13 @@
     "optionPageTitle": {
         "message": "Glitter Drag Option Page"
     },
-    "tabTitle-settings": {
+    "tabtitle_settings": {
         "message": "Settings"
     },
-    "tabTitle-actions": {
+    "tabtitle_actions": {
         "message": "Actions"
     },
-    "tabTitle-configuration": {
+    "tabtitle_configuration": {
         "message": "Configuration"
     },
     "actionGroup": {
@@ -65,94 +65,94 @@
     "performedCommand": {
         "message": "Performed Command"
     },
-    "command-open": {
+    "command_open": {
         "message": "Open"
     },
-    "command-Copy": {
+    "command_copy": {
         "message": "Copy"
     },
-    "command-search": {
+    "command_search": {
         "message": "Search"
     },
-    "command-download": {
+    "command_download": {
         "message": "Download"
     },
-    "command-noop": {
+    "command_noop": {
         "message": "No Operation"
     },
-    "command-translate": {
+    "command_translate": {
         "message": "Translate"
     },
-    "command-find": {
+    "command_find": {
         "message": "Find"
     },
-    "command-runScript": {
+    "command_runScript": {
         "message": "Run Script"
     },
-    "direction-any": {
+    "direction_any": {
         "message": "Any"
     },
-    "direction-up": {
+    "direction_up": {
         "message": "Up"
     },
-    "direction-down": {
+    "direction_down": {
         "message": "Down"
     },
-    "direction-left": {
+    "direction_left": {
         "message": "Left"
     },
-    "direction-right": {
+    "direction_right": {
         "message": "Right"
     },
-    "direction-upperLeft": {
+    "direction_upperLeft": {
         "message": "Upper Left"
     },
-    "direction-upperRight": {
+    "direction_upperRight": {
         "message": "Upper Right"
     },
-    "direction-lowerLeft": {
+    "direction_lowerLeft": {
         "message": "Lower Left"
     },
-    "direction-lowerRight": {
+    "direction_lowerRight": {
         "message": "Lower Right"
     },
     "preference": {
         "message": "Preference"
     },
-    "preference-text": {
+    "preference_text": {
         "message": "Text"
     },
-    "preference-link": {
+    "preference_link": {
         "message": "Link"
     },
-    "preference-image": {
+    "preference_image": {
         "message": "Image"
     },
     "positionOfNewTab": {
         "message": "The location of the tab"
     },
-    "tabPosition-notSet": {
+    "tabPosition_notSet": {
         "message": "Not Set"
     },
-    "tabPosition-newWindow": {
+    "tabPosition_newWindow": {
         "message": "New Window"
     },
-    "tabPosition-privateWindow": {
+    "tabPosition_privateWindow": {
         "message": "Private Window"
     },
-    "tabPosition-overrideCurrent": {
+    "tabPosition_overrideCurrent": {
         "message": "Current"
     },
-    "tabPosition-end": {
+    "tabPosition_end": {
         "message": "End"
     },
-    "tabPosition-start": {
+    "tabPosition_start": {
         "message": "Start"
     },
-    "tabPosition-left": {
+    "tabPosition_left": {
         "message": "Left"
     },
-    "tabPosition-right": {
+    "tabPosition_right": {
         "message": "Right"
     },
     "activateTab": {
@@ -254,52 +254,52 @@
     "icon": {
         "message": "Icon"
     },
-    "provider-google": {
+    "provider_google": {
         "message": "Google"
     },
-    "language-auto": {
+    "language_auto": {
         "message": "Auto"
     },
-    "language-english": {
+    "language_english": {
         "message": "English"
     },
-    "language-simplified-chinese": {
+    "language_sch": {
         "message": "SCH"
     },
-    "language-traditional-chinese": {
+    "language_tch": {
         "message": "TCH"
     },
-    "language-japanese": {
+    "language_japanese": {
         "message": "Japanese"
     },
-    "language-german": {
+    "language_german": {
         "message": "German"
     },
-    "language-korean": {
+    "language_korean": {
         "message": "Korean"
     },
-    "language-russian": {
+    "language_russian": {
         "message": "Russian"
     },
-    "language-french": {
+    "language_french": {
         "message": "French"
     },
-    "helpInfo-tabPosition": {
+    "helpInfo_tabPosition": {
         "message": ""
     },
-    "helpInfo-preference": {
+    "helpInfo_preference": {
         "message": ""
     },
-    "helpInfo-searchEngine": {
+    "helpInfo_searchEngine": {
         "message": ""
     },
-    "helpInfo-downloadDirectory": {
+    "helpInfo_downloadDirectory": {
         "message": ""
     },
-    "helpInfo-prompt": {
+    "helpInfo_prompt": {
         "message": ""
     },
-    "helpInfo-script": {
+    "helpInfo_script": {
         "message": ""
     }
 }

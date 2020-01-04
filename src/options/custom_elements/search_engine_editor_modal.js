@@ -40,6 +40,7 @@ class SearchEngineEditorModal extends HTMLElement {
             }
         })
 
+        queryUtil.removeElementsByVender(this)
         i18nUtil.render(this)
     }
 
@@ -49,10 +50,6 @@ class SearchEngineEditorModal extends HTMLElement {
             detail: resultType,
             bubbles: true
         }))
-    }
-
-    get showBuiltin() {
-        return this.getAttribute("show-builtin") !== null
     }
 
     get modalTitle() {

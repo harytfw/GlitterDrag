@@ -38,7 +38,7 @@ class DirectoryManager extends HTMLElement {
         document.addEventListener("configloaded", (e) => {
             this.configManager = e.target
             this.init()
-        },{once:true})
+        })
     }
 
     init() {

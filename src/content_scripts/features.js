@@ -1,59 +1,101 @@
 
-const extendMiddleButton = function () {
-    var x1 = 0.0, y1 = 0.0;
-    const MIN_MOVEMENT = 10;
-    const se = document.getSelection();
-    const LEFT_BUTTON = 0,
-        MIDDLE_BUTTON = 1;
-    const STATE_INIT = 0,
-        STATE_READY = 1,
-        STATE_WORKING = 2,
-        STATE_FINISH = 3;
-    let state = STATE_INIT;
+const extendMiddleButton = new (class {
+    constructor() {
+        this.MIN_MOVEMENT = 10;
+        this.LEFT_BUTTON = 0;
+        this.MIDDLE_BUTTON = 1;
 
-    function mousedown(e) {
-        if (e.button !== MIDDLE_BUTTON) {
+        this.STATE_IDLE = 0;
+        this.STATE_WORKING = 2;
+
+        this.x1 = 0.0, this.y1 = 0.0;
+        this.x2 = 0.0, this.y2 = 0.0;
+        this.se = window.getSelection();
+
+        this.state = this.STATE_IDLE;
+
+        this.mouseup = this.mouseup.bind(this);
+        this.mousedown = this.mousedown.bind(this);
+        this.mousemove = this.mousemove.bind(this);
+        this.auxclick = this.auxclick.bind(this);
+
+        this.style = document.createElement("style");
+        this.style.textContent = "a { pointer-events:none; }";
+    }
+
+    start() {
+        document.addEventListener("mouseup", this.mouseup);
+
+        document.addEventListener("mousedown", this.mousedown);
+
+        document.addEventListener("mousemove", this.mousemove);
+
+        document.addEventListener("auxclick", this.auxclick);
+
+    }
+
+    stop() {
+        document.removeEventListener("mouseup", this.mouseup);
+        document.removeEventListener("mousedown", this.mousedown);
+        document.removeEventListener("mousemove", this.mousemove);
+        document.removeEventListener("auxclick", this.auxclick);
+
+    }
+
+    getRange(x, y) {
+        if (typeof document.caretPositionFromPoint === "function") {
+            const { offsetNode: node, offset: offset } = document.caretPositionFromPoint(x, y);
+            return {
+                node, offset,
+            };
+        } else {
+            const { startContainer: node, startOffset: offset } = document.caretRangeFromPoint(x, y);
+            return {
+                node, offset,
+            };
+        }
+    }
+
+    mousedown(e) {
+        console.info(e);
+        if (e.button !== this.MIDDLE_BUTTON) {
             return;
         }
-        x1 = e.clientX;
-        y1 = e.clientY;
-        const range = document.caretPositionFromPoint(x1, y1);
-        se.setBaseAndExtent(range.offsetNode, range.offset, range.offsetNode, range.offset);
-        state = STATE_READY;
-    }
-    var x2 = 0.0, y2 = 0.0;
-    function mouseup(e) {
-        if (e.button === MIDDLE_BUTTON) {
-            if (state === STATE_WORKING) state = STATE_FINISH;
-            else state = STATE_INIT;
+        e.preventDefault();
+        if (this.state === this.STATE_IDLE) {
+            this.state = this.STATE_WORKING;
+            this.x1 = e.clientX;
+            this.y1 = e.clientY;
+            const range = this.getRange(e.clientX, e.clientY);
+            this.se.setBaseAndExtent(range.node, range.offset, range.node, range.offset);
         }
     }
-    function mousemove(e) {
-        if (state === STATE_INIT) return;
-        x2 = e.clientX;
-        y2 = e.clientY;
-        if (Math.hypot(x1 - x2, y1 - y2) >= MIN_MOVEMENT) {
-            if (state === STATE_WORKING || state === STATE_READY) {
-                const range = document.caretPositionFromPoint(x2, y2);
-                if (se.anchorNode !== null) se.extend(range.offsetNode, range.offset);
-                state = STATE_WORKING;
-            }
+
+    mouseup(e) {
+        console.info(e);
+        this.state = this.STATE_IDLE;
+        if (e.button !== this.MIDDLE_BUTTON) {
+            return;
         }
-        else {
-            state = STATE_READY;
-        }
+        e.preventDefault();
     }
-    function click(e) {
-        if (e.button === MIDDLE_BUTTON && state == STATE_FINISH) {
+
+    mousemove(e) {
+        if (this.state === this.STATE_WORKING) {
+            const range = this.getRange(e.clientX, e.clientY);
+            this.se.extend(range.node, range.offset);
             e.preventDefault();
         }
-        state = STATE_INIT;
     }
-    document.addEventListener('mouseup', mouseup);
-    document.addEventListener('mousedown', mousedown);
-    document.addEventListener('mousemove', mousemove);
-    document.addEventListener('click', click);
-}
+
+    auxclick(e) {
+        console.info(e);
+        this.state = this.STATE_IDLE;
+        if (e.button === this.MIDDLE_BUTTON && this.se.toString() !== "") {
+            e.preventDefault();
+        }
+    }
+})();
 
 const scrollbarLocker = {
     //https://stackoverflow.com/questions/13631730/how-to-lock-scrollbar-and-leave-it-visible
@@ -69,11 +111,11 @@ const scrollbarLocker = {
     },
     doLock: () => {
         window.scrollTo(scrollbarLocker.x, scrollbarLocker.y);
-    }
-}
+    },
+};
 
 // expose global variable
 var features = Object.freeze({
     extendMiddleButton,
     scrollbarLocker,
-})
+});

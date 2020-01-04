@@ -1,16 +1,30 @@
 "use strict";
-(function (ns) {
+var queryUtil = {};
+{
     const findEventElem = (target) => {
         if (!(target instanceof HTMLElement)) {
-            return null
+            return null;
         }
-        const elem = target.closest("[data-event]")
+        const elem = target.closest("[data-event]");
         if (elem instanceof HTMLElement) {
-            return elem
+            return elem;
         }
-        return null
-    }
+        return null;
+    };
 
-    ns.findEventElem = findEventElem
-})(queryUtil || {})
+    const removeElementsByVender = (context) => {
+        const vender = env.browser;
+        for (const target of context.querySelectorAll("[data-target-browser]")) {
+            const allowed = target.dataset.targetBrowser.split(",");
+            console.log(target, "allow browser: " + allowed);
+            if (!allowed.includes(vender)) {
+                console.info(target, " is removed due to the browser filter rule");
+                target.remove();
+            }
+        }
+    };
+
+    queryUtil.findEventElem = findEventElem;
+    queryUtil.removeElementsByVender = removeElementsByVender;
+}
 

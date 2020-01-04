@@ -11,13 +11,13 @@
     "optionPageTitle": {
         "message": "闪耀拖拽 选项页"
     },
-    "tabTitle-settings": {
+    "tabtitle_settings": {
         "message": "设置"
     },
-    "tabTitle-actions": {
+    "tabtitle_actions": {
         "message": "动作"
     },
-    "tabTitle-configuration": {
+    "tabtitle_configuration": {
         "message": "配置"
     },
     "actionGroup": {
@@ -65,94 +65,94 @@
     "performedCommand": {
         "message": "执行的命令"
     },
-    "command-open": {
+    "command_open": {
         "message": "打开"
     },
-    "command-Copy": {
+    "command_copy": {
         "message": "复制"
     },
-    "command-search": {
+    "command_search": {
         "message": "搜索"
     },
-    "command-download": {
+    "command_download": {
         "message": "下载"
     },
-    "command-noop": {
+    "command_noop": {
         "message": "无操作"
     },
-    "command-translate": {
+    "command_translate": {
         "message": "翻译"
     },
-    "command-find": {
+    "command_find": {
         "message": "查找"
     },
-    "command-runScript": {
+    "command_runScript": {
         "message": "运行脚本"
     },
-    "direction-any": {
+    "direction_any": {
         "message": "任意"
     },
-    "direction-up": {
+    "direction_up": {
         "message": "上"
     },
-    "direction-down": {
+    "direction_down": {
         "message": "下"
     },
-    "direction-left": {
+    "direction_left": {
         "message": "左"
     },
-    "direction-right": {
+    "direction_right": {
         "message": "右"
     },
-    "direction-upperLeft": {
+    "direction_upperLeft": {
         "message": "左上"
     },
-    "direction-upperRight": {
+    "direction_upperRight": {
         "message": "右上"
     },
-    "direction-lowerLeft": {
+    "direction_lowerLeft": {
         "message": "左下"
     },
-    "direction-lowerRight": {
+    "direction_lowerRight": {
         "message": "右下"
     },
     "preference": {
         "message": "优先"
     },
-    "preference-text": {
+    "preference_text": {
         "message": "文本"
     },
-    "preference-link": {
+    "preference_link": {
         "message": "链接"
     },
-    "preference-image": {
+    "preference_image": {
         "message": "图像"
     },
     "positionOfNewTab": {
         "message": "新标签页位置"
     },
-    "tabPosition-notSet": {
+    "tabPosition_notSet": {
         "message": "不指定"
     },
-    "tabPosition-newWindow": {
+    "tabPosition_newWindow": {
         "message": "新建窗口"
     },
-    "tabPosition-privateWindow": {
+    "tabPosition_privateWindow": {
         "message": "隐私窗口"
     },
-    "tabPosition-overrideCurrent": {
+    "tabPosition_overrideCurrent": {
         "message": "当前"
     },
-    "tabPosition-end": {
+    "tabPosition_end": {
         "message": "尾"
     },
-    "tabPosition-start": {
+    "tabPosition_start": {
         "message": "首"
     },
-    "tabPosition-left": {
+    "tabPosition_left": {
         "message": "前"
     },
-    "tabPosition-right": {
+    "tabPosition_right": {
         "message": "后"
     },
     "activateTab": {
@@ -256,52 +256,52 @@
         "message": "图标"
     },
 
-    "provider-google": {
+    "provider_google": {
         "message": "谷歌翻译"
     },
-    "language-auto": {
+    "language_auto": {
         "message": "自动"
     },
-    "language-english": {
+    "language_english": {
         "message": "英语"
     },
-    "language-simplified-chinese": {
+    "language_sch": {
         "message": "简体"
     },
-    "language-traditional-chinese": {
+    "language_tch": {
         "message": "繁体"
     },
-    "language-japanese": {
+    "language_japanese": {
         "message": "日语"
     },
-    "language-german": {
+    "language_german": {
         "message": "德语"
     },
-    "language-korean": {
+    "language_korean": {
         "message": "韩语"
     },
-    "language-russian": {
+    "language_russian": {
         "message": "俄语"
     },
-    "language-french": {
+    "language_french": {
         "message": "法语"
     },
-    "helpInfo-tabPosition": {
+    "helpInfo_tabPosition": {
         "message": "\"不指定\":让浏览器或其他扩展决定标签页的位置\n\"隐私窗口\"：此选项会优先复用已有的隐私窗口，扩展查看页面启用\"在隐私窗口下运行\"选项才能正常工作"
     },
-    "helpInfo-preference": {
+    "helpInfo_preference": {
         "message": "如果选中的内容同时包含偏好类型的数据，那么会先使用这个类型的数据"
     },
-    "helpInfo-searchEngine": {
+    "helpInfo_searchEngine": {
         "message": "修改搜索时调用的引擎。留空会使用浏览器默认的搜索方式"
     },
-    "helpInfo-downloadDirectory": {
+    "helpInfo_downloadDirectory": {
         "message": "留空使用默认下载目录"
     },
-    "helpInfo-prompt": {
+    "helpInfo_prompt": {
         "message": "指定提示信息的内容"
     },
-    "helpInfo-script": {
+    "helpInfo_script": {
         "message": "将脚本插入到页面中执行"
     }
 }

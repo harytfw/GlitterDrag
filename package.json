@@ -3,17 +3,15 @@
     "description": "An drag extension for Firefox Browser.",
     "devDependencies": {
         "eslint": "^4.4.1",
-        "web-ext": "^2.9.1"
+        "web-ext": "^2.9.1",
+        "tslint": "^5.20.1"
     },
     "scripts": {
-        "build": "npm run renew && web-ext build -s ./src --overwrite-dest",
+        "build": "web-ext build -s ./src --overwrite-dest",
+        "start:firefox": "web-ext run  -s ./src --firefox=firefoxdeveloperedition -p webextension",
         "lint": "eslint . && web-ext lint",
-        "test": "npm run lint",
-        "renew": "node ./src/_locales/renew_template.js"
+        "test": "npm run lint"
     },
-    "types": "types/index.d.ts",
-    "license": "MIT",
-    "dependencies": {
-        "handlebars": "^4.5.3"
-    }
+    "types": "@types/content_scripts.ts",
+    "license": "MIT"
 }

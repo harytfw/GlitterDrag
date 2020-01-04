@@ -1,18 +1,18 @@
-"use strict"
+"use strict";
 
 // consoleUtil.disableLog()
-
+window.enableLog = true
 window.onerror = function () {
-    console.trace(...arguments)
-}
+    console.trace(...arguments);
+};
 
 window.onrejectionhandled = function () {
-    console.trace(...arguments)
-}
+    console.trace(...arguments);
+};
 
 window.onunhandledrejection = function () {
-    console.trace(...arguments)
-}
+    console.trace(...arguments);
+};
 
 const SELECTION_TYPE = {
     unknown: "unknown",
@@ -22,14 +22,14 @@ const SELECTION_TYPE = {
     anchorContainsImg: "anchorContainsImage",
     plainImage: "plainImage",
     externalImage: "externalImage",
-    externalText: "externalText"
-}
+    externalText: "externalText",
+};
 
-const MIME_PLAIN_TEXT = "text/plain"
-const MIME_URI_LIST = "text/uri-list"
+const MIME_PLAIN_TEXT = "text/plain";
+const MIME_URI_LIST = "text/uri-list";
 
-const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".txt"]
-const TEXT_EXTENSIONS = [".txt", ".text"]
+const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".txt"];
+const TEXT_EXTENSIONS = [".txt", ".text"];
 
 class Controller {
 
@@ -42,193 +42,207 @@ class Controller {
     // }
 
     static includesPlainText(dataTransfer) {
-        return dataTransfer.types.includes("text/plain")
+        return dataTransfer.types.includes("text/plain");
     }
 
-
     static includesValidFile(dataTransfer) {
-        let files = dataTransfer.files
-        if (files.length != 1) {
-            return false
+        let files = dataTransfer.files;
+        if (files.length !== 1) {
+            return false;
         }
-        let filename = files[0].name
-        let ext = this.getFileExtension(filename)
+        let filename = files[0].name;
+        let ext = this.getFileExtension(filename);
 
         if (IMAGE_EXTENSIONS.includes(ext)) {
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     static angleToDirection(angle, mapping) {
         for (const obj of mapping) {
             if (obj.range[0] <= angle && angle < obj.range[1]) {
-                return obj.value
+                return obj.value;
             }
         }
-        throw new Error("failed to convert angle to direction:")
+        throw new Error("failed to convert angle to direction:");
     }
 
-    static predictActionType(selectionType, ) {
+    static predictActionType(selectionType) {
         switch (selectionType) {
             case SELECTION_TYPE.plainText:
-                return 'text'
+                return "text";
             case SELECTION_TYPE.plainAnchor:
-                return 'link'
+                return "link";
             case SELECTION_TYPE.plainImage:
-                return 'image'
+                return "image";
             case SELECTION_TYPE.urlText:
-                return 'link'
+                return "link";
             case SELECTION_TYPE.anchorContainsImg:
-                //TODO: check alwaysImage
-                // if (bgConfig.alwaysImage === true) {
-                //     return 'imageAction'
-                // } else {
-                return 'link'
+                return "linkAndImage";
             // }
             default:
-                console.trace('unknown selection type')
-                return ''
+                console.trace("unknown selection type");
+                return "";
         }
     }
 
     static isText(node) {
-        return node instanceof Text
+        return node instanceof Text;
     }
 
     static isTextInput(node) {
         return node instanceof HTMLTextAreaElement
             || (node instanceof HTMLInputElement
-                && ["text", "number", "url"].includes(node.type.toLowerCase()))
+                && ["text", "number", "url"].includes(node.type.toLowerCase()));
     }
 
     static isAnchor(node) {
-        return node instanceof HTMLAnchorElement
+        return node instanceof HTMLAnchorElement;
     }
 
     static isAnchorContainsImg(node) {
-        return node instanceof HTMLAnchorElement && node.firstElementChild instanceof HTMLImageElement
+        return node instanceof HTMLAnchorElement && node.firstElementChild instanceof HTMLImageElement;
     }
 
     static isImage(node) {
-        return node instanceof HTMLImageElement
+        return node instanceof HTMLImageElement;
     }
 
     static getUriList(dataTransfer) {
-        return dataTransfer.getData("text/uri-list")
+        return dataTransfer.getData("text/uri-list");
     }
 
     static getFileExtension(urlStr) {
-        const match = urlStr.match(/[^/\\&?]+(\.\w{3,4})(?=([?&].*$|$))/)
-        let [_, ext] = match
-        return ext !== null ? ext : ''
+        //TODO
+        const match = urlStr.match(/[^/\\&?]+(\.\w{3,4})(?=([?&].*$|$))/);
+        if (!match) {
+            return "";
+        }
+        let [_, ext] = match;
+        return ext !== null ? ext : "";
+    }
+
+    get lastShortcut() {
+        return this.shortcutStore[this.shortcutStore.length - 1];
+    }
+
+    set lastShortcut(val) {
+        return this.shortcutStore[this.shortcutStore.length - 1] = val;
     }
 
     constructor() {
 
+        this.core = new Core(this);
+        this.storage = new BlobStorage();
+        this.actionWrapper = new ActionWrapper();
 
-        this.core = new Core(this)
-        this.storage = new BlobStorage()
-        this.actionWrapper = new ActionWrapper()
-
-        this.config = {}
+        this.config = {};
 
         this.selection = {
             text: null,
             plainUrl: null,
             imageLink: null,
-        }
+        };
 
-        this.selectionType = SELECTION_TYPE.unknown
+        this.selectionType = SELECTION_TYPE.unknown;
 
-        this.direction = null //TODO: 
+        this.direction = null;
 
         this.ui = {
-            // indicator: new UIClass(),
+            indicator: new RangeIndicator(),
             prompt: new Prompt(),
             // panelBox: new UIClass()
-        }
+        };
 
-        this.shortcut = ""
+        this.shortcutStore = [""];
 
         browser.storage.onChanged.addListener((_, areaName) => {
             if (areaName === "local") {
-                this.refreshPageConfig()
+                this.refreshPageConfig();
             }
-        })
+        });
 
         document.addEventListener("keydown", (e) => {
             if (e.isComposing === false) {
-                this.shortcut = e.key
+                console.log("keydown", e.key);
+                this.lastShortcut = e.key;
             }
-        })
+        });
 
         document.addEventListener("keyup", () => {
-            this.shortcut = ""
-        })
+            console.log("keyup", this.lastShortcut);
+            this.lastShortcut = "";
+        });
 
-        this.refreshPageConfig()
+        this.refreshPageConfig();
 
+    }
+
+    async refreshPageConfig() {
+        console.log("refresh page config");
+        browser.storage.local.get().then(a => {
+            this.config = a;
+            if (this.config.features.extendMiddleButton === true) {
+                console.log("enable features: ", "extend middle button");
+                features.extendMiddleButton.start();
+            }
+        });
     }
 
     queryDirection() {
         for (const action of this.config.actions) {
-            if (action.shortcut === this.shortcut) {
-                return Controller.angleToDirection(this.core.angle, DIMENSION[action.limitation])
+            if (action.shortcut === this.lastShortcut) {
+                return Controller.angleToDirection(this.core.angle, DIMENSION[action.limitation]);
             }
         }
     }
 
     queryActionDetail() {
 
-        const actionType = Controller.predictActionType(this.selectionType)
-        console.log("quertActionDetail", "selectionType:", this.selectionType, ", actionType:", actionType)
+        console.log("quertActionDetail", "selectionType:", this.selectionType, ", shortcut:", this.lastShortcut);
+        const actionType = Controller.predictActionType(this.selectionType);
         for (const action of this.config.actions) {
-            if (action.shortcut === this.shortcut) {
+            if (action.shortcut === this.lastShortcut) {
                 //TODO
-                console.log("action detail", action.detail, ", expceted direction:", this.direction)
-                return action.detail[actionType].find(detail => detail.direction === this.direction)
+                console.log("action detail", action.detail, ", expceted direction:", this.direction);
+                return action.detail[actionType].find(detail => detail.direction === this.direction);
             }
         }
 
         // 没有按键
         //TODO
-        return null
-    }
-
-
-    async refreshPageConfig() {
-        console.log("refresh page config")
-        browser.storage.local.get().then(a => {
-            this.config = a
-        })
+        return null;
     }
 
     clear() {
-        console.log("clear")
-        this.selection.text = this.selection.plainUrl = this.selection.imageLink = null
-        this.direction = null
-        this.selectionType = SELECTION_TYPE.unknown
-        this.shortcut = ""
-        // this.ui.indicator.remove()
-        this.ui.prompt.remove()
+        console.log("clear");
+        this.selection.text = this.selection.plainUrl = this.selection.imageLink = null;
+        this.direction = null;
+        this.selectionType = SELECTION_TYPE.unknown;
+        this.shortcutStore.length = 1;
+        this.shortcutStore[0] = "";
+        this.ui.indicator.remove();
+        this.ui.prompt.remove();
         // this.ui.panelBox.remove()
     }
 
     checkDistanceRange() {
-        return true
-        //TODO
-        let d = this.core.distance
-        if (bgConfig.minDistance <= d && d < bgConfig.maxDistance) {
-            return true
+        if (!this.config.limitRange) {
+            return true;
         }
-        return false
+        let d = this.core.distance;
+        if (this.config.range[0] <= d && d <= this.config.range[1]) {
+            console.log("IN RANGE");
+            return true;
+        }
+        return false;
     }
 
     /**
-     * 
-     * @param {Node} target 
-     * @param {DataTransfer} dataTransfer 
+     *
+     * @param {Node} target
+     * @param {DataTransfer} dataTransfer
      */
     allowDrag(target, dataTransfer) {
 
@@ -242,7 +256,7 @@ class Controller {
             return false;
         } else if (Controller.isText(target)) {
 
-            return true
+            return true;
 
         } else if (Controller.isAnchor(target)) {
 
@@ -250,133 +264,165 @@ class Controller {
                 return false;
             }
 
-            const JS_PREFIX = "javascript:"
+            const JS_PREFIX = "javascript:";
             if (JS_PREFIX === target.href.substr(0, JS_PREFIX.length).toLowerCase()) {
-                return Controller.isImage(target.firstElementChild)
+                return Controller.isImage(target.firstElementChild);
             }
 
-            return true
+            return true;
         } else if (Controller.isImage(target)) {
-            return true
+            return true;
         } else if (Controller.isTextInput(target)) {
-            return true
+            return true;
         }
 
-        return false
+        return false;
     }
 
-
     /**
-     * 
-     * @param {Element} target 
+     *
+     * @param {Element} target
      */
     allowDrop(target, dataTransfer, isExternal, defaultPrevented) {
         if (!this.checkDistanceRange()) {
-            return false
+            return false;
         }
-        return defaultPrevented === false &&
-            (target instanceof Element) && target.getAttribute("contenteditable") === null
+        if (defaultPrevented === true) {
+            return false;
+        }
+        if (target instanceof Text) {
+            return true;
+        }
+        if (target instanceof Element) {
+            return target.getAttribute("contenteditable") === null;
+        }
+        console.warn("not allow drop", target);
+        return false;
     }
 
     /**
-     * 
-     * @param {DataTransfer} dataTransfer 
+     *
+     * @param {DataTransfer} dataTransfer
      */
     allowExternal(dataTransfer) {
         if (Controller.includesPlainText(dataTransfer)) {
-            return true
+            return true;
         } else if (Controller.includesValidFile(dataTransfer)) {
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     callPreventDefaultInDropEvent(target) {
         if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
             return false;
         }
-        return true
+        return true;
     }
 
     onModifierKeyChange() {
-        //TODO: handle ui change
+
     }
 
     /**
-     * 
-     * @param {Node} target 
-     * @param {DataTransfer} dataTransfer 
+     *
+     * @param {Node} target
+     * @param {DataTransfer} dataTransfer
      * @param {boolean} isExternal
      */
     onStart(target, dataTransfer, isExternal) {
-        this.clear()
-        let type = SELECTION_TYPE.unknown
-        console.log("onStart", target)
+        let type = SELECTION_TYPE.unknown;
+        console.log("onStart", target);
         if (Controller.isText(target) || Controller.isTextInput(target)) {
-            // TODO: handle urlText
-            this.selection.text = dataTransfer.getData("text/plain")
+
+            this.selection.text = dataTransfer.getData("text/plain");
             if (urlUtil.seemAsURL(this.selection.text)) {
-                this.selection.plainUrl = urlUtil.fixSchemer(this.selection.text)
-                type = SELECTION_TYPE.urlText
+                this.selection.plainUrl = urlUtil.fixSchemer(this.selection.text);
+                type = SELECTION_TYPE.urlText;
             } else {
-                type = SELECTION_TYPE.plainText
+                type = SELECTION_TYPE.plainText;
             }
         } else if (Controller.isAnchorContainsImg(target)) {
-            this.selection.plainUrl = dataTransfer.getData("text/uri-list")
-            this.selection.text = target.textContent
-            const imgElement = target.querySelector("img")
+            this.selection.plainUrl = dataTransfer.getData("text/uri-list");
+            this.selection.text = target.textContent;
+            const imgElement = target.querySelector("img");
             if (imgElement instanceof HTMLImageElement) {
-                this.selection.imageLink = imgElement.src
+                this.selection.imageLink = imgElement.src;
             }
-            type = SELECTION_TYPE.anchorContainsImg
+            type = SELECTION_TYPE.anchorContainsImg;
         } else if (Controller.isAnchor(target)) {
-            this.selection.plainUrl = dataTransfer.getData("text/uri-list")
-            this.selection.text = target.textContent
-            type = SELECTION_TYPE.plainAnchor
+            this.selection.plainUrl = dataTransfer.getData("text/uri-list");
+            this.selection.text = target.textContent;
+            type = SELECTION_TYPE.plainAnchor;
         } else if (Controller.isImage(target)) {
-            this.selection.imageLink = target.src
-            type = SELECTION_TYPE.plainImage
+            this.selection.imageLink = target.src;
+            type = SELECTION_TYPE.plainImage;
         } else if (isExternal) {
 
-            const file = dataTransfer.files[0]
+            const file = dataTransfer.files[0];
             if (file) {
-                const ext = Controller.getFileExtension(file.name)
+                const ext = Controller.getFileExtension(file.name);
                 if (IMAGE_EXTENSIONS.includes(ext)) {
-                    type = SELECTION_TYPE.externalImage
+                    type = SELECTION_TYPE.externalImage;
                 } else if (TEXT_EXTENSIONS.includes(ext)) {
-                    this.selection.text = dataTransfer.getData(MIME_PLAIN_TEXT)
-                    type = SELECTION_TYPE.externalText
+                    this.selection.text = dataTransfer.getData(MIME_PLAIN_TEXT);
+                    type = SELECTION_TYPE.externalText;
                 }
             } else if (Controller.includesPlainText(dataTransfer)) {
-                type = SELECTION_TYPE.plainText
+                type = SELECTION_TYPE.plainText;
             } else {
-                type = SELECTION_TYPE.unknown
+                type = SELECTION_TYPE.unknown;
             }
 
         } else {
-            type = SELECTION_TYPE.unknown
+            type = SELECTION_TYPE.unknown;
         }
-        this.selectionType = type
+        this.selectionType = type;
+
+        if (this.config.limitRange && this.config.enableIndicator) {
+            this.ui.indicator.active();
+            console.log("range", this.config.range);
+            this.ui.indicator.update(this.core.pagePos.x, this.core.pagePos.y, this.config.range[0])
+        }
     }
 
     /**
-     * 
+     *
      */
     onMove(target, dataTransfer, isExternal) {
+
+        switch (this.core.modifierKey) {
+            case Core.CTRL:
+                //TODO
+                if (this.shortcutStore.length > 1) {
+                    this.shortcutStore.length = 1;
+                }
+                this.shortcutStore.push("Control");
+                break;
+            case Core.SHIFT:
+                if (this.shortcutStore.length > 1) {
+                    this.shortcutStore.length = 1;
+                }
+                this.shortcutStore.push("Shift");
+                break;
+            default:
+                break;
+        }
+
         if (this.checkDistanceRange()) {
             // let d = Object.keys(DIMENSION).map(key => `${key} = ${DragController.angleToDirection(this.core.angle, DIMENSION[key])}`)
             // console.log(this.core.angle, d)
 
-            this.direction = this.queryDirection()
-            console.log('direction: ', this.direction)
+            this.direction = this.queryDirection();
+            console.log("direction: ", this.direction);
 
             if (true === this.config.enablePrompt) {
-                const detail = this.queryActionDetail()
+                const detail = this.queryActionDetail();
                 if (detail.prompt !== "") {
-                    this.ui.prompt.active()
-                    this.ui.prompt.render(this.selection, detail)
+                    this.ui.prompt.active();
+                    this.ui.prompt.render(this.selection, detail);
                 } else {
-                    this.ui.prompt.remove()
+                    this.ui.prompt.remove();
                 }
             }
 
@@ -392,50 +438,54 @@ class Controller {
     }
 
     onEnd(target, dataTransfer, isExternal) {
+        if (dataTransfer === null) {
+            console.log("dataTransfer is null, nothing can do.");
+            this.clear();
+            return;
+        }
+
         // TODO: handle isExternal
         // console.log('selection type', dataTransfer.getData(MIME_SELECTION_TYPE))
-        console.log('text/plain', dataTransfer.getData(MIME_PLAIN_TEXT))
-        console.log('text/uri-list', dataTransfer.getData(MIME_URI_LIST))
-        // console.log('text/image-link', dataTransfer.getData(MIME_IMAGE_LINK))
-
+        console.log("text/plain", dataTransfer.getData(MIME_PLAIN_TEXT));
+        console.log("text/uri-list", dataTransfer.getData(MIME_URI_LIST));
 
         const imageInfo = {
             token: null,
-            extension: '',
-        }
-        this.actionWrapper.setActionType(Controller.predictActionType(this.selectionType))
+            extension: "",
+        };
+        this.actionWrapper.setActionType(Controller.predictActionType(this.selectionType));
 
         switch (this.selectionType) {
             case SELECTION_TYPE.plainImage:
-                imageInfo.extension = Controller.getFileExtension(this.selection.imageLink)
-                imageInfo.token = this.storage.storeURL(new URL(this.selection.imageLink))
-                break
+                imageInfo.extension = Controller.getFileExtension(this.selection.imageLink);
+                imageInfo.token = this.storage.storeURL(new URL(this.selection.imageLink));
+                break;
             case SELECTION_TYPE.anchorContainsImg:
-                imageInfo.extension = Controller.getFileExtension(this.selection.imageLink)
-                imageInfo.token = this.storage.storeURL(new URL(this.selection.imageLink))
-                break
+                imageInfo.extension = Controller.getFileExtension(this.selection.imageLink);
+                imageInfo.token = this.storage.storeURL(new URL(this.selection.imageLink));
+                break;
             case SELECTION_TYPE.externalImage:
-                console.assert(this.selection.text === null, "text should be null")
-                console.assert(this.selection.imageLink === null, "imageLink should be null")
-                console.assert(this.selection.plainUrl === null, "plainUrl should be null")
-                imageInfo.extension = Controller.getFileExtension(dataTransfer.files[0].name)
-                imageInfo.token = this.storage.storeFile(dataTransfer.files[0])
-                break
+                console.assert(this.selection.text === null, "text should be null");
+                console.assert(this.selection.imageLink === null, "imageLink should be null");
+                console.assert(this.selection.plainUrl === null, "plainUrl should be null");
+                imageInfo.extension = Controller.getFileExtension(dataTransfer.files[0].name);
+                imageInfo.token = this.storage.storeFile(dataTransfer.files[0]);
+                break;
         }
         /**
          * 1. dataURL
          * 2. UInt8Array
          * 3. normal url
-         * 4. 
+         * 4.
          */
         this.actionWrapper.setSelection(this.selection)
             .setDirection(this.direction)
             .setExtraImageInfo(imageInfo)
             .setSite(location.origin)
             .setPageTitle(document.title)
-            .post(this.queryActionDetail())
+            .post(this.queryActionDetail());
 
-        this.clear()
+        this.clear();
     }
 
     onExternal() {
@@ -444,14 +494,14 @@ class Controller {
 
 }
 
-var c = new Controller()
+var c = new Controller();
 
 browser.runtime.onConnect.addListener(port => {
-    console.log(`new connection in ${location.href}`)
+    console.log(`new connection in ${location.href}`);
     port.onDisconnect.addListener(() => {
-        console.log('disconnect')
-    })
+        console.log("disconnect");
+    });
     port.onMessage.addListener(async (token) => {
-        port.postMessage(await c.storage.consume(token))
-    })
-})
+        port.postMessage(await c.storage.consume(token));
+    });
+});

@@ -1,0 +1,13 @@
+* {
+  all: initial;
+}
+
+#main-box {
+  height: 640px;
+  width: 400px;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  background: white;
+  z-index: 99999999;
+}

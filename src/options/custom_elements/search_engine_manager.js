@@ -30,10 +30,12 @@ class SearchEngineManager extends HTMLElement {
             this.configManager = e.target
             this.init()
             i18nUtil.render(this)
-        }, { once: true })
+        })
     }
 
     init() {
+        Array.from(this.table.tBodies[0].children).forEach(row => row.remove())
+
         for (const s of this.configManager.get().searchEngines) {
             this.addSearchEngineRow(s.name, s.url, s.icon, s.method)
         }

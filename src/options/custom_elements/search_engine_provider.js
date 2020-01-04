@@ -49,7 +49,7 @@ class SearchEngineProvider extends HTMLElement {
 
         const options = []
 
-        if (this.isBrowserGroup) {
+        if (this.isBrowserGroup && env.isFirefox) {
             for (const se of (await browser.search.get())) {
                 const option = document.createElement("option")
                 option.value = se.name

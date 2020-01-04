@@ -1,6 +1,7 @@
 "use strict";
+var configUtil = {};
 
-(function (ns) {
+{
     const templateConfig = {
         enableSync: false,
 
@@ -20,13 +21,10 @@
                     direction: "up",
                     command: "open",
                     commandTarget: "link",
-    
-                    preferImage: false,
-    
+
                     activeTab: true,
                     tabPosition: "left",
-    
-                    
+
                     searchEngine: {
                         name: "",
                         url: "",
@@ -35,29 +33,28 @@
                         searchOnSite: false,
                         builtin: false,
                     },
-    
+
                     download: {
                         showSaveAsDialog: false,
                         directory: "",
                     },
-    
+
                     script: "",
-    
+
                     prompt: "",
-    
+
                 }], */
                 text: [],
                 link: [],
                 image: [],
-            }
+            },
         }],
-
 
         features: {
             disableFixURL: false,
             preventUiRemove: false,
             extendMiddleButton: false,
-            lockScrollbar: false
+            lockScrollbar: false,
         },
 
         currentStyle: "",
@@ -72,6 +69,9 @@
             sourceLanguage: "auto",
             targetLanguage: "auto",
         },
+        limitRange: false,
+
+        range: [0, 9999],
 
         version: "0.0.0",
     };
@@ -80,7 +80,7 @@
         direction: "",
         command: "",
         commandTarget: "",
-        
+        icon: "",
         activeTab: false,
         tabPosition: "",
 
@@ -101,11 +101,11 @@
         script: "",
 
         prompt: "",
-    }
+    };
 
     const cloneDeep = (obj) => {
-        return JSON.parse(JSON.stringify(obj))
-    }
+        return JSON.parse(JSON.stringify(obj));
+    };
 
     const proxyConfig = (config) => {
         const manipulator = {
@@ -123,61 +123,60 @@
                         detail: {
                             text: [],
                             link: [],
-                            image: []
-                        }
-                    })
+                            image: [],
+                        },
+                    });
                 },
 
                 update(name, option) {
-                    let obj = manipulator.actions.find(name)
+                    let obj = manipulator.actions.find(name);
                     if (obj) {
-                        Object.assign(obj, option)
+                        Object.assign(obj, option);
                     } else {
-                        console.trace(`name: "${name}" no found`)
+                        console.trace(`name: "${name}" no found`);
                     }
                 },
 
                 find(name) {
-                    return config.actions.find(obj => obj.name === name)
+                    return config.actions.find(obj => obj.name === name);
                 },
 
                 remove(name) {
-                    config.actions = config.actions.filter(obj => obj.name !== name)
-                }
+                    config.actions = config.actions.filter(obj => obj.name !== name);
+                },
             },
 
             detail: {
 
                 add(name, actionType, direction) {
-                    const action = manipulator.actions.find(name)
-                    const cloned = cloneDeep(defaultActionDetail)
-                    cloned.direction = direction
-                    action[actionType].push(cloned)
-
-                    return cloned
+                    const action = manipulator.actions.find(name);
+                    const cloned = cloneDeep(defaultActionDetail);
+                    cloned.direction = direction;
+                    action[actionType].push(cloned);
+                    return cloned;
                 },
 
-                remove(name, actionType, direction) {
-                    throw new Error("unimplementation")
+                remove(_name, _actionType, _direction) {
+                    throw new Error("unimplementation");
                 },
 
                 find(name, actionType, direction) {
-                    const action = manipulator.actions.find(name)
+                    const action = manipulator.actions.find(name);
                     if (!action) {
-                        return null
+                        return null;
                     }
-                    let ret = action.detail[actionType].find(obj => obj.direction === direction)
+                    let ret = action.detail[actionType].find(obj => obj.direction === direction);
                     if (!ret) {
-                        ret = cloneDeep(defaultActionDetail)
-                        ret.direction = direction
-                        action.detail[actionType].push(ret)
+                        ret = cloneDeep(defaultActionDetail);
+                        ret.direction = direction;
+                        action.detail[actionType].push(ret);
                     }
-                    return ret
+                    return ret;
                 },
 
                 update(name, actionType, direction, option) {
-                    const detail = manipulator.detail.find(name, actionType, direction)
-                    Object.assign(detail, option)
+                    const detail = manipulator.detail.find(name, actionType, direction);
+                    Object.assign(detail, option);
                 },
 
             },
@@ -187,21 +186,21 @@
                     config.directories.push({
                         name,
                         type: "",
-                        value: ""
-                    })
+                        value: "",
+                    });
                 },
 
                 remove(name) {
-                    config.directories = config.directories.filter(d => d.name !== name)
+                    config.directories = config.directories.filter(d => d.name !== name);
                 },
 
                 find(name) {
-                    return config.directories.find(d => d.name === name)
+                    return config.directories.find(d => d.name === name);
                 },
 
                 update(name, option) {
-                    const dir = this.find(name)
-                    Object.assign(dir, cloneDeep(option))
+                    const dir = this.find(name);
+                    Object.assign(dir, cloneDeep(option));
                 },
             },
 
@@ -209,92 +208,90 @@
                 add(name) {
                     config.styles.push({
                         name,
-                        style: ""
-                    })
+                        style: "",
+                    });
                 },
 
                 remove(name) {
-                    config.styles === config.styles.filter(s => s.name !== name)
+                    config.styles === config.styles.filter(s => s.name !== name);
                 },
 
                 find(name) {
-                    config.styles.find(s => s.name === name)
+                    config.styles.find(s => s.name === name);
                 },
 
                 update(name, option) {
-                    const s = this.find(name)
-                    Object.assign(s, cloneDeep(option))
+                    const s = this.find(name);
+                    Object.assign(s, cloneDeep(option));
                 },
             },
             scripts: {
                 add(name) {
                     config.scritps.push({
                         name,
-                        script: ""
-                    })
+                        script: "",
+                    });
                 },
 
                 remove(name) {
-                    config.scripts = config.scripts.filter(s => s.name !== name)
+                    config.scripts = config.scripts.filter(s => s.name !== name);
                 },
 
                 find(name) {
-                    return config.scripts.find(s => s.name === name)
+                    return config.scripts.find(s => s.name === name);
                 },
 
                 update(name, option) {
-                    const s = this.find(name)
-                    Object.assign(s, cloneDeep(option))
-                }
+                    const s = this.find(name);
+                    Object.assign(s, cloneDeep(option));
+                },
             },
 
-
             //TODO
-            updateTranslatationParameter(name, value) {
+            updateTranslatationParameter(_name, _value) {
 
             },
 
             updateFeatures(name, val = false) {
-                config.features[name] = val
+                config.features[name] = val;
             },
-        }
-        return manipulator
-    }
+        };
+        return manipulator;
+    };
 
     const save = async (obj) => {
-        console.trace("save to local storage", obj)
-        await browser.storage.local.set(obj)
-    }
+        console.trace("save to local storage", obj);
+        await browser.storage.local.set(obj);
+    };
 
     const load = async () => {
-        console.trace("load from local storage")
-        return browser.storage.local.get()
-    }
+        console.trace("load from local storage");
+
+        return browser.storage.local.get();
+    };
 
     const clear = async () => {
-        console.trace("clear local storage")
-        await browser.storage.local.clear()
-    }
+        console.trace("clear local storage");
+        await browser.storage.local.clear();
+    };
 
-    const compress = () => { }
-    const decompress = () => { }
-    const loadFromSync = () => { }
-    const saveToSync = () => { }
+    const compress = () => { };
+    const decompress = () => { };
+    const loadFromSync = () => { };
+    const saveToSync = () => { };
     const getTemplateConfig = () => {
-        return templateConfig
-    }
+        return templateConfig;
+    };
 
+    configUtil.proxyConfig = proxyConfig;
+    configUtil.save = save;
+    configUtil.load = load;
+    configUtil.clear = clear;
+    configUtil.compress = compress;
+    configUtil.decompress = decompress;
+    configUtil.loadFromSync = loadFromSync;
+    configUtil.saveToSync = saveToSync;
+    configUtil.cloneDeep = cloneDeep;
+    configUtil.getTemplateConfig = getTemplateConfig;
 
-    ns.proxyConfig = proxyConfig
-    ns.save = save
-    ns.load = load
-    ns.clear = clear
-    ns.compress = compress
-    ns.decompress = decompress
-    ns.loadFromSync = loadFromSync
-    ns.saveToSync = saveToSync
-    ns.cloneDeep = cloneDeep
-    ns.getTemplateConfig = getTemplateConfig
-
-})(configUtil || {})
-
+}

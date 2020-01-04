@@ -1,10 +1,20 @@
 "use strict";
-var environment = Object.freeze({
-    isFirefox: true,
-    isChrome: false,
-    isEdge: false,
-    isNode: false,
-    isWebExtension: typeof window.browser !== "undefined" && typeof window.browser.runtime !== "undefined",
-    isNormalDocument: typeof window.browser === "undefined" || typeof window.browser.runtime === "undefined"
-})
+var env = {};
+{
+    const userAgent = navigator.userAgent;
+    let browser = "";
+    if (userAgent.includes("Firefox")) {
+        browser = "firefox";
+    } else if (userAgent.includes("Chrome")) {
+        browser = "chromium";
+    } else {
+        browser = "other";
+    }
 
+    env.browser = browser;
+    env.isFirefox = browser === "firefox";
+    env.isChromium = browser === "chromium";
+    env.isWebExtension = typeof window.browser !== "undefined" && typeof window.browser.runtime !== "undefined";
+    env.isPage = typeof window.browser === "undefined" || typeof window.browser.runtime === "undefined";
+
+}

@@ -1,44 +1,46 @@
-(function (ns) {
-    const noop = () => { }
-    const log = console.log
-    const debug = console.debug
-    const info = console.info
-    const error = console.error
-    const time = console.time
-    const timeEnd = console.timeEnd
-    const trace = console.trace
+"use strict";
+var consoleUtil = {};
+{
+    const noop = () => {/** noop */};
+    const log = console.log;
+    const debug = console.debug;
+    const info = console.info;
+    const error = console.error;
+    const time = console.time;
+    const timeEnd = console.timeEnd;
+    const trace = console.trace;
 
-    const globalConsole = window.console
-    
-    ns.disableLog = () => {
-        globalConsole.log = noop
-    }
+    const globalConsole = window.console;
 
-    ns.resumeLog = () => {
-        globalConsole.log = log
-    }
+    consoleUtil.disableLog = () => {
+        globalConsole.log = noop;
+    };
 
-    ns.disableInfo = () => {
+    consoleUtil.resumeLog = () => {
+        globalConsole.log = log;
+    };
 
-    }
+    consoleUtil.disableInfo = () => {
 
-    ns.resumeInfo = () => {
+    };
 
-    }
+    consoleUtil.resumeInfo = () => {
 
-    ns.disableTime = () => {
+    };
 
-    }
+    consoleUtil.disableTime = () => {
 
-    ns.resumeTime = () => {
+    };
 
-    }
+    consoleUtil.resumeTime = () => {
 
-    ns.disableTrace = () => {
-        console.trace = noop
-    }
+    };
 
-    ns.resumeTrace = () => {
-        console.trace = trace
-    }
-})(consoleUtil || {})
+    consoleUtil.disableTrace = () => {
+        console.trace = noop;
+    };
+
+    consoleUtil.resumeTrace = () => {
+        console.trace = trace;
+    };
+}

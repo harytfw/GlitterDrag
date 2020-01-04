@@ -41,7 +41,6 @@ class Configuration extends HTMLElement {
                         location.reload()
                         break
                     case "backup":
-                        // TODO: 保存前，保存后？
                         this.downloadConfigAsJson(await this.configManager.backupConfig())
                         break
                     case "restore":
@@ -56,7 +55,7 @@ class Configuration extends HTMLElement {
         document.addEventListener("configloaded", (e) => {
             this.configManager = e.target
             i18nUtil.render(this)
-        }, { once: true })
+        })
     }
 
     restoreConfigFromJson(json) {
