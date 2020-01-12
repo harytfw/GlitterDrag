@@ -45,7 +45,7 @@ class SearchEngineEditorModal extends HTMLElement {
     }
 
     _dispatch(resultType) {
-        console.log(this, `dispatch result event with type:${resultType}`)
+        consoleUtil.log(this, `dispatch result event with type:${resultType}`)
         this.dispatchEvent(new CustomEvent("result", {
             detail: resultType,
             bubbles: true
@@ -117,16 +117,16 @@ class SearchEngineEditorModal extends HTMLElement {
     }
 
     active(name, url, icon) {
-        console.log(this, "active")
+        consoleUtil.log(this, "active")
 
         // const column = this.querySelector("[groupname=Browser]").closest(".column")
 
         // if (this.showBuiltin) {
         //     column.classList.remove("is-hidden")
-        //     console.log("show builtin")
+        //     consoleUtil.log("show builtin")
         // } else {
         //     column.classList.add("is-hidden")
-        //     console.log("not show builtin")
+        //     consoleUtil.log("not show builtin")
         // }
 
         this.querySelector(".modal").classList.add("is-active")
@@ -144,13 +144,13 @@ class SearchEngineEditorModal extends HTMLElement {
     }
 
     close() {
-        console.log(this, "close")
+        consoleUtil.log(this, "close")
         this._dispatch("close")
         this.querySelector(".modal").classList.remove("is-active")
     }
 
     confirm() {
-        console.log(this, "confirm")
+        consoleUtil.log(this, "confirm")
         this._dispatch("confirm")
         this.querySelector(".modal").classList.remove("is-active")
     }
@@ -168,13 +168,13 @@ class SearchEngineEditorModal extends HTMLElement {
         }
         const reader = new FileReader()
         reader.onloadend = () => {
-            console.log("read file end")
+            consoleUtil.log("read file end")
             this.searchEngineIcon = reader.result
         }
         reader.onerror = (err) => {
             console.error(err)
         }
-        console.log("start read file")
+        consoleUtil.log("start read file")
         reader.readAsDataURL(file)
     }
 }

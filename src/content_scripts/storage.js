@@ -5,6 +5,7 @@ class BlobStorage {
 
     constructor() {
         this.map = new Map();
+        this.doRecycleTask = this.doRecycleTask.bind(this);
         this.doRecycleTask();
     }
 
@@ -20,9 +21,10 @@ class BlobStorage {
                 }
                 cnt += 1;
                 this.map.delete(key);
+                consoleUtil.log("recycle url:", url);
             }
         }
-        window.setTimeout(this.doRecycleTask.bind(this), 60 * 1000);
+        window.setTimeout(this.doRecycleTask, 60 * 1000);
     }
 
     /**
@@ -61,16 +63,16 @@ class BlobStorage {
     }
 
     async consume(key) {
-        const [url, time, _] = this.map.get(key);
-        console.log(`consume: ${key}, url: ${url}`);
+        const [url, time, revoke] = this.map.get(key);
         // TODO: CORS
-        const res = await fetch(url, {
-            cache: "force-cache",
-        });
+        const res = await fetch(url);
         const arrayBuffer = await res.arrayBuffer();
 
         this.map.delete(key);
-
+        if (true === revoke) {
+            URL.revokeObjectURL(url);
+        }
+        consoleUtil.log(`consume: ${key}, url: ${url}`);
         return arrayBuffer;
     }
 

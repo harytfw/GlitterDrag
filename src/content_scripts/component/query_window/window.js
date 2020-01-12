@@ -39,7 +39,7 @@ class QueryWindow {
 
     constructor() {
 
-        console.log("init query window", this);
+        consoleUtil.log("init query window", this);
 
         this.container = document.createElement("div");
 
@@ -49,13 +49,13 @@ class QueryWindow {
         this.root.addEventListener("click", (e) => {
             const target = queryUtil.findEventElem(e.target);
             if (target instanceof HTMLElement) {
-                console.log("data-event:", target.dataset.event);
+                consoleUtil.log("data-event:", target.dataset.event);
                 switch (target.dataset.event) {
                     case "close":
-                        this.close();
+                        this.remove();
                         break;
                     default:
-                        console.log("unhandled", target);
+                        consoleUtil.log("unhandled", target);
                         break;
                 }
             }
@@ -68,7 +68,7 @@ class QueryWindow {
                 this.root.innerHTML = html;
                 this.box = this.root.querySelector("#main-box");
                 this.root.querySelector("#bulma").href = browser.runtime.getURL("libs/bulma/bulma.min.css");
-                this.root.querySelector("#window-css").href = browser.runtime.getURL("content_scripts/component/query_window/css/window.css");
+                this.root.querySelector("#css").href = browser.runtime.getURL(`${QueryWindow.PATH}/css/window.css`);
             });
 
         this.services = {
@@ -77,9 +77,9 @@ class QueryWindow {
         };
 
         browser.runtime.onMessage.addListener((msg, sender) => {
-            console.log("get message", msg);
+            consoleUtil.log("get message", msg);
             if (msg.msgCmd === "activeQueryWindow") {
-                console.log("get activeQueryWindow message, text: ", msg.text);
+                consoleUtil.log("get activeQueryWindow message, text: ", msg.text);
                 this.active();
                 this.query(msg.text);
             }
@@ -87,14 +87,15 @@ class QueryWindow {
     }
 
     active() {
-        console.log("active queryWindow");
+        consoleUtil.log("active queryWindow");
         document.body.appendChild(this.container);
     }
 
-    close() {
-        console.log("close queryWindow");
-        this.container.remove();
-        
+    remove() {
+        if (consoleUtil.autoHide) {
+            consoleUtil.log("close queryWindow");
+            this.container.remove();
+        }
     }
 
     query(text) {

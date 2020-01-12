@@ -15,6 +15,24 @@ var urlUtil = {};
     const KnowTopDomain1 = /\.(com|net|org|gov|edu|info|mobi|mil|asia)$/;
     const KnowTopDomain2 = /\.(de|uk|eu|nl|it|cn|be|us|br|jp|ch|fr|at|se|es|cz|pt|ca|ru|hk|tw|pl|me|tv|cc)$/;
 
+    const FULL_URI_SCHEME = [
+        "http:", "https:", "ftp:",
+        "ws:", "wss:",
+        "data:", "file:",
+        "magnet:",
+        "sms:",
+        "bitcoin:",
+        "about:",
+        "view-source:",
+    ];
+
+    const PARTIAL_URI_SCHEME = [
+        // partial http scheme
+        "ttp:", "tp:", "p:",
+        // partial https scheme
+        "ttps:", "tps:", "ps:", "s:",
+    ];
+
     const TABLE = Object.freeze({
         "p://": HTTP,
         "tp://": HTTP,
@@ -29,25 +47,29 @@ var urlUtil = {};
     });
 
     const validateUrl = (str) => {
-        str = str.toLowerCase();
+        str = str.trim();
         try {
             const url = new URL(str);
-            // fix #106
-            if (str.startsWith(`${url.protocol}//`)) {
+            if (FULL_URI_SCHEME.includes(url.protocol)) {
                 return true;
             }
-            return false;
+
+        } catch {
+            // ignore
         }
-        catch (e) {
-            return false;
-        }
+
+        return false;
     };
 
     const seemAsURL = (url) => {
-        //match both ipv4 and ipv6
-        if (validateUrl(url)) return true;
-        //TODO
-        // if (bgConfig.disableFixURL === true) return false;
+        try {
+            const urlObj = new URL(url);
+            if (FULL_URI_SCHEME.includes(urlObj.protocol) || PARTIAL_URI_SCHEME.includes(urlObj.protocol)) {
+                return true;
+            }
+        } catch {
+            // ignore
+        }
 
         if (IsIPV4_Port_Query.test(url) || IsIPV6.test(url) || IsIPV6_Bracket_Query.test(url)) { return true; }
 
@@ -61,6 +83,12 @@ var urlUtil = {};
     };
 
     const fixSchemer = (aURI) => {
+        if (!seemAsURL(aURI)) {
+            return aURI;
+        }
+        if (validateUrl(aURI)) {
+            return aURI;
+        }
 
         if (IsIPV6.test(aURI)) {
             return `${HTTP}[${aURI}]`;
@@ -90,4 +118,8 @@ var urlUtil = {};
     urlUtil.validateUrl = validateUrl;
     urlUtil.fixSchemer = fixSchemer;
 
+}
+
+if (typeof module === "object") {
+    module.exports = urlUtil;
 }

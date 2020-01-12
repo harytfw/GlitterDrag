@@ -46,7 +46,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
         }
     }
     else if (details.reason === browser.runtime.OnInstalledReason.INSTALL) {
-        console.log("new install")
+        consoleUtil.log("new install")
         await configUtil.save(configUtil.cloneDeep(configUtil.getTemplateConfig()));
         
     }

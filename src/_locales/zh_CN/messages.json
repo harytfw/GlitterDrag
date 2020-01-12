@@ -295,6 +295,9 @@
     "helpInfo_searchEngine": {
         "message": "修改搜索时调用的引擎。留空会使用浏览器默认的搜索方式"
     },
+    "helpInfo_searchEngine_chromium": {
+        "message": "修改搜索时调用的引擎。不能留空，否则将无法执行搜索功能"
+    },
     "helpInfo_downloadDirectory": {
         "message": "留空使用默认下载目录"
     },

@@ -1,16 +1,6 @@
 "use strict";
 
-window.onerror = function () {
-    console.trace(...arguments);
-};
-
-window.onrejectionhandled = function () {
-    console.trace(...arguments);
-};
-
-window.onunhandledrejection = function () {
-    console.trace(...arguments);
-};
+consoleUtil.logErrorEvent();
 
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
 
@@ -123,7 +113,7 @@ class ExecutorClass {
     }
 
     async execute() {
-        console.log("execute command: ", this.data.command);
+        consoleUtil.log("execute command: ", this.data.command);
         switch (this.data.command) {
             case "open":
                 return this.openHandler();
@@ -142,7 +132,7 @@ class ExecutorClass {
             case "runScript":
                 return this.runScript();
             case "":
-                console.log("no operation");
+                consoleUtil.warn("no operation");
                 return;
             default:
                 console.error(`unexcepted commond: "${this.data.command}"`);
@@ -188,7 +178,7 @@ class ExecutorClass {
     }
 
     async copyHandler() {
-        console.log("copyHandler");
+        consoleUtil.log("copyHandler");
         let p;
         switch (this.data.actionType) {
             case "link": {
@@ -295,13 +285,13 @@ class ExecutorClass {
     }
 
     async queryHandler() {
-        console.log("queryHandler");
+        consoleUtil.log("queryHandler");
         if (this.data.actionType !== "text") {
             console.error(`unsuuport "query" command under ${this.data.actionType}`);
             return;
         }
         const tabId = this.sender.tab.id;
-        console.log(`send activeQueryWindow to tab ${tabId}`);
+        consoleUtil.log(`send activeQueryWindow to tab ${tabId}`);
         return browser.tabs.sendMessage(tabId, {
             msgCmd: "activeQueryWindow",
             text: this.data.selection.text,
@@ -309,24 +299,37 @@ class ExecutorClass {
     }
 
     async searchText(keyword) {
-        console.log("search text: ", keyword);
+        consoleUtil.log("search text: ", keyword);
         if (env.isFirefox && (this.data.searchEngine.url === "" || this.data.searchEngine.builtin === true)) {
             const tabHoldingSearch = await this.openTab("about:blank");
-            console.log("call browser search api",
-                ", engine name:", this.data.searchEngine.name,
-                ", tab holds search page:", tabHoldingSearch);
-            return browser.search.search({
+
+            const option = {
                 query: keyword,
-                engine: this.data.searchEngine.name,
                 tabId: tabHoldingSearch.id,
-            });
-        } else {
-            // TODO: check chromium
-            console.log(`search engine name: "${this.data.searchEngine.name}" , url: "${this.data.searchEngine.url}"`);
-            return this.openURL(processURLPlaceholders(this.data.searchEngine.url, keyword, {
-                site: this.data.site,
-            }));
+            };
+            if (this.data.searchEngine.name !== "") {
+                option.engine = this.data.searchEngine.name;
+            }
+            consoleUtil.log("call browser search api",
+                ", engine name:", this.data.searchEngine.name,
+                ", tab holds search page:", tabHoldingSearch,
+                ", option: ", option);
+            return browser.search.search(option);
         }
+
+        if (!env.isFirefox && this.data.searchEngine.url === "") {
+            browser.notifications.create({
+                type: "basic",
+                title: "No Search Engine",
+                message: "No search engine is speficied to performed search",
+            });
+            return;
+        }
+        // TODO: check chromium
+        consoleUtil.log(`search engine name: "${this.data.searchEngine.name}" , url: "${this.data.searchEngine.url}"`);
+        return this.openURL(processURLPlaceholders(this.data.searchEngine.url, keyword, {
+            site: this.data.site,
+        }));
 
     }
 
@@ -346,7 +349,7 @@ class ExecutorClass {
     }
 
     async findText(text = "") {
-        console.log("find text:", text);
+        consoleUtil.log("find text:", text);
         if (text.length === 0) { return; }
         const result = await browser.find.find(text);
         if (result.count > 0) {
@@ -356,7 +359,7 @@ class ExecutorClass {
     }
 
     async removeHighlighting() {
-        console.log("remove find");
+        consoleUtil.log("remove find");
         if (this.findFlag) {
             this.findFlag = false;
             return browser.find.removeHighlighting();
@@ -364,10 +367,12 @@ class ExecutorClass {
     }
 
     async download(url) {
-        console.log("download: ", url);
+        const path = `${this.data.download.directory.trim()}${fileUtil.getFilename(url).trim()}`;
+        consoleUtil.log("download: ", url, ", path: ", path, ", site: ", this.data.site);
+
         browser.downloads.download({
             url,
-            filename: `${this.data.download.directory}/${filenameUtil.getFilename(url)}`,
+            filename: path,
             saveAs: this.data.download.showSaveAsDialog,
             headers: [{ name: "Referer", value: this.data.site }],
         });
@@ -390,12 +395,12 @@ class ExecutorClass {
     }
 
     async copyText(data) {
-        console.log("copy text:", data);
+        consoleUtil.log("copy text:", data);
         return navigator.clipboard.writeText(data);
     }
 
     async copyImage(u8Array) {
-        console.log("copy image, length:", u8Array);
+        consoleUtil.log("copy image, length:", u8Array);
         browser.clipboard.setImageData(u8Array,
             this.data.extraImageInfo.extension === ".png" ? "png" : "jpeg");
     }
@@ -420,13 +425,13 @@ class ExecutorClass {
         if (["newWindow", "privateWindow"].includes(this.data.tabPosition)) {
             let win;
             if ("newWindow" === this.data.tabPosition) {
-                console.log("create window");
+                consoleUtil.log("create window");
                 win = await browser.windows.create();
             } else {
-                console.log("attempt to reuse icongito window");
+                consoleUtil.log("attempt to reuse icongito window");
                 win = (await browser.windows.getAll({ windowTypes: ["normal"] })).find(w => w.incognito);
                 if (!win) {
-                    console.log("create new icongito window");
+                    consoleUtil.log("create new icongito window");
                     win = await browser.windows.create({ incognito: true });
                 }
             }
@@ -467,7 +472,7 @@ class ExecutorClass {
     }
 
     getTabIndex(tabsLength = 0, currentTabIndex = 0) {
-        console.log("calc the index of new created tab",
+        consoleUtil.log("calc the index of new created tab",
             ", tabsLength:", tabsLength,
             ", currentTabIndex:", currentTabIndex,
             ", backgroundChildCount:", this.backgroundChildTabCount);
@@ -486,14 +491,14 @@ class ExecutorClass {
 
         if (!this.data.activeTab && this.data.tabPosition === "right") {
             this.backgroundChildTabCount += 1;
-            console.log("increase backgroundChildTabCount: ", this.backgroundChildTabCount);
+            consoleUtil.log("increase backgroundChildTabCount: ", this.backgroundChildTabCount);
         }
-        console.log("the index of tab maybe: ", index);
+        consoleUtil.log("the index of tab maybe: ", index);
         return index;
     }
 
     async fetchImagePromise(extraImageInfo) {
-        console.log("create fetch image promise");
+        consoleUtil.log("create fetch image promise");
         return new Promise((resolve, reject) => {
             const port = browser.tabs.connect(this.sender.tabId);
             if (port.error) {
@@ -502,7 +507,7 @@ class ExecutorClass {
                 return;
             }
             port.onMessage.addListener(u8Array => {
-                console.log("get u8Array, call disconnect then resolve promise");
+                consoleUtil.log("get u8Array, call disconnect then resolve promise");
                 port.disconnect();
                 resolve(u8Array);
             });

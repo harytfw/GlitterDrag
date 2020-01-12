@@ -22,17 +22,27 @@ hr {
 }
 
 .provider-container {
-    flex-wrap: wrap;
-    flex-direction: column;
-    height: 6rem;
+  flex-wrap: wrap;
+  flex-direction: column;
+  height: 6rem;
 }
 
 .provider-container search-engine-provider {
-  margin-right: .8rem;
+  margin-right: 0.8rem;
   margin-bottom: 1rem;
   width: 30%;
 }
 
 .simple-pre {
   white-space: pre;
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.sample-img {
+  height: 64px;
+  width: 64px;
+  background: chocolate;
 }

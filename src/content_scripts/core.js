@@ -119,7 +119,7 @@ class Core {
     }
 
     _log(...arg) {
-        (window.enableLog || window.document.enableLog) && console.log(...arg);
+        consoleUtil.log(...arg);
     }
 
     /**

@@ -1,5 +1,5 @@
 "use strict";
-
+const GRIDS_MAPPING = { "grids_3x3": ".grids-3x3", "grids_4x4": ".grids-4x4" };
 class ActinoConfiguration extends HTMLElement {
     constructor() {
         super();
@@ -35,23 +35,26 @@ class ActinoConfiguration extends HTMLElement {
                         // loadDetail 依赖 方向限制
                         this.updateLimitationStatus();
                         this.loadDetail();
-                        this.updateCommandPermitStatus();
+                        this.updateFieldStatus();
                         break;
                     case "limitation":
                         this.saveActionProperty();
                         this.updateLimitationStatus();
                         this.loadDetail();
-                        this.updateCommandPermitStatus();
+                        this.updateFieldStatus();
                         target.dispatchEvent(new Event("configupdate", { bubbles: true }));
                         break;
                     case "actionType":
+                        this.loadDetail();
+                        this.updateFieldStatus();
+                        break;
                     case "direction":
                         this.loadDetail();
-                        this.updateCommandPermitStatus();
+                        this.updateFieldStatus();
                         // target.dispatchEvent(new Event("configupdate", { bubbles: true }))
                         break;
                     case "command":
-                        this.updateCommandPermitStatus();
+                        this.updateFieldStatus();
                         this.saveDetail();
                         target.dispatchEvent(new Event("configupdate", { bubbles: true }));
                         break;
@@ -65,7 +68,7 @@ class ActinoConfiguration extends HTMLElement {
                         target.dispatchEvent(new Event("configupdate", { bubbles: true }));
                         break;
                     default:
-                        console.log("unhandled change", target);
+                        consoleUtil.log("unhandled change", target);
                         break;
                 }
             }
@@ -78,7 +81,7 @@ class ActinoConfiguration extends HTMLElement {
             this.updateGroups();
             this.updateLimitationStatus();
             this.loadDetail();
-            this.updateCommandPermitStatus();
+            this.updateFieldStatus();
             queryUtil.removeElementsByVender(this);
             i18nUtil.render(this);
         });
@@ -103,25 +106,47 @@ class ActinoConfiguration extends HTMLElement {
     updateLimitationStatus() {
         const limitation = this.permitedDirections;
 
-        for (const input of this.querySelectorAll("[data-permit]")) {
-            const permitTable = input.dataset.permit.split(",").map(a => a.trim());
-            input.disabled = !permitTable.includes(limitation);
+        for (const selector of Object.values(GRIDS_MAPPING)) {
+            this.querySelector(selector).classList.add("is-hidden");
         }
 
-        for (const input of this.querySelectorAll("[name=direction]")) {
-            if (!input.disabled) {
-                input.checked = true;
-                break;
+        if (Object.keys(GRIDS_MAPPING).includes(limitation)) {
+            for (const div of this.querySelectorAll(".normal-direction,.diagonal-direction")) {
+                div.classList.add("is-hidden");
+            }
+            this.querySelector(GRIDS_MAPPING[limitation]).classList.remove("is-hidden");
+        } else {
+
+            for (const div of this.querySelectorAll(".normal-direction,.diagonal-direction")) {
+                div.classList.remove("is-hidden");
+            }
+
+            for (const input of this.querySelectorAll("[data-permit]")) {
+                const permitTable = input.dataset.permit.split(",").map(a => a.trim());
+                input.disabled = !permitTable.includes(limitation);
+            }
+            for (const input of this.querySelectorAll("[name=direction]")) {
+                if (!input.disabled) {
+                    input.checked = true;
+                    break;
+                }
             }
         }
     }
 
-    updateCommandPermitStatus() {
+    updateFieldStatus() {
+        const actionType = this.actionType;
+        for (const opt of this.querySelectorAll("[data-target-action-type]")) {
+            const permitTable = opt.dataset.targetActionType.split(",").map(a => a.trim());
+            opt.disabled = !permitTable.includes(actionType);
+        }
+
         const command = this.querySelector("[name=command]").value;
         for (const input of this.querySelectorAll("[data-command-permit]")) {
             const permitTable = input.dataset.commandPermit.split(",").map(a => a.trim());
             input.disabled = !permitTable.includes(command);
         }
+
     }
 
     applyLoadingAnimation() {
@@ -135,7 +160,7 @@ class ActinoConfiguration extends HTMLElement {
     }
 
     listenGroupModalClose() {
-        console.log("listen group modal close");
+        consoleUtil.log("listen group modal close");
         this.groupModal.addEventListener("close", () => {
             this.updateGroups();
         }, { once: true });
@@ -152,9 +177,11 @@ class ActinoConfiguration extends HTMLElement {
 
         this.searchEngineEditor.addEventListener("result", (e) => {
             if (e.detail === "confirm") {
-                console.log("get searchEngineEditor result");
+                consoleUtil.log("get searchEngineEditor result");
                 this.querySelector(`[name='searchEngine.name']`).value = this.searchEngineEditor.searchEngineName;
                 this.querySelector(`[name='searchEngine.url']`).value = this.searchEngineEditor.searchEngineURL;
+                this.updateSearchEngineHelpIcon();
+
                 this.querySelector(`[name='searchEngine.icon']`).value = this.searchEngineEditor.searchEngineIcon;
                 this.querySelector(`[name='searchEngine.method']`).value = this.searchEngineEditor.searchEngineMethod;
 
@@ -169,7 +196,7 @@ class ActinoConfiguration extends HTMLElement {
     }
 
     updateGroups() {
-        console.log("update group dropdown");
+        consoleUtil.log("update group dropdown");
         const dropdown = this.querySelector("#group-dropdown");
         const actions = this.configManager.get().actions;
         const pairs = actions.map(a => [a.name, a.name]);
@@ -184,9 +211,9 @@ class ActinoConfiguration extends HTMLElement {
     }
 
     loadDetail() {
-        const detail = this.configManager.getProxy().detail.find(this.currentGroupName, this.actionType, this.direction);
+        const detail = this.configManager.getProxy().details.find(this.currentGroupName, this.actionType, this.direction);
 
-        console.log("try load detail", detail);
+        consoleUtil.log("try load detail", detail);
         if (!detail) {
             console.error("detail is null");
             return;
@@ -199,6 +226,9 @@ class ActinoConfiguration extends HTMLElement {
 
         this.querySelector(`[name='searchEngine.name']`).value = detail.searchEngine.name;
         this.querySelector(`[name='searchEngine.url']`).value = detail.searchEngine.url;
+
+        this.updateSearchEngineHelpIcon();
+
         this.querySelector(`[name='searchEngine.icon']`).value = detail.searchEngine.icon;
         this.querySelector(`[name='searchEngine.method']`).value = detail.searchEngine.method;
         this.querySelector(`[name='download.directory']`).value = detail.download.directory;
@@ -237,15 +267,29 @@ class ActinoConfiguration extends HTMLElement {
     }
 
     saveActionProperty() {
-        console.log("save action property");
+        consoleUtil.log("save action property");
         this.configManager.getProxy().actions.update(this.currentGroupName, {
             limitation: this.permitedDirections,
         });
     }
 
     saveDetail() {
-        console.log("save detail");
-        this.configManager.getProxy().detail.update(this.currentGroupName, this.actionType, this.direction, this.collectDetail());
+        consoleUtil.log("save detail");
+        this.configManager.getProxy().details.update(this.currentGroupName, this.actionType, this.direction, this.collectDetail());
+    }
+
+    updateSearchEngineHelpIcon() {
+        if (!env.isChromium) {
+            return;
+        }
+        const url = this.querySelector("[name='searchEngine.url']").value;
+        const icon = this.querySelector(".search-engine-help-icon");
+        const command = this.querySelector("[name=command]").value;
+        if (command === "search" && url === "") {
+            icon.classList.replace("has-text-grey-light", "has-text-warning");
+        } else {
+            icon.classList.replace("has-text-warning", "has-text-grey-light");
+        }
     }
 }
 

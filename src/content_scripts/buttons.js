@@ -1,14 +1,15 @@
 (async function() {
-    return 
+    return ;
     if (window.top !== window.self) {
         return;
     }
 
 
-    var qwindow = new QueryWindow();
-
+    // var qwindow = new QueryWindow();
+    var grids = new Grids();
     function A() {
-        dictService.bing.query(document.body, "service");
+        // dictService.bing.query(document.body, "service");
+        grids.active();
     }
 
     function B() {

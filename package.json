@@ -10,7 +10,7 @@
         "build": "web-ext build -s ./src --overwrite-dest",
         "start:firefox": "web-ext run  -s ./src --firefox=firefoxdeveloperedition -p webextension",
         "lint": "eslint . && web-ext lint",
-        "test": "npm run lint"
+        "test": "node ./test/url.js"
     },
     "types": "@types/content_scripts.ts",
     "license": "MIT"

@@ -1,6 +1,6 @@
 "use strict";
 
-var filenameUtil = {};
+var fileUtil = {};
 {
     const DATA_PREFIX = "data:";
 
@@ -33,5 +33,5 @@ var filenameUtil = {};
         return location.hostname;
     };
 
-    filenameUtil.getFilename = getFilename;
+    fileUtil.getFilename = getFilename;
 }

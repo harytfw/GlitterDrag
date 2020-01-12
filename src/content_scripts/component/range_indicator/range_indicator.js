@@ -42,22 +42,21 @@ class RangeIndicator {
         return this.radius;
     }
 
-    update(x, y, val) {
+    active(x, y, val) {
         this.radius = val;
         this.indicator.style.left = `${x - val}px`;
         this.indicator.style.top = `${y - val}px`;
         this.indicator.style.height = `${val * 2}px`;
         this.indicator.style.width = `${val * 2}px`;
         this.indicator.style.borderRadius = `${val * 2}px ${val * 2}px`;
-    }
-
-    active() {
-
         document.body.appendChild(this.container);
     }
 
     remove() {
-        this.container.remove();
+        if (consoleUtil.autoHide) {
+            consoleUtil.log("close range indicator");
+            this.container.remove();
+        }
     }
 
 }

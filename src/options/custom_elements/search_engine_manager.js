@@ -55,7 +55,7 @@ class SearchEngineManager extends HTMLElement {
                     this.editor.searchEngineMethod)
                 this.dispatchEvent(new Event("configupdate", { bubbles: true }))
             } else {
-                console.log("cancal addition")
+                consoleUtil.log("cancal addition")
             }
         }, { once: true })
         this.editor.active()
@@ -72,7 +72,7 @@ class SearchEngineManager extends HTMLElement {
                 this.saveSearchEngine(row)
                 this.dispatchEvent(new Event("configupdate", { bubbles: true }))
             } else {
-                console.log(row, "cancal change")
+                consoleUtil.log(row, "cancal change")
             }
         }, { once: true })
         this.editor.active()
@@ -104,7 +104,7 @@ class SearchEngineManager extends HTMLElement {
         searchEngine.icon = row.querySelector("[name=icon]").value
         searchEngine.method = row.querySelector("[name=method]").value
 
-        console.log("save search engine")
+        consoleUtil.log("save search engine")
         this.dispatchEvent(new Event("configupdate", { bubbles: true }))
     }
 
@@ -130,7 +130,7 @@ class SearchEngineManager extends HTMLElement {
             icon,
             method
         })
-        console.log("add search engine")
+        consoleUtil.log("add search engine")
         this.addSearchEngineRow(name, url, icon, method)
         this.dispatchEvent(new Event("configupdate", { bubbles: true }))
     }
@@ -138,7 +138,7 @@ class SearchEngineManager extends HTMLElement {
     deleteSearchEngine(row) {
         const index = Array.from(row.parentElement.children).findIndex(a => a === row)
         this.configManager.get().searchEngines.splice(index, 1)
-        console.log("delete search engine")
+        consoleUtil.log("delete search engine")
         row.remove()
 
         this.dispatchEvent(new Event("configupdate", { bubbles: true }))

@@ -42,23 +42,52 @@
                 <li data-target="#no2"><a data-i18n="tabtitle_actions">Actions</a></li>
                 <!-- <li data-target="#no3"><a data-i18n="tabtitle_searchEngine">Search Engine</a></li> -->
                 <li data-target="#no5"><a data-i18n="tabtitle_configuration">Configuration</a></li>
+                <li data-target="#no6"><a>Playground</a></li>
             </ul>
         </div>
         <div class="columns tabs-body">
-            <div id="no1" class="column">
-                <custom-settings></custom-settings>
-            </div>
-            <div id="no2" class="is-hidden column">
-                <custom-action-config></custom-action-config>
-            </div>
-            <!-- <div id="no3" class="is-hidden column">
+            <div class="column">
+                <div id="no1" class="">
+                    <custom-settings></custom-settings>
+                </div>
+                <div id="no2" class="is-hidden">
+                    <custom-action-config></custom-action-config>
+                </div>
+                <!-- <div id="no3" class="is-hidden column">
                 <search-engine-manager></search-engine-manager>
-            </div> -->
-            <!-- <div id="no4" class="is-hidden column">
-                <directory-manager></directory-manager>
-            </div> -->
-            <div id="no5" class="is-hidden column">
-                <custom-configuration></custom-configuration>
+                </div> -->
+                <!-- <div id="no4" class="is-hidden column">
+                    <directory-manager></directory-manager>
+                </div> -->
+                <div id="no5" class="is-hidden">
+                    <custom-configuration></custom-configuration>
+                </div>
+                <div id="no6" class="is-hidden">
+                    <p>
+                        This is a very long long long text
+                    </p>
+                    <p>
+                        <a href="./index.html">Options Page</a>
+                    </p>
+                    <p>
+                        Normal Image:
+                    </p>
+                    <p>
+                        <img src="./../icon/drag.png" style="width: 64px; height: 64px; ">
+                    </p>
+                    <p>
+                        Data URL
+                    </p>
+                    <p>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACESURBVGhD1ccxDQAACMAw/MtAHTL456BJn87s2XpOz+k5Pafn9Jye03N6Ts/pOT2n5/ScntNzek7P6Tk9p+f0nJ7Tc3pOz+k5Pafn9Jye03N6Ts/pOT2n5/ScntNzek7P6Tk9p+f0nJ7Tc3pOz+k5Pafn9Jye03N6Ts/pOT2n5/Sc3rL3gJihaV9ahRMAAAAASUVORK5CYII="
+                            style="width: 64px; height: 64px; ">
+                    </p>
+                    <p>
+                        <a href="./index.html">
+                            <img style="width: 64px; height: 64px;">
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>
     </template>
@@ -178,7 +207,7 @@
             </div>
         </div>
 
-        <div class="field is-horizontal">
+        <div class="is-hidden field is-horizontal">
             <div class="field-body">
                 <div class="field">
                     <div class="control">
@@ -256,6 +285,8 @@
                             <option value="rd" data-i18n="rightDiagonalDirections">Right Diagonal</option>
                             <option value="ld" data-i18n="leftDiagonalDirections">Left Diagonal</option>
                             <option value="all" data-i18n="allDirections">All</option>
+                            <option value="grids_3x3" data-i18n="grids_3x3">Grids 3x3</option>
+                            <option value="grids_4x4" data-i18n="grids_4x4">Grids 4x4</option>
                         </datalist>
                     </div>
                 </div>
@@ -269,7 +300,6 @@
         <div class="field is-horizontal normal-direction">
             <div class="field-label ">
                 <label data-i18n="normalDirections">Normal Direction</label>
-
             </div>
             <div class="field-body">
                 <div class="control">
@@ -341,6 +371,243 @@
                 </div>
             </div>
         </div>
+
+        <!-- 3x3 grids -->
+        <div class="is-hidden field is-horizontal grids-3x3">
+            <div class="field-label ">
+                <label data-i18n="grids">Grids</label>
+            </div>
+            <div class="field-body">
+                <div class="control">
+                    <div class="columns">
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="3x3@(0,0)" name="direction">
+                                <div class="state">
+                                    <label>1</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="3x3@(0,1)" name="direction">
+                                <div class="state">
+                                    <label>2</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="3x3@(0,2)" name="direction">
+                                <div class="state">
+                                    <label>3</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="3x3@(1,0)" name="direction">
+                                <div class="state">
+                                    <label>1</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="3x3@(1,1)" name="direction">
+                                <div class="state">
+                                    <label>2</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="3x3@(1,2)" name="direction">
+                                <div class="state">
+                                    <label>3</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="3x3@(2,0)" name="direction">
+                                <div class="state">
+                                    <label>1</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="3x3@(2,1)" name="direction">
+                                <div class="state">
+                                    <label>2</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="3x3@(2,2)" name="direction">
+                                <div class="state">
+                                    <label>3</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4x4 grids -->
+        <div class="is-hidden field is-horizontal grids-4x4">
+            <div class="field-label ">
+                <label data-i18n="grids">Grids 3x3</label>
+            </div>
+            <div class="field-body">
+                <div class="control">
+                    <div class="columns">
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(0,0)" name="direction">
+                                <div class="state">
+                                    <label>1</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(0,1)" name="direction">
+                                <div class="state">
+                                    <label>2</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(0,2)" name="direction">
+                                <div class="state">
+                                    <label>3</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(0,3)" name="direction">
+                                <div class="state">
+                                    <label>4</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(1,0)" name="direction">
+                                <div class="state">
+                                    <label>1</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(1,1)" name="direction">
+                                <div class="state">
+                                    <label>2</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(1,2)" name="direction">
+                                <div class="state">
+                                    <label>3</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(1,3)" name="direction">
+                                <div class="state">
+                                    <label>4</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(2,0)" name="direction">
+                                <div class="state">
+                                    <label>1</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(2,1)" name="direction">
+                                <div class="state">
+                                    <label>2</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(2,2)" name="direction">
+                                <div class="state">
+                                    <label>3</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(2,3)" name="direction">
+                                <div class="state">
+                                    <label>4</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(3,0)" name="direction">
+                                <div class="state">
+                                    <label>1</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(3,1)" name="direction">
+                                <div class="state">
+                                    <label>2</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(3,2)" name="direction">
+                                <div class="state">
+                                    <label>3</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="pretty p-default p-round">
+                                <input type="radio" value="4x4@(3,3)" name="direction">
+                                <div class="state">
+                                    <label>4</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- action type-->
         <div class="field is-horizontal is-narrow">
             <div class="field-label ">
@@ -413,17 +680,18 @@
                     <div class="control">
                         <bulma-dropdown list="command-options" name="command"></bulma-dropdown>
                         <datalist id="command-options">
-                            <option value="" data-i18n="command_noop">No Operation</option>
-                            <option value="open" data-i18n="command_open" data-target-action-type="text,link,image">
+                            <option value="" data-i18n="command_noop" data-target-action-type="text,link,image">No
+                                Operation</option>
+                            <option value="open" data-i18n="command_open" data-target-action-type="link,image">
                                 Open
                             </option>
                             <option value="search" data-i18n="command_search" data-target-action-type="text,image">
                                 Search
                             </option>
-                            <option value="find" data-i18n="command_find" data-target-action-type="text"
+                            <!-- <option value="find" data-i18n="command_find" data-target-action-type="text"
                                 data-target-browser="firefox">
                                 Find Text
-                            </option>
+                            </option> -->
                             <option value="copy" data-i18n="command_copy" data-target-action-type="text,link">
                                 Copy
                             </option>
@@ -550,14 +818,15 @@
                     <label data-i18n="searchEngine">search engine</label>
                     <div class="dropdown is-hoverable has-text-left">
                         <div class="dropdown-trigger">
-                            <span class="icon has-text-grey-light">
+                            <span class="icon has-text-grey-light search-engine-help-icon">
                                 <i class="fas fa-info-circle"></i>
                             </span>
                         </div>
                         <div class="dropdown-menu">
                             <div class="dropdown-content">
                                 <div class="dropdown-item">
-                                    <span class="simple-pre" data-i18n="helpInfo_searchEngine"></span>
+                                    <span class="simple-pre" data-i18n="helpInfo_searchEngine"
+                                        data-i18n-chromium="helpInfo_searchEngine_chromium"></span>
                                 </div>
                             </div>
                         </div>

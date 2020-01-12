@@ -18,10 +18,10 @@ class BingDict {
     async tailor(iframe) {
         const res = await fetch(browser.runtime.getURL("/content_scripts/component/query_window/css/tailor_dict_bing.css"));
         const css = await res.text();
-        hostBridge.injectCSS(iframe, "tailor", css);
+        hostBridge.injectStyle(iframe, "tailor", css);
     }
     async query(container, keyword) {
-        console.log("bing dict query", container, keyword);
+        consoleUtil("bing dict query", container, keyword);
 
         let iframe = container.querySelector("#dict");
         if (!(iframe instanceof HTMLIFrameElement)) {
@@ -33,9 +33,9 @@ class BingDict {
         const url = this.buildQueryURL(keyword);
         iframe.style.opacity = "0";
         iframe.addEventListener("load", () => {
-            console.log("iframe load");
+            consoleUtil("iframe load");
             this.tailor(iframe);
-            hostBridge.executeJS(iframe, "window.scrollTo(0,0)");
+            hostBridge.injectScript(iframe, "window.scrollTo(0,0)");
             iframe.style.opacity = "1";
         }, { once: true });
         iframe.src = url;

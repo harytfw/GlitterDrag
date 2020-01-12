@@ -9,7 +9,10 @@ var i18nUtil = {};
     i18nUtil.render = (context) => {
         for (const elem of context.querySelectorAll("[data-i18n]")) {
             if (elem instanceof HTMLElement && CANDIDATE_TAG_NAME.includes(elem.tagName)) {
-                const i18nName = elem.dataset.i18n;
+                let i18nName = elem.dataset.i18n;
+                if (env.isChromium && typeof elem.dataset.i18nChromium === "string") {
+                    i18nName = elem.dataset.i18nChromium;
+                }
                 const value = i18nUtil.getI18n(i18nName);
                 if (value !== "") {
                     elem.textContent = value;
@@ -17,7 +20,7 @@ var i18nUtil = {};
                     // console.warn("miss i18n string", elem);
                 }
             } else {
-                console.warn("not supported", elem);
+                console.warn(elem, " is not support i18n");
             }
         }
     };

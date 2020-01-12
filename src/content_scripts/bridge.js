@@ -3,109 +3,195 @@ var frameBridge = {};
 var hostBridge = {};
 
 const UUID = browser.runtime.getURL("");
+const isTop = window.top === window.self;
+const validateMessage = (key, args) => {
+    if (UUID !== key) {
+        consoleUtil.error("key not match");
+        return false;
+    }
+    if (!Array.isArray(args)) {
+        consoleUtil.error("args must be an array");
+        return false;
+    }
+    return true;
+};
+
 {
-    const isTop = window.top === window.self;
+
 
     if (!isTop) {
         window.addEventListener("message", (e) => {
             if (typeof e.data !== "object") { return; }
             const { key, cmd, args } = e.data;
-            if (UUID !== key) {
-                console.error("key not match");
+            if (!validateMessage(key, args)) {
                 return;
             }
-            if (!Array.isArray(args)) {
-                console.error("args must be an array");
-                return;
-            }
-            console.log("handle cmd", cmd);
+            consoleUtil.log("handle cmd", cmd);
             switch (cmd) {
-                case "executeJS":
-                    executeJS(...args);
+                case "injectScript":
+                    injectScript(...args);
                     break;
-                case "injectCSS":
-                    injectCSS(...args);
+                case "injectStyle":
+                    injectStyle(...args);
                     break;
-                case "removeCSS":
-                    removeCSS(...args);
+                case "removeStyle":
+                    removeStyle(...args);
                     break;
                 default:
-                    console.warn(`can not execute command "${cmd}"`);
+                    consoleUtil.warn(`can not find command "${cmd}" in frame bridge`);
                     break;
             }
         }, false);
     }
 
-    const WARN = "bridge frame api is called from top window";
+    const WARN = "attempt to call bridge frame api from top window";
 
-    const executeJS = (js) => {
+    const injectScript = (js) => {
         if (isTop) {
-            console.warn(WARN);
+            consoleUtil.warn(WARN);
         }
         const script = document.createElement("script");
         script.type = "application/javascript";
         script.textContent = js;
         document.body.appendChild(script);
-        console.log("frame bridge", "execute JS", script);
+        consoleUtil.log("frame bridge", "inject script", script);
     };
 
-    const injectCSS = (id, css) => {
-        console.log("injectCSS");
+    const injectStyle = (id, css) => {
+        consoleUtil.log("injectStyle");
         if (isTop) {
-            console.warn(WARN);
+            consoleUtil.warn(WARN);
         }
         const style = document.createElement("style");
         style.textContent = css;
         style.id = id;
         document.head.appendChild(style);
-        console.log("frame bridge", "inject css", style);
+        consoleUtil.log("frame bridge", "inject css", style);
     };
 
-    const removeCSS = (id) => {
+    const removeStyle = (id) => {
         if (isTop) {
-            console.warn(WARN);
+            consoleUtil.warn(WARN);
         }
 
         const style = document.querySelector(`#${id}`);
         if (style) {
-            console.log("frame bridge", "remove style", style);
+            consoleUtil.log("frame bridge", "remove style", style);
             style.remove();
         }
     };
 
-    frameBridge.executeJS = executeJS;
-    frameBridge.injectCSS = injectCSS;
-    frameBridge.removeCSS = removeCSS;
+    const onCallbackStart = (...args) => {
+        if (isTop) {
+            consoleUtil.warn(WARN);
+        }
+        window.top.postMessage({
+            key: UUID,
+            cmd: "onCallbackStart",
+            args: args,
+        }, "*");
+    };
+
+    const onCallbackMove = (...args) => {
+        if (isTop) {
+            consoleUtil.warn(WARN);
+        }
+        window.top.postMessage({
+            key: UUID,
+            cmd: "onCallbackMove",
+            args: args,
+        }, "*");
+    };
+
+    const onCallbackEnd = (...args) => {
+        if (isTop) {
+            consoleUtil.warn(WARN);
+        }
+        window.top.postMessage({
+            key: UUID,
+            cmd: "onCallbackEnd",
+            args: args,
+        }, "*");
+    };
+
+    frameBridge.injectScript = injectScript;
+    frameBridge.injectStyle = injectStyle;
+    frameBridge.removeStyle = removeStyle;
+    frameBridge.onCallbackStart = onCallbackStart;
+    frameBridge.onCallbackMove = onCallbackMove;
+    frameBridge.onCallbackEnd = onCallbackEnd;
 }
 
 {
-    const executeJS = (frame, js) => {
+
+    if (isTop) {
+        window.addEventListener("message", (e) => {
+            if (typeof e.data !== "object") { return; }
+            const { key, cmd, args } = e.data;
+            if (!validateMessage(key, args)) {
+                return;
+            }
+            consoleUtil.log("handle cmd", cmd);
+            switch (cmd) {
+                case "onCallbackStart":
+                    onCallbackStart(...args);
+                    break;
+                case "onCallbackMove":
+                    onCallbackMove(...args);
+                    break;
+                case "onCallbackEnd":
+                    onCallbackEnd(...args);
+                    break;
+                default:
+                    consoleUtil.warn(`can not find command "${cmd}" in host bridge`);
+                    break;
+            }
+        }, false);
+    }
+
+    const injectScript = (frame, js) => {
         frame.contentWindow.postMessage({
             key: UUID,
-            cmd: "executeJS",
+            cmd: "injectScript",
             args: [js],
         }, "*");
     };
 
-    const injectCSS = (frame, id, css) => {
-        console.log("host injectCSS");
+    const injectStyle = (frame, id, css) => {
+        consoleUtil.log("host injectStyle");
         frame.contentWindow.postMessage({
             key: UUID,
-            cmd: "injectCSS",
+            cmd: "injectStyle",
             args: [id, css],
         }, "*");
     };
 
-    const removeCSS = (frame, id) => {
+    const removeStyle = (frame, id) => {
         frame.contentWindow.postMessage({
             key: UUID,
-            cmd: "removeCSS",
+            cmd: "removeStyle",
             args: [id],
         }, "*");
     };
 
-    hostBridge.executeJS = executeJS;
-    hostBridge.injectCSS = injectCSS;
-    hostBridge.removeCSS = removeCSS;
+    const ERR = "This method is not overrided";
 
+    let onCallbackStart = () => {
+        consoleUtil.trace(ERR);
+    };
+
+    let onCallbackMove = () => {
+        consoleUtil.trace(ERR);
+    };
+
+    let onCallbackEnd = () => {
+        consoleUtil.trace(ERR);
+    };
+
+    hostBridge.injectScript = injectScript;
+    hostBridge.injectStyle = injectStyle;
+    hostBridge.removeStyle = removeStyle;
+    hostBridge.onCallbackStart = onCallbackStart;
+    hostBridge.onCallbackMove = onCallbackMove;
+    hostBridge.onCallbackEnd = onCallbackEnd;
 }

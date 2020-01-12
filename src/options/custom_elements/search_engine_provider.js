@@ -20,7 +20,7 @@ class SearchEngineProvider extends HTMLElement {
     }
 
     _dispatch(name, url, icon) {
-        console.log(this, "dispatch provideritemselect event")
+        consoleUtil.log(this, "dispatch provideritemselect event")
         this.dispatchEvent(new CustomEvent("provideritemselect", {
             detail: {
                 name,

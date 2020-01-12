@@ -5,7 +5,7 @@ const MOBILE_UA = `Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/NRD90M; wv) A
 function rewriteUserAgentHeader(e) {
     for (var header of e.requestHeaders) {
         if (header.name.toLowerCase() === "user-agent") {
-            console.log("find bing dict page, rewrite ua")
+            consoleUtil.log("find bing dict page, rewrite ua")
             header.value = MOBILE_UA;
         }
     }

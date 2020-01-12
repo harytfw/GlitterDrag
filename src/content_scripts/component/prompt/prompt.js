@@ -41,7 +41,7 @@ class Prompt {
     }
 
     render(selection, actionDetail) {
-        console.log("render", actionDetail);
+        consoleUtil.log("render", actionDetail);
         if (typeof actionDetail === "object") {
             const clean = DOMPurify.sanitize(this.translate(selection, actionDetail));
             return this.promptDiv.innerHTML = clean;
@@ -54,7 +54,7 @@ class Prompt {
 
     active() {
         if (this.container.parentElement === null) {
-            console.log(this.container, "active");
+            consoleUtil.log(this.container, "active");
             document.body.appendChild(this.container);
         }
     }
@@ -65,9 +65,11 @@ class Prompt {
 
     translate(selection, detail) {
         let data;
-        if (detail.commandTarget === "text") { data = selection.text || selection.plainUrl || this.imageLink || "" }
-        else if (detail.commandTarget === "link") { data = selection.plainUrl || selection.imageLink || selection.text || "" }
-        else { data = selection.imageLink || selection.plainUrl || selection.text || "" }
+        if (detail.commandTarget === "text") {
+            data = selection.text || selection.plainUrl || this.imageLink || "";
+        } else if (detail.commandTarget === "link") {
+            data = selection.plainUrl || selection.imageLink || selection.text || "";
+        } else { data = selection.imageLink || selection.plainUrl || selection.text || ""; }
         return detail.prompt
             .replace("%s", data);
     }

@@ -16,7 +16,7 @@ var configUtil = {};
             shortcut: "",
             limitation: "",
             important: true,
-            detail: {
+            details: {
                 /* text: [{
                     direction: "up",
                     command: "open",
@@ -120,7 +120,7 @@ var configUtil = {};
                         name,
                         shortcut,
                         limitation,
-                        detail: {
+                        details: {
                             text: [],
                             link: [],
                             image: [],
@@ -146,7 +146,7 @@ var configUtil = {};
                 },
             },
 
-            detail: {
+            details: {
 
                 add(name, actionType, direction) {
                     const action = manipulator.actions.find(name);
@@ -165,18 +165,18 @@ var configUtil = {};
                     if (!action) {
                         return null;
                     }
-                    let ret = action.detail[actionType].find(obj => obj.direction === direction);
+                    let ret = action.details[actionType].find(obj => obj.direction === direction);
                     if (!ret) {
                         ret = cloneDeep(defaultActionDetail);
                         ret.direction = direction;
-                        action.detail[actionType].push(ret);
+                        action.details[actionType].push(ret);
                     }
                     return ret;
                 },
 
                 update(name, actionType, direction, option) {
-                    const detail = manipulator.detail.find(name, actionType, direction);
-                    Object.assign(detail, option);
+                    const details = manipulator.details.find(name, actionType, direction);
+                    Object.assign(details, option);
                 },
 
             },

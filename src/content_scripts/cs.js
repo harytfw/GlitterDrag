@@ -1,18 +1,6 @@
 "use strict";
 
-// consoleUtil.disableLog()
-window.enableLog = true
-window.onerror = function () {
-    console.trace(...arguments);
-};
-
-window.onrejectionhandled = function () {
-    console.trace(...arguments);
-};
-
-window.onunhandledrejection = function () {
-    console.trace(...arguments);
-};
+consoleUtil.logErrorEvent();
 
 const SELECTION_TYPE = {
     unknown: "unknown",
@@ -79,8 +67,7 @@ class Controller {
             case SELECTION_TYPE.urlText:
                 return "link";
             case SELECTION_TYPE.anchorContainsImg:
-                return "linkAndImage";
-            // }
+                return "link";
             default:
                 console.trace("unknown selection type");
                 return "";
@@ -98,7 +85,10 @@ class Controller {
     }
 
     static isAnchor(node) {
-        return node instanceof HTMLAnchorElement;
+        if (node instanceof HTMLElement) {
+            return node instanceof HTMLAnchorElement || node.closest("a") instanceof HTMLAnchorElement;
+        }
+        return false;
     }
 
     static isAnchorContainsImg(node) {
@@ -123,11 +113,11 @@ class Controller {
         return ext !== null ? ext : "";
     }
 
-    get lastShortcut() {
+    get recentShortcut() {
         return this.shortcutStore[this.shortcutStore.length - 1];
     }
 
-    set lastShortcut(val) {
+    set recentShortcut(val) {
         return this.shortcutStore[this.shortcutStore.length - 1] = val;
     }
 
@@ -152,6 +142,7 @@ class Controller {
         this.ui = {
             indicator: new RangeIndicator(),
             prompt: new Prompt(),
+            grids: new Grids(),
             // panelBox: new UIClass()
         };
 
@@ -165,14 +156,14 @@ class Controller {
 
         document.addEventListener("keydown", (e) => {
             if (e.isComposing === false) {
-                console.log("keydown", e.key);
-                this.lastShortcut = e.key;
+                consoleUtil.log("keydown", e.key);
+                this.recentShortcut = e.key;
             }
         });
 
         document.addEventListener("keyup", () => {
-            console.log("keyup", this.lastShortcut);
-            this.lastShortcut = "";
+            consoleUtil.log("keyup", this.recentShortcut);
+            this.recentShortcut = "";
         });
 
         this.refreshPageConfig();
@@ -180,11 +171,11 @@ class Controller {
     }
 
     async refreshPageConfig() {
-        console.log("refresh page config");
+        consoleUtil.log("refresh page config");
         browser.storage.local.get().then(a => {
             this.config = a;
             if (this.config.features.extendMiddleButton === true) {
-                console.log("enable features: ", "extend middle button");
+                consoleUtil.log("enable features: ", "extend middle button");
                 features.extendMiddleButton.start();
             }
         });
@@ -192,21 +183,33 @@ class Controller {
 
     queryDirection() {
         for (const action of this.config.actions) {
-            if (action.shortcut === this.lastShortcut) {
-                return Controller.angleToDirection(this.core.angle, DIMENSION[action.limitation]);
+            if (action.shortcut === this.recentShortcut) {
+                if (action.limitation.startsWith("grids")) {
+                    return this.ui.grids.direction;
+                } else {
+                    return Controller.angleToDirection(this.core.angle, DIMENSION[action.limitation]);
+                }
+            }
+        }
+    }
+
+    queryActionGroup() {
+        for (const action of this.config.actions) {
+            if (action.shortcut === this.recentShortcut) {
+                return action;
             }
         }
     }
 
     queryActionDetail() {
 
-        console.log("quertActionDetail", "selectionType:", this.selectionType, ", shortcut:", this.lastShortcut);
+        consoleUtil.log("quertActionDetail", "selectionType:", this.selectionType, ", shortcut:", this.recentShortcut);
         const actionType = Controller.predictActionType(this.selectionType);
         for (const action of this.config.actions) {
-            if (action.shortcut === this.lastShortcut) {
+            if (action.shortcut === this.recentShortcut) {
                 //TODO
-                console.log("action detail", action.detail, ", expceted direction:", this.direction);
-                return action.detail[actionType].find(detail => detail.direction === this.direction);
+                consoleUtil.log("action details", action.details, ", expceted direction:", this.direction);
+                return action.details[actionType].find(detail => detail.direction === this.direction);
             }
         }
 
@@ -216,7 +219,7 @@ class Controller {
     }
 
     clear() {
-        console.log("clear");
+        consoleUtil.log("clear");
         this.selection.text = this.selection.plainUrl = this.selection.imageLink = null;
         this.direction = null;
         this.selectionType = SELECTION_TYPE.unknown;
@@ -224,6 +227,7 @@ class Controller {
         this.shortcutStore[0] = "";
         this.ui.indicator.remove();
         this.ui.prompt.remove();
+        this.ui.grids.remove();
         // this.ui.panelBox.remove()
     }
 
@@ -233,10 +237,13 @@ class Controller {
         }
         let d = this.core.distance;
         if (this.config.range[0] <= d && d <= this.config.range[1]) {
-            console.log("IN RANGE");
             return true;
         }
         return false;
+    }
+
+    isGridsActive() {
+        return this.ui.grids.container.parentElement instanceof HTMLElement;
     }
 
     /**
@@ -255,10 +262,10 @@ class Controller {
                 target.getAttribute("draggble") !== null)) {
             return false;
         } else if (Controller.isText(target)) {
-
             return true;
+        }
 
-        } else if (Controller.isAnchor(target)) {
+        if (Controller.isAnchor(target)) {
 
             if (target.href.startsWith("#")) {
                 return false;
@@ -284,12 +291,22 @@ class Controller {
      * @param {Element} target
      */
     allowDrop(target, dataTransfer, isExternal, defaultPrevented) {
-        if (!this.checkDistanceRange()) {
-            return false;
+
+        if (this.isGridsActive) {
+            return this.ui.grids.allowDrop();
         }
+
+        if (!this.isGridsActive && this.config.limitRange) {
+            if (!this.checkDistanceRange()) {
+                return false;
+            }
+        }
+
         if (defaultPrevented === true) {
             return false;
         }
+
+
         if (target instanceof Text) {
             return true;
         }
@@ -332,11 +349,10 @@ class Controller {
      */
     onStart(target, dataTransfer, isExternal) {
         let type = SELECTION_TYPE.unknown;
-        console.log("onStart", target);
+        consoleUtil.log("onStart", target);
         if (Controller.isText(target) || Controller.isTextInput(target)) {
-
             this.selection.text = dataTransfer.getData("text/plain");
-            if (urlUtil.seemAsURL(this.selection.text)) {
+            if (!this.config.features.disableFixURL && urlUtil.seemAsURL(this.selection.text)) {
                 this.selection.plainUrl = urlUtil.fixSchemer(this.selection.text);
                 type = SELECTION_TYPE.urlText;
             } else {
@@ -377,12 +393,21 @@ class Controller {
         } else {
             type = SELECTION_TYPE.unknown;
         }
-        this.selectionType = type;
 
-        if (this.config.limitRange && this.config.enableIndicator) {
-            this.ui.indicator.active();
-            console.log("range", this.config.range);
-            this.ui.indicator.update(this.core.pagePos.x, this.core.pagePos.y, this.config.range[0])
+        this.selectionType = type;
+        const actionGroup = this.queryActionGroup();
+        if (actionGroup.limitation.startsWith("grids")) {
+            this.ui.grids.active(
+                this.core.pagePos.x,
+                this.core.pagePos.y,
+                actionGroup,
+                Controller.predictActionType(this.selectionType),
+            );
+        } else {
+            if (this.config.limitRange && this.config.enableIndicator) {
+                consoleUtil.log("range", this.config.range);
+                // this.ui.indicator.active(this.core.pagePos.x, this.core.pagePos.y, this.config.range[0])
+            }
         }
     }
 
@@ -408,14 +433,9 @@ class Controller {
             default:
                 break;
         }
-
-        if (this.checkDistanceRange()) {
-            // let d = Object.keys(DIMENSION).map(key => `${key} = ${DragController.angleToDirection(this.core.angle, DIMENSION[key])}`)
-            // console.log(this.core.angle, d)
-
-            this.direction = this.queryDirection();
-            console.log("direction: ", this.direction);
-
+        this.direction = this.queryDirection();
+        consoleUtil.log("direction: ", this.direction);
+        if (!this.isGridsActive && this.checkDistanceRange()) {
             if (true === this.config.enablePrompt) {
                 const detail = this.queryActionDetail();
                 if (detail.prompt !== "") {
@@ -425,7 +445,6 @@ class Controller {
                     this.ui.prompt.remove();
                 }
             }
-
         } else if (Controller.isTextInput(target)) {
             // this.ui.prompt.remove()
             // 隐藏距离指示器
@@ -439,19 +458,24 @@ class Controller {
 
     onEnd(target, dataTransfer, isExternal) {
         if (dataTransfer === null) {
-            console.log("dataTransfer is null, nothing can do.");
+            // specially handle dragend event
+            consoleUtil.log("dataTransfer is null, nothing can do.");
             this.clear();
             return;
         }
 
+        if (target.matches("#gd-grids")) {
+            console.info("Bingo!!!!!!!!!!!Grids");
+        }
+
         // TODO: handle isExternal
-        // console.log('selection type', dataTransfer.getData(MIME_SELECTION_TYPE))
-        console.log("text/plain", dataTransfer.getData(MIME_PLAIN_TEXT));
-        console.log("text/uri-list", dataTransfer.getData(MIME_URI_LIST));
+        // consoleUtil.log('selection type', dataTransfer.getData(MIME_SELECTION_TYPE))
+        consoleUtil.log("text/plain", dataTransfer.getData(MIME_PLAIN_TEXT));
+        consoleUtil.log("text/uri-list", dataTransfer.getData(MIME_URI_LIST));
 
         const imageInfo = {
             token: null,
-            extension: "",
+            extension: null,
         };
         this.actionWrapper.setActionType(Controller.predictActionType(this.selectionType));
 
@@ -497,9 +521,9 @@ class Controller {
 var c = new Controller();
 
 browser.runtime.onConnect.addListener(port => {
-    console.log(`new connection in ${location.href}`);
+    consoleUtil.log(`new connection in ${location.href}`);
     port.onDisconnect.addListener(() => {
-        console.log("disconnect");
+        consoleUtil.log("disconnect");
     });
     port.onMessage.addListener(async (token) => {
         port.postMessage(await c.storage.consume(token));

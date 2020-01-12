@@ -1,0 +1,29 @@
+#grids {
+  all: initial;
+
+  box-sizing: border-box;
+
+  background-color: transparent;
+  font-size: 16px;
+
+  color: #4a4a4a;
+  font-weight: 400;
+  line-height: 1.5;
+
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 99999;
+}
+
+.command {
+  width: 64px;
+  height: 64px;
+  border: 1px solid #4a4a4a;
+
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.command.active {
+  background-color: rgba(150, 150, 100, 0.75);
+}

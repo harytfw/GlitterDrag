@@ -16,7 +16,7 @@ var queryUtil = {};
         const vender = env.browser;
         for (const target of context.querySelectorAll("[data-target-browser]")) {
             const allowed = target.dataset.targetBrowser.split(",");
-            console.log(target, "allow browser: " + allowed);
+            consoleUtil.log(target, "allow browser: " + allowed);
             if (!allowed.includes(vender)) {
                 console.info(target, " is removed due to the browser filter rule");
                 target.remove();
@@ -24,7 +24,16 @@ var queryUtil = {};
         }
     };
 
+    const fixHorizonOffset = (x, width = 0) => {
+        return Math.min(Math.max(0, x), window.innerWidth + window.pageXOffset - width);
+    };
+
+    const fixVerticalOffset = (y, height = 0) => {
+        return Math.min(Math.max(0, y), window.innerHeight + window.pageYOffset - height);
+    };
+
     queryUtil.findEventElem = findEventElem;
     queryUtil.removeElementsByVender = removeElementsByVender;
+    queryUtil.fixHorizonOffset = fixHorizonOffset;
+    queryUtil.fixVerticalOffset = fixVerticalOffset;
 }
-

@@ -47,7 +47,7 @@ class ActionWrapper {
 
     post(actionDetail) {
         if (!actionDetail) {
-            console.warn("action detail is empty, replace it with no operation");
+            consoleUtil.info("action detail is empty, replace it with no operation");
             actionDetail = {
                 command: "",
             };
@@ -57,7 +57,7 @@ class ActionWrapper {
             ...this,
             ...actionDetail,
         };
-        console.log("post", msg);
+        consoleUtil.log("post", msg);
         browser.runtime.sendMessage(msg)
 
         this.direction = null;
