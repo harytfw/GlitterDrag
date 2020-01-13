@@ -702,9 +702,9 @@
                                     Translate
                                 </option> -->
                             <!-- <option value="query" data-i18n="command_query">Query</option> -->
-                            <!-- <option value="runScript" data-event="command-runScript" data-i18n="command_runScript">
+                            <option value="runScript" data-event="command-runScript" data-i18n="command_runScript">
                                 Run Script
-                            </option> -->
+                            </option>
                         </datalist>
                     </div>
                 </div>
@@ -1001,14 +1001,14 @@
             </div>
 
 
-            <div class="field is-horizontal is-hidden">
+            <div class="field is-horizontal">
                 <div class="field-label ">
                     <label data-i18n="script">script</label>
                     <div class="dropdown is-hoverable has-text-left">
                         <div class="dropdown-trigger">
-                            <span class="icon has-text-grey-light">
+                            <a class="icon has-text-grey-light" data-event="loadDefaultScript">
                                 <i class="fas fa-info-circle"></i>
-                            </span>
+                            </a>
                         </div>
                         <div class="dropdown-menu">
                             <div class="dropdown-content">
@@ -1124,7 +1124,7 @@
                         <search-engine-provider data-target-browser="firefox" groupname="Browser">
                         </search-engine-provider>
                         <search-engine-provider groupname="General"></search-engine-provider>
-                        <search-engine-provider groupname="Chinese"></search-engine-provider>
+                        <search-engine-provider class="is-hidden" groupname="Chinese"></search-engine-provider>
                         <search-engine-provider groupname="Image Search"></search-engine-provider>
                         <!-- <search-engine-provider groupname="Image Search(via upload)"></search-engine-provider> -->
                     </div>
@@ -1153,6 +1153,24 @@
                                     <div class="field is-horizontal">
                                         <div class="field-label has-text-left">
                                             <label data-i18n="searchEngineURL"> URL </label>
+                                            <div class="dropdown is-hoverable has-text-left">
+                                                <div class="dropdown-trigger">
+                                                    <span class="icon has-text-grey-light">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </span>
+                                                </div>
+                                                <div class="dropdown-menu">
+                                                    <div class="dropdown-content">
+                                                        <div class="dropdown-item">
+                                                            <span data-i18n="helpInfo_searchEngine_url"></span>
+                                                            <br>
+                                                            <a class="link" href=""
+                                                                data-i18n="helpInfo_searchEngine_viewPlaceHolders"></a>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="field-body">
                                             <div class="field">

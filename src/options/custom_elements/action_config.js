@@ -19,8 +19,10 @@ class ActinoConfiguration extends HTMLElement {
                         this.listenGroupModalClose();
                         break;
                     case "editSearchEngine":
-                        this.searchEngineEditor.active();
                         this.listenSearchEngineEditorResult();
+                        break;
+                    case "loadDefaultScript":
+                        this.loadDefaultScript();
                         break;
                     default: break;
                 }
@@ -115,6 +117,7 @@ class ActinoConfiguration extends HTMLElement {
                 div.classList.add("is-hidden");
             }
             this.querySelector(GRIDS_MAPPING[limitation]).classList.remove("is-hidden");
+            this.querySelector(GRIDS_MAPPING[limitation]).querySelector("[name=direction]").checked = true;
         } else {
 
             for (const div of this.querySelectorAll(".normal-direction,.diagonal-direction")) {
@@ -168,12 +171,13 @@ class ActinoConfiguration extends HTMLElement {
     }
 
     listenSearchEngineEditorResult() {
-        this.searchEngineEditor.searchEngineName = this.querySelector(`[name='searchEngine.name']`).value;
-        this.searchEngineEditor.searchEngineURL = this.querySelector(`[name='searchEngine.url']`).value;
-        this.searchEngineEditor.searchEngineIcon = this.querySelector(`[name='searchEngine.icon']`).value;
-        this.searchEngineEditor.searchEngineMethod = this.querySelector(`[name='searchEngine.method']`).value;
-
-        this.searchEngineEditor.searchEngineBuiltin = this.querySelector(`[name='searchEngine.builtin']`).checked;
+        this.searchEngineEditor.active(
+            this.querySelector(`[name='searchEngine.name']`).value,
+            this.querySelector(`[name='searchEngine.url']`).value,
+            this.querySelector(`[name='searchEngine.icon']`).value,
+            this.querySelector(`[name='searchEngine.builtin']`).checked,
+            this.querySelector(`[name='searchEngine.method']`).value,
+        );
 
         this.searchEngineEditor.addEventListener("result", (e) => {
             if (e.detail === "confirm") {
@@ -187,7 +191,13 @@ class ActinoConfiguration extends HTMLElement {
 
                 this.querySelector(`[name='searchEngine.builtin']`).checked = this.searchEngineEditor.searchEngineBuiltin;
 
-                this.querySelector(`.searchEngineURLPreview`).textContent = this.searchEngineEditor.searchEngineURL;
+                let previewContent;
+                if (this.searchEngineEditor.searchEngineBuiltin) {
+                    previewContent = "";
+                } else {
+                    previewContent = this.searchEngineEditor.searchEngineURL;
+                }
+                this.querySelector(`.searchEngineURLPreview`).textContent = previewContent;
 
                 this.saveDetail();
                 this.dispatchEvent(new Event("configupdate", { bubbles: true }));
@@ -239,7 +249,15 @@ class ActinoConfiguration extends HTMLElement {
         this.querySelector(`[name='searchEngine.builtin']`).checked = detail.searchEngine.builtin;
         this.querySelector(`[name='download.showSaveAsDialog']`).checked = detail.download.showSaveAsDialog;
 
-        this.querySelector(`.searchEngineURLPreview`).textContent = detail.searchEngine.url;
+        let previewContent;
+        if (detail.searchEngine.builtin) {
+            previewContent = "";
+        } else {
+            previewContent = detail.searchEngine.url;
+        }
+        this.querySelector(`.searchEngineURLPreview`).textContent = previewContent;
+
+
 
     }
 
@@ -279,7 +297,7 @@ class ActinoConfiguration extends HTMLElement {
     }
 
     updateSearchEngineHelpIcon() {
-        if (!env.isChromium) {
+        if (env.isFirefox) {
             return;
         }
         const url = this.querySelector("[name='searchEngine.url']").value;
@@ -290,6 +308,14 @@ class ActinoConfiguration extends HTMLElement {
         } else {
             icon.classList.replace("has-text-warning", "has-text-grey-light");
         }
+    }
+
+    async loadDefaultScript() {
+        const res = await fetch(browser.runtime.getURL("options/example_content_script.js"));
+        const script = await res.text();
+        const textarea = this.querySelector("[name=script]");
+        textarea.value = script;
+        textarea.dispatchEvent(new Event("change", { bubbles: true }));
     }
 }
 

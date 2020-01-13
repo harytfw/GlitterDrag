@@ -25,11 +25,11 @@ var queryUtil = {};
     };
 
     const fixHorizonOffset = (x, width = 0) => {
-        return Math.min(Math.max(0, x), window.innerWidth + window.pageXOffset - width);
+        return Math.min(Math.max(0, x), document.documentElement.clientWidth - width);
     };
 
     const fixVerticalOffset = (y, height = 0) => {
-        return Math.min(Math.max(0, y), window.innerHeight + window.pageYOffset - height);
+        return Math.min(Math.max(0, y), document.documentElement.clientHeight - height);
     };
 
     queryUtil.findEventElem = findEventElem;

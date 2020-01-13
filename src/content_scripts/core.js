@@ -92,11 +92,6 @@ class Core {
             y: 0,
         };
 
-        this.pagePos = {
-            x: 0,
-            y: 0,
-        };
-
         this.inner_state = Core.STATE_STOP;
         this.last_state = Core.STATE_STOP;
         this.inner_modifierKey = Core.KEY_NONE;
@@ -128,11 +123,9 @@ class Core {
      */
     _dragstart(e) {
         this._log("_dragstart", e);
-        this.startPos.x = this.endPos.x = e.screenX;
-        this.startPos.y = this.endPos.y = e.screenY;
+        this.startPos.x = this.endPos.x = e.clientX;
+        this.startPos.y = this.endPos.y = e.clientY;
 
-        this.pagePos.x = e.pageX;
-        this.pagePos.y = e.pageY;
         this.inner_modifierKey = Core._getModifierKeyFromEvent(e);
         if (!this.allowDrag(e.target, e.dataTransfer)) {
             this._log("%cdeny accept drag", "color:yello");
@@ -152,8 +145,8 @@ class Core {
      */
     _dragover(e) {
         this._log("_dragover, state:", this.inner_state, ", defaultPrevented: ", e.defaultPrevented);
-        this.endPos.x = e.screenX;
-        this.endPos.y = e.screenY;
+        this.endPos.x = e.clientX;
+        this.endPos.y = e.clientY;
         if (e.defaultPrevented
             && this.inner_state !== Core.STATE_TEMPORARY_STOP) {
 
@@ -203,11 +196,11 @@ class Core {
      * @param {DragEvent} e
      */
     _dragenter(e) {
-        if (this.state == Core.STATE_STOP) {
+        if (this.state === Core.STATE_STOP) {
             this._log("new external action", e);
         }
 
-        if (this.state == Core.STATE_STOP) {
+        if (this.state === Core.STATE_STOP) {
             if (this.allowExternal(e.dataTransfer)) {
                 this._log("accpet this external action");
                 this._log("target: ", e.target, "relatedTarget: ", e.relatedTarget);

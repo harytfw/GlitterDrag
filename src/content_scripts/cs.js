@@ -156,13 +156,13 @@ class Controller {
 
         document.addEventListener("keydown", (e) => {
             if (e.isComposing === false) {
-                consoleUtil.log("keydown", e.key);
+                // consoleUtil.log("keydown", e.key);
                 this.recentShortcut = e.key;
             }
         });
 
         document.addEventListener("keyup", () => {
-            consoleUtil.log("keyup", this.recentShortcut);
+            // consoleUtil.log("keyup", this.recentShortcut);
             this.recentShortcut = "";
         });
 
@@ -242,9 +242,6 @@ class Controller {
         return false;
     }
 
-    isGridsActive() {
-        return this.ui.grids.container.parentElement instanceof HTMLElement;
-    }
 
     /**
      *
@@ -292,11 +289,11 @@ class Controller {
      */
     allowDrop(target, dataTransfer, isExternal, defaultPrevented) {
 
-        if (this.isGridsActive) {
+        if (this.ui.grids.isActive) {
             return this.ui.grids.allowDrop();
         }
 
-        if (!this.isGridsActive && this.config.limitRange) {
+        if (!this.ui.grids.isActive && this.config.limitRange) {
             if (!this.checkDistanceRange()) {
                 return false;
             }
@@ -398,14 +395,15 @@ class Controller {
         const actionGroup = this.queryActionGroup();
         if (actionGroup.limitation.startsWith("grids")) {
             this.ui.grids.active(
-                this.core.pagePos.x,
-                this.core.pagePos.y,
+                this.core.startPos.x,
+                this.core.startPos.y,
                 actionGroup,
                 Controller.predictActionType(this.selectionType),
             );
         } else {
             if (this.config.limitRange && this.config.enableIndicator) {
                 consoleUtil.log("range", this.config.range);
+                // TODO: 不使用 pagePos
                 // this.ui.indicator.active(this.core.pagePos.x, this.core.pagePos.y, this.config.range[0])
             }
         }
@@ -435,7 +433,7 @@ class Controller {
         }
         this.direction = this.queryDirection();
         consoleUtil.log("direction: ", this.direction);
-        if (!this.isGridsActive && this.checkDistanceRange()) {
+        if (!this.ui.grids.isActive && this.checkDistanceRange()) {
             if (true === this.config.enablePrompt) {
                 const detail = this.queryActionDetail();
                 if (detail.prompt !== "") {

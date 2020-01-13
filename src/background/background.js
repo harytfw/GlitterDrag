@@ -369,12 +369,15 @@ class ExecutorClass {
     async download(url) {
         const path = `${this.data.download.directory.trim()}${fileUtil.getFilename(url).trim()}`;
         consoleUtil.log("download: ", url, ", path: ", path, ", site: ", this.data.site);
-
+        const headers = [];
+        if (env.isFirefox) {
+            headers.push({ name: "Referer", value: this.data.site });
+        }
         browser.downloads.download({
             url,
             filename: path,
             saveAs: this.data.download.showSaveAsDialog,
-            headers: [{ name: "Referer", value: this.data.site }],
+            headers: headers,
         });
     }
 
@@ -517,7 +520,10 @@ class ExecutorClass {
 
     async runScript() {
         return browser.tabs.executeScript({
-            code: this.data.script,
+            code: `{
+                ${this.data.script}
+                ;main(JSON.parse(decodeURIComponent(\`${encodeURIComponent(JSON.stringify(this.data.selection))}\`)))
+            }`,
         });
     }
 

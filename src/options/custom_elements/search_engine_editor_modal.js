@@ -1,123 +1,136 @@
 class SearchEngineEditorModal extends HTMLElement {
     constructor() {
-        super()
+        super();
 
-        const template = document.querySelector("#template-search-engine-editor-modal")
-        const content = template.content
-        this.appendChild(content.cloneNode(true))
+        const template = document.querySelector("#template-search-engine-editor-modal");
+        const content = template.content;
+        this.appendChild(content.cloneNode(true));
+
+        if (browser.i18n.getUILanguage().startsWith("zh")) {
+            this.querySelector("[groupname=Chinese]").classList.remove("is-hidden");
+        }
 
         this.addEventListener("click", (e) => {
-            const target = queryUtil.findEventElem(e.target)
+            const target = queryUtil.findEventElem(e.target);
             if (target instanceof HTMLElement) {
                 switch (target.dataset.event) {
                     case "close":
-                        this.close()
-                        break
+                        this.close();
+                        break;
                     case "confirm":
-                        this.confirm()
-                        break
+                        this.confirm();
+                        break;
                 }
             }
-        })
+        });
 
         this.addEventListener("provideritemselect", (e) => {
-            const { name, url, icon, builtin, method, searchOnSite } = e.detail
-            this.searchEngineURL = builtin ? "protected" : url
-            this.searchEngineName = name
-            this.searchEngineBuiltin = builtin
-            this.searchEngineMethod = method
+            const { name, url, icon, builtin, method, searchOnSite } = e.detail;
+            this.searchEngineURL = builtin ? i18nUtil.getI18n("searchEngineURLNotAvailable") : url;
+            this.searchEngineName = name;
+            this.searchEngineBuiltin = builtin;
+            this.searchEngineMethod = method;
 
             if (icon.length !== 0) {
-                this.searchEngineIcon = icon
+                this.searchEngineIcon = icon;
             }
-        })
+        });
         this.addEventListener("change", (e) => {
-            const { target } = e
+            const { target } = e;
             if (target.name === "searchEngineIcon") {
-                this.updatePreview()
+                this.updatePreview();
             } else if (target.name === "iconInput") {
-                this.processIconInput()
+                this.processIconInput();
             }
-        })
+        });
 
-        queryUtil.removeElementsByVender(this)
-        i18nUtil.render(this)
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && this.isActive) {
+                 this.close();
+            }
+        });
+
+        queryUtil.removeElementsByVender(this);
+        i18nUtil.render(this);
     }
 
     _dispatch(resultType) {
-        consoleUtil.log(this, `dispatch result event with type:${resultType}`)
+        consoleUtil.log(this, `dispatch result event with type:${resultType}`);
         this.dispatchEvent(new CustomEvent("result", {
             detail: resultType,
-            bubbles: true
-        }))
+            bubbles: true,
+        }));
     }
 
     get modalTitle() {
-        this.querySelector(".modal-card-title").textContent
+        this.querySelector(".modal-card-title").textContent;
     }
 
     set modalTitle(value) {
-        this.querySelector(".modal-card-title").textContent = value
+        this.querySelector(".modal-card-title").textContent = value;
     }
 
     get searchEngineName() {
-        return this.querySelector("[name=searchEngineName]").value
+        return this.querySelector("[name=searchEngineName]").value;
     }
 
     set searchEngineName(value) {
-        return this.querySelector("[name=searchEngineName]").value = value
+        return this.querySelector("[name=searchEngineName]").value = value;
     }
 
     get searchEngineURL() {
-        return this.querySelector("[name=searchEngineURL]").value
+        if (!this.searchEngineBuiltin) {
+            return this.querySelector("[name=searchEngineURL]").value;
+        }
+        return "__protected__";
     }
 
     set searchEngineURL(value) {
-        return this.querySelector("[name=searchEngineURL]").value = value
+        return this.querySelector("[name=searchEngineURL]").value = value;
     }
 
     get searchEngineIcon() {
-        return this.querySelector("[name=searchEngineIcon]").value
+        return this.querySelector("[name=searchEngineIcon]").value;
     }
 
     set searchEngineIcon(value) {
-        this.querySelector("[name=searchEngineIcon]").value = value
-        this.updatePreview()
-        return value
+        this.querySelector("[name=searchEngineIcon]").value = value;
+        this.updatePreview();
+        return value;
     }
 
     get searchEngineBuiltin() {
-        return this.querySelector("[name=searchEngineBuiltin]").checked
+        return this.querySelector("[name=searchEngineBuiltin]").checked;
     }
 
     set searchEngineBuiltin(value) {
-        if (value) {
-            this.querySelector("[name=searchEngineURL]").disabled = "disabled"
-        } else {
-            this.querySelector("[name=searchEngineURL]").disabled = ""
-        }
-        return this.querySelector("[name=searchEngineBuiltin]").checked = value
+        const urlInput = this.querySelector("[name=searchEngineURL]");
+        urlInput.disabled = value ? "disabled" : "";
+        return this.querySelector("[name=searchEngineBuiltin]").checked = value;
     }
 
     get searchEngineMethod() {
-        return this.querySelector("[name=searchEngineMethod]").value
+        return this.querySelector("[name=searchEngineMethod]").value;
     }
 
     set searchEngineMethod(value) {
-        return this.querySelector("[name=searchEngineMethod]").value = value
+        return this.querySelector("[name=searchEngineMethod]").value = value;
     }
-
 
     get searchEngine() {
         return {
             name: this.searchEngineName,
             url: this.searchEngineURL,
-            icon: this.searchEngineIcon
-        }
+            icon: this.searchEngineIcon,
+        };
     }
 
-    active(name, url, icon) {
-        consoleUtil.log(this, "active")
+    get isActive() {
+        return this.querySelector(".modal").classList.contains("is-active");
+    }
+
+    active(name, url, icon, builtin, method) {
+        consoleUtil.log(this, "active");
 
         // const column = this.querySelector("[groupname=Browser]").closest(".column")
 
@@ -129,55 +142,56 @@ class SearchEngineEditorModal extends HTMLElement {
         //     consoleUtil.log("not show builtin")
         // }
 
-        this.querySelector(".modal").classList.add("is-active")
-        if (typeof name === "string") {
-            this.searchEngineName = name
+        this.querySelector(".modal").classList.add("is-active");
+
+        this.searchEngineBuiltin = builtin;
+
+        this.searchEngineName = name;
+
+        if (builtin) {
+            this.searchEngineURL = i18nUtil.getI18n("searchEngineURLNotAvailable");
+        } else {
+            this.searchEngineURL = url;
         }
 
-        if (typeof url === "string") {
-            this.searchEngineURL = url
-        }
+        this.searchEngineIcon = icon;
 
-        if (typeof icon === "string") {
-            this.searchEngineIcon = icon
-        }
+        this.querySelector("[name=searchEngineName]").focus();
     }
 
     close() {
-        consoleUtil.log(this, "close")
-        this._dispatch("close")
-        this.querySelector(".modal").classList.remove("is-active")
+        consoleUtil.log(this, "close");
+        this._dispatch("close");
+        this.querySelector(".modal").classList.remove("is-active");
     }
 
     confirm() {
-        consoleUtil.log(this, "confirm")
-        this._dispatch("confirm")
-        this.querySelector(".modal").classList.remove("is-active")
+        consoleUtil.log(this, "confirm");
+        this._dispatch("confirm");
+        this.querySelector(".modal").classList.remove("is-active");
     }
 
-
     updatePreview() {
-        this.querySelector(".preview").src = this.searchEngineIcon
+        this.querySelector(".preview").src = this.searchEngineIcon;
     }
 
     processIconInput() {
-        const file = this.querySelector("[name=iconInput]").files[0]
+        const file = this.querySelector("[name=iconInput]").files[0];
         if (!file) {
-            console.error("no file")
-            return
+            console.error("no file");
+            return;
         }
-        const reader = new FileReader()
+        const reader = new FileReader();
         reader.onloadend = () => {
-            consoleUtil.log("read file end")
-            this.searchEngineIcon = reader.result
-        }
+            consoleUtil.log("read file end");
+            this.searchEngineIcon = reader.result;
+        };
         reader.onerror = (err) => {
-            console.error(err)
-        }
-        consoleUtil.log("start read file")
-        reader.readAsDataURL(file)
+            console.error(err);
+        };
+        consoleUtil.log("start read file");
+        reader.readAsDataURL(file);
     }
 }
 
-
-customElements.define("search-engine-editor-modal", SearchEngineEditorModal)
+customElements.define("search-engine-editor-modal", SearchEngineEditorModal);

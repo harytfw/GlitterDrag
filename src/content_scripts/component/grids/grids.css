@@ -10,17 +10,19 @@
   font-weight: 400;
   line-height: 1.5;
 
-  position: absolute;
+  position: fixed;
   top: 0px;
   left: 0px;
   z-index: 99999;
+  
+  /* pointer-events: none; */
 }
 
 .command {
   width: 64px;
   height: 64px;
   border: 1px solid #4a4a4a;
-
+  /* pointer-events: initial; */
   background-color: rgba(255, 255, 255, 0.75);
 }
 

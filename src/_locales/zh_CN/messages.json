@@ -179,6 +179,9 @@
     "searchEngineURL": {
         "message": "链接"
     },
+    "searchEngineURLNotAvailable": {
+        "message": "无法获取链接"
+    },
     "selectSearchEngine": {
         "message": "选择搜索引擎"
     },
@@ -230,7 +233,6 @@
     "reset": {
         "message": "恢复默认"
     },
-
     "showIndicator": {
         "message": "显示距离指示器"
     },
@@ -255,7 +257,6 @@
     "icon": {
         "message": "图标"
     },
-
     "provider_google": {
         "message": "谷歌翻译"
     },
@@ -297,6 +298,12 @@
     },
     "helpInfo_searchEngine_chromium": {
         "message": "修改搜索时调用的引擎。不能留空，否则将无法执行搜索功能"
+    },
+    "helpInfo_searchEngine_url": {
+        "message": "使用 %s 替换关键词"
+    },
+    "helpInfo_searchEngine_viewPlaceHolders": {
+        "message": "查看占位符"
     },
     "helpInfo_downloadDirectory": {
         "message": "留空使用默认下载目录"

@@ -7,6 +7,10 @@ class Grids {
     constructor() {
         this.container = document.createElement("div");
         this.container.id = "gd-grids";
+
+
+        this.rectCache = null;
+
         this.gridsBox = null;
         this.grids_3x3 = null;
         this.grids_3x4 = null;
@@ -23,6 +27,7 @@ class Grids {
                 this.root.querySelector("#bulma").href = browser.runtime.getURL("libs/bulma/bulma.min.css");
                 this.root.querySelector("#css").href = browser.runtime.getURL(`${Grids.PATH}/grids.css`);
 
+
             });
         this.activeCommand = null;
         this.root.addEventListener("dragover", (e) => {
@@ -35,8 +40,6 @@ class Grids {
                 this.activeCommand.classList.add("active");
             }
         });
-
-        this.rectCache = null;
     }
 
     allowDrop() {
@@ -50,27 +53,27 @@ class Grids {
         return null;
     }
 
+    get isActive() {
+        return this.container.parentElement instanceof HTMLElement;
+    }
+
     active(x, y, actionGroup, actionType) {
-        if (this.container.parentElement instanceof HTMLElement) {
+        if (this.isActive) {
             return;
         }
+
         this.render(actionGroup, actionType);
-        consoleUtil.log("place grids, x:", y, "y:", y, actionGroup);
-        if (this.rectCache === null) {
-            this.gridsBox.style.visibility = "hidden";
-            document.body.append(this.container);
-            // 加延时是为了保证布局重排完成，getBoundingClientRect() 返回的结果正确。
-            setTimeout(() => {
-                this.rectCache = this.gridsBox.getBoundingClientRect();
-                this.gridsBox.style.left = `${queryUtil.fixHorizonOffset(x - (this.rectCache.width + 10) / 2, this.rectCache.width + 10)}px`;
-                this.gridsBox.style.top = `${queryUtil.fixVerticalOffset(y - (this.rectCache.height + 10) / 2, this.rectCache.height + 10)}px`;
-                this.gridsBox.style.visibility = "visible";
-            }, 50);
-        } else {
+        consoleUtil.log("place grids, x:", y, "y:", y, actionGroup, this.rectCache);
+
+        this.gridsBox.style.visibility = "hidden";
+        document.body.appendChild(this.container);
+        setTimeout(() => {
+            this.rectCache = this.gridsBox.getBoundingClientRect();
             this.gridsBox.style.left = `${queryUtil.fixHorizonOffset(x - (this.rectCache.width + 10) / 2, this.rectCache.width + 10)}px`;
             this.gridsBox.style.top = `${queryUtil.fixVerticalOffset(y - (this.rectCache.height + 10) / 2, this.rectCache.height + 10)}px`;
-            document.body.append(this.container);
-        }
+            document.body.appendChild(this.container);
+            this.gridsBox.style.visibility = "";
+        }, 60);
     }
 
     render(actionGroup, actionType) {
@@ -110,7 +113,11 @@ class Grids {
     remove() {
         if (consoleUtil.autoHide) {
             consoleUtil.log("close grids");
+            // this.gridsBox.style.visibility = "hidden";
             this.container.remove();
+            this.gridsBox.style.left = "0px";
+            this.gridsBox.style.top = "0px";
+
         }
     }
 

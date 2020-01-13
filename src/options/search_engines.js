@@ -19,7 +19,7 @@ const searchEngines = {
         { name: "哔哩哔哩搜索", url: "https://search.bilibili.com/all?keyword=%s", icon: "" },
         { name: "优酷搜索", url: "http://www.soku.com/search_video/q_%s", icon: "" },
         { name: "网易云音乐搜索", url: "https://music.163.com/#/search/m/?s=%s", icon: "" },
-        { name: "豆瓣搜索", url: "https://www.douban.com/search?q=", icon: "" },
+        { name: "豆瓣搜索", url: "https://www.douban.com/search?q=%s", icon: "" },
         { name: "知乎搜索", url: "https://www.zhihu.com/search?q=%s", icon: "" },
         { name: "中文维基百科", url: "https://zh.wikipedia.org/wiki/%s", icon: "" },
     ],
