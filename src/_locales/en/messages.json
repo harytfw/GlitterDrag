@@ -734,6 +734,10 @@
         "message": "Remove the rule from the exclusion list",
         "description": ""
     },
+    "popup_openOptionsPage": {
+        "message": "Open options page",
+        "description": ""
+    },
     "header_Distance": {
         "message": "Distance"
     },

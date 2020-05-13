@@ -737,6 +737,10 @@
         "message": "从排除列表中移除规则",
         "description": ""
     },
+    "popup_openOptionsPage": {
+        "message": "打开设置页面",
+        "description": ""
+    },
     "header_Distance": {
         "message": "触发距离"
     },

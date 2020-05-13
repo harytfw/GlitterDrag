@@ -14,6 +14,8 @@ window.onload = async function ()
     document.getElementById("addRule").textContent = browser.i18n.getMessage("popup_AddRule");
     document.getElementById("removeRule").textContent = browser.i18n.getMessage("popup_RemoveRule")
 
+    document.getElementById("openOptionsPage").textContent = browser.i18n.getMessage("popup_openOptionsPage")
+
     list = (await browser.storage.local.get("exclusionRules"))["exclusionRules"];
 
     let i = 0;
@@ -60,3 +62,9 @@ document.getElementById("removeRule").addEventListener("click", async () =>
     document.getElementById("addRuleBox").style.display = "block";
     document.getElementById("removeRuleBox").style.display = "none";
 })
+
+document.getElementById("openOptionsPage").addEventListener("click", async () =>
+{
+    await browser.runtime.openOptionsPage();
+})
+

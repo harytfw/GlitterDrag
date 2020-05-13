@@ -734,6 +734,10 @@
         "message": "",
         "description": ""
     },
+    "popup_openOptionsPage": {
+        "message": "",
+        "description": ""
+    },
     "header_Distance": {
         "message": ""
     },
