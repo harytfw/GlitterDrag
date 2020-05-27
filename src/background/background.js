@@ -532,7 +532,10 @@ class ExecutorClass {
     }
 
     async showCopyNotificaion() {
-        return browser.notifications.create({
+        setTimeout(async () => {
+            await browser.notifications.clear("copynotification");
+        }, 2000);
+        return browser.notifications.create("copynotification", {
             message: `Copy Complete`,
             title: "Glitter Drag Notification",
             type: "basic",
