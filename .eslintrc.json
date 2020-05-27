@@ -11,7 +11,25 @@
     "extends": [
         "eslint:recommended"
     ],
+<<<<<<< HEAD
     "globals": {},
+=======
+    "globals": {
+        "DOMRect": false,
+        "commons": false,
+        "i18nUtil.getI18n": false,
+        "checkDragTargetType": false,
+        "DEFAULT_CONFIG": false,
+        "bgConfig": false,
+        "eventUtil": false,
+        "typeUtil": false,
+        "TranslatorService": false,
+        "$E": false,
+        "$A": false,
+        "$H": false,
+        "$D": false
+    },
+>>>>>>> df9c4026dfa6c74ef8dbc59b0748063061c26d23
     "rules": {
         "no-console": 0,
         "no-const-assign": "warn",
