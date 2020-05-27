@@ -22,7 +22,8 @@
     ],
     "typeAcquisition": {
         "include": [
-            "firefox-webext-browser"
+            "firefox-webext-browser",
+            "dompurify"
         ]
     }
 }

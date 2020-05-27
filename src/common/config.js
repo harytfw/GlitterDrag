@@ -55,6 +55,7 @@ var configUtil = {};
             preventUiRemove: false,
             extendMiddleButton: false,
             lockScrollbar: false,
+            showNotificationAfterCopy: false,
         },
 
         currentStyle: "",

@@ -42,6 +42,8 @@ class SettingsContainer extends HTMLElement {
         this.querySelector("[name='features.extendMiddleButton']").checked = config.features.extendMiddleButton;
         this.querySelector("[name='features.disableFixURL']").checked = config.features.disableFixURL;
         this.querySelector("[name='features.lockScrollbar']").checked = config.features.lockScrollbar;
+        this.querySelector("[name='features.showNotificationAfterCopy']").checked =
+            config.features.showNotificationAfterCopy;
 
         // this.querySelector("[name='features.appendReferrer']").value = config.features.appendReferrer
 

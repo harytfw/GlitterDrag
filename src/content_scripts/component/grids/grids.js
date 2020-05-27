@@ -107,7 +107,16 @@ class Grids {
     render_4x4(actionGroup) {
         const cells = Array.from(this.root.querySelectorAll("#grids-4x4 .column .command"));
 
-        cells.forEach((cell, index) => cell.textContent = `${index}`.padStart(2, "0"));
+        cells.forEach((cell, index) => {
+            const d = details.find(a => a.direction === cell.dataset.direction);
+            if (d && d.command !== "") {
+                cell.innerHTML = d.prompt !== "" ? d.prompt : index;
+                cell.style.visibility = "";
+            } else {
+                cell.textContent = "NOOP";
+                cell.style.visibility = "hidden";
+            }
+        });
     }
 
     remove() {

@@ -11,16 +11,13 @@
     "permissions": [
         "http://*/*",
         "https://*/*",
+        "ftp://*/*",
         "storage",
         "tabs",
         "clipboardWrite",
         "downloads",
         "find",
-        "search",
-        "contextualIdentities",
-        "webRequest",
-        "webRequestBlocking",
-        "notifications"
+        "search"
     ],
     "background": {
         "scripts": [
@@ -41,7 +38,8 @@
             "all_frames": true,
             "matches": [
                 "http://*/*",
-                "https://*/*"
+                "https://*/*",
+                "ftp://*/*"
             ],
             "js": [
                 "libs/DOMPurify/purify.min.js",

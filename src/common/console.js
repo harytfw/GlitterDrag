@@ -45,7 +45,7 @@ var consoleUtil = {};
         if (F_TRACE) {
             console.trace(...args);
         }
-    }
+    };
 
     consoleUtil.logErrorEvent = () => {
 

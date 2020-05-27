@@ -226,7 +226,7 @@ class ExecutorClass {
                 break;
             }
         }
-
+        p = p.then(this.showCopyNotificaion);
         return p;
     }
 
@@ -529,6 +529,14 @@ class ExecutorClass {
 
     async openImageViewer(u8Array) {
 
+    }
+
+    async showCopyNotificaion() {
+        return browser.notifications.create({
+            message: `Copy Complete`,
+            title: "Glitter Drag Notification",
+            type: "basic",
+        });
     }
 }
 

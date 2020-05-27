@@ -12,6 +12,5 @@
         "lint": "eslint . && web-ext lint",
         "test": "node ./test/url.js"
     },
-    "types": "@types/content_scripts.ts",
     "license": "MIT"
 }
