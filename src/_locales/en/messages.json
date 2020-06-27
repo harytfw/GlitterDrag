@@ -140,7 +140,7 @@
     "tabPosition_privateWindow": {
         "message": "Private Window"
     },
-    "tabPosition_overrideCurrent": {
+    "tabPosition_current": {
         "message": "Current"
     },
     "tabPosition_end": {

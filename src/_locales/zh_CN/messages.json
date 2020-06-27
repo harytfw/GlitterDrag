@@ -140,7 +140,7 @@
     "tabPosition_privateWindow": {
         "message": "隐私窗口"
     },
-    "tabPosition_overrideCurrent": {
+    "tabPosition_current": {
         "message": "当前"
     },
     "tabPosition_end": {

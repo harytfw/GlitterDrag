@@ -455,7 +455,7 @@ class ExecutorClass {
             if (!activatedTab) {
                 throw new Error("No actived tab is found");
             }
-            if (this.data.tabPosition === "overrideCurrent") {
+            if (this.data.tabPosition === "current") {
                 browser.tabs.update(activatedTab.id, { url });
             } else {
                 const option = {
