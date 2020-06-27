@@ -178,20 +178,21 @@ class BulmaDropdown extends HTMLElement {
     }
 
     updateDropdownList() {
-        const items = [];
-        Array.from(this.datalist.children).forEach((option, index) => {
+        const items = Array.from(this.datalist.children).map((option, index) => {
             const extraClassName = option.disabled ? "has-text-grey-lighter pointer-events-none" : "";
-            items.push([`<a class="is-text dropdown-item ${extraClassName}" data-index="${index}">${option.innerHTML}</a>`, option.disabled]);
+            return [option.disabled, `<a class="is-text dropdown-item ${extraClassName}" data-index="${index}">${option.innerHTML}</a>`];
         });
-        // items.sort((a, b) => {
-        //     if (a[1]) {
-        //         return 1;
-        //     } else if (b[1]) {
-        //         return -1;
-        //     }
-        //     return 0;
-        // });
-        this.querySelector(".dropdown-content").innerHTML = items.map(tuple => tuple[0]).join("");
+        if (false) {
+            items.sort((a, b) => {
+                if (a[1]) {
+                    return 1;
+                } else if (b[1]) {
+                    return -1;
+                }
+                return 0;
+            });
+        }
+        this.querySelector(".dropdown-content").innerHTML = items.map(tuple => tuple[1]).join("");
     }
 
     updateSelectedOptionByItem(itemElement) {
@@ -211,7 +212,7 @@ class BulmaDropdown extends HTMLElement {
         const dataList = this.datalist;
         const children = Array.from(dataList.children);
         if (index < 0 || index >= children.length) {
-            throw new Error("index out of bound");
+            throw new Error(`index: ${index} out of bound`);
         }
         for (const opt of dataList.querySelectorAll("option")) {
             opt.selected = false;
