@@ -1,5 +1,5 @@
 
-function migrateOldConfig(oldConfig) {
+async function migrateOldConfig(oldConfig) {
 
     function convertOldDir(dir) {
         switch (dir) {
@@ -12,7 +12,7 @@ function migrateOldConfig(oldConfig) {
             case "DIR_LOW_L": return "lowerLeft";
             case "DIR_LOW_R": return "lowerRight";
             case "DIR_OUTER": return "any";
-            default: 
+            default:
                 console.trace("unknown direction", dir);
                 return "any";
         }
@@ -26,9 +26,9 @@ function migrateOldConfig(oldConfig) {
         console.trace(" can not convert action type", actionType);
     }
 
-    function convertActName(oldActionDetail) {
+    function convertActName(oldActionDetail, actionType) {
         switch (oldActionDetail.act_name) {
-            case "ACT_OPEN": return "open";
+            case "ACT_OPEN": return actionType === 'text' ? 'search' : "open";
             case "ACT_COPY": return "copy";
             case "ACT_SEARCH": return "search";
             case "ACT_TRANS": return "translate";
@@ -72,12 +72,23 @@ function migrateOldConfig(oldConfig) {
     }
 
     function convertSearchEngine(oldActionDetail) {
-        return {
-            name: oldActionDetail.engine_name,
-            url: oldActionDetail.engine_url,
-            builtin: oldActionDetail.is_browser_search,
-            icon: "",
-            searchOnSite: oldActionDetail.search_onsite,
+        if (oldActionDetail.is_browser_search) {
+            let builtin = builtinSearchEngines.findIndex(a => a.name === oldActionDetail.engine_name) >= 0;
+            return {
+                name: builtin ? oldActionDetail.engine_name : "",
+                url: builtin ? oldActionDetail.engine_url : "",
+                builtin: false,
+                icon: "",
+                searchOnSite: oldActionDetail.search_onsite,
+            }
+        } else {
+            return {
+                name: oldActionDetail.engine_name,
+                url: oldActionDetail.engine_url,
+                builtin: false,
+                icon: false,
+                searchOnSite: oldActionDetail.search_onsite,
+            }
         }
     }
 
@@ -88,12 +99,12 @@ function migrateOldConfig(oldConfig) {
         }
     }
 
-    function convertOldAction(oldAction) {
+    function convertOldAction(oldAction, actionType) {
         let details = []
         for (const dir of Object.keys(oldAction)) {
             details.push({
                 direction: convertOldDir(dir),
-                command: convertActName(oldAction[dir]),
+                command: convertActName(oldAction[dir], actionType),
                 commandTarget: getCommandTarget(oldAction[dir]),
                 activeTab: Boolean(oldAction[dir].tab_active),
                 tabPosition: convertTabPosition(oldAction[dir]),
@@ -120,6 +131,8 @@ function migrateOldConfig(oldConfig) {
         }
     }
 
+    const builtinSearchEngines = await browser.search.get()
+
     let newConfig = configUtil.getBareConfig();
 
     newConfig.enableIndicator = Boolean(oldConfig.enableIndicator);
@@ -133,35 +146,35 @@ function migrateOldConfig(oldConfig) {
     newConfig.features.preventUiRemove = false;
     newConfig.actions.push({
         name: "Default",
-        shorcut: "",
+        shortcut: "",
         limitation: convertLimitation(oldConfig.directionControl.textAction),
         important: false,
         details: {
-            text: convertOldAction(oldConfig.Actions.textAction),
-            link: convertOldAction(oldConfig.Actions.linkAction),
-            image: convertOldAction(oldConfig.Actions.imageAction),
+            text: convertOldAction(oldConfig.Actions.textAction, 'text'),
+            link: convertOldAction(oldConfig.Actions.linkAction, 'link'),
+            image: convertOldAction(oldConfig.Actions.imageAction, 'image'),
         }
     });
     newConfig.actions.push({
         name: "Shift Key",
-        shorcut: "",
+        shortcut: "",
         limitation: convertLimitation(oldConfig.directionControl_ShiftKey.textAction),
         important: false,
         details: {
-            text: convertOldAction(oldConfig.Actions_ShiftKey.textAction),
-            link: convertOldAction(oldConfig.Actions_ShiftKey.linkAction),
-            image: convertOldAction(oldConfig.Actions_ShiftKey.imageAction),
+            text: convertOldAction(oldConfig.Actions_ShiftKey.textAction, 'text'),
+            link: convertOldAction(oldConfig.Actions_ShiftKey.linkAction, 'link'),
+            image: convertOldAction(oldConfig.Actions_ShiftKey.imageAction, 'image'),
         }
     });
     newConfig.actions.push({
         name: "Ctrl Key",
-        shorcut: "",
+        shortcut: "",
         limitation: convertLimitation(oldConfig.directionControl_CtrlKey.textAction),
         important: false,
         details: {
-            text: convertOldAction(oldConfig.Actions_CtrlKey.textAction),
-            link: convertOldAction(oldConfig.Actions_CtrlKey.linkAction),
-            image: convertOldAction(oldConfig.Actions_CtrlKey.imageAction),
+            text: convertOldAction(oldConfig.Actions_CtrlKey.textAction, 'text'),
+            link: convertOldAction(oldConfig.Actions_CtrlKey.linkAction, 'link'),
+            image: convertOldAction(oldConfig.Actions_CtrlKey.imageAction, 'image'),
         }
     });
     return newConfig;
@@ -190,7 +203,7 @@ function main() {
             const oldConfig = JSON.parse(fileReader.result);
             console.log("old config", oldConfig);
             try {
-                const newConfig = migrateOldConfig(oldConfig);
+                const newConfig = await migrateOldConfig(oldConfig);
                 await browser.storage.local.set(newConfig);
                 console.log("new config", newConfig);
                 alert("success");
