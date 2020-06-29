@@ -2,6 +2,35 @@
 var configUtil = {};
 
 {
+
+
+    const bareConfig = {
+        enableSync: false,
+        enableIndicator: false,
+        enablePrompt: false,
+        enableTimeout: false,
+        timeout: 2000,
+        actions: [],
+        features: {
+            disableFixURL: false,
+            preventUiRemove: false,
+            extendMiddleButton: false,
+            lockScrollbar: false,
+            showNotificationAfterCopy: false,
+        },
+        currentStyle: "",
+        styles: [],
+
+        translation: {
+            provider: "google",
+            sourceLanguage: "auto",
+            targetLanguage: "auto",
+        },
+        limitRange: false,
+        range: [0, 9999],
+        version: "0.0.0",
+    }
+
     const templateConfig = {
         enableSync: false,
 
@@ -14,10 +43,10 @@ var configUtil = {};
         actions: [{
             name: "Default",
             shortcut: "",
-            limitation: "",
+            limitation: "any",
             important: true,
             details: {
-                /* text: [{
+                text: [{
                     direction: "up",
                     command: "open",
                     commandTarget: "link",
@@ -43,8 +72,7 @@ var configUtil = {};
 
                     prompt: "",
 
-                }], */
-                text: [],
+                }],
                 link: [],
                 image: [],
             },
@@ -59,21 +87,17 @@ var configUtil = {};
         },
 
         currentStyle: "",
-        /*styles: [{
+        styles: [{
             name: "",
             style: ""
-        }], */
-        styles: [],
-
+        }],
         translation: {
             provider: "google",
             sourceLanguage: "auto",
             targetLanguage: "auto",
         },
         limitRange: false,
-
         range: [0, 9999],
-
         version: "0.0.0",
     };
 
@@ -104,7 +128,7 @@ var configUtil = {};
         prompt: "",
     };
 
-    const cloneDeep = (obj) => {
+    const deepClone = (obj) => {
         return JSON.parse(JSON.stringify(obj));
     };
 
@@ -151,7 +175,7 @@ var configUtil = {};
 
                 add(name, actionType, direction) {
                     const action = manipulator.actions.find(name);
-                    const cloned = cloneDeep(defaultActionDetail);
+                    const cloned = deepClone(defaultActionDetail);
                     cloned.direction = direction;
                     action[actionType].push(cloned);
                     return cloned;
@@ -168,7 +192,7 @@ var configUtil = {};
                     }
                     let ret = action.details[actionType].find(obj => obj.direction === direction);
                     if (!ret) {
-                        ret = cloneDeep(defaultActionDetail);
+                        ret = deepClone(defaultActionDetail);
                         ret.direction = direction;
                         action.details[actionType].push(ret);
                     }
@@ -201,7 +225,7 @@ var configUtil = {};
 
                 update(name, option) {
                     const dir = this.find(name);
-                    Object.assign(dir, cloneDeep(option));
+                    Object.assign(dir, deepClone(option));
                 },
             },
 
@@ -223,7 +247,7 @@ var configUtil = {};
 
                 update(name, option) {
                     const s = this.find(name);
-                    Object.assign(s, cloneDeep(option));
+                    Object.assign(s, deepClone(option));
                 },
             },
             scripts: {
@@ -244,7 +268,7 @@ var configUtil = {};
 
                 update(name, option) {
                     const s = this.find(name);
-                    Object.assign(s, cloneDeep(option));
+                    Object.assign(s, deepClone(option));
                 },
             },
 
@@ -281,8 +305,11 @@ var configUtil = {};
     const loadFromSync = () => { };
     const saveToSync = () => { };
     const getTemplateConfig = () => {
-        return templateConfig;
+        return deepClone(templateConfig);
     };
+    const getBareConfig = () => {
+        return deepClone(bareConfig);
+    }
 
     configUtil.proxyConfig = proxyConfig;
     configUtil.save = save;
@@ -292,7 +319,8 @@ var configUtil = {};
     configUtil.decompress = decompress;
     configUtil.loadFromSync = loadFromSync;
     configUtil.saveToSync = saveToSync;
-    configUtil.cloneDeep = cloneDeep;
+    configUtil.cloneDeep = deepClone;
     configUtil.getTemplateConfig = getTemplateConfig;
+    configUtil.getBareConfig = getBareConfig;
 
 }
