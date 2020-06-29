@@ -30,10 +30,7 @@ class SearchEngineEditorModal extends HTMLElement {
             this.searchEngineName = name;
             this.searchEngineBuiltin = builtin;
             this.searchEngineMethod = method;
-
-            if (icon.length !== 0) {
-                this.searchEngineIcon = icon;
-            }
+            this.searchEngineIcon = icon;
         });
         this.addEventListener("change", (e) => {
             const { target } = e;
@@ -46,7 +43,7 @@ class SearchEngineEditorModal extends HTMLElement {
 
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape" && this.isActive) {
-                 this.close();
+                this.close();
             }
         });
 
@@ -131,16 +128,6 @@ class SearchEngineEditorModal extends HTMLElement {
 
     active(name, url, icon, builtin, method) {
         consoleUtil.log(this, "active");
-
-        // const column = this.querySelector("[groupname=Browser]").closest(".column")
-
-        // if (this.showBuiltin) {
-        //     column.classList.remove("is-hidden")
-        //     consoleUtil.log("show builtin")
-        // } else {
-        //     column.classList.add("is-hidden")
-        //     consoleUtil.log("not show builtin")
-        // }
 
         this.querySelector(".modal").classList.add("is-active");
 
