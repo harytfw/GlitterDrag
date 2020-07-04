@@ -24,6 +24,7 @@ async function migrateOldConfig(oldConfig) {
         if (actionType.endsWith("IMAGE")) return "image";
         if (actionType.endsWith("IMAGE_LINK")) return "link";
         console.trace(" can not convert action type", actionType);
+        return "text";
     }
 
     function convertActName(oldActionDetail, actionType) {
@@ -50,6 +51,9 @@ async function migrateOldConfig(oldConfig) {
             case "ACT_DL": return convertActionType(oldActionDetail.download_type);
             case "ACT_FIND": return "text";
             case "ACT_PANEL": return "text";
+            default:
+                console.trace("unknown act_name", oldActionDetail.act_name)
+                return "text";
         }
     }
 
