@@ -15,10 +15,11 @@ class RangeIndicator {
     }
 
     constructor() {
+        this.container = document.createElement("div");
+        this.container.id = 'gd-range-indicator';
+        this.container.style.all = 'unset';
 
         this.radius = 0;
-
-        this.container = document.createElement("div");
 
         /**
          * create shadowRoot with mode "closed" to
@@ -30,7 +31,7 @@ class RangeIndicator {
 
         this.indicator = null;
         fetch(browser.runtime.getURL(RangeIndicator.HTML_PATH))
-            .then((res) => res.text())
+            .then(res => res.text())
             .then(html => {
                 root.innerHTML = html;
                 root.querySelector("link").href = browser.runtime.getURL(RangeIndicator.CSS_Path);

@@ -17,6 +17,8 @@ class Prompt {
     constructor() {
 
         this.container = document.createElement("div");
+        this.container.id = 'gd-prompt'
+        this.container.style.all = 'unset'
 
         /**
          * create shadowRoot with mode "closed" to
@@ -42,10 +44,8 @@ class Prompt {
 
     render(selection, actionDetail) {
         consoleUtil.log("render", actionDetail);
-        if (typeof actionDetail === "object") {
-            const clean = DOMPurify.sanitize(this.translate(selection, actionDetail));
-            return this.promptDiv.innerHTML = clean;
-        }
+        const clean = DOMPurify.sanitize(this.translate(selection, actionDetail));
+        return this.promptDiv.innerHTML = clean;
     }
 
     get value() {

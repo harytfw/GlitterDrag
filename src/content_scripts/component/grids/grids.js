@@ -4,9 +4,11 @@ class Grids {
     static get PATH() {
         return "content_scripts/component/grids";
     }
+
     constructor() {
         this.container = document.createElement("div");
         this.container.id = "gd-grids";
+        this.container.style.all = 'unset';
 
 
         this.rectCache = null;
@@ -26,8 +28,6 @@ class Grids {
                 this.gridsBox = this.root.querySelector("#grids");
                 this.root.querySelector("#bulma").href = browser.runtime.getURL("libs/bulma/bulma.min.css");
                 this.root.querySelector("#css").href = browser.runtime.getURL(`${Grids.PATH}/grids.css`);
-
-
             });
         this.activeCommand = null;
         this.root.addEventListener("dragover", (e) => {
