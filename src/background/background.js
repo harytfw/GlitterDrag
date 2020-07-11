@@ -112,11 +112,14 @@ class ExecutorClass {
         this.data = actionWrapper;
         this.sender = sender;
         this.doFlag = true;
-        await this.execute();
-        this.data = null;
-        this.sender = null;
-        this.doFlag = false;
-        console.timeEnd("do action");
+        try {
+            await this.execute();
+        } finally {
+            this.data = null;
+            this.sender = null;
+            this.doFlag = false;
+            console.timeEnd("do action");
+        }
     }
 
     async execute(data) {
