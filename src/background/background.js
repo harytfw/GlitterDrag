@@ -235,7 +235,9 @@ class ExecutorClass {
                 break;
             }
         }
-        p = p.then(this.showCopyNotificaion);
+        if (this.bgConfig.features.showNotificationAfterCopy) {
+            p = p.then(this.showCopyNotificaion);
+        }
         return p;
     }
 
