@@ -142,6 +142,11 @@ class ExecutorClass {
                 return;
             case "":
                 consoleUtil.warn("no operation");
+                browser.notifications.create("nooperation", {
+                    message: `No Operation`,
+                    title: "Glitter Drag Notification",
+                    type: "basic",
+                });
                 return;
             default:
                 console.error(`unexcepted commond: "${this.data.command}"`);

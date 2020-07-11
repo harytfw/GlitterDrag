@@ -77,6 +77,9 @@ class BrowserSearchEngineProvider extends SearchEngineProvider {
     }
 
     async updateDropdownList() {
+        if (!env.isFirefox) {
+            return
+        }
         const datalist = document.createElement("datalist");
         datalist.id = `provider-${Math.floor(Math.random() * 100000)}`;
         this.appendChild(datalist);
