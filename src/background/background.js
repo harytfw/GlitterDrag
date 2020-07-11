@@ -112,7 +112,7 @@ class ExecutorClass {
         this.data = actionWrapper;
         this.sender = sender;
         this.doFlag = true;
-        await this.execute(data);
+        await this.execute();
         this.data = null;
         this.sender = null;
         this.doFlag = false;
