@@ -154,11 +154,30 @@ class Controller {
         browser.storage.local.get().then(a => {
             this.config = a;
             consoleUtil.log("refresh page config", a);
+            if (this.checkBlockListRules()) {
+                consoleUtil.log("this site is blobkced, stop the core")
+                this.core.stop()
+                return
+            }
             if (this.config.features.extendMiddleButton === true) {
                 consoleUtil.log("enable features: ", "extend middle button");
                 features.extendMiddleButton.start();
             }
         });
+    }
+
+    checkBlockListRules() {
+        for (const strRe of this.config.blockList) {
+            try {
+                const re = new RegExp(strRe)
+                if (location.href.match(re)) {
+                    return true;
+                }
+            } catch (ex) {
+                console.error(ex)
+            }
+        }
+        return false;
     }
 
     queryDirection() {

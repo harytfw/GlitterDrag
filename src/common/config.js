@@ -27,6 +27,7 @@ var configUtil = {};
         },
         limitRange: false,
         range: [0, 9999],
+        blockList: [],
         version: "0.0.0",
     }
 
@@ -117,6 +118,7 @@ var configUtil = {};
         },
         limitRange: false,
         range: [0, 9999],
+        blockList: [],
         version: "0.0.0",
     };
 
