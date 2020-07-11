@@ -6,7 +6,7 @@ class SettingsContainer extends HTMLElement {
         this.appendChild(content.cloneNode(true));
         this.addEventListener("change", (e) => {
             this.onSettingChange(e);
-            this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+            this.configManager.emitUpdate(this);
         });
 
         this.configManager = null;

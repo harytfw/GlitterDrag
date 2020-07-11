@@ -53,7 +53,8 @@ class SearchEngineManager extends HTMLElement {
                     this.editor.searchEngineURL,
                     this.editor.searchEngineIcon,
                     this.editor.searchEngineMethod);
-                this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+
+                this.configManager.emitUpdate(this);
             } else {
                 consoleUtil.log("cancal addition");
             }
@@ -70,7 +71,7 @@ class SearchEngineManager extends HTMLElement {
             if (e.detail === "confirm") {
                 this.updateSearchEngine(row, this.editor.searchEngineName, this.editor.searchEngineURL, this.editor.searchEngineIcon, this.editor.searchEngineMethod);
                 this.saveSearchEngine(row);
-                this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+                this.configManager.emitUpdate(this);
             } else {
                 consoleUtil.log(row, "cancal change");
             }
@@ -105,7 +106,7 @@ class SearchEngineManager extends HTMLElement {
         searchEngine.method = row.querySelector("[name=method]").value;
 
         consoleUtil.log("save search engine");
-        this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+        this.configManager.emitUpdate(this);
     }
 
     updateSearchEngine(row, name, url, icon, method) {
@@ -132,7 +133,7 @@ class SearchEngineManager extends HTMLElement {
         });
         consoleUtil.log("add search engine");
         this.addSearchEngineRow(name, url, icon, method);
-        this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+        this.configManager.emitUpdate(this);
     }
 
     deleteSearchEngine(row) {
@@ -140,8 +141,7 @@ class SearchEngineManager extends HTMLElement {
         this.configManager.get().searchEngines.splice(index, 1);
         consoleUtil.log("delete search engine");
         row.remove();
-
-        this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+        this.configManager.emitUpdate(this);
     }
 }
 

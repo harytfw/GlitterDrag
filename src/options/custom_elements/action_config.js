@@ -44,7 +44,7 @@ class ActinoConfiguration extends HTMLElement {
                         this.updateLimitationStatus();
                         this.loadDetail();
                         this.updateFieldStatus();
-                        target.dispatchEvent(new Event("configupdate", { bubbles: true }));
+                        this.configManager.emitUpdate(target)
                         break;
                     case "actionType":
                         this.loadDetail();
@@ -53,12 +53,11 @@ class ActinoConfiguration extends HTMLElement {
                     case "direction":
                         this.loadDetail();
                         this.updateFieldStatus();
-                        // target.dispatchEvent(new Event("configupdate", { bubbles: true }))
                         break;
                     case "command":
                         this.updateFieldStatus();
                         this.saveDetail();
-                        target.dispatchEvent(new Event("configupdate", { bubbles: true }));
+                        this.configManager.emitUpdate(target)
                         break;
                     case "activeTab":
                     case "tabPosition":
@@ -68,7 +67,7 @@ class ActinoConfiguration extends HTMLElement {
                     case "download.showSaveAsDialog":
                     case "script":
                         this.saveDetail();
-                        target.dispatchEvent(new Event("configupdate", { bubbles: true }));
+                        this.configManager.emitUpdate(target)
                         break;
                     default:
                         consoleUtil.log("unhandled change", target);
@@ -201,7 +200,7 @@ class ActinoConfiguration extends HTMLElement {
                 this.querySelector(`.searchEngineURLPreview`).textContent = previewContent;
 
                 this.saveDetail();
-                this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+                this.configManager.emitUpdate(this);
             }
         }, { once: true });
     }

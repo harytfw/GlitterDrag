@@ -131,7 +131,7 @@ class ActionGroupModal extends HTMLElement {
         this.configManager.getProxy().actions.add(group);
 
         this.addGroupRow(name, shortcut, false);
-        this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+        this.configManager.emitUpdate(this);
     }
 
     addGroupRow(name, shortcut, important) {
@@ -165,7 +165,7 @@ class ActionGroupModal extends HTMLElement {
         const index = Array.from(row.parentElement.children).findIndex(a => a === row);
         this.configManager.get().actions.splice(index, 1);
         row.remove();
-        this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+        this.configManager.emitUpdate(this);
     }
 
     saveAllGroup() {
@@ -187,7 +187,7 @@ class ActionGroupModal extends HTMLElement {
         group.shortcut = shortcut;
         // group.important =
 
-        this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+        this.configManager.emitUpdate(this);
     }
 
     checkInput() {

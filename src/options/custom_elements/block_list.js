@@ -26,7 +26,7 @@ class BlockList extends HTMLElement {
             .map(line => line.trim())
             .filter(line => line !== "");
         config.blockList = lines
-        this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+        this.configManager.emitUpdate(this);
     }
 }
 

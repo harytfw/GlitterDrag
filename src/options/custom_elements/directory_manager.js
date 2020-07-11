@@ -14,11 +14,12 @@ class DirectoryManager extends HTMLElement {
                 switch (target.dataset.event) {
                     case "add":
                         this.addDirectory("", "");
-                        this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+
+                        this.configManager.emitUpdate(this);
                         break;
                     case "delete":
                         this.deleteDirectory(target.closest("tr"));
-                        this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+                        this.configManager.emitUpdate(this);
                         break;
                     default:
                         console.warn("unknown dataset event: " + target.dataset.event);
@@ -29,7 +30,8 @@ class DirectoryManager extends HTMLElement {
         this.addEventListener("change", (e) => {
             if (e.target instanceof HTMLInputElement) {
                 this.saveDirectory(e.target.closest("tr"));
-                this.dispatchEvent(new Event("configupdate", { bubbles: true }));
+
+                this.configManager.emitUpdate(this);
             }
         });
 
