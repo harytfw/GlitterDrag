@@ -442,10 +442,8 @@ class Controller {
                 }
             }
         } else if (Controller.isTextInput(target)) {
-            // this.ui.prompt.remove()
-            // 隐藏距离指示器
-            // 隐藏动作提示框
-            // 隐藏面板
+            this.ui.prompt.remove()
+            this.ui.grids.remove()
         } else {
             // this.ui.prompt.remove()
             // this.ui.panelBox.remove()
@@ -457,6 +455,11 @@ class Controller {
             // specially handle dragend event
             consoleUtil.log("dataTransfer is null, nothing can do.");
             this.clear();
+            return;
+        }
+        if (Controller.isTextInput(target)) {
+            consoleUtil.log("text input, do nothing")
+            this.clear()
             return;
         }
 
