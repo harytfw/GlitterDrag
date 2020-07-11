@@ -15,8 +15,12 @@ class SearchEngineProvider extends HTMLElement {
             }
         });
 
-        this.updateDropdownList();
-        i18nUtil.render(this);
+        this.configManager = null;
+        document.addEventListener("configloaded", (e) => {
+            this.configManager = e.target;
+            this.updateDropdownList();
+            i18nUtil.render(this);
+        });
     }
 
     _dispatch(name, url, icon) {
@@ -104,12 +108,6 @@ class UserSearchEngineProvider extends SearchEngineProvider {
     constructor() {
         super();
 
-        this.configManager = null;
-        document.addEventListener("configloaded", (e) => {
-            this.configManager = e.target;
-            this.updateDropdownList();
-            i18nUtil.render(this);
-        });
     }
 
     getAllUniqueSearchEngines() {

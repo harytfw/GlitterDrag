@@ -43,6 +43,7 @@
                 <!-- <li data-target="#no3"><a data-i18n="tabtitle_searchEngine">Search Engine</a></li> -->
                 <li data-target="#no5"><a data-i18n="tabtitle_configuration">Configuration</a></li>
                 <li data-target="#no6"><a>Playground</a></li>
+                <li data-target="#no7"><a>Blocklist</a></li>
             </ul>
         </div>
         <div class="columns tabs-body">
@@ -87,6 +88,9 @@
                             <img style="width: 64px; height: 64px;">
                         </a>
                     </p>
+                </div>
+                <div id="no7" class="">
+                    <custom-blocklist></custom-blocklist>
                 </div>
             </div>
         </div>
@@ -817,8 +821,7 @@
                 <div class="field-body">
                     <div class="control">
                         <div class="pretty p-default">
-                            <input type="checkbox" name="activeTab" 
-                            data-command-permit="open,search,runScript">
+                            <input type="checkbox" name="activeTab" data-command-permit="open,search,runScript">
                             <div class="state">
                                 <label data-i18n="activate">active (Foregound)</label>
                             </div>
@@ -1470,6 +1473,10 @@
         </div>
 
     </template>
+
+    <template id="template-blocklist">
+        <textarea class="textarea"></textarea>
+    </template>
     <script src="main.js"></script>
     <script src="../libs/webextension-polyfill/browser-polyfill.min.js"></script>
     <script src="../common/namespace.js"></script>
@@ -1498,6 +1505,7 @@
     <script src="custom_elements/search_engine_manager.js"></script>
     <script src="custom_elements/settings.js"></script>
     <script src="custom_elements/action_config.js"></script>
+    <script src="custom_elements/block_list.js"></script>
     <script src="custom_elements/tabs.js"></script>
 </body>
 
