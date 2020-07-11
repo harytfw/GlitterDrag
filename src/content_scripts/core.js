@@ -23,16 +23,20 @@ const CyclerCounter = class {
 
 class Core {
 
-    static get KEY_NONE() {
-        return -1;
+    static get KEY_NO() {
+        return "";
     }
 
     static get KEY_CTRL() {
-        return 0;
+        return 'ctrl';
     }
 
     static get KEY_SHIFT() {
-        return 1;
+        return 'shift';
+    }
+
+    static get KEY_ALT() {
+        return 'alt';
     }
 
     static get STATE_STOP() {
@@ -73,9 +77,10 @@ class Core {
             return Core.KEY_CTRL;
         } else if (e.shiftKey) {
             return Core.KEY_SHIFT;
-        } else {
-            return Core.KEY_NONE;
-        }
+        } /*  else if (e.altkey) {
+             return Core.KEY_ALT;
+        } */
+        return Core.KEY_NO;
     }
 
     constructor(callbacks = {}) {
@@ -94,7 +99,7 @@ class Core {
 
         this.inner_state = Core.STATE_STOP;
         this.last_state = Core.STATE_STOP;
-        this.inner_modifierKey = Core.KEY_NONE;
+        this.inner_modifierKey = Core.KEY_NO;
         this.doPreventInDropEvent = false;
 
         this.counter = new CyclerCounter(20);
@@ -133,8 +138,8 @@ class Core {
         } else {
             this._log("%caccept drag", "color:green");
             this.inner_state = Core.STATE_NORMAL;
-            this.onModifierKeyChange(this.modifierKey);
             this.onStart(e.target, e.dataTransfer, false);
+            this.onModifierKeyChange(this.modifierKey, Core.KEY_NO);
         }
 
     }
@@ -166,12 +171,10 @@ class Core {
         }
 
         if (this.state === Core.STATE_NORMAL || this.state === Core.STATE_EXTERNAL) {
-            let oldKey = null;
-            [this.inner_modifierKey, oldKey] = [Core._getModifierKeyFromEvent(e), this.inner_modifierKey];
+            let oldKey = this.inner_modifierKey;
+            this.inner_modifierKey = Core._getModifierKeyFromEvent(e);
             if (oldKey !== this.inner_modifierKey) {
-
                 this.onModifierKeyChange(this.inner_modifierKey, oldKey);
-
             }
             if (this.allowDrop(e.target, e.dataTransfer, this.state === Core.STATE_EXTERNAL, e.defaultPrevented)) {
                 this._log("_dragover, call preventDefault()");

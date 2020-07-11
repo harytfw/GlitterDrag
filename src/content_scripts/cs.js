@@ -113,14 +113,6 @@ class Controller {
         return ext !== null ? ext : "";
     }
 
-    get recentShortcut() {
-        return this.shortcutStore[this.shortcutStore.length - 1];
-    }
-
-    set recentShortcut(val) {
-        return this.shortcutStore[this.shortcutStore.length - 1] = val;
-    }
-
     constructor() {
 
         this.core = new Core(this);
@@ -146,7 +138,7 @@ class Controller {
             // panelBox: new UIClass()
         };
 
-        this.shortcutStore = [""];
+        this.shortcutStore = Core.KEY_NO;
 
         browser.storage.onChanged.addListener((_, areaName) => {
             if (areaName === "local") {
@@ -154,26 +146,14 @@ class Controller {
             }
         });
 
-        document.addEventListener("keydown", (e) => {
-            if (e.isComposing === false) {
-                // consoleUtil.log("keydown", e.key);
-                this.recentShortcut = e.key;
-            }
-        });
-
-        document.addEventListener("keyup", () => {
-            // consoleUtil.log("keyup", this.recentShortcut);
-            this.recentShortcut = "";
-        });
-
         this.refreshPageConfig();
 
     }
 
     async refreshPageConfig() {
-        consoleUtil.log("refresh page config");
         browser.storage.local.get().then(a => {
             this.config = a;
+            consoleUtil.log("refresh page config", a);
             if (this.config.features.extendMiddleButton === true) {
                 consoleUtil.log("enable features: ", "extend middle button");
                 features.extendMiddleButton.start();
@@ -183,7 +163,7 @@ class Controller {
 
     queryDirection() {
         for (const action of this.config.actions) {
-            if (action.shortcut === this.recentShortcut) {
+            if (action.shortcut === this.shortcutStore) {
                 if (action.limitation.startsWith("grids")) {
                     return this.ui.grids.direction;
                 } else {
@@ -195,18 +175,17 @@ class Controller {
 
     queryActionGroup() {
         for (const action of this.config.actions) {
-            if (action.shortcut === this.recentShortcut) {
+            if (action.shortcut === this.shortcutStore) {
                 return action;
             }
         }
     }
 
     queryActionDetail() {
-
-        consoleUtil.log("quertActionDetail", "selectionType:", this.selectionType, ", shortcut:", this.recentShortcut);
+        consoleUtil.log("quertActionDetail", "selectionType:", this.selectionType, ", shortcut:", this.shortcutStore);
         const actionType = Controller.predictActionType(this.selectionType);
         for (const action of this.config.actions) {
-            if (action.shortcut === this.recentShortcut) {
+            if (action.shortcut === this.shortcutStore) {
                 //TODO
                 consoleUtil.log("action details", action.details, ", expceted direction:", this.direction);
                 return action.details[actionType].find(detail => detail.direction === this.direction);
@@ -223,8 +202,7 @@ class Controller {
         this.selection.text = this.selection.plainUrl = this.selection.imageLink = null;
         this.direction = null;
         this.selectionType = SELECTION_TYPE.unknown;
-        this.shortcutStore.length = 1;
-        this.shortcutStore[0] = "";
+        this.shortcutStore = Core.KEY_NO
         this.ui.indicator.remove();
         this.ui.prompt.remove();
         this.ui.grids.remove();
@@ -334,8 +312,27 @@ class Controller {
         return true;
     }
 
-    onModifierKeyChange() {
-
+    onModifierKeyChange(newKey, oldKey) {
+        consoleUtil.info("newkey:", newKey)
+        this.shortcutStore = newKey;
+        const actionGroup = this.queryActionGroup();
+        consoleUtil.log("shortcutstore", this.shortcutStore, actionGroup)
+        if (actionGroup.limitation.startsWith("grids")) {
+            consoleUtil.log("render grids")
+            this.ui.grids.render(
+                actionGroup,
+                Controller.predictActionType(this.selectionType),
+            );
+        }
+        if (!this.ui.grids.isActive && this.config.enablePrompt && this.checkDistanceRange()) {
+            const detail = this.queryActionDetail();
+            if (detail.prompt !== "") {
+                this.ui.prompt.active();
+                this.ui.prompt.render(this.selection, detail);
+            } else {
+                this.ui.prompt.remove();
+            }
+        }
     }
 
     /**
@@ -413,24 +410,6 @@ class Controller {
      *
      */
     onMove(target, dataTransfer, isExternal) {
-
-        switch (this.core.modifierKey) {
-            case Core.CTRL:
-                //TODO
-                if (this.shortcutStore.length > 1) {
-                    this.shortcutStore.length = 1;
-                }
-                this.shortcutStore.push("Control");
-                break;
-            case Core.SHIFT:
-                if (this.shortcutStore.length > 1) {
-                    this.shortcutStore.length = 1;
-                }
-                this.shortcutStore.push("Shift");
-                break;
-            default:
-                break;
-        }
         this.direction = this.queryDirection();
         consoleUtil.log("direction: ", this.direction);
         if (!this.ui.grids.isActive && this.checkDistanceRange()) {
