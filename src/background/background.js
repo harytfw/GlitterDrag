@@ -93,6 +93,7 @@ class ExecutorClass {
 
         this.refreshBackgroundConfig();
 
+        this.doFlag = false;
     }
 
     async refreshBackgroundConfig() {
@@ -103,16 +104,22 @@ class ExecutorClass {
     }
 
     async DO(actionWrapper, sender) {
+        if (this.doFlag) {
+            console.error("while one action is executing, another action want to execute. It is not allowed", actionWrapper);
+            return;
+        }
         console.time("do action");
         this.data = actionWrapper;
         this.sender = sender;
-        await this.execute();
+        this.doFlag = true;
+        await this.execute(data);
         this.data = null;
         this.sender = null;
+        this.doFlag = false;
         console.timeEnd("do action");
     }
 
-    async execute() {
+    async execute(data) {
         consoleUtil.log("execute command: ", this.data.command);
         switch (this.data.command) {
             case "open":
@@ -141,7 +148,7 @@ class ExecutorClass {
         }
     }
 
-    async openHandler() {
+    async openHandler(data) {
         console.time("openHandler");
         switch (this.data.actionType) {
             case "text": {
