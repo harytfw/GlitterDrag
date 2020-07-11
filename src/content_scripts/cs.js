@@ -104,7 +104,14 @@ class Controller {
     }
 
     static getFileExtension(urlStr) {
-        //TODO
+        if (urlStr.startsWith("data:")) {
+            const mime = urlStr.substring(urlStr.indexOf(":") + 1, urlStr.indexOf(";"))
+            switch (mime) {
+                case "image/png": return ".png";
+                case "image/jpeg": return ".jpeg";
+            }
+            return ""
+        }
         const match = urlStr.match(/[^/\\&?]+(\.\w{3,4})(?=([?&].*$|$))/);
         if (!match) {
             return "";
