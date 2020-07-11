@@ -375,7 +375,7 @@ class ExecutorClass {
     }
 
     async removeHighlighting() {
-        consoleUtil.log("remove find");
+        consoleUtil.log("remove highlight");
         if (this.findFlag) {
             this.findFlag = false;
             return browser.find.removeHighlighting();
