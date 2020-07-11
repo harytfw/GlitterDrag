@@ -64,11 +64,10 @@ class BlobStorage {
 
     async consume(key) {
         const [url, time, revoke] = this.map.get(key);
+        this.map.delete(key);
         // TODO: CORS
         const res = await fetch(url);
         const arrayBuffer = await res.arrayBuffer();
-
-        this.map.delete(key);
         if (true === revoke) {
             URL.revokeObjectURL(url);
         }

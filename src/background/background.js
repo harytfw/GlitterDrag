@@ -226,7 +226,7 @@ class ExecutorClass {
             }
             case "image": {
                 p = this.fetchImagePromise(this.data.extraImageInfo)
-                    .then((u8Array) => {
+                    .then(u8Array => {
                         this.copyImage(u8Array);
                     });
                 break;
@@ -236,7 +236,7 @@ class ExecutorClass {
                     p = this.copyText(this.data.selection.plainUrl)
                 } else {
                     p = this.fetchImagePromise(this.data.extraImageInfo)
-                        .then((u8Array) => {
+                        .then(u8Array => {
                             this.copyImage(u8Array);
                         });
                 }
@@ -522,14 +522,14 @@ class ExecutorClass {
     async fetchImagePromise(extraImageInfo) {
         consoleUtil.log("create fetch image promise");
         return new Promise((resolve, reject) => {
-            const port = browser.tabs.connect(this.sender.tabId);
+            const port = browser.tabs.connect(this.sender.tab.id);
             if (port.error) {
                 console.trace(port, port.error);
                 reject(port.error);
                 return;
             }
             port.onMessage.addListener(u8Array => {
-                consoleUtil.log("get u8Array, call disconnect then resolve promise");
+                consoleUtil.log("got u8Array, call disconnect then resolve promise");
                 port.disconnect();
                 resolve(u8Array);
             });
