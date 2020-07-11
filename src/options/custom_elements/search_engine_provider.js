@@ -37,10 +37,6 @@ class SearchEngineProvider extends HTMLElement {
         }));
     }
 
-    get isBrowserGroup() {
-        return this.getAttribute("groupname") === "Browser";
-    }
-
     async updateDropdownList() {
         const groupName = this.getAttribute("groupname");
 
@@ -51,30 +47,16 @@ class SearchEngineProvider extends HTMLElement {
 
         const options = [];
 
-        if (this.isBrowserGroup && env.isFirefox) {
-            for (const se of (await browser.search.get())) {
-                const option = document.createElement("option");
-                option.value = se.name;
-                option.dataset.name = se.name;
-                option.dataset.icon = se.favIconUrl;
-                option.dataset.url = "";
-                option.innerHTML = `<img width="16" height="16" class="middle-img" src="${se.favIconUrl}"><span>${se.name}</span>`;
-                options.push(option);
-            }
-        } else {
-
-            if (!(groupName in searchEngines)) {
-                console.warn(this, `not found search engine group: "${groupName}"`);
-                return;
-            }
-
+        if (groupName in searchEngines) {
             for (const searchEngine of searchEngines[groupName]) {
                 options.push(this.createOptionElement(searchEngine));
             }
+        } else {
+            console.warn(this, `not found search engine group: "${groupName}"`);
         }
-        const dropdown = this.querySelector("bulma-dropdown");
-        dropdown.overrideWithOptions(options);
-        dropdown.updateButtonTextContent(i18nUtil.getI18n("selectSearchEngine"));
+
+        this.dropdown.overrideWithOptions(options);
+        this.dropdown.updateButtonTextContent(i18nUtil.getI18n("selectSearchEngine"));
     }
 
     createOptionElement(searchEngine) {
@@ -88,4 +70,84 @@ class SearchEngineProvider extends HTMLElement {
     }
 }
 
+
+class BrowserSearchEngineProvider extends SearchEngineProvider {
+    constructor() {
+        super();
+    }
+
+    async updateDropdownList() {
+        const datalist = document.createElement("datalist");
+        datalist.id = `provider-${Math.floor(Math.random() * 100000)}`;
+        this.appendChild(datalist);
+        this.dropdown.list = datalist.id;
+        const options = [];
+        for (const se of (await browser.search.get())) {
+            const option = document.createElement("option");
+            option.value = se.name;
+            option.dataset.name = se.name;
+            option.dataset.icon = se.favIconUrl;
+            option.dataset.url = "";
+            option.innerHTML = `<img width="16" height="16" class="middle-img" src="${se.favIconUrl}"><span>${se.name}</span>`;
+            options.push(option);
+        }
+
+        this.dropdown.overrideWithOptions(options);
+        this.dropdown.updateButtonTextContent(i18nUtil.getI18n("selectSearchEngine"));
+    }
+}
+
+class UserSearchEngineProvider extends SearchEngineProvider {
+    constructor() {
+        super();
+
+        this.configManager = null;
+        document.addEventListener("configloaded", (e) => {
+            this.configManager = e.target;
+            this.updateDropdownList();
+            i18nUtil.render(this);
+        });
+    }
+
+    getAllUniqueSearchEngines() {
+        const result = []
+        const seen = new Set()
+        const config = this.configManager.get();
+        for (const group of config.actions) {
+            for (const type of ["text", "link", "image"]) {
+                for (const detail of group.details[type]) {
+                    const name = detail.searchEngine.name;
+                    if (seen.has(name)) continue;
+                    seen.add(name)
+                    result.push(detail.searchEngine)
+                }
+            }
+        }
+        return result
+    }
+
+    async updateDropdownList() {
+        const datalist = document.createElement("datalist");
+        datalist.id = `provider-${Math.floor(Math.random() * 100000)}`;
+        this.appendChild(datalist);
+        this.dropdown.list = datalist.id;
+        const options = [];
+        for (const se of this.getAllUniqueSearchEngines()) {
+            const option = document.createElement("option");
+            option.value = se.name;
+            option.dataset.name = se.name;
+            option.dataset.icon = se.icon;
+            option.dataset.url = se.url;
+            option.innerHTML = `<img width="16" height="16" class="middle-img" src="${se.favIconUrl}"><span>${se.name}</span>`;
+            options.push(option);
+        }
+        const dropdown = this.querySelector("bulma-dropdown");
+        dropdown.overrideWithOptions(options);
+        dropdown.updateButtonTextContent(i18nUtil.getI18n("selectSearchEngine"));
+    }
+}
+
 customElements.define("search-engine-provider", SearchEngineProvider);
+customElements.define("browser-search-engine-provider", BrowserSearchEngineProvider);
+customElements.define("user-search-engine-provider", UserSearchEngineProvider);
+
