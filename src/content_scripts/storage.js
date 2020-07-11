@@ -1,6 +1,8 @@
 class BlobStorage {
-    static get SUPPORTED_PROTOCOL() {
-        return ["blob:", "data:", "http:", "https:", "ftp:"];
+
+    static get EXPIRE_TIME() {
+        // 30s
+        return Date.now() + 30 * 1000;
     }
 
     constructor() {
@@ -9,13 +11,13 @@ class BlobStorage {
         this.doRecycleTask();
     }
 
-    doRecycleTask(expired = 30 * 1000) {
+    doRecycleTask() {
         const now = Date.now();
         const entries = this.map.entries();
         let cnt = 0;
         for (const [key, data] of entries) {
-            const [url, time, revoke] = data;
-            if (now - time > expired) {
+            const [url, expireTime, revoke] = data;
+            if (expireTime >= now) {
                 if (revoke === true && url.protocol === "blob:") {
                     URL.revokeObjectURL(url.toString());
                 }
@@ -32,23 +34,21 @@ class BlobStorage {
      * @param {URL} url
      */
     storeURL(url, revoke = false) {
-        if (!BlobStorage.SUPPORTED_PROTOCOL.includes(url.protocol)) {
-            throw new Error("unsupported protocol");
+        let key = '';
+        switch (url.protocol) {
+            case 'data:':
+                key = `${Date.now()}`
+                break
+            case 'blob:':
+            case 'http:':
+            case 'https:':
+            case 'ftp:':
+                key = url.toString()
+                break
+            default:
+                throw new Error("unsupported protocol");
         }
-        // switch (url.protocol) {
-        //     case 'blob:':
-        //         break
-        //     case 'data:':
-        //         break
-        //     case 'http:':
-        //     case 'https:':
-        //     case 'ftp:':
-        //         break
-        //     default:
-        //         break
-        // }
-        const key = url.toString();
-        this.map.set(key, [url, Date.now(), revoke]);
+        this.map.set(key, [url, BlobStorage.EXPIRE_TIME, revoke]);
         return key;
     }
 
