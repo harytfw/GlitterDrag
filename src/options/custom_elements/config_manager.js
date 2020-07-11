@@ -60,6 +60,27 @@ class ConfigManager extends HTMLElement {
         src.dispatchEvent(new Event("configupdate", { bubbles: true }));
     }
 
+    async resetConfig() {
+        await configUtil.clear();
+        await configUtil.save(configUtil.getTemplateConfig());
+
+        this.stack.length = 0;
+        this.stack.push(configUtil.cloneDeep(configUtil.getTemplateConfig()));
+        this.stack.push(this._cloneTop());
+        this._check();
+        this.dispatchEvent(new Event("configloaded", { bubbles: true }));
+    }
+
+    async restoreConfig(config) {
+        await configUtil.clear(config);
+        await configUtil.save(config);
+        this.stack.length = 0;
+        this.stack.push(configUtil.cloneDeep(config));
+        this.stack.push(this._cloneTop());
+        this._check();
+        this.dispatchEvent(new Event("configloaded", { bubbles: true }));
+    }
+
     async _save() {
         consoleUtil.log(this, "save");
         await configUtil.save(this.stack[this.stack.length - 1]);
@@ -87,26 +108,7 @@ class ConfigManager extends HTMLElement {
         return this._cloneTop();
     }
 
-    async _resetConfig() {
-        await configUtil.clear();
-        await configUtil.save(configUtil.getTemplateConfig());
 
-        this.stack.length = 0;
-        this.stack.push(configUtil.cloneDeep(configUtil.getTemplateConfig()));
-        this.stack.push(this._cloneTop());
-        this._check();
-        this.dispatchEvent(new Event("configloaded", { bubbles: true }));
-    }
-
-    async _restoreConfig(config) {
-        await configUtil.clear(config);
-        await configUtil.save(config);
-        this.stack.length = 0;
-        this.stack.push(configUtil.cloneDeep(config));
-        this.stack.push(this._cloneTop());
-        this._check();
-        this.dispatchEvent(new Event("configloaded", { bubbles: true }));
-    }
 
     _cloneTop() {
         const cloned = configUtil.cloneDeep(this.stack[this.stack.length - 1]);
