@@ -12,7 +12,19 @@ class ActionWrapper {
             token: null, // the token to retrive data from page
             extension: null, // the format of image
         });
+        this.direction = null;
+        this.site = null;
+        this.actionType = null;
+        this.pageTitle = null;
 
+        window["postMsg"] = this.plainPostMsg.bind(this);
+    }
+
+    exposeMessageObject(msg) {
+        msg = JSON.parse(JSON.stringify(msg))
+        msg.command = ""
+        consoleUtil.log("expose message object", msg)
+        window["msg"] = msg;
     }
 
     setDirection(val) {
@@ -45,6 +57,11 @@ class ActionWrapper {
         return this;
     }
 
+    plainPostMsg(msg) {
+        consoleUtil.log("plain post msg: ", msg);
+        browser.runtime.sendMessage(msg);
+    }
+
     post(actionDetail) {
         if (!actionDetail) {
             consoleUtil.info("action detail is empty, replace it with no operation");
@@ -54,12 +71,22 @@ class ActionWrapper {
         }
         const msg = {
             msgCmd: "postAction",
-            ...this,
+            selection: this.selection,
+            extraImageInfo: this.extraImageInfo,
+            direction: this.direction,
+            site: this.site,
+            actionType: this.actionType,
+            pageTitle: this.pageTitle,
             ...actionDetail,
         };
-        consoleUtil.log("post", msg);
-        browser.runtime.sendMessage(msg)
+        consoleUtil.log("post", JSON.parse(JSON.stringify(msg)));
+        this.exposeMessageObject(msg);
+        browser.runtime.sendMessage(msg);
 
+        this.clear()
+    }
+
+    clear() {
         this.direction = null;
         this.site = null;
         this.actionType = null;

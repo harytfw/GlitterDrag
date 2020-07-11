@@ -130,7 +130,9 @@ class ExecutorClass {
             case "translate":
                 return this.translateText(this.data.selection.text);
             case "runScript":
-                return this.runScript();
+                // ignore result
+                this.runScript();
+                return;
             case "":
                 consoleUtil.warn("no operation");
                 return;
@@ -521,8 +523,8 @@ class ExecutorClass {
     async runScript() {
         return browser.tabs.executeScript({
             code: `{
-                ${this.data.script}
-                ;main(JSON.parse(decodeURIComponent(\`${encodeURIComponent(JSON.stringify(this.data.selection))}\`)))
+                ${this.data.script};
+                ;
             }`,
         });
     }

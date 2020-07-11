@@ -66,6 +66,7 @@ class ActinoConfiguration extends HTMLElement {
                     case "prompt":
                     case "download.directory":
                     case "download.showSaveAsDialog":
+                    case "script":
                         this.saveDetail();
                         target.dispatchEvent(new Event("configupdate", { bubbles: true }));
                         break;
