@@ -3,7 +3,6 @@ var configUtil = {};
 
 {
 
-
     const bareConfig = {
         enableSync: false,
         enableIndicator: false,
@@ -76,7 +75,27 @@ var configUtil = {};
                 link: [],
                 image: [],
             },
-        }],
+        }, {
+            name: "Shift",
+            shortcut: "Shift",
+            limitation: "any",
+            important: true,
+            details: {
+                text: [],
+                link: [],
+                image: [],
+            },
+        }, {
+            name: "Ctrl",
+            shortcut: "Ctrl",
+            limitation: "any",
+            important: true,
+            details: {
+                text: [],
+                link: [],
+                image: [],
+            },
+        },],
 
         features: {
             disableFixURL: false,
@@ -122,9 +141,7 @@ var configUtil = {};
             showSaveAsDialog: false,
             directory: "",
         },
-
         script: "",
-
         prompt: "",
     };
 
