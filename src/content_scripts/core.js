@@ -150,7 +150,7 @@ class Core {
      * @param {DragEvent} e
      */
     _dragover(e) {
-        this._log("_dragover, state:", this.inner_state, ", defaultPrevented: ", e.defaultPrevented);
+        this._log("_dragover, state:", this.inner_state, ", defaultPrevented: ", e.defaultPrevented, 'target:', e.target);
         this.endPos.x = e.clientX;
         this.endPos.y = e.clientY;
         if (e.defaultPrevented

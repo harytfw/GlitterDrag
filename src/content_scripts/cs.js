@@ -286,8 +286,8 @@ class Controller {
      */
     allowDrop(target, dataTransfer, isExternal, defaultPrevented) {
 
-        if (this.ui.grids.isActive) {
-            return this.ui.grids.allowDrop();
+        if (this.ui.grids.isActive && this.ui.grids.allowDrop()) {
+            return true;
         }
 
         if (!this.ui.grids.isActive && this.config.limitRange) {
@@ -304,6 +304,11 @@ class Controller {
         if (target instanceof Text) {
             return true;
         }
+
+        if (Controller.isTextInput(target)) {
+            return true;
+        }
+
         if (target instanceof Element) {
             return target.getAttribute("contenteditable") === null;
         }
@@ -431,6 +436,21 @@ class Controller {
     onMove(target, dataTransfer, isExternal) {
         this.direction = this.queryDirection();
         consoleUtil.log("direction: ", this.direction);
+        if (Controller.isTextInput(target)) {
+            consoleUtil.log("target is textinput, remove ui")
+            this.ui.prompt.remove();
+            this.ui.grids.remove();
+            return;
+        }
+        const actionGroup = this.queryActionGroup();
+        if (actionGroup.limitation.startsWith("grids")) {
+            this.ui.grids.active(
+                this.core.startPos.x,
+                this.core.startPos.y,
+                actionGroup,
+                Controller.predictActionType(this.selectionType),
+            );
+        }
         if (!this.ui.grids.isActive && this.checkDistanceRange()) {
             if (true === this.config.enablePrompt) {
                 const detail = this.queryActionDetail();
@@ -441,12 +461,6 @@ class Controller {
                     this.ui.prompt.remove();
                 }
             }
-        } else if (Controller.isTextInput(target)) {
-            this.ui.prompt.remove()
-            this.ui.grids.remove()
-        } else {
-            // this.ui.prompt.remove()
-            // this.ui.panelBox.remove()
         }
     }
 
