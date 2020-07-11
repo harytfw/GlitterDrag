@@ -103,15 +103,16 @@ class Core {
         this.doPreventInDropEvent = false;
 
         this.counter = new CyclerCounter(20);
+        this.stopFlag = false;
 
         const target = document;
-        target.addEventListener("dragstart", e => this._dragstart(e));
-        target.addEventListener("dragend", e => this._dragend(e));
-        target.addEventListener("drop", e => this._drop(e));
-        target.addEventListener("drag", e => this._drag(e));
-        target.addEventListener("dragover", e => this._dragover(e));
-        target.addEventListener("dragenter", e => this._dragenter(e));
-        target.addEventListener("dragleave", e => this._dragleave(e));
+        target.addEventListener("dragstart", e => !this.stopFlag && this._dragstart(e));
+        target.addEventListener("dragend", e => !this.stopFlag && this._dragend(e));
+        target.addEventListener("drop", e => !this.stopFlag && this._drop(e));
+        target.addEventListener("drag", e => !this.stopFlag && this._drag(e));
+        target.addEventListener("dragover", e => !this.stopFlag && this._dragover(e));
+        target.addEventListener("dragenter", e => !this.stopFlag && this._dragenter(e));
+        target.addEventListener("dragleave", e => !this.stopFlag && this._dragleave(e));
     }
 
     _fixCompatibility() {
@@ -288,6 +289,10 @@ class Core {
 
     get modifierKey() {
         return this.inner_modifierKey;
+    }
+
+    stop() {
+        this.stopFlag = true;
     }
 
     reset() {
