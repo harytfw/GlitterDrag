@@ -792,7 +792,7 @@
                 <div class="field-body">
                     <div class="control">
                         <bulma-dropdown list="tab-position-options" name="tabPosition"
-                            data-command-permit="open,search">
+                            data-command-permit="open,search,runScript">
                         </bulma-dropdown>
                         <datalist id="tab-position-options">
                             <option value="" data-i18n="tabPosition_notSet">Not Set</option>
@@ -817,7 +817,8 @@
                 <div class="field-body">
                     <div class="control">
                         <div class="pretty p-default">
-                            <input type="checkbox" name="activeTab" data-command-permit="open,search">
+                            <input type="checkbox" name="activeTab" 
+                            data-command-permit="open,search,runScript">
                             <div class="state">
                                 <label data-i18n="activate">active (Foregound)</label>
                             </div>
@@ -849,7 +850,7 @@
                 <div class="field-body">
                     <div class="control">
                         <button class="button is-small" data-event="editSearchEngine" data-i18n="editSearchEngine"
-                            data-command-permit="search">Edit</button>
+                            data-command-permit="search,runScript">Edit</button>
                         <div class="dropdown is-hoverable has-text-left" style="margin-left: 1rem;">
                             <div class="dropdown-trigger"><span class="icon has-text-grey-light"><i
                                         class="fas fa-info-circle"></i></span></div>
@@ -961,7 +962,7 @@
                     <div class="field is-narrow">
                         <div class="control">
                             <input class="input is-small" type="text" name="download.directory"
-                                data-command-permit="download">
+                                data-command-permit="download,runScript">
                         </div>
                     </div>
                 </div>
@@ -976,7 +977,8 @@
                     <div class="field is-narrow">
                         <div class="control">
                             <div class="pretty p-default">
-                                <input type="checkbox" name="download.showSaveAsDialog" data-command-permit="download">
+                                <input type="checkbox" name="download.showSaveAsDialog"
+                                    data-command-permit="download,runScript">
                                 <div class="state">
                                     <label data-i18n="showSaveAsDialog">Default</label>
                                 </div>
