@@ -31,12 +31,13 @@ class Grids {
             });
         this.activeCommand = null;
         this.root.addEventListener("dragover", (e) => {
+            const command = e.target.closest(".command");
             if (this.activeCommand instanceof HTMLElement) {
                 this.activeCommand.classList.remove("active");
                 this.activeCommand = null;
             }
-            if (e.target instanceof HTMLElement) {
-                this.activeCommand = e.target;
+            if (command instanceof HTMLElement) {
+                this.activeCommand = command
                 this.activeCommand.classList.add("active");
             }
         });

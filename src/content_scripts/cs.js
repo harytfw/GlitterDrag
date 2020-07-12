@@ -326,9 +326,11 @@ class Controller {
      * @param {Element} target
      */
     allowDrop(target, dataTransfer, isExternal, defaultPrevented) {
-
-        if (this.ui.grids.isActive && this.ui.grids.allowDrop()) {
-            return true;
+        if (this.ui.grids.isActive) {
+            if (Controller.isTextInput(target)) {
+                return true;
+            }
+            return this.ui.grids.allowDrop();
         }
 
         if (!this.ui.grids.isActive && this.config.limitRange) {

@@ -7,7 +7,6 @@ class BlobStorage {
 
     constructor() {
         this.map = new Map();
-        this.doRecycleTask = this.doRecycleTask.bind(this);
         this.doRecycleTask();
     }
 
@@ -26,7 +25,7 @@ class BlobStorage {
                 consoleUtil.log("recycle url:", url);
             }
         }
-        window.setTimeout(this.doRecycleTask, 60 * 1000);
+        window.setTimeout(this.doRecycleTask.bind(this), 60 * 1000);
     }
 
     /**
