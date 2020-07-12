@@ -39,6 +39,10 @@ class Core {
         return 'alt';
     }
 
+    static get KEY_EXT() {
+        return "ext";
+    }
+
     static get STATE_STOP() {
         return 0;
     }
@@ -140,7 +144,7 @@ class Core {
             this._log("%caccept drag", "color:green");
             this.inner_state = Core.STATE_NORMAL;
             this.onStart(e.target, e.dataTransfer, false);
-            this.onModifierKeyChange(this.modifierKey, Core.KEY_NO);
+            this.onModifierKeyChange(this.modifierKey, Core.KEY_NO, false);
         }
 
     }
@@ -175,7 +179,7 @@ class Core {
             let oldKey = this.inner_modifierKey;
             this.inner_modifierKey = Core._getModifierKeyFromEvent(e);
             if (oldKey !== this.inner_modifierKey) {
-                this.onModifierKeyChange(this.inner_modifierKey, oldKey);
+                this.onModifierKeyChange(this.inner_modifierKey, oldKey, this.state === Core.STATE_EXTERNAL);
             }
             if (this.allowDrop(e.target, e.dataTransfer, this.state === Core.STATE_EXTERNAL, e.defaultPrevented)) {
                 this._log("_dragover, call preventDefault()");
@@ -245,7 +249,7 @@ class Core {
             resetFlag = true;
         } else if (this.inner_state === Core.STATE_EXTERNAL) {
             this.doPreventInDropEvent = this.callPreventDefaultInDropEvent(e.target, e.dataTransfer, Core.STATE_EXTERNAL === this.state);
-            this.onEnd(null, e.dataTransfer, true);
+            this.onEnd(e.target, e.dataTransfer, true);
             resetFlag = true;
         } else if (this.inner_state === Core.STATE_DENY_EXTERNAL) {
             resetFlag = true;
@@ -335,10 +339,10 @@ class Core {
      * @param {number} newKey
      * @param {number} oldKey
      */
-    onModifierKeyChange(newKey, oldKey) {
-        this._log("modifier key changed", `new: ${newKey}`, `old: ${oldKey}`);
+    onModifierKeyChange(newKey, oldKey, isExternal) {
+        this._log("modifier key changed", `new: ${newKey}`, `old: ${oldKey}`, `isExternal: ${isExternal}`);
 
-        this.callbacks.onModifierKeyChange(newKey, oldKey);
+        this.callbacks.onModifierKeyChange(newKey, oldKey, isExternal);
     }
 
     /**
@@ -350,7 +354,11 @@ class Core {
     onStart(target, dataTransfer, isExternal) {
         this._log("onStart", target, `isExternal: ${isExternal}`);
         this._log("onStart", `angle:${this.angle}`, `distance:${this.distance}`, `modifierKey:${this.modifierKey}`);
-        this.callbacks.onStart(target, dataTransfer, isExternal);
+        if (isExternal) {
+            this.callbacks.onStartExternal(target, dataTransfer);
+        } else {
+            this.callbacks.onStart(target, dataTransfer);
+        }
     }
 
     /**
@@ -362,9 +370,13 @@ class Core {
     onMove(target, dataTransfer, isExternal) {
         // if (this.counter.hit()) {
         this._log("onMove", target, `isExternal: ${isExternal}`);
-
         this._log("onMove", `angle:${this.angle}`, `distance:${this.distance}`, `modifierKey:${this.modifierKey}`);
-        this.callbacks.onMove(target, dataTransfer, isExternal);
+        if (isExternal) {
+            this.callbacks.onMoveExternal(target, dataTransfer);
+        } else {
+            this.callbacks.onMove(target, dataTransfer);
+
+        }
         // }
     }
 
@@ -378,7 +390,11 @@ class Core {
 
         this._log("onEnd", target, `isExternal: ${isExternal}`);
         this._log("onEnd", `angle: ${this.angle}`, `distance: ${this.distance}`, `modifierKey: ${this.modifierKey}`);
-        this.callbacks.onEnd(target, dataTransfer, isExternal);
+        if (isExternal) {
+            this.callbacks.onEndExternal(target, dataTransfer);
+        } else {
+            this.callbacks.onEnd(target, dataTransfer);
+        }
     }
 
     onHandleBySite(target, dataTransfer, isExternal) {

@@ -59,7 +59,7 @@ class BlobStorage {
     storgeFile(file) {
         // 不使用的话，浏览器是否会一直保持这个文件的引用?
         const url = URL.createObjectURL(file);
-        return this.storeURL(url, true);
+        return this.storeURL(new URL(url), true);
     }
 
     async consume(key) {

@@ -9,15 +9,17 @@ const SELECTION_TYPE = {
     plainAnchor: "plainAnchor",
     anchorContainsImg: "anchorContainsImage",
     plainImage: "plainImage",
-    externalImage: "externalImage",
-    externalText: "externalText",
 };
 
-const MIME_PLAIN_TEXT = "text/plain";
-const MIME_URI_LIST = "text/uri-list";
-
 const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".txt"];
+const IMAGE_MIMES = ["image/png", "image/jpeg"];
 const TEXT_EXTENSIONS = [".txt", ".text"];
+const TEXT_MIMES = ["text/plain"];
+const MIME_TO_EXTENSION = {
+    "image/png": ".png",
+    "image/jpeg": ".jpeg",
+    "text/plain": ".text"
+};
 
 class Controller {
 
@@ -33,18 +35,50 @@ class Controller {
         return dataTransfer.types.includes("text/plain");
     }
 
-    static includesValidFile(dataTransfer) {
-        let files = dataTransfer.files;
-        if (files.length !== 1) {
-            return false;
-        }
-        let filename = files[0].name;
-        let ext = this.getFileExtension(filename);
+    static includesFile(dataTransfer) {
+        return dataTransfer.types.includes("Files");
+    }
 
-        if (IMAGE_EXTENSIONS.includes(ext)) {
-            return true;
+    static includesValidFile(dataTransfer) {
+        for (const item of dataTransfer.items) {
+            if (IMAGE_MIMES.includes(item.type)) {
+                return true;
+            }
+            if (TEXT_MIMES.includes(item.type)) {
+                return true;
+            }
         }
         return false;
+    }
+
+    static async extractText(dataTransfer) {
+        for (const mime of TEXT_MIMES) {
+            if (dataTransfer.types.includes(mime)) {
+                return dataTransfer.getData(mime);
+            }
+        }
+        let f = null;
+        outer: for (const file of dataTransfer.files) {
+            for (const mime of TEXT_MIMES) {
+                if (file.type === mime) {
+                    f = file;
+                    break outer;
+                }
+            }
+        }
+        if (f != null) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    resolve(reader.result);
+                }
+                reader.onerror = (ev) => {
+                    reject(ev);
+                }
+                reader.readAsText(f);
+            })
+        }
+        return ""
     }
 
     static angleToDirection(angle, mapping) {
@@ -307,7 +341,6 @@ class Controller {
             return false;
         }
 
-
         if (target instanceof Text) {
             return true;
         }
@@ -330,7 +363,8 @@ class Controller {
     allowExternal(dataTransfer) {
         if (Controller.includesPlainText(dataTransfer)) {
             return true;
-        } else if (Controller.includesValidFile(dataTransfer)) {
+        }
+        if (Controller.includesValidFile(dataTransfer)) {
             return true;
         }
         return false;
@@ -343,7 +377,12 @@ class Controller {
         return true;
     }
 
-    onModifierKeyChange(newKey, oldKey) {
+    onModifierKeyChange(newKey, oldKey, isExternal) {
+        if (isExternal) {
+            consoleUtil.log("force set shortcutStore = KEY_EXT");
+            this.shortcutStore = Core.KEY_EXT;
+            return;
+        }
         consoleUtil.info("newkey:", newKey)
         this.shortcutStore = newKey;
         const actionGroup = this.queryActionGroup();
@@ -370,9 +409,8 @@ class Controller {
      *
      * @param {Node} target
      * @param {DataTransfer} dataTransfer
-     * @param {boolean} isExternal
      */
-    onStart(target, dataTransfer, isExternal) {
+    onStart(target, dataTransfer) {
         let type = SELECTION_TYPE.unknown;
         consoleUtil.log("onStart", target);
         if (Controller.isText(target) || Controller.isTextInput(target)) {
@@ -398,23 +436,6 @@ class Controller {
         } else if (Controller.isImage(target)) {
             this.selection.imageLink = target.src;
             type = SELECTION_TYPE.plainImage;
-        } else if (isExternal) {
-
-            const file = dataTransfer.files[0];
-            if (file) {
-                const ext = Controller.getFileExtension(file.name);
-                if (IMAGE_EXTENSIONS.includes(ext)) {
-                    type = SELECTION_TYPE.externalImage;
-                } else if (TEXT_EXTENSIONS.includes(ext)) {
-                    this.selection.text = dataTransfer.getData(MIME_PLAIN_TEXT);
-                    type = SELECTION_TYPE.externalText;
-                }
-            } else if (Controller.includesPlainText(dataTransfer)) {
-                type = SELECTION_TYPE.plainText;
-            } else {
-                type = SELECTION_TYPE.unknown;
-            }
-
         } else {
             type = SELECTION_TYPE.unknown;
         }
@@ -440,7 +461,7 @@ class Controller {
     /**
      *
      */
-    onMove(target, dataTransfer, isExternal) {
+    onMove(target, dataTransfer) {
         this.direction = this.queryDirection();
         consoleUtil.log("direction: ", this.direction);
         if (Controller.isTextInput(target)) {
@@ -471,7 +492,7 @@ class Controller {
         }
     }
 
-    onEnd(target, dataTransfer, isExternal) {
+    onEnd(target, dataTransfer) {
         if (dataTransfer === null) {
             // specially handle dragend event
             consoleUtil.log("dataTransfer is null, nothing can do.");
@@ -488,11 +509,6 @@ class Controller {
             console.info("Bingo!!!!!!!!!!!Grids");
         }
 
-        // TODO: handle isExternal
-        // consoleUtil.log('selection type', dataTransfer.getData(MIME_SELECTION_TYPE))
-        consoleUtil.log("text/plain", dataTransfer.getData(MIME_PLAIN_TEXT));
-        consoleUtil.log("text/uri-list", dataTransfer.getData(MIME_URI_LIST));
-
         const imageInfo = {
             token: null,
             extension: null,
@@ -507,13 +523,6 @@ class Controller {
             case SELECTION_TYPE.anchorContainsImg:
                 imageInfo.extension = Controller.getFileExtension(this.selection.imageLink);
                 imageInfo.token = this.storage.storeURL(new URL(this.selection.imageLink));
-                break;
-            case SELECTION_TYPE.externalImage:
-                console.assert(this.selection.text === null, "text should be null");
-                console.assert(this.selection.imageLink === null, "imageLink should be null");
-                console.assert(this.selection.plainUrl === null, "plainUrl should be null");
-                imageInfo.extension = Controller.getFileExtension(dataTransfer.files[0].name);
-                imageInfo.token = this.storage.storeFile(dataTransfer.files[0]);
                 break;
         }
         /**
@@ -532,8 +541,79 @@ class Controller {
         this.clear();
     }
 
-    onExternal() {
+    onStartExternal(target, dataTransfer) {
+        let type = SELECTION_TYPE.unknown;
+        if (Controller.includesPlainText(dataTransfer)) {
+            type = SELECTION_TYPE.plainText;
+        }
+        for (const item of dataTransfer.items) {
+            if (TEXT_MIMES.includes(item.type)) {
+                type = SELECTION_TYPE.plainText;
+            }
+            if (IMAGE_MIMES.includes(item.type)) {
+                type = SELECTION_TYPE.plainImage;
+            }
+        }
+        this.selectionType = type;
+        consoleUtil.log("onStartExternal,type:", this.selectionType);
+    }
 
+    onMoveExternal(target, dataTransfer) {
+    }
+
+    async onEndExternal(target, dataTransfer) {
+        if (dataTransfer === null) {
+            // specially handle dragend event
+            consoleUtil.log("dataTransfer is null, nothing can do.");
+            this.clear();
+            return;
+        }
+        if (Controller.isTextInput(target)) {
+            consoleUtil.log("text input, do nothing")
+            this.clear()
+            return;
+        }
+        consoleUtil.log("onendexternal", dataTransfer, this.selectionType);
+        if (Controller.isTextInput(target)) {
+            consoleUtil.log("text input, do nothing")
+            this.clear()
+            return;
+        }
+        const imageInfo = {
+            token: null,
+            extension: null,
+        };
+        this.direction = DIRECTION.any;
+        switch (this.selectionType) {
+            case SELECTION_TYPE.plainText:
+                this.selection.text = await Controller.extractText(dataTransfer);
+                break;
+            case SELECTION_TYPE.plainImage:
+                imageInfo.extension = MIME_TO_EXTENSION[dataTransfer.files[0].type];
+                imageInfo.token = this.storage.storgeFile(dataTransfer.files[0]);
+                break;
+            default:
+                console.error("unhandle selectionType", this.selectionType);
+        }
+        /**
+         * 1. dataURL
+         * 2. UInt8Array
+         * 3. normal url
+         * 4.
+         */
+        this.actionWrapper.setSelection(this.selection)
+            .setActionType(Controller.predictActionType(this.selectionType))
+            .setDirection(this.direction)
+            .setExtraImageInfo(imageInfo)
+            .setSite(location.origin)
+            .setPageTitle(document.title)
+            .post(this.queryActionDetail());
+
+        this.clear();
+    }
+
+    onExternal() {
+        this.shortcutStore = Core.KEY_EXT;
     }
 
 }
