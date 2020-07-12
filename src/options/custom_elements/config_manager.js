@@ -81,6 +81,11 @@ class ConfigManager extends HTMLElement {
         this.dispatchEvent(new Event("configloaded", { bubbles: true }));
     }
 
+    async backupConfig() {
+        await this._save();
+        return this._cloneTop();
+    }
+    
     async _save() {
         consoleUtil.log(this, "save");
         await configUtil.save(this.stack[this.stack.length - 1]);
@@ -102,12 +107,6 @@ class ConfigManager extends HTMLElement {
         this.dispatchEvent(new Event("discard", { bubbles: true }));
         this.dispatchEvent(new Event("configloaded", { bubbles: true }));
     }
-
-    async _backupConfig() {
-        await this._save();
-        return this._cloneTop();
-    }
-
 
 
     _cloneTop() {
