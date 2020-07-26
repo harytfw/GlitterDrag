@@ -16,5 +16,6 @@ var env = {};
     env.isChromium = browser === "chromium";
     env.isWebExtension = typeof window.browser !== "undefined" && typeof window.browser.runtime !== "undefined";
     env.isPage = typeof window.browser === "undefined" || typeof window.browser.runtime === "undefined";
+    env.isChildFrame = window.top !== window;
     Object.freeze(env);
 }

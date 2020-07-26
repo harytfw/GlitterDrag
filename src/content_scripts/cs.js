@@ -222,13 +222,12 @@ class Controller {
     }
 
     queryDirection() {
+        if (this.ui.grids.isActive) {
+            return this.ui.grids.direction;
+        }
         for (const action of this.config.actions) {
             if (action.shortcut === this.shortcutStore) {
-                if (action.limitation.startsWith("grids")) {
-                    return this.ui.grids.direction;
-                } else {
-                    return Controller.angleToDirection(this.core.angle, DIMENSION[action.limitation]);
-                }
+                return Controller.angleToDirection(this.core.angle, DIMENSION[action.limitation]);
             }
         }
     }
@@ -389,8 +388,12 @@ class Controller {
         this.shortcutStore = newKey;
         const actionGroup = this.queryActionGroup();
         consoleUtil.log("shortcutstore", this.shortcutStore, actionGroup)
-        if (actionGroup.limitation.startsWith("grids")) {
-            consoleUtil.log("render grids")
+        if (env.isChildFrame || actionGroup.limitation.startsWith("grids")) {
+            if(env.isChildFrame) {
+                consoleUtil.log("render grids under child frame");
+            } else {
+                consoleUtil.log("render grids");
+            }
             this.ui.grids.render(
                 actionGroup,
                 Controller.predictActionType(this.selectionType),

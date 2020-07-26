@@ -43,6 +43,10 @@ class Core {
         return "ext";
     }
 
+    static get KEY_FRAME() {
+        return 'frame';
+    }
+
     static get STATE_STOP() {
         return 0;
     }
