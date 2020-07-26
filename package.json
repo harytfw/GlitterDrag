@@ -12,5 +12,6 @@
         "lint": "eslint . && web-ext lint",
         "test": "node ./test/url.js"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {}
 }
