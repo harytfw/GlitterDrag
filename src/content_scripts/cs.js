@@ -179,7 +179,7 @@ class Controller {
             // panelBox: new UIClass()
         };
 
-        this.shortcutStore = Core.KEY_NO;
+        this.conditionStore = Core.COND_NO;
 
         browser.storage.onChanged.addListener((_, areaName) => {
             if (areaName === "local") {
@@ -226,7 +226,7 @@ class Controller {
             return this.ui.grids.direction;
         }
         for (const action of this.config.actions) {
-            if (action.shortcut === this.shortcutStore) {
+            if (action.condition === this.conditionStore) {
                 return Controller.angleToDirection(this.core.angle, DIMENSION[action.limitation]);
             }
         }
@@ -234,17 +234,17 @@ class Controller {
 
     queryActionGroup() {
         for (const action of this.config.actions) {
-            if (action.shortcut === this.shortcutStore) {
+            if (action.condition === this.conditionStore) {
                 return action;
             }
         }
     }
 
     queryActionDetail() {
-        consoleUtil.log("quertActionDetail", "selectionType:", this.selectionType, ", shortcut:", this.shortcutStore);
+        consoleUtil.log("quertActionDetail", "selectionType:", this.selectionType, ", condition:", this.conditionStore);
         const actionType = Controller.predictActionType(this.selectionType);
         for (const action of this.config.actions) {
-            if (action.shortcut === this.shortcutStore) {
+            if (action.condition === this.conditionStore) {
                 //TODO
                 consoleUtil.log("action details", action.details, ", expceted direction:", this.direction);
                 return action.details[actionType].find(detail => detail.direction === this.direction);
@@ -261,7 +261,7 @@ class Controller {
         this.selection.text = this.selection.plainUrl = this.selection.imageLink = null;
         this.direction = null;
         this.selectionType = SELECTION_TYPE.unknown;
-        this.shortcutStore = Core.KEY_NO
+        this.conditionStore = Core.COND_NO
         this.ui.indicator.remove();
         this.ui.prompt.remove();
         this.ui.grids.remove();
@@ -380,14 +380,14 @@ class Controller {
 
     onModifierKeyChange(newKey, oldKey, isExternal) {
         if (isExternal) {
-            consoleUtil.log("force set shortcutStore = KEY_EXT");
-            this.shortcutStore = Core.KEY_EXT;
+            consoleUtil.log("force set conditionStore = KEY_EXT");
+            this.conditionStore = Core.COND_EXT;
             return;
         }
         consoleUtil.info("newkey:", newKey)
-        this.shortcutStore = newKey;
+        this.conditionStore = newKey;
         const actionGroup = this.queryActionGroup();
-        consoleUtil.log("shortcutstore", this.shortcutStore, actionGroup)
+        consoleUtil.log("conditionstore", this.conditionStore, actionGroup)
         if (env.isChildFrame || actionGroup.limitation.startsWith("grids")) {
             if(env.isChildFrame) {
                 consoleUtil.log("render grids under child frame");
@@ -618,7 +618,7 @@ class Controller {
     }
 
     onExternal() {
-        this.shortcutStore = Core.KEY_EXT;
+        this.conditionStore = Core.COND_EXT;
     }
 
 }

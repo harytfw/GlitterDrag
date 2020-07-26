@@ -23,27 +23,27 @@ const CyclerCounter = class {
 
 class Core {
 
-    static get KEY_NO() {
+    static get COND_NO() {
         return "";
     }
 
-    static get KEY_CTRL() {
+    static get COND_CTRL() {
         return 'ctrl';
     }
 
-    static get KEY_SHIFT() {
+    static get COND_SHIFT() {
         return 'shift';
     }
 
-    static get KEY_ALT() {
+    static get COND_ALT() {
         return 'alt';
     }
 
-    static get KEY_EXT() {
+    static get COND_EXT() {
         return "ext";
     }
 
-    static get KEY_FRAME() {
+    static get COND_FRAME() {
         return 'frame';
     }
 
@@ -82,13 +82,13 @@ class Core {
      */
     static _getModifierKeyFromEvent(e) {
         if (e.ctrlKey) {
-            return Core.KEY_CTRL;
+            return Core.COND_CTRL;
         } else if (e.shiftKey) {
-            return Core.KEY_SHIFT;
+            return Core.COND_SHIFT;
         } /*  else if (e.altkey) {
              return Core.KEY_ALT;
         } */
-        return Core.KEY_NO;
+        return Core.COND_NO;
     }
 
     constructor(callbacks = {}) {
@@ -107,7 +107,7 @@ class Core {
 
         this.inner_state = Core.STATE_STOP;
         this.last_state = Core.STATE_STOP;
-        this.inner_modifierKey = Core.KEY_NO;
+        this.inner_modifierKey = Core.COND_NO;
         this.doPreventInDropEvent = false;
 
         this.counter = new CyclerCounter(20);
@@ -148,7 +148,7 @@ class Core {
             this._log("%caccept drag", "color:green");
             this.inner_state = Core.STATE_NORMAL;
             this.onStart(e.target, e.dataTransfer, false);
-            this.onModifierKeyChange(this.modifierKey, Core.KEY_NO, false);
+            this.onModifierKeyChange(this.modifierKey, Core.COND_NO, false);
         }
 
     }

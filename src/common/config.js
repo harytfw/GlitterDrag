@@ -42,7 +42,7 @@ var configUtil = {};
 
         actions: [{
             name: "Default",
-            shortcut: "",
+            condition: "",
             limitation: "any",
             important: true,
             details: {
@@ -78,7 +78,7 @@ var configUtil = {};
             },
         }, {
             name: "Shift",
-            shortcut: "Shift",
+            condition: "Shift",
             limitation: "any",
             important: true,
             details: {
@@ -88,7 +88,7 @@ var configUtil = {};
             },
         }, {
             name: "Ctrl",
-            shortcut: "Ctrl",
+            condition: "Ctrl",
             limitation: "any",
             important: true,
             details: {
@@ -159,10 +159,10 @@ var configUtil = {};
             },
 
             actions: {
-                add(name, shortcut, limitation) {
+                add(name, condition, limitation) {
                     config.actions.push({
                         name,
-                        shortcut,
+                        condition,
                         limitation,
                         details: {
                             text: [],

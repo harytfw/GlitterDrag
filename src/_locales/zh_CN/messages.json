@@ -242,7 +242,7 @@
     "enableTimeout": {
         "message": "启用超时取消"
     },
-    "shortcut": {
+    "condition": {
         "message": "快捷键: "
     },
     "lockScrollbar": {

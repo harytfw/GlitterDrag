@@ -43,35 +43,35 @@ class ActionGroupModal extends HTMLElement {
             this.checkInput();
         });
 
-        this.onShortcutInputFocus = (e) => {
+        this.onConditionInputFocus = (e) => {
             consoleUtil.log(e);
             const target = queryUtil.findEventElem(e.target);
-            if (target instanceof HTMLInputElement && target.dataset.event === "shortcut") {
-                this.listenShortcut(target.closest("tr"));
+            if (target instanceof HTMLInputElement && target.dataset.event === "condition") {
+                this.listenCondition(target.closest("tr"));
             }
         };
 
-        this.onShortcutInputBlur = (e) => {
+        this.onConditionInputBlur = (e) => {
             consoleUtil.log(e);
             const target = queryUtil.findEventElem(e.target);
-            if (target instanceof HTMLInputElement && target.dataset.event === "shortcut") {
-                target.removeEventListener("keydown", this.onShortcutInputKeydown);
-                this.isListenningShortcut = false;
+            if (target instanceof HTMLInputElement && target.dataset.event === "condition") {
+                target.removeEventListener("keydown", this.onConditionInputKeydown);
+                this.isListenningCondition = false;
                 this.saveGroup(target.closest("tr"));
             }
         };
 
-        this.onShortcutInputKeydown = (e) => {
+        this.onConditionInputKeydown = (e) => {
             const input = e.target;
-            if (this.isListenningShortcut && !e.isComposing && e.key !== "Process") {
+            if (this.isListenningCondition && !e.isComposing && e.key !== "Process") {
                 input.value = e.key;
             }
             e.preventDefault();
             input.blur();
-            this.isListenningShortcut = false;
+            this.isListenningCondition = false;
         };
 
-        this.isListenningShortcut = false;
+        this.isListenningCondition = false;
 
         this.configManager = null;
         document.addEventListener("configloaded", (e) => {
@@ -86,7 +86,7 @@ class ActionGroupModal extends HTMLElement {
 
         const groups = this.configManager.get().actions;
         for (const g of groups) {
-            this.addGroupRow(g.name, g.shortcut, g.important);
+            this.addGroupRow(g.name, g.condition, g.important);
         }
     }
 
@@ -98,15 +98,15 @@ class ActionGroupModal extends HTMLElement {
         }));
     }
 
-    listenShortcut(row) {
-        if (this.isListenningShortcut) {
-            return console.error("already listened shortcut");
+    listenCondition(row) {
+        if (this.isListenningCondition) {
+            return console.error("already listened condition");
         }
-        consoleUtil.log("start listen shortcut");
-        const shortcutInput = row.querySelector("[name=shortcut]");
-        shortcutInput.addEventListener("keydown", this.onShortcutInputKeydown);
+        consoleUtil.log("start listen condition");
+        const conditionInput = row.querySelector("[name=condition]");
+        conditionInput.addEventListener("keydown", this.onConditionInputKeydown);
 
-        this.isListenningShortcut = true;
+        this.isListenningCondition = true;
     }
 
     active() {
@@ -120,21 +120,21 @@ class ActionGroupModal extends HTMLElement {
         this.dispatchEvent(new Event("close", { bubbles: true }));
     }
 
-    addGroup(name, shortcut, important) {
-        consoleUtil.log("add group", "name: ", name, "shortcut: ", shortcut);
+    addGroup(name, condition, important) {
+        consoleUtil.log("add group", "name: ", name, "condition: ", condition);
         const group = {
             name,
-            shortcut,
+            condition,
             important,
         };
 
         this.configManager.getProxy().actions.add(group);
 
-        this.addGroupRow(name, shortcut, false);
+        this.addGroupRow(name, condition, false);
         this.configManager.emitUpdate(this);
     }
 
-    addGroupRow(name, shortcut, important) {
+    addGroupRow(name, condition, important) {
         consoleUtil.log("add group row");
 
         const index = this.table.tBodies[0].children.length;
@@ -148,11 +148,11 @@ class ActionGroupModal extends HTMLElement {
         nameInput.value = name;
         nameInput.disabled = important;
 
-        const shortcurInput = row.querySelector("[name=shortcut]");
+        const shortcurInput = row.querySelector("[name=condition]");
         shortcurInput.disabled = important;
-        shortcurInput.value = shortcut;
-        shortcurInput.onfocus = this.onShortcutInputFocus;
-        shortcurInput.onblur = this.onShortcutInputBlur;
+        shortcurInput.value = condition;
+        shortcurInput.onfocus = this.onConditionInputFocus;
+        shortcurInput.onblur = this.onConditionInputBlur;
 
         row.querySelector("[data-event=delete]").disabled = important;
 
@@ -180,11 +180,11 @@ class ActionGroupModal extends HTMLElement {
         const index = Array.from(row.parentElement.children).findIndex(a => a === row);
 
         const name = row.querySelector("[name=name]").value;
-        const shortcut = row.querySelector("[name=shortcut]").value;
+        const condition = row.querySelector("[name=condition]").value;
         const group = this.configManager.get().actions[index];
 
         group.name = name;
-        group.shortcut = shortcut;
+        group.condition = condition;
         // group.important =
 
         this.configManager.emitUpdate(this);

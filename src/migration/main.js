@@ -150,7 +150,7 @@ async function migrateOldConfig(oldConfig) {
     newConfig.features.preventUiRemove = false;
     newConfig.actions.push({
         name: "Default",
-        shortcut: "",
+        condition: "",
         limitation: convertLimitation(oldConfig.directionControl.textAction),
         important: false,
         details: {
@@ -161,7 +161,7 @@ async function migrateOldConfig(oldConfig) {
     });
     newConfig.actions.push({
         name: "Shift Key",
-        shortcut: "",
+        condition: "",
         limitation: convertLimitation(oldConfig.directionControl_ShiftKey.textAction),
         important: false,
         details: {
@@ -172,7 +172,7 @@ async function migrateOldConfig(oldConfig) {
     });
     newConfig.actions.push({
         name: "Ctrl Key",
-        shortcut: "",
+        condition: "",
         limitation: convertLimitation(oldConfig.directionControl_CtrlKey.textAction),
         important: false,
         details: {

@@ -239,8 +239,8 @@
     "enableTimeout": {
         "message": "Stop after timeout"
     },
-    "shortcut": {
-        "message": "Shortcut"
+    "condition": {
+        "message": "Condition"
     },
     "lockScrollbar": {
         "message": "Lock scrollbar when dragging"
