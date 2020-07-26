@@ -21,6 +21,13 @@ const MIME_TO_EXTENSION = {
     "text/plain": ".text"
 };
 
+const COND_NO = "";
+const COND_CTRL = 'ctrl';
+const COND_SHIFT = 'shift';
+const COND_ALT = 'alt';
+const COND_EXT = "ext";
+const COND_FRAME = 'frame';
+
 class Controller {
 
     // static getFileExtension(filename) {
@@ -179,7 +186,7 @@ class Controller {
             // panelBox: new UIClass()
         };
 
-        this.conditionStore = Core.COND_NO;
+        this.conditionStore = COND_NO;
 
         browser.storage.onChanged.addListener((_, areaName) => {
             if (areaName === "local") {
@@ -233,11 +240,15 @@ class Controller {
     }
 
     queryActionGroup() {
+        consoleUtil.log("query action group:", this.conditionStore);
         for (const action of this.config.actions) {
+            consoleUtil.log("quert action group, condition:", action.condition);
             if (action.condition === this.conditionStore) {
                 return action;
             }
         }
+        consoleUtil.warn("no action group was found");
+        return null;
     }
 
     queryActionDetail() {
@@ -261,7 +272,7 @@ class Controller {
         this.selection.text = this.selection.plainUrl = this.selection.imageLink = null;
         this.direction = null;
         this.selectionType = SELECTION_TYPE.unknown;
-        this.conditionStore = Core.COND_NO
+        this.conditionStore = COND_NO
         this.ui.indicator.remove();
         this.ui.prompt.remove();
         this.ui.grids.remove();
@@ -381,15 +392,21 @@ class Controller {
     onModifierKeyChange(newKey, oldKey, isExternal) {
         if (isExternal) {
             consoleUtil.log("force set conditionStore = KEY_EXT");
-            this.conditionStore = Core.COND_EXT;
+            this.conditionStore = COND_EXT;
             return;
         }
-        consoleUtil.info("newkey:", newKey)
-        this.conditionStore = newKey;
+        consoleUtil.info("newkey:", newKey, "old key:", oldKey)
+        switch (newKey) {
+            case "ctrl": this.conditionStore = COND_CTRL; break;
+            case "shift": this.conditionStore = COND_SHIFT; break;
+            case "alt": this.conditionStore = COND_ALT; break;
+            case "":
+            default: this.conditionStore = COND_NO; break;
+        }
         const actionGroup = this.queryActionGroup();
         consoleUtil.log("conditionstore", this.conditionStore, actionGroup)
         if (env.isChildFrame || actionGroup.limitation.startsWith("grids")) {
-            if(env.isChildFrame) {
+            if (env.isChildFrame) {
                 consoleUtil.log("render grids under child frame");
             } else {
                 consoleUtil.log("render grids");
@@ -618,7 +635,7 @@ class Controller {
     }
 
     onExternal() {
-        this.conditionStore = Core.COND_EXT;
+        this.conditionStore = COND_EXT;
     }
 
 }

@@ -23,30 +23,6 @@ const CyclerCounter = class {
 
 class Core {
 
-    static get COND_NO() {
-        return "";
-    }
-
-    static get COND_CTRL() {
-        return 'ctrl';
-    }
-
-    static get COND_SHIFT() {
-        return 'shift';
-    }
-
-    static get COND_ALT() {
-        return 'alt';
-    }
-
-    static get COND_EXT() {
-        return "ext";
-    }
-
-    static get COND_FRAME() {
-        return 'frame';
-    }
-
     static get STATE_STOP() {
         return 0;
     }
@@ -82,13 +58,13 @@ class Core {
      */
     static _getModifierKeyFromEvent(e) {
         if (e.ctrlKey) {
-            return Core.COND_CTRL;
+            return "ctrl";
         } else if (e.shiftKey) {
-            return Core.COND_SHIFT;
+            return "shift";
         } /*  else if (e.altkey) {
              return Core.KEY_ALT;
         } */
-        return Core.COND_NO;
+        return "";
     }
 
     constructor(callbacks = {}) {
@@ -107,7 +83,7 @@ class Core {
 
         this.inner_state = Core.STATE_STOP;
         this.last_state = Core.STATE_STOP;
-        this.inner_modifierKey = Core.COND_NO;
+        this.inner_modifierKey = "";
         this.doPreventInDropEvent = false;
 
         this.counter = new CyclerCounter(20);
