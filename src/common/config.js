@@ -338,20 +338,22 @@ class ConfigManipulator {
 {
 
     async function V1_0$V1_1(config) {
+        logUtil.info('upgrade 1.0 => 1.1')
         config.version = '1.1'
     }
 
     async function V1_1$V1_2(config) {
+        logUtil.info('upgrade 1.1 => 1.2')
         config.version = '1.2'
     }
 
     configUtil.upgrade = function (config) {
-        cloned = configUtil.cloneDeep(config)
         if (config.version === '1.0') {
-            await V1_0$V1_1(cloned)
+            await V1_0$V1_1(config)
         }
         if (config.version === '1.1') {
-            await V1_1$V1_2(cloned)
+            await V1_1$V1_2(config)
         }
+        logUtil.info('upgrade done')
     }
 }
