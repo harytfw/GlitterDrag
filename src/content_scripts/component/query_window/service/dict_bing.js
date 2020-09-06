@@ -21,7 +21,7 @@ class BingDict {
         hostBridge.injectStyle(iframe, "tailor", css);
     }
     async query(container, keyword) {
-        consoleUtil("bing dict query", container, keyword);
+        logUtil("bing dict query", container, keyword);
 
         let iframe = container.querySelector("#dict");
         if (!(iframe instanceof HTMLIFrameElement)) {
@@ -33,7 +33,7 @@ class BingDict {
         const url = this.buildQueryURL(keyword);
         iframe.style.opacity = "0";
         iframe.addEventListener("load", () => {
-            consoleUtil("iframe load");
+            logUtil("iframe load");
             this.tailor(iframe);
             hostBridge.injectScript(iframe, "window.scrollTo(0,0)");
             iframe.style.opacity = "1";

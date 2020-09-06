@@ -56,7 +56,7 @@ class SearchEngineManager extends HTMLElement {
 
                 this.configManager.emitUpdate(this);
             } else {
-                consoleUtil.log("cancal addition");
+                logUtil.log("cancal addition");
             }
         }, { once: true });
         this.editor.active();
@@ -73,7 +73,7 @@ class SearchEngineManager extends HTMLElement {
                 this.saveSearchEngine(row);
                 this.configManager.emitUpdate(this);
             } else {
-                consoleUtil.log(row, "cancal change");
+                logUtil.log(row, "cancal change");
             }
         }, { once: true });
         this.editor.active();
@@ -105,7 +105,7 @@ class SearchEngineManager extends HTMLElement {
         searchEngine.icon = row.querySelector("[name=icon]").value;
         searchEngine.method = row.querySelector("[name=method]").value;
 
-        consoleUtil.log("save search engine");
+        logUtil.log("save search engine");
         this.configManager.emitUpdate(this);
     }
 
@@ -131,7 +131,7 @@ class SearchEngineManager extends HTMLElement {
             icon,
             method,
         });
-        consoleUtil.log("add search engine");
+        logUtil.log("add search engine");
         this.addSearchEngineRow(name, url, icon, method);
         this.configManager.emitUpdate(this);
     }
@@ -139,7 +139,7 @@ class SearchEngineManager extends HTMLElement {
     deleteSearchEngine(row) {
         const index = Array.from(row.parentElement.children).findIndex(a => a === row);
         this.configManager.get().searchEngines.splice(index, 1);
-        consoleUtil.log("delete search engine");
+        logUtil.log("delete search engine");
         row.remove();
         this.configManager.emitUpdate(this);
     }

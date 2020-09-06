@@ -154,7 +154,7 @@ class BulmaDropdown extends HTMLElement {
 
     onDataListMutation(mutationsList, observer) {
         // simple and brutal
-        consoleUtil.log(...arguments);
+        logUtil.log(...arguments);
         this.updateDropdownList();
     }
 
@@ -167,7 +167,7 @@ class BulmaDropdown extends HTMLElement {
             console.warn(dataList, "is not datalist");
             return;
         }
-        consoleUtil.log("add mutation observer");
+        logUtil.log("add mutation observer");
         this.mutationObserver.observe(dataList, {
             childList: true,
             subtree: true,

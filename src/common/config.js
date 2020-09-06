@@ -334,3 +334,24 @@ class ConfigManipulator {
     configUtil.getBareConfig = getBareConfig;
 
 }
+
+{
+
+    async function V1_0$V1_1(config) {
+        config.version = '1.1'
+    }
+
+    async function V1_1$V1_2(config) {
+        config.version = '1.2'
+    }
+
+    configUtil.upgrade = function (config) {
+        cloned = configUtil.cloneDeep(config)
+        if (config.version === '1.0') {
+            await V1_0$V1_1(cloned)
+        }
+        if (config.version === '1.1') {
+            await V1_1$V1_2(cloned)
+        }
+    }
+}

@@ -87,7 +87,7 @@ class ConfigManager extends HTMLElement {
     }
     
     async _save() {
-        consoleUtil.log(this, "save");
+        logUtil.log(this, "save");
         await configUtil.save(this.stack[this.stack.length - 1]);
         this.stack.shift();
         this.stack.push(this._cloneTop());
@@ -98,7 +98,7 @@ class ConfigManager extends HTMLElement {
     }
 
     _discard() {
-        consoleUtil.log(this, "discard");
+        logUtil.log(this, "discard");
         this.stack.pop();
         this.stack.push(this._cloneTop());
         this._check();

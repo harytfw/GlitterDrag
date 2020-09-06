@@ -52,7 +52,7 @@ class SearchEngineEditorModal extends HTMLElement {
     }
 
     _dispatch(resultType) {
-        consoleUtil.log(this, `dispatch result event with type:${resultType}`);
+        logUtil.log(this, `dispatch result event with type:${resultType}`);
         this.dispatchEvent(new CustomEvent("result", {
             detail: resultType,
             bubbles: true,
@@ -127,7 +127,7 @@ class SearchEngineEditorModal extends HTMLElement {
     }
 
     active(name, url, icon, builtin, method) {
-        consoleUtil.log(this, "active");
+        logUtil.log(this, "active");
 
         this.querySelector(".modal").classList.add("is-active");
 
@@ -147,13 +147,13 @@ class SearchEngineEditorModal extends HTMLElement {
     }
 
     close() {
-        consoleUtil.log(this, "close");
+        logUtil.log(this, "close");
         this._dispatch("close");
         this.querySelector(".modal").classList.remove("is-active");
     }
 
     confirm() {
-        consoleUtil.log(this, "confirm");
+        logUtil.log(this, "confirm");
         this._dispatch("confirm");
         this.querySelector(".modal").classList.remove("is-active");
     }
@@ -170,13 +170,13 @@ class SearchEngineEditorModal extends HTMLElement {
         }
         const reader = new FileReader();
         reader.onloadend = () => {
-            consoleUtil.log("read file end");
+            logUtil.log("read file end");
             this.searchEngineIcon = reader.result;
         };
         reader.onerror = (err) => {
             console.error(err);
         };
-        consoleUtil.log("start read file");
+        logUtil.log("start read file");
         reader.readAsDataURL(file);
     }
 }

@@ -16,7 +16,7 @@ var queryUtil = {};
         const vender = env.browser;
         for (const target of context.querySelectorAll("[data-target-browser]")) {
             const allowed = target.dataset.targetBrowser.split(",");
-            consoleUtil.log(target, "allow browser: " + allowed);
+            logUtil.log(target, "allow browser: " + allowed);
             if (!allowed.includes(vender)) {
                 console.info(target, " is removed due to the browser filter rule");
                 target.remove();

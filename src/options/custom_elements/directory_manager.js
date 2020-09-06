@@ -74,7 +74,7 @@ class DirectoryManager extends HTMLElement {
         const directory = this.configManager.get().directories[index];
         directory.name = row.querySelector("[name='directory.name']").value;
         directory.path = row.querySelector("[name='directory.path']").value;
-        consoleUtil.log(`update directories[${index}]`, directory);
+        logUtil.log(`update directories[${index}]`, directory);
     }
 
     addDirectory(name, path) {
@@ -82,7 +82,7 @@ class DirectoryManager extends HTMLElement {
             name,
             path,
         });
-        consoleUtil.log("add directory");
+        logUtil.log("add directory");
         this.addDirectoryRow(name, path);
         this.assginRowNo();
     }
@@ -93,7 +93,7 @@ class DirectoryManager extends HTMLElement {
         this.configManager.get().directories.splice(index, 1);
         row.remove();
 
-        consoleUtil.log(`delete directories[${index}]`);
+        logUtil.log(`delete directories[${index}]`);
 
         this.assginRowNo();
     }

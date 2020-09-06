@@ -54,8 +54,8 @@ class RangeIndicator {
     }
 
     remove() {
-        if (consoleUtil.autoHide) {
-            consoleUtil.log("close range indicator");
+        if (logUtil.autoHide) {
+            logUtil.log("close range indicator");
             this.container.remove();
         }
     }

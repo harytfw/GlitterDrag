@@ -38,7 +38,7 @@ function searchImageViaUploadImage(file = new File()) {
                     return res.json();
                 }).then((json) => {
                     stopAnimation();
-                    // consoleUtil.log(json);
+                    // logUtil.log(json);
                     if (json.url) {
                         location.href = `http://image.baidu.com/n/pc_search?queryImageUrl=${json.url}`;
                     }
@@ -113,7 +113,7 @@ async function main() {
     //TODO
     const { data, cmd } = executor.temporaryDataStorage.get(key)
     executor.temporaryDataStorage.delete(key)
-    consoleUtil.log(data, cmd)
+    logUtil.log(data, cmd)
 }
 
 document.querySelector("button").addEventListener("click", () => {

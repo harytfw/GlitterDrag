@@ -40,7 +40,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
         const all = await (browser.storage.local.get());
 
     } else if (details.reason === "install") {
-        consoleUtil.log("new install")
+        logUtil.log("new install")
         await configUtil.save(configUtil.cloneDeep(configUtil.getTemplateConfig()));
     }
 });

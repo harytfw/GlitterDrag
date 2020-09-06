@@ -6,11 +6,11 @@ const UUID = browser.runtime.getURL("");
 const isTop = window.top === window.self;
 const validateMessage = (key, args) => {
     if (UUID !== key) {
-        consoleUtil.error("key not match");
+        logUtil.error("key not match");
         return false;
     }
     if (!Array.isArray(args)) {
-        consoleUtil.error("args must be an array");
+        logUtil.error("args must be an array");
         return false;
     }
     return true;
@@ -26,7 +26,7 @@ const validateMessage = (key, args) => {
             if (!validateMessage(key, args)) {
                 return;
             }
-            consoleUtil.log("handle cmd", cmd);
+            logUtil.log("handle cmd", cmd);
             switch (cmd) {
                 case "injectScript":
                     injectScript(...args);
@@ -38,7 +38,7 @@ const validateMessage = (key, args) => {
                     removeStyle(...args);
                     break;
                 default:
-                    consoleUtil.warn(`can not find command "${cmd}" in frame bridge`);
+                    logUtil.warn(`can not find command "${cmd}" in frame bridge`);
                     break;
             }
         }, false);
@@ -48,42 +48,42 @@ const validateMessage = (key, args) => {
 
     const injectScript = (js) => {
         if (isTop) {
-            consoleUtil.warn(WARN);
+            logUtil.warn(WARN);
         }
         const script = document.createElement("script");
         script.type = "application/javascript";
         script.textContent = js;
         document.body.appendChild(script);
-        consoleUtil.log("frame bridge", "inject script", script);
+        logUtil.log("frame bridge", "inject script", script);
     };
 
     const injectStyle = (id, css) => {
-        consoleUtil.log("injectStyle");
+        logUtil.log("injectStyle");
         if (isTop) {
-            consoleUtil.warn(WARN);
+            logUtil.warn(WARN);
         }
         const style = document.createElement("style");
         style.textContent = css;
         style.id = id;
         document.head.appendChild(style);
-        consoleUtil.log("frame bridge", "inject css", style);
+        logUtil.log("frame bridge", "inject css", style);
     };
 
     const removeStyle = (id) => {
         if (isTop) {
-            consoleUtil.warn(WARN);
+            logUtil.warn(WARN);
         }
 
         const style = document.querySelector(`#${id}`);
         if (style) {
-            consoleUtil.log("frame bridge", "remove style", style);
+            logUtil.log("frame bridge", "remove style", style);
             style.remove();
         }
     };
 
     const onCallbackStart = (...args) => {
         if (isTop) {
-            consoleUtil.warn(WARN);
+            logUtil.warn(WARN);
         }
         window.top.postMessage({
             key: UUID,
@@ -94,7 +94,7 @@ const validateMessage = (key, args) => {
 
     const onCallbackMove = (...args) => {
         if (isTop) {
-            consoleUtil.warn(WARN);
+            logUtil.warn(WARN);
         }
         window.top.postMessage({
             key: UUID,
@@ -105,7 +105,7 @@ const validateMessage = (key, args) => {
 
     const onCallbackEnd = (...args) => {
         if (isTop) {
-            consoleUtil.warn(WARN);
+            logUtil.warn(WARN);
         }
         window.top.postMessage({
             key: UUID,
@@ -131,7 +131,7 @@ const validateMessage = (key, args) => {
             if (!validateMessage(key, args)) {
                 return;
             }
-            consoleUtil.log("handle cmd", cmd);
+            logUtil.log("handle cmd", cmd);
             switch (cmd) {
                 case "onCallbackStart":
                     onCallbackStart(...args);
@@ -143,7 +143,7 @@ const validateMessage = (key, args) => {
                     onCallbackEnd(...args);
                     break;
                 default:
-                    consoleUtil.warn(`can not find command "${cmd}" in host bridge`);
+                    logUtil.warn(`can not find command "${cmd}" in host bridge`);
                     break;
             }
         }, false);
@@ -158,7 +158,7 @@ const validateMessage = (key, args) => {
     };
 
     const injectStyle = (frame, id, css) => {
-        consoleUtil.log("host injectStyle");
+        logUtil.log("host injectStyle");
         frame.contentWindow.postMessage({
             key: UUID,
             cmd: "injectStyle",
@@ -177,15 +177,15 @@ const validateMessage = (key, args) => {
     const ERR = "This method is not overrided";
 
     let onCallbackStart = () => {
-        consoleUtil.trace(ERR);
+        logUtil.trace(ERR);
     };
 
     let onCallbackMove = () => {
-        consoleUtil.trace(ERR);
+        logUtil.trace(ERR);
     };
 
     let onCallbackEnd = () => {
-        consoleUtil.trace(ERR);
+        logUtil.trace(ERR);
     };
 
     hostBridge.injectScript = injectScript;

@@ -64,7 +64,7 @@ class Grids {
         }
 
         this.render(actionGroup, actionType);
-        consoleUtil.log("place grids, x:", y, "y:", y, actionGroup, this.rectCache);
+        logUtil.log("place grids, x:", y, "y:", y, actionGroup, this.rectCache);
 
         this.gridsBox.style.visibility = "hidden";
         document.body.appendChild(this.container);
@@ -78,7 +78,7 @@ class Grids {
     }
 
     render(actionGroup, actionType) {
-        consoleUtil.log("render grids", actionGroup, actionType);
+        logUtil.log("render grids", actionGroup, actionType);
         if (actionGroup.limitation === "grids_3x3") {
             this.root.querySelector("#grids-3x3").classList.remove("is-hidden");
             this.root.querySelector("#grids-4x4").classList.add("is-hidden");
@@ -121,8 +121,8 @@ class Grids {
     }
 
     remove() {
-        if (consoleUtil.autoHide) {
-            consoleUtil.log("close grids");
+        if (logUtil.autoHide) {
+            logUtil.log("close grids");
             // this.gridsBox.style.visibility = "hidden";
             this.container.remove();
             this.gridsBox.style.left = "0px";

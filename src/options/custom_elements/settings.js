@@ -76,14 +76,14 @@ class SettingsContainer extends HTMLElement {
 
             if (settingName.startsWith("features")) {
                 const featuresName = settingName.split(".")[1];
-                consoleUtil.log(`update features: ${featuresName}=${val}`);
+                logUtil.log(`update features: ${featuresName}=${val}`);
                 this.configManager.getProxy().updateFeatures(settingName.split(".")[1], val);
             } else if (settingName === "range0" || settingName === "range1") {
                 const index = settingName === "range0" ? 0 : 1;
                 this.configManager.get().range[index] = val;
-                consoleUtil.log(`update range: `, this.configManager.get().range);
+                logUtil.log(`update range: `, this.configManager.get().range);
             } else {
-                consoleUtil.log(`setting change: ${settingName}=${val}`);
+                logUtil.log(`setting change: ${settingName}=${val}`);
                 this.configManager.get()[settingName] = val;
             }
         }

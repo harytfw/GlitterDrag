@@ -104,7 +104,7 @@ class Core {
     }
 
     _log(...arg) {
-        consoleUtil.log(...arg);
+        logUtil.log(...arg);
     }
 
     /**

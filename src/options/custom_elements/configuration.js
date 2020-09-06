@@ -11,18 +11,18 @@ class Configuration extends HTMLElement {
         this.appendChild(content.cloneNode(true));
 
         this.onFileInputChange = (e) => {
-            consoleUtil.log("on file input change");
+            logUtil.log("on file input change");
             const input = e.target;
             if (input.files.length >= 1) {
-                consoleUtil.log("start load file");
+                logUtil.log("start load file");
                 const reader = new FileReader();
                 reader.onloadend = () => {
-                    consoleUtil.log("load file end");
+                    logUtil.log("load file end");
                     this.restoreConfigFromJson(reader.result);
                 };
                 reader.readAsText(input.files[0]);
             } else {
-                consoleUtil.log("no files");
+                logUtil.log("no files");
             }
         };
 
@@ -37,7 +37,7 @@ class Configuration extends HTMLElement {
                 switch (target.dataset.event) {
                     case "reset":
                         await this.configManager.resetConfig();
-                        consoleUtil.log("reload document");
+                        logUtil.log("reload document");
                         location.reload();
                         break;
                     case "backup":
@@ -59,7 +59,7 @@ class Configuration extends HTMLElement {
     }
 
     restoreConfigFromJson(json) {
-        consoleUtil.log("restore config from json");
+        logUtil.log("restore config from json");
         try {
             const obj = JSON.parse(json);
             this.configManager.restoreConfig(obj);
@@ -69,7 +69,7 @@ class Configuration extends HTMLElement {
     }
 
     downloadConfigAsJson(obj) {
-        consoleUtil.log("download config as json");
+        logUtil.log("download config as json");
         const json = JSON.stringify(obj);
         const blob = new Blob([json], {
             type: "application/json",

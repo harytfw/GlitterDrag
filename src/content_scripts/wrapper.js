@@ -23,7 +23,7 @@ class ActionWrapper {
     exposeMessageObject(msg) {
         msg = JSON.parse(JSON.stringify(msg))
         msg.command = ""
-        consoleUtil.log("expose message object", msg)
+        logUtil.log("expose message object", msg)
         window["msg"] = msg;
     }
 
@@ -58,13 +58,13 @@ class ActionWrapper {
     }
 
     plainPostMsg(msg) {
-        consoleUtil.log("plain post msg: ", msg);
+        logUtil.log("plain post msg: ", msg);
         browser.runtime.sendMessage(msg);
     }
 
     post(actionDetail) {
         if (!actionDetail) {
-            consoleUtil.info("action detail is empty, replace it with no operation");
+            logUtil.info("action detail is empty, replace it with no operation");
             actionDetail = {
                 command: "",
             };
@@ -79,7 +79,7 @@ class ActionWrapper {
             pageTitle: this.pageTitle,
             ...actionDetail,
         };
-        consoleUtil.log("post", JSON.parse(JSON.stringify(msg)));
+        logUtil.log("post", JSON.parse(JSON.stringify(msg)));
         this.exposeMessageObject(msg);
         browser.runtime.sendMessage(msg);
 

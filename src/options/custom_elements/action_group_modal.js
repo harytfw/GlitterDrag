@@ -44,7 +44,7 @@ class ActionGroupModal extends HTMLElement {
         });
 
         this.onConditionInputFocus = (e) => {
-            consoleUtil.log(e);
+            logUtil.log(e);
             const target = queryUtil.findEventElem(e.target);
             if (target instanceof HTMLInputElement && target.dataset.event === "condition") {
                 this.listenCondition(target.closest("tr"));
@@ -52,7 +52,7 @@ class ActionGroupModal extends HTMLElement {
         };
 
         this.onConditionInputBlur = (e) => {
-            consoleUtil.log(e);
+            logUtil.log(e);
             const target = queryUtil.findEventElem(e.target);
             if (target instanceof HTMLInputElement && target.dataset.event === "condition") {
                 target.removeEventListener("keydown", this.onConditionInputKeydown);
@@ -91,7 +91,7 @@ class ActionGroupModal extends HTMLElement {
     }
 
     _dispatch(resultType) {
-        consoleUtil.log(this, `dispatch result event with type:${resultType}`);
+        logUtil.log(this, `dispatch result event with type:${resultType}`);
         this.dispatchEvent(new CustomEvent("result", {
             detail: resultType,
             bubbles: true,
@@ -102,7 +102,7 @@ class ActionGroupModal extends HTMLElement {
         if (this.isListenningCondition) {
             return console.error("already listened condition");
         }
-        consoleUtil.log("start listen condition");
+        logUtil.log("start listen condition");
         const conditionInput = row.querySelector("[name=condition]");
         conditionInput.addEventListener("keydown", this.onConditionInputKeydown);
 
@@ -110,18 +110,18 @@ class ActionGroupModal extends HTMLElement {
     }
 
     active() {
-        consoleUtil.log("active group modal");
+        logUtil.log("active group modal");
         this.querySelector(".modal").classList.add("is-active");
     }
 
     close() {
-        consoleUtil.log("close group modal");
+        logUtil.log("close group modal");
         this.querySelector(".modal").classList.remove("is-active");
         this.dispatchEvent(new Event("close", { bubbles: true }));
     }
 
     addGroup(name, condition, important) {
-        consoleUtil.log("add group", "name: ", name, "condition: ", condition);
+        logUtil.log("add group", "name: ", name, "condition: ", condition);
         const group = {
             name,
             condition,
@@ -135,7 +135,7 @@ class ActionGroupModal extends HTMLElement {
     }
 
     addGroupRow(name, condition, important) {
-        consoleUtil.log("add group row");
+        logUtil.log("add group row");
 
         const index = this.table.tBodies[0].children.length;
 
@@ -161,7 +161,7 @@ class ActionGroupModal extends HTMLElement {
     }
 
     deleteGroup(row) {
-        consoleUtil.log("delete row");
+        logUtil.log("delete row");
         const index = Array.from(row.parentElement.children).findIndex(a => a === row);
         this.configManager.get().actions.splice(index, 1);
         row.remove();
@@ -169,14 +169,14 @@ class ActionGroupModal extends HTMLElement {
     }
 
     saveAllGroup() {
-        consoleUtil.log("save all group");
+        logUtil.log("save all group");
         for (const row of this.table.tBodies[0].querySelectorAll("tr")) {
             this.saveGroup(row);
         }
     }
 
     saveGroup(row) {
-        consoleUtil.log("save group", row);
+        logUtil.log("save group", row);
         const index = Array.from(row.parentElement.children).findIndex(a => a === row);
 
         const name = row.querySelector("[name=name]").value;

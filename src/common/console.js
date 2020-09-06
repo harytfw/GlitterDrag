@@ -1,5 +1,5 @@
 "use strict";
-var consoleUtil = {};
+var logUtil = {};
 {
     function getFlag(key, def) {
         if (key in globalThis) {
@@ -15,45 +15,45 @@ var consoleUtil = {};
     const F_ERROR = true;
     const F_TRACE = true;
 
-    consoleUtil.autoHide = true;
+    logUtil.autoHide = true;
 
-    consoleUtil.log = (...args) => {
+    logUtil.log = (...args) => {
         if (getFlag("F_LOG", F_LOG)) {
             console.log(...args);
         }
     };
 
-    consoleUtil.debug = (...args) => {
+    logUtil.debug = (...args) => {
         if (getFlag("F_DEBUG", F_DEBUG)) {
             console.debug(...args);
         }
     };
 
-    consoleUtil.info = (...args) => {
+    logUtil.info = (...args) => {
         if (getFlag("F_INFO", F_INFO)) {
             console.info(...args);
         }
     };
 
-    consoleUtil.error = (...args) => {
+    logUtil.error = (...args) => {
         if (getFlag("F_ERROR", F_ERROR)) {
             console.error(...args);
         }
     };
 
-    consoleUtil.warn = (...args) => {
+    logUtil.warn = (...args) => {
         if (getFlag("F_WARN", F_WARN)) {
             console.warn(...args);
         }
     };
 
-    consoleUtil.trace = (...args) => {
+    logUtil.trace = (...args) => {
         if (getFlag("F_TRACE", F_TRACE)) {
             console.trace(...args);
         }
     };
 
-    consoleUtil.logErrorEvent = () => {
+    logUtil.logErrorEvent = () => {
 
         window.onerror = (e) => {
             console.trace(e);

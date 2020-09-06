@@ -1,6 +1,6 @@
 "use strict";
 
-consoleUtil.logErrorEvent();
+logUtil.logErrorEvent();
 
 const SELECTION_TYPE = {
     unknown: "unknown",
@@ -201,14 +201,14 @@ class Controller {
     async refreshPageConfig() {
         browser.storage.local.get().then(a => {
             this.config = a;
-            consoleUtil.log("refresh page config", a);
+            logUtil.log("refresh page config", a);
             if (this.checkBlockListRules()) {
-                consoleUtil.log("this site is blobkced, stop the core")
+                logUtil.log("this site is blobkced, stop the core")
                 this.core.stop()
                 return
             }
             if (this.config.features.extendMiddleButton === true) {
-                consoleUtil.log("enable features: ", "extend middle button");
+                logUtil.log("enable features: ", "extend middle button");
                 features.extendMiddleButton.start();
             }
         });
@@ -240,24 +240,24 @@ class Controller {
     }
 
     queryActionGroup() {
-        consoleUtil.log("query action group:", this.conditionStore);
+        logUtil.log("query action group:", this.conditionStore);
         for (const action of this.config.actions) {
-            consoleUtil.log("quert action group, condition:", action.condition);
+            logUtil.log("quert action group, condition:", action.condition);
             if (action.condition === this.conditionStore) {
                 return action;
             }
         }
-        consoleUtil.warn("no action group was found");
+        logUtil.warn("no action group was found");
         return null;
     }
 
     queryActionDetail() {
-        consoleUtil.log("quertActionDetail", "selectionType:", this.selectionType, ", condition:", this.conditionStore);
+        logUtil.log("quertActionDetail", "selectionType:", this.selectionType, ", condition:", this.conditionStore);
         const actionType = Controller.predictActionType(this.selectionType);
         for (const action of this.config.actions) {
             if (action.condition === this.conditionStore) {
                 //TODO
-                consoleUtil.log("action details", action.details, ", expceted direction:", this.direction);
+                logUtil.log("action details", action.details, ", expceted direction:", this.direction);
                 return action.details[actionType].find(detail => detail.direction === this.direction);
             }
         }
@@ -268,7 +268,7 @@ class Controller {
     }
 
     clear() {
-        consoleUtil.log("clear");
+        logUtil.log("clear");
         this.selection.text = this.selection.plainUrl = this.selection.imageLink = null;
         this.direction = null;
         this.selectionType = SELECTION_TYPE.unknown;
@@ -391,11 +391,11 @@ class Controller {
 
     onModifierKeyChange(newKey, oldKey, isExternal) {
         if (isExternal) {
-            consoleUtil.log("force set conditionStore = KEY_EXT");
+            logUtil.log("force set conditionStore = KEY_EXT");
             this.conditionStore = COND_EXT;
             return;
         }
-        consoleUtil.info("newkey:", newKey, "old key:", oldKey)
+        logUtil.info("newkey:", newKey, "old key:", oldKey)
         switch (newKey) {
             case "ctrl": this.conditionStore = COND_CTRL; break;
             case "shift": this.conditionStore = COND_SHIFT; break;
@@ -404,12 +404,12 @@ class Controller {
             default: this.conditionStore = COND_NO; break;
         }
         const actionGroup = this.queryActionGroup();
-        consoleUtil.log("conditionstore", this.conditionStore, actionGroup)
+        logUtil.log("conditionstore", this.conditionStore, actionGroup)
         if (env.isChildFrame || actionGroup.limitation.startsWith("grids")) {
             if (env.isChildFrame) {
-                consoleUtil.log("render grids under child frame");
+                logUtil.log("render grids under child frame");
             } else {
-                consoleUtil.log("render grids");
+                logUtil.log("render grids");
             }
             this.ui.grids.render(
                 actionGroup,
@@ -434,7 +434,7 @@ class Controller {
      */
     onStart(target, dataTransfer) {
         let type = SELECTION_TYPE.unknown;
-        consoleUtil.log("onStart", target);
+        logUtil.log("onStart", target);
         if (Controller.isText(target) || Controller.isTextInput(target)) {
             this.selection.text = dataTransfer.getData("text/plain");
             if (!this.config.features.disableFixURL && urlUtil.seemAsURL(this.selection.text)) {
@@ -473,7 +473,7 @@ class Controller {
             );
         } else {
             if (this.config.limitRange && this.config.enableIndicator) {
-                consoleUtil.log("range", this.config.range);
+                logUtil.log("range", this.config.range);
                 // TODO: 不使用 pagePos
                 // this.ui.indicator.active(this.core.pagePos.x, this.core.pagePos.y, this.config.range[0])
             }
@@ -485,9 +485,9 @@ class Controller {
      */
     onMove(target, dataTransfer) {
         this.direction = this.queryDirection();
-        consoleUtil.log("direction: ", this.direction);
+        logUtil.log("direction: ", this.direction);
         if (Controller.isTextInput(target)) {
-            consoleUtil.log("target is textinput, remove ui")
+            logUtil.log("target is textinput, remove ui")
             this.ui.prompt.remove();
             this.ui.grids.remove();
             return;
@@ -517,12 +517,12 @@ class Controller {
     onEnd(target, dataTransfer) {
         if (dataTransfer === null) {
             // specially handle dragend event
-            consoleUtil.log("dataTransfer is null, nothing can do.");
+            logUtil.log("dataTransfer is null, nothing can do.");
             this.clear();
             return;
         }
         if (Controller.isTextInput(target)) {
-            consoleUtil.log("text input, do nothing")
+            logUtil.log("text input, do nothing")
             this.clear()
             return;
         }
@@ -577,7 +577,7 @@ class Controller {
             }
         }
         this.selectionType = type;
-        consoleUtil.log("onStartExternal,type:", this.selectionType);
+        logUtil.log("onStartExternal,type:", this.selectionType);
     }
 
     onMoveExternal(target, dataTransfer) {
@@ -586,18 +586,18 @@ class Controller {
     async onEndExternal(target, dataTransfer) {
         if (dataTransfer === null) {
             // specially handle dragend event
-            consoleUtil.log("dataTransfer is null, nothing can do.");
+            logUtil.log("dataTransfer is null, nothing can do.");
             this.clear();
             return;
         }
         if (Controller.isTextInput(target)) {
-            consoleUtil.log("text input, do nothing")
+            logUtil.log("text input, do nothing")
             this.clear()
             return;
         }
-        consoleUtil.log("onendexternal", dataTransfer, this.selectionType);
+        logUtil.log("onendexternal", dataTransfer, this.selectionType);
         if (Controller.isTextInput(target)) {
-            consoleUtil.log("text input, do nothing")
+            logUtil.log("text input, do nothing")
             this.clear()
             return;
         }
@@ -643,9 +643,9 @@ class Controller {
 var c = new Controller();
 
 browser.runtime.onConnect.addListener(port => {
-    consoleUtil.log(`new connection in ${location.href}`);
+    logUtil.log(`new connection in ${location.href}`);
     port.onDisconnect.addListener(() => {
-        consoleUtil.log("disconnect");
+        logUtil.log("disconnect");
     });
     port.onMessage.addListener(async (token) => {
         port.postMessage(await c.storage.consume(token));

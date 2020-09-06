@@ -70,7 +70,7 @@ class ActinoConfiguration extends HTMLElement {
                         this.configManager.emitUpdate(target)
                         break;
                     default:
-                        consoleUtil.log("unhandled change", target);
+                        logUtil.log("unhandled change", target);
                         break;
                 }
             }
@@ -163,7 +163,7 @@ class ActinoConfiguration extends HTMLElement {
     }
 
     listenGroupModalClose() {
-        consoleUtil.log("listen group modal close");
+        logUtil.log("listen group modal close");
         this.groupModal.addEventListener("close", () => {
             this.updateGroups();
         }, { once: true });
@@ -181,7 +181,7 @@ class ActinoConfiguration extends HTMLElement {
 
         this.searchEngineEditor.addEventListener("result", (e) => {
             if (e.detail === "confirm") {
-                consoleUtil.log("get searchEngineEditor result");
+                logUtil.log("get searchEngineEditor result");
                 this.querySelector(`[name='searchEngine.name']`).value = this.searchEngineEditor.searchEngineName;
                 this.querySelector(`[name='searchEngine.url']`).value = this.searchEngineEditor.searchEngineURL;
                 this.updateSearchEngineHelpIcon();
@@ -206,7 +206,7 @@ class ActinoConfiguration extends HTMLElement {
     }
 
     updateGroups() {
-        consoleUtil.log("update group dropdown");
+        logUtil.log("update group dropdown");
         const dropdown = this.querySelector("#group-dropdown");
         const actions = this.configManager.get().actions;
         const pairs = actions.map(a => [a.name, a.name]);
@@ -223,7 +223,7 @@ class ActinoConfiguration extends HTMLElement {
     loadDetail() {
         const detail = this.configManager.getProxy().details.find(this.currentGroupName, this.actionType, this.direction);
 
-        consoleUtil.log("try load detail", detail);
+        logUtil.log("try load detail", detail);
         if (!detail) {
             console.error("detail is null");
             return;
@@ -285,14 +285,14 @@ class ActinoConfiguration extends HTMLElement {
     }
 
     saveActionProperty() {
-        consoleUtil.log("save action property");
+        logUtil.log("save action property");
         this.configManager.getProxy().actions.update(this.currentGroupName, {
             limitation: this.permitedDirections,
         });
     }
 
     saveDetail() {
-        consoleUtil.log("save detail");
+        logUtil.log("save detail");
         this.configManager.getProxy().details.update(this.currentGroupName, this.actionType, this.direction, this.collectDetail());
     }
 

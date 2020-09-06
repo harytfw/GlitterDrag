@@ -39,7 +39,7 @@ class QueryWindow {
 
     constructor() {
 
-        consoleUtil.log("init query window", this);
+        logUtil.log("init query window", this);
 
         this.container = document.createElement("div");
 
@@ -49,13 +49,13 @@ class QueryWindow {
         this.root.addEventListener("click", (e) => {
             const target = queryUtil.findEventElem(e.target);
             if (target instanceof HTMLElement) {
-                consoleUtil.log("data-event:", target.dataset.event);
+                logUtil.log("data-event:", target.dataset.event);
                 switch (target.dataset.event) {
                     case "close":
                         this.remove();
                         break;
                     default:
-                        consoleUtil.log("unhandled", target);
+                        logUtil.log("unhandled", target);
                         break;
                 }
             }
@@ -77,9 +77,9 @@ class QueryWindow {
         };
 
         browser.runtime.onMessage.addListener((msg, sender) => {
-            consoleUtil.log("get message", msg);
+            logUtil.log("get message", msg);
             if (msg.msgCmd === "activeQueryWindow") {
-                consoleUtil.log("get activeQueryWindow message, text: ", msg.text);
+                logUtil.log("get activeQueryWindow message, text: ", msg.text);
                 this.active();
                 this.query(msg.text);
             }
@@ -87,13 +87,13 @@ class QueryWindow {
     }
 
     active() {
-        consoleUtil.log("active queryWindow");
+        logUtil.log("active queryWindow");
         document.body.appendChild(this.container);
     }
 
     remove() {
-        if (consoleUtil.autoHide) {
-            consoleUtil.log("close queryWindow");
+        if (logUtil.autoHide) {
+            logUtil.log("close queryWindow");
             this.container.remove();
         }
     }

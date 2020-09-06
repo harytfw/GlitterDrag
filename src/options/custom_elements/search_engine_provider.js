@@ -34,7 +34,7 @@ class SearchEngineProvider extends HTMLElement {
             searchOnSite: false,
         }
 
-        consoleUtil.log(this, "dispatch provideritemselect event", { name: detail.name, url: detail.url });
+        logUtil.log(this, "dispatch provideritemselect event", { name: detail.name, url: detail.url });
         this.dispatchEvent(new CustomEvent("provideritemselect", {
             detail,
             bubbles: true,

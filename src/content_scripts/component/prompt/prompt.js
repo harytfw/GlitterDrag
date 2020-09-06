@@ -43,7 +43,7 @@ class Prompt {
     }
 
     render(selection, actionDetail) {
-        consoleUtil.log("render", actionDetail);
+        logUtil.log("render", actionDetail);
         const clean = DOMPurify.sanitize(this.translate(selection, actionDetail));
         return this.promptDiv.innerHTML = clean;
     }
@@ -54,7 +54,7 @@ class Prompt {
 
     active() {
         if (this.container.parentElement === null) {
-            consoleUtil.log(this.container, "active");
+            logUtil.log(this.container, "active");
             document.body.appendChild(this.container);
         }
     }

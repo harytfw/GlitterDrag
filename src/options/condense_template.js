@@ -18,7 +18,7 @@
 
     console.groupCollapsed("strip whitespace");
     for (const t of document.querySelectorAll("template")) {
-        consoleUtil.log(t);
+        logUtil.log(t);
         const content = t.content;
         for (const node of Array.from(content.childNodes)) {
             stripWhitespateTextNode(node);

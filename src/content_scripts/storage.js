@@ -22,7 +22,7 @@ class BlobStorage {
                 }
                 cnt += 1;
                 this.map.delete(key);
-                consoleUtil.log("recycle url:", url);
+                logUtil.log("recycle url:", url);
             }
         }
         window.setTimeout(this.doRecycleTask.bind(this), 60 * 1000);
@@ -70,7 +70,7 @@ class BlobStorage {
         if (true === revoke) {
             URL.revokeObjectURL(url);
         }
-        consoleUtil.log(`consume: ${key}, url: ${url}`);
+        logUtil.log(`consume: ${key}, url: ${url}`);
         return arrayBuffer;
     }
 

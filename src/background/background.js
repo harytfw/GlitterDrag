@@ -1,6 +1,6 @@
 "use strict";
 
-consoleUtil.logErrorEvent();
+logUtil.logErrorEvent();
 
 const REDIRECT_URL = browser.runtime.getURL("redirect/redirect.html");
 
@@ -123,7 +123,7 @@ class ExecutorClass {
     }
 
     async execute(data) {
-        consoleUtil.log("execute command: ", this.data.command);
+        logUtil.log("execute command: ", this.data.command);
         switch (this.data.command) {
             case "open":
                 return this.openHandler();
@@ -144,7 +144,7 @@ class ExecutorClass {
                 this.runScript();
                 return;
             case "":
-                consoleUtil.warn("no operation");
+                logUtil.warn("no operation");
                 browser.notifications.create("nooperation", {
                     message: `No Operation`,
                     title: "Glitter Drag Notification",
@@ -195,7 +195,7 @@ class ExecutorClass {
     }
 
     async copyHandler() {
-        consoleUtil.log("copyHandler");
+        logUtil.log("copyHandler");
         let p;
         switch (this.data.actionType) {
             case "link": {
@@ -304,13 +304,13 @@ class ExecutorClass {
     }
 
     async queryHandler() {
-        consoleUtil.log("queryHandler");
+        logUtil.log("queryHandler");
         if (this.data.actionType !== "text") {
             console.error(`unsuuport "query" command under ${this.data.actionType}`);
             return;
         }
         const tabId = this.sender.tab.id;
-        consoleUtil.log(`send activeQueryWindow to tab ${tabId}`);
+        logUtil.log(`send activeQueryWindow to tab ${tabId}`);
         return browser.tabs.sendMessage(tabId, {
             msgCmd: "activeQueryWindow",
             text: this.data.selection.text,
@@ -318,7 +318,7 @@ class ExecutorClass {
     }
 
     async searchText(keyword) {
-        consoleUtil.log("search text: ", keyword);
+        logUtil.log("search text: ", keyword);
         if (env.isFirefox && (this.data.searchEngine.url === "" || this.data.searchEngine.builtin === true)) {
             const tabHoldingSearch = await this.openTab("about:blank");
 
@@ -329,7 +329,7 @@ class ExecutorClass {
             if (this.data.searchEngine.name !== "") {
                 option.engine = this.data.searchEngine.name;
             }
-            consoleUtil.log("call browser search api",
+            logUtil.log("call browser search api",
                 ", engine name:", this.data.searchEngine.name,
                 ", tab holds search page:", tabHoldingSearch,
                 ", option: ", option);
@@ -345,7 +345,7 @@ class ExecutorClass {
             return;
         }
         // TODO: check chromium
-        consoleUtil.log(`search engine name: "${this.data.searchEngine.name}" , url: "${this.data.searchEngine.url}"`);
+        logUtil.log(`search engine name: "${this.data.searchEngine.name}" , url: "${this.data.searchEngine.url}"`);
         return this.openURL(processURLPlaceholders(this.data.searchEngine.url, keyword, {
             site: this.data.site,
         }));
@@ -368,7 +368,7 @@ class ExecutorClass {
     }
 
     async findText(text = "") {
-        consoleUtil.log("find text:", text);
+        logUtil.log("find text:", text);
         if (text.length === 0) { return; }
         const result = await browser.find.find(text);
         if (result.count > 0) {
@@ -378,7 +378,7 @@ class ExecutorClass {
     }
 
     async removeHighlighting() {
-        consoleUtil.log("remove highlight");
+        logUtil.log("remove highlight");
         if (this.findFlag) {
             this.findFlag = false;
             return browser.find.removeHighlighting();
@@ -387,7 +387,7 @@ class ExecutorClass {
 
     async download(url) {
         const path = `${this.data.download.directory.trim()}${fileUtil.getFilename(url).trim()}`;
-        consoleUtil.log("download: ", url, ", path: ", path, ", site: ", this.data.site);
+        logUtil.log("download: ", url, ", path: ", path, ", site: ", this.data.site);
         const headers = [];
         if (env.isFirefox) {
             headers.push({ name: "Referer", value: this.data.site });
@@ -417,12 +417,12 @@ class ExecutorClass {
     }
 
     async copyText(data) {
-        consoleUtil.log("copy text:", data);
+        logUtil.log("copy text:", data);
         return navigator.clipboard.writeText(data);
     }
 
     async copyImage(u8Array) {
-        consoleUtil.log("copy image, length:", u8Array);
+        logUtil.log("copy image, length:", u8Array);
         browser.clipboard.setImageData(u8Array,
             this.data.extraImageInfo.extension === ".png" ? "png" : "jpeg");
     }
@@ -447,13 +447,13 @@ class ExecutorClass {
         if (["newWindow", "privateWindow"].includes(this.data.tabPosition)) {
             let win;
             if ("newWindow" === this.data.tabPosition) {
-                consoleUtil.log("create window");
+                logUtil.log("create window");
                 win = await browser.windows.create();
             } else {
-                consoleUtil.log("attempt to reuse icongito window");
+                logUtil.log("attempt to reuse icongito window");
                 win = (await browser.windows.getAll({ windowTypes: ["normal"] })).find(w => w.incognito);
                 if (!win) {
-                    consoleUtil.log("create new icongito window");
+                    logUtil.log("create new icongito window");
                     win = await browser.windows.create({ incognito: true });
                 }
             }
@@ -494,7 +494,7 @@ class ExecutorClass {
     }
 
     getTabIndex(tabsLength = 0, currentTabIndex = 0) {
-        consoleUtil.log("calc the index of new created tab",
+        logUtil.log("calc the index of new created tab",
             ", tabsLength:", tabsLength,
             ", currentTabIndex:", currentTabIndex,
             ", backgroundChildCount:", this.backgroundChildTabCount);
@@ -513,14 +513,14 @@ class ExecutorClass {
 
         if (!this.data.activeTab && this.data.tabPosition === "right") {
             this.backgroundChildTabCount += 1;
-            consoleUtil.log("increase backgroundChildTabCount: ", this.backgroundChildTabCount);
+            logUtil.log("increase backgroundChildTabCount: ", this.backgroundChildTabCount);
         }
-        consoleUtil.log("the index of tab maybe: ", index);
+        logUtil.log("the index of tab maybe: ", index);
         return index;
     }
 
     async fetchImagePromise(extraImageInfo) {
-        consoleUtil.log("create fetch image promise");
+        logUtil.log("create fetch image promise");
         return new Promise((resolve, reject) => {
             const port = browser.tabs.connect(this.sender.tab.id);
             if (port.error) {
@@ -529,7 +529,7 @@ class ExecutorClass {
                 return;
             }
             port.onMessage.addListener(u8Array => {
-                consoleUtil.log("got u8Array, call disconnect then resolve promise");
+                logUtil.log("got u8Array, call disconnect then resolve promise");
                 port.disconnect();
                 resolve(u8Array);
             });

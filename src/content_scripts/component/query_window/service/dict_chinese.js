@@ -21,7 +21,7 @@ class ChineseDict {
      */
 
     async query(container, keyword) {
-        consoleUtil.log("chinese dict query", container, keyword);
+        logUtil.log("chinese dict query", container, keyword);
 
         let iframe = container.querySelector("#dict");
         if (!(iframe instanceof HTMLIFrameElement)) {
