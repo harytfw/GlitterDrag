@@ -168,15 +168,15 @@ class ConfigManipulator {
 
             remove(name) {
                 self.config.actions = self.config.actions.filter(obj => obj.name !== name);
-            },
+            },  
         };
         this.details = {
             add(name, actionType, direction, option) {
                 const action = self.actions.find(name);
-                const cloned = JSON.parse(JSON.stringify(ConfigManipulator.defaultActionDetail));
+                const cloned = JSON.parse(JSON.stringify(ConfigManipulator.defaultActionDetail()));
                 cloned.direction = direction;
                 Object.assign(cloned, option)
-                action[actionType].push(cloned);
+                action.details[actionType].push(cloned);
                 return cloned;
             },
             remove(_name, _actionType, _direction) {
@@ -189,7 +189,7 @@ class ConfigManipulator {
                 }
                 let ret = action.details[actionType].find(obj => obj.direction === direction);
                 if (!ret) {
-                    ret = deepClone(defaultActionDetail);
+                    ret = ConfigManipulator.defaultActionDetail();
                     ret.direction = direction;
                     action.details[actionType].push(ret);
                 }
@@ -333,9 +333,6 @@ class ConfigManipulator {
     configUtil.getTemplateConfig = getTemplateConfig;
     configUtil.getBareConfig = getBareConfig;
 
-}
-
-{
 
     async function V1_0$V1_1(config) {
         logUtil.info('upgrade 1.0 => 1.1')
@@ -347,7 +344,7 @@ class ConfigManipulator {
         config.version = '1.2'
     }
 
-    configUtil.upgrade = function (config) {
+    configUtil.upgrade = async function (config) {
         if (config.version === '1.0') {
             await V1_0$V1_1(config)
         }

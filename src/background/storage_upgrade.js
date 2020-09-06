@@ -1,8 +1,8 @@
 
 browser.runtime.onInstalled.addListener(async (details) => {
 
-    console.info("current version: ", browser.runtime.getManifest().version)
-    console.info("previous version", details.previousVersion)
+    logUtil.info("current version: ", browser.runtime.getManifest().version)
+    logUtil.info("previous version", details.previousVersion)
 
     if (details.reason === "update") {
         if (details.previousVersion === '1.57.0') {
@@ -13,7 +13,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
         }
         const all = await (browser.storage.local.get());
         try {
-            configUtil.upgrade(all)
+            await configUtil.upgrade(all)
             await browser.storage.local.set(all)
         }
         catch (ex) {
