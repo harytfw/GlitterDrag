@@ -57,7 +57,6 @@ const extendMiddleButton = new (class {
     }
 
     mousedown(e) {
-        console.info(e);
         if (e.button !== this.MIDDLE_BUTTON) {
             return;
         }
@@ -72,7 +71,6 @@ const extendMiddleButton = new (class {
     }
 
     mouseup(e) {
-        console.info(e);
         this.state = this.STATE_IDLE;
         if (e.button !== this.MIDDLE_BUTTON) {
             return;
