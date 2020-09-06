@@ -121,13 +121,12 @@ class Grids {
     }
 
     remove() {
-        if (logUtil.autoHide) {
-            logUtil.log("close grids");
+        if (globalThis.autoHide) {
+            logUtil.debug("close grids");
             // this.gridsBox.style.visibility = "hidden";
             this.container.remove();
             this.gridsBox.style.left = "0px";
             this.gridsBox.style.top = "0px";
-
         }
     }
 

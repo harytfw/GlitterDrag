@@ -92,7 +92,7 @@ class QueryWindow {
     }
 
     remove() {
-        if (logUtil.autoHide) {
+        if (globalThis.autoHide) {
             logUtil.log("close queryWindow");
             this.container.remove();
         }

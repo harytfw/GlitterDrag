@@ -43,7 +43,7 @@ class Prompt {
     }
 
     render(selection, actionDetail) {
-        logUtil.log("render", actionDetail);
+        logUtil.debug("render", actionDetail);
         const clean = DOMPurify.sanitize(this.translate(selection, actionDetail));
         return this.promptDiv.innerHTML = clean;
     }
