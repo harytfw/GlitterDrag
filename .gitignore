@@ -67,5 +67,6 @@ typings/
 # dotenv env variables file
 .env
 
-
 # End of https://www.gitignore.io/api/node
+.parcel-cache
+dist
