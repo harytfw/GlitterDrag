@@ -1,308 +1,300 @@
 "use strict";
 var configUtil = {};
 
-{
+class ActionDetailBuilder {
+    constructor() {
+        this.detail = {
+            direction: "",
+            command: "",
+            commandTarget: "",
 
-    const bareConfig = {
-        enableSync: false,
-        enableIndicator: false,
-        enablePrompt: false,
-        enableTimeout: false,
-        timeout: 2000,
-        actions: [],
-        features: {
-            disableFixURL: false,
-            preventUiRemove: false,
-            extendMiddleButton: false,
-            lockScrollbar: false,
-            showNotificationAfterCopy: false,
-        },
-        currentStyle: "",
-        styles: [],
+            activeTab: false,
+            tabPosition: "",
+            searchEngine: {
+                name: "",
+                url: "",
+                icon: "",
+                method: "get",
+                searchOnSite: false,
+                builtin: false,
+            },
 
-        translation: {
-            provider: "google",
-            sourceLanguage: "auto",
-            targetLanguage: "auto",
-        },
-        limitRange: false,
-        range: [0, 9999],
-        blockList: [],
-        version: "0.0.0",
+            download: {
+                showSaveAsDialog: false,
+                directory: "",
+            },
+            script: "",
+            prompt: "",
+        }
+    }
+    clone() {
+        d = JSON.parse(JSON.stringify(this.detail))
+        const builder = new ActionDetailBuilder()
+        builder.detail = d;
+        return builder
+    }
+    build() {
+        return JSON.parse(JSON.stringify(this.detail));
+    }
+    setDirection(dir) {
+        this.detail.direction = dir;
+        return this;
+    }
+    setCommand(command) {
+        this.detail.command = command;
+        return this;
+    }
+    setCommandTarget(target) {
+        this.detail.commandTarget = target;
+        return this;
     }
 
-    const templateConfig = {
-        enableSync: false,
+    toggleActiveTab(b) {
+        this.detail.activeTab = b;
+        return this;
+    }
 
-        enableIndicator: false,
-        enablePrompt: false,
+    setTabPosition(pos) {
+        this.detail.tabPosition = pos;
+        return this;
+    }
 
-        enableTimeout: false,
-        timeout: 2000,
+    updateSearchEngine(name, url, icon, searchOnSite, builetin) {
+        Object.assign(this.detail.searchEngine, {
+            name, url, icon, searchOnSite, builtin
+        })
+        return this;
+    }
 
-        actions: [{
-            name: "Default",
-            condition: "",
-            limitation: "any",
-            important: true,
-            details: {
-                text: [{
-                    direction: "up",
-                    command: "open",
-                    commandTarget: "link",
+    updateDownload(directory, showSaveAsDialog) {
+        Object.assign(this.download, { directory, showSaveAsDialog });
+        return this;
+    }
 
-                    activeTab: true,
-                    tabPosition: "left",
+    setScript(script) {
+        this.detail.script = script
+        return this;
+    }
 
-                    searchEngine: {
-                        name: "",
-                        url: "",
-                        icon: "",
-                        method: "get",
-                        searchOnSite: false,
-                        builtin: false,
-                    },
+    setPrompt(prompt) {
+        this.detail.prompt = prompt;
+        return this;
+    }
+}
 
-                    download: {
-                        showSaveAsDialog: false,
-                        directory: "",
-                    },
+class ConfigManipulator {
 
-                    script: "",
-
-                    prompt: "",
-
-                }],
-                link: [],
-                image: [],
-            },
-        }, {
-            name: "Shift",
-            condition: "Shift",
-            limitation: "any",
-            important: true,
-            details: {
-                text: [],
-                link: [],
-                image: [],
-            },
-        }, {
-            name: "Ctrl",
-            condition: "Ctrl",
-            limitation: "any",
-            important: true,
-            details: {
-                text: [],
-                link: [],
-                image: [],
-            },
-        },],
-
-        features: {
-            disableFixURL: false,
-            preventUiRemove: false,
-            extendMiddleButton: false,
-            lockScrollbar: false,
-            showNotificationAfterCopy: false,
-        },
-
-        currentStyle: "",
-        styles: [{
-            name: "",
-            style: ""
-        }],
-        translation: {
-            provider: "google",
-            sourceLanguage: "auto",
-            targetLanguage: "auto",
-        },
-        limitRange: false,
-        range: [0, 9999],
-        blockList: [],
-        version: "0.0.0",
-    };
-
-    const defaultActionDetail = {
-        direction: "",
-        command: "",
-        commandTarget: "",
-        icon: "",
-        activeTab: false,
-        tabPosition: "",
-
-        searchEngine: {
-            name: "",
-            url: "",
+    static defaultActionDetail() {
+        return {
+            direction: "",
+            command: "",
+            commandTarget: "",
             icon: "",
-            method: "",
-            searchOnSite: false,
-            builtin: false,
-        },
+            activeTab: false,
+            tabPosition: "",
 
-        download: {
-            showSaveAsDialog: false,
-            directory: "",
-        },
-        script: "",
-        prompt: "",
-    };
+            searchEngine: {
+                name: "",
+                url: "",
+                icon: "",
+                method: "",
+                searchOnSite: false,
+                builtin: false,
+            },
+
+            download: {
+                showSaveAsDialog: false,
+                directory: "",
+            },
+            script: "",
+            prompt: "",
+        }
+    }
+
+    static empty() {
+        return new ConfigManipulator({
+            enableSync: false,
+            enableIndicator: false,
+            enablePrompt: false,
+            enableTimeout: false,
+            timeout: 2000,
+            actions: [],
+            features: {
+                disableFixURL: false,
+                preventUiRemove: false,
+                extendMiddleButton: false,
+                lockScrollbar: false,
+                showNotificationAfterCopy: false,
+            },
+            currentStyle: "",
+            styles: [],
+            limitRange: false,
+            range: [0, 9999],
+            blockList: [],
+            version: "2.0.0",
+        })
+    }
+
+    constructor(config) {
+        this.config = config
+
+        const self = this;
+
+        this.actions = {
+            add(name, condition, limitation) {
+                self.config.actions.push({
+                    name,
+                    condition,
+                    limitation,
+                    details: {
+                        text: [],
+                        link: [],
+                        image: [],
+                    },
+                });
+            },
+            update(name, option) {
+                let obj = self.actions.find(name);
+                if (obj) {
+                    Object.assign(obj, option);
+                } else {
+                    console.trace(`name: "${name}" no found`);
+                }
+            },
+
+            find(name) {
+                return self.config.actions.find(obj => obj.name === name);
+            },
+
+            remove(name) {
+                self.config.actions = self.config.actions.filter(obj => obj.name !== name);
+            },
+        };
+        this.details = {
+            add(name, actionType, direction, option) {
+                const action = self.actions.find(name);
+                const cloned = JSON.parse(JSON.stringify(ConfigManipulator.defaultActionDetail));
+                cloned.direction = direction;
+                Object.assign(cloned, option)
+                action[actionType].push(cloned);
+                return cloned;
+            },
+            remove(_name, _actionType, _direction) {
+                throw new Error("unimplementation");
+            },
+            find(name, actionType, direction) {
+                const action = self.actions.find(name);
+                if (!action) {
+                    return null;
+                }
+                let ret = action.details[actionType].find(obj => obj.direction === direction);
+                if (!ret) {
+                    ret = deepClone(defaultActionDetail);
+                    ret.direction = direction;
+                    action.details[actionType].push(ret);
+                }
+                return ret;
+            },
+
+            update(name, actionType, direction, option) {
+                const details = self.details.find(name, actionType, direction);
+                Object.assign(details, option);
+            },
+
+        };
+
+        this.styles = {
+            add(name) {
+                self.config.styles.push({
+                    name,
+                    style: "",
+                });
+            },
+
+            remove(name) {
+                self.config.styles === self.config.styles.filter(s => s.name !== name);
+            },
+
+            find(name) {
+                self.config.styles.find(s => s.name === name);
+            },
+
+            update(name, option) {
+                const s = this.find(name);
+                Object.assign(s, deepClone(option));
+            },
+        };
+        this.blockList = {
+            add(rule) {
+                self.config.blockList.push(rule);
+            },
+            remove(rule) {
+                self.config.blockList = self.config.filter(s => s != rule);
+            },
+            setWhole(list) {
+                self.config.blockList = list;
+            }
+        };
+
+    }
+    cloneConfig() {
+        return JSON.parse(JSON.stringify(this.config));
+    }
+
+    updateFeatures(name, val = false) {
+        this.config.features[name] = val;
+    }
+
+    setTimeoutVal(timeout) {
+        this.config.timeout = timeout;
+    }
+    setRange(min, max) {
+        this.config.range = [min, max];
+    }
+    toggleSync(b) {
+        this.config.enableSync = b;
+    }
+    toggleIndicator(b) {
+        this.config.enableIndicator = b;
+    }
+    togglePrompt(b) {
+        this.config.enablePrompt = b;
+    }
+    toggleTimeout(b) {
+        this.config.enableTimeout = b;
+    }
+
+    updateConfigVersion() {
+        this.config.version = "2.0.0";
+    }
+}
+
+{
+
+
+    const m = ConfigManipulator.empty();
+    m.setTimeoutVal(2000)
+    m.actions.add("Default", "", "any");
+    m.details.add("Default", "text", "up",
+        new ActionDetailBuilder()
+            .setCommand("open")
+            .toggleActiveTab(true)
+            .setTabPosition("left")
+            .build());
+    m.actions.add("Shift", "shift", "any");
+    m.actions.add("Ctrl", "shift", "any");
+    m.setRange(0, 9999);
+    m.updateConfigVersion();
+
+    const templateConfig = m.cloneConfig()
 
     const deepClone = (obj) => {
         return JSON.parse(JSON.stringify(obj));
     };
 
-    const proxyConfig = (config) => {
-        const manipulator = {
-
-            init() {
-
-            },
-
-            actions: {
-                add(name, condition, limitation) {
-                    config.actions.push({
-                        name,
-                        condition,
-                        limitation,
-                        details: {
-                            text: [],
-                            link: [],
-                            image: [],
-                        },
-                    });
-                },
-
-                update(name, option) {
-                    let obj = manipulator.actions.find(name);
-                    if (obj) {
-                        Object.assign(obj, option);
-                    } else {
-                        console.trace(`name: "${name}" no found`);
-                    }
-                },
-
-                find(name) {
-                    return config.actions.find(obj => obj.name === name);
-                },
-
-                remove(name) {
-                    config.actions = config.actions.filter(obj => obj.name !== name);
-                },
-            },
-
-            details: {
-
-                add(name, actionType, direction) {
-                    const action = manipulator.actions.find(name);
-                    const cloned = deepClone(defaultActionDetail);
-                    cloned.direction = direction;
-                    action[actionType].push(cloned);
-                    return cloned;
-                },
-
-                remove(_name, _actionType, _direction) {
-                    throw new Error("unimplementation");
-                },
-
-                find(name, actionType, direction) {
-                    const action = manipulator.actions.find(name);
-                    if (!action) {
-                        return null;
-                    }
-                    let ret = action.details[actionType].find(obj => obj.direction === direction);
-                    if (!ret) {
-                        ret = deepClone(defaultActionDetail);
-                        ret.direction = direction;
-                        action.details[actionType].push(ret);
-                    }
-                    return ret;
-                },
-
-                update(name, actionType, direction, option) {
-                    const details = manipulator.details.find(name, actionType, direction);
-                    Object.assign(details, option);
-                },
-
-            },
-            directories: {
-
-                add(name) {
-                    config.directories.push({
-                        name,
-                        type: "",
-                        value: "",
-                    });
-                },
-
-                remove(name) {
-                    config.directories = config.directories.filter(d => d.name !== name);
-                },
-
-                find(name) {
-                    return config.directories.find(d => d.name === name);
-                },
-
-                update(name, option) {
-                    const dir = this.find(name);
-                    Object.assign(dir, deepClone(option));
-                },
-            },
-
-            styles: {
-                add(name) {
-                    config.styles.push({
-                        name,
-                        style: "",
-                    });
-                },
-
-                remove(name) {
-                    config.styles === config.styles.filter(s => s.name !== name);
-                },
-
-                find(name) {
-                    config.styles.find(s => s.name === name);
-                },
-
-                update(name, option) {
-                    const s = this.find(name);
-                    Object.assign(s, deepClone(option));
-                },
-            },
-            scripts: {
-                add(name) {
-                    config.scritps.push({
-                        name,
-                        script: "",
-                    });
-                },
-
-                remove(name) {
-                    config.scripts = config.scripts.filter(s => s.name !== name);
-                },
-
-                find(name) {
-                    return config.scripts.find(s => s.name === name);
-                },
-
-                update(name, option) {
-                    const s = this.find(name);
-                    Object.assign(s, deepClone(option));
-                },
-            },
-
-            //TODO
-            updateTranslatationParameter(_name, _value) {
-
-            },
-
-            updateFeatures(name, val = false) {
-                config.features[name] = val;
-            },
-        };
-        return manipulator;
+    const proxyConfig = (c) => {
+        return new ConfigManipulator(c)
     };
-
     const save = async (obj) => {
         console.trace("save to local storage", obj);
         await browser.storage.local.set(obj);
@@ -310,7 +302,6 @@ var configUtil = {};
 
     const load = async () => {
         console.trace("load from local storage");
-
         return browser.storage.local.get();
     };
 
@@ -327,7 +318,7 @@ var configUtil = {};
         return deepClone(templateConfig);
     };
     const getBareConfig = () => {
-        return deepClone(bareConfig);
+        return deepClone(ConfigManipulator.empty().cloneConfig());
     }
 
     configUtil.proxyConfig = proxyConfig;
