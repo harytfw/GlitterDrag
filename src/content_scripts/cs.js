@@ -120,9 +120,8 @@ class Controller {
     }
 
     static isTextInput(node) {
-        return node instanceof HTMLTextAreaElement
-            || (node instanceof HTMLInputElement
-                && ["text", "number", "url"].includes(node.type.toLowerCase()));
+        return node instanceof HTMLTextAreaElement ||
+            (node instanceof HTMLInputElement && ["text", "number", "url"].includes(node.type.toLowerCase()));
     }
 
     static isAnchor(node) {
@@ -148,8 +147,10 @@ class Controller {
         if (urlStr.startsWith("data:")) {
             const mime = urlStr.substring(urlStr.indexOf(":") + 1, urlStr.indexOf(";"))
             switch (mime) {
-                case "image/png": return ".png";
-                case "image/jpeg": return ".jpeg";
+                case "image/png":
+                    return ".png";
+                case "image/jpeg":
+                    return ".jpeg";
             }
             return ""
         }
@@ -221,7 +222,8 @@ class Controller {
                 if (location.href.match(re)) {
                     return true;
                 }
-            } catch (ex) {
+            }
+            catch (ex) {
                 console.error(ex)
             }
         }
@@ -306,7 +308,8 @@ class Controller {
             (target.getAttribute("contenteditable") !== null ||
                 target.getAttribute("draggble") !== null)) {
             return false;
-        } else if (Controller.isText(target)) {
+        }
+        else if (Controller.isText(target)) {
             return true;
         }
 
@@ -322,9 +325,11 @@ class Controller {
             }
 
             return true;
-        } else if (Controller.isImage(target)) {
+        }
+        else if (Controller.isImage(target)) {
             return true;
-        } else if (Controller.isTextInput(target)) {
+        }
+        else if (Controller.isTextInput(target)) {
             return true;
         }
 
@@ -397,18 +402,27 @@ class Controller {
         }
         logUtil.info("newkey:", newKey, "old key:", oldKey)
         switch (newKey) {
-            case "ctrl": this.conditionStore = COND_CTRL; break;
-            case "shift": this.conditionStore = COND_SHIFT; break;
-            case "alt": this.conditionStore = COND_ALT; break;
+            case "ctrl":
+                this.conditionStore = COND_CTRL;
+                break;
+            case "shift":
+                this.conditionStore = COND_SHIFT;
+                break;
+            case "alt":
+                this.conditionStore = COND_ALT;
+                break;
             case "":
-            default: this.conditionStore = COND_NO; break;
+            default:
+                this.conditionStore = COND_NO;
+                break;
         }
         const actionGroup = this.queryActionGroup();
         logUtil.log("conditionstore", this.conditionStore, actionGroup)
         if (env.isChildFrame || actionGroup.limitation.startsWith("grids")) {
             if (env.isChildFrame) {
                 logUtil.log("render grids under child frame");
-            } else {
+            }
+            else {
                 logUtil.log("render grids");
             }
             this.ui.grids.render(
@@ -421,7 +435,8 @@ class Controller {
             if (detail.prompt !== "") {
                 this.ui.prompt.active();
                 this.ui.prompt.render(this.selection, detail);
-            } else {
+            }
+            else {
                 this.ui.prompt.remove();
             }
         }
@@ -440,10 +455,12 @@ class Controller {
             if (!this.config.features.disableFixURL && urlUtil.seemAsURL(this.selection.text)) {
                 this.selection.plainUrl = urlUtil.fixSchemer(this.selection.text);
                 type = SELECTION_TYPE.urlText;
-            } else {
+            }
+            else {
                 type = SELECTION_TYPE.plainText;
             }
-        } else if (Controller.isAnchorContainsImg(target)) {
+        }
+        else if (Controller.isAnchorContainsImg(target)) {
             this.selection.plainUrl = dataTransfer.getData("text/uri-list");
             this.selection.text = target.textContent;
             const imgElement = target.querySelector("img");
@@ -451,14 +468,17 @@ class Controller {
                 this.selection.imageLink = imgElement.src;
             }
             type = SELECTION_TYPE.anchorContainsImg;
-        } else if (Controller.isAnchor(target)) {
+        }
+        else if (Controller.isAnchor(target)) {
             this.selection.plainUrl = dataTransfer.getData("text/uri-list");
             this.selection.text = target.textContent;
             type = SELECTION_TYPE.plainAnchor;
-        } else if (Controller.isImage(target)) {
+        }
+        else if (Controller.isImage(target)) {
             this.selection.imageLink = target.src;
             type = SELECTION_TYPE.plainImage;
-        } else {
+        }
+        else {
             type = SELECTION_TYPE.unknown;
         }
 
@@ -471,7 +491,8 @@ class Controller {
                 actionGroup,
                 Controller.predictActionType(this.selectionType),
             );
-        } else {
+        }
+        else {
             if (this.config.limitRange && this.config.enableIndicator) {
                 logUtil.log("range", this.config.range);
                 // TODO: 不使用 pagePos
@@ -507,7 +528,8 @@ class Controller {
                 if (detail.prompt !== "") {
                     this.ui.prompt.active();
                     this.ui.prompt.render(this.selection, detail);
-                } else {
+                }
+                else {
                     this.ui.prompt.remove();
                 }
             }
@@ -580,8 +602,7 @@ class Controller {
         logUtil.log("onStartExternal,type:", this.selectionType);
     }
 
-    onMoveExternal(target, dataTransfer) {
-    }
+    onMoveExternal(target, dataTransfer) {}
 
     async onEndExternal(target, dataTransfer) {
         if (dataTransfer === null) {
@@ -647,7 +668,7 @@ browser.runtime.onConnect.addListener(port => {
     port.onDisconnect.addListener(() => {
         logUtil.log("disconnect");
     });
-    port.onMessage.addListener(async (token) => {
+    port.onMessage.addListener(async(token) => {
         port.postMessage(await c.storage.consume(token));
     });
 });
