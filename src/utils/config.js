@@ -1,7 +1,4 @@
-"use strict";
-var configUtil = {};
-
-class ActionDetailBuilder {
+export class ActionDetailBuilder {
     constructor() {
         this.detail = {
             direction: "",
@@ -61,13 +58,20 @@ class ActionDetailBuilder {
 
     updateSearchEngine(name, url, icon, searchOnSite, builetin) {
         Object.assign(this.detail.searchEngine, {
-            name, url, icon, searchOnSite, builtin
+            name,
+            url,
+            icon,
+            searchOnSite,
+            builtin
         })
         return this;
     }
 
     updateDownload(directory, showSaveAsDialog) {
-        Object.assign(this.download, { directory, showSaveAsDialog });
+        Object.assign(this.download, {
+            directory,
+            showSaveAsDialog
+        });
         return this;
     }
 
@@ -157,7 +161,8 @@ class ConfigManipulator {
                 let obj = self.actions.find(name);
                 if (obj) {
                     Object.assign(obj, option);
-                } else {
+                }
+                else {
                     console.trace(`name: "${name}" no found`);
                 }
             },
@@ -168,7 +173,7 @@ class ConfigManipulator {
 
             remove(name) {
                 self.config.actions = self.config.actions.filter(obj => obj.name !== name);
-            },  
+            },
         };
         this.details = {
             add(name, actionType, direction, option) {
@@ -269,88 +274,69 @@ class ConfigManipulator {
     }
 }
 
-{
+
+const m = ConfigManipulator.empty();
+m.setTimeoutVal(2000)
+m.actions.add("Default", "", "any");
+m.details.add("Default", "text", "up",
+    new ActionDetailBuilder()
+    .setCommand("open")
+    .toggleActiveTab(true)
+    .setTabPosition("left")
+    .build());
+m.actions.add("Shift", "shift", "any");
+m.actions.add("Ctrl", "shift", "any");
+m.setRange(0, 9999);
+m.updateConfigVersion();
+
+export const templateConfig = m.cloneConfig()
+
+export const deepClone = (obj) => {
+    return JSON.parse(JSON.stringify(obj));
+};
+
+export const proxyConfig = (c) => {
+    return new ConfigManipulator(c)
+};
+export const save = async(obj) => {
+    console.trace("save to local storage", obj);
+    await browser.storage.local.set(obj);
+};
+
+export const load = async() => {
+    console.trace("load from local storage");
+    return browser.storage.local.get();
+};
+
+export const clear = async() => {
+    console.trace("clear local storage");
+    await browser.storage.local.clear();
+};
+
+export const getTemplateConfig = () => {
+    return deepClone(templateConfig);
+};
+export const getBareConfig = () => {
+    return deepClone(ConfigManipulator.empty().cloneConfig());
+}
 
 
-    const m = ConfigManipulator.empty();
-    m.setTimeoutVal(2000)
-    m.actions.add("Default", "", "any");
-    m.details.add("Default", "text", "up",
-        new ActionDetailBuilder()
-            .setCommand("open")
-            .toggleActiveTab(true)
-            .setTabPosition("left")
-            .build());
-    m.actions.add("Shift", "shift", "any");
-    m.actions.add("Ctrl", "shift", "any");
-    m.setRange(0, 9999);
-    m.updateConfigVersion();
 
-    const templateConfig = m.cloneConfig()
+async function V1_0$V1_1(config) {
+    logUtil.info('upgrade 1.0 => 1.1')
+    config.version = '1.1'
+}
 
-    const deepClone = (obj) => {
-        return JSON.parse(JSON.stringify(obj));
-    };
-
-    const proxyConfig = (c) => {
-        return new ConfigManipulator(c)
-    };
-    const save = async (obj) => {
-        console.trace("save to local storage", obj);
-        await browser.storage.local.set(obj);
-    };
-
-    const load = async () => {
-        console.trace("load from local storage");
-        return browser.storage.local.get();
-    };
-
-    const clear = async () => {
-        console.trace("clear local storage");
-        await browser.storage.local.clear();
-    };
-
-    const compress = () => { };
-    const decompress = () => { };
-    const loadFromSync = () => { };
-    const saveToSync = () => { };
-    const getTemplateConfig = () => {
-        return deepClone(templateConfig);
-    };
-    const getBareConfig = () => {
-        return deepClone(ConfigManipulator.empty().cloneConfig());
+async function V1_1$V1_2(config) {
+    logUtil.info('upgrade 1.1 => 1.2')
+    config.version = '1.2'
+}
+export const upgrade = async function(config) {
+    if (config.version === '1.0') {
+        await V1_0$V1_1(config)
     }
-
-    configUtil.proxyConfig = proxyConfig;
-    configUtil.save = save;
-    configUtil.load = load;
-    configUtil.clear = clear;
-    configUtil.compress = compress;
-    configUtil.decompress = decompress;
-    configUtil.loadFromSync = loadFromSync;
-    configUtil.saveToSync = saveToSync;
-    configUtil.cloneDeep = deepClone;
-    configUtil.getTemplateConfig = getTemplateConfig;
-    configUtil.getBareConfig = getBareConfig;
-
-
-    async function V1_0$V1_1(config) {
-        logUtil.info('upgrade 1.0 => 1.1')
-        config.version = '1.1'
+    if (config.version === '1.1') {
+        await V1_1$V1_2(config)
     }
-
-    async function V1_1$V1_2(config) {
-        logUtil.info('upgrade 1.1 => 1.2')
-        config.version = '1.2'
-    }
-
-    configUtil.upgrade = async function (config) {
-        if (config.version === '1.0') {
-            await V1_0$V1_1(config)
-        }
-        if (config.version === '1.1') {
-            await V1_1$V1_2(config)
-        }
-        logUtil.info('upgrade done')
-    }
+    logUtil.info('upgrade done')
 }

@@ -22,14 +22,7 @@
     ],
     "background": {
         "scripts": [
-            "libs/webextension-polyfill/browser-polyfill.min.js",
-            "common/log.js",
-            "common/url_util.js",
-            "common/file_util.js",
-            "common/config.js",
-            "common/env.js",
-            "background/storage_upgrade.js",
-            "background/background.js"
+            "bg.js"
         ]
     },
     "content_scripts": [{
