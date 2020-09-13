@@ -56,11 +56,10 @@
             "content_scripts/bridge.js",
             "content_scripts/wrapper.js",
             "content_scripts/core.js",
-            "content_scripts/dimension_define.js",
+            "content_scripts/dimension.js",
             "content_scripts/storage.js",
             "content_scripts/features.js",
-            "content_scripts/cs.js",
-            "content_scripts/buttons.js"
+            "content_scripts/cs.js"
         ]
     }],
     "options_ui": {
