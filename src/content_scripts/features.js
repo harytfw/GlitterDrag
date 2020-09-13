@@ -1,5 +1,4 @@
-
-const extendMiddleButton = new (class {
+const extendMiddleButton = new(class {
     constructor() {
         this.MIN_MOVEMENT = 10;
         this.LEFT_BUTTON = 0;
@@ -44,14 +43,23 @@ const extendMiddleButton = new (class {
 
     getRange(x, y) {
         if (typeof document.caretPositionFromPoint === "function") {
-            const { offsetNode: node, offset: offset } = document.caretPositionFromPoint(x, y);
+            const {
+                offsetNode: node,
+                offset: offset
+            } = document.caretPositionFromPoint(x, y);
             return {
-                node, offset,
+                node,
+                offset,
             };
-        } else {
-            const { startContainer: node, startOffset: offset } = document.caretRangeFromPoint(x, y);
+        }
+        else {
+            const {
+                startContainer: node,
+                startOffset: offset
+            } = document.caretRangeFromPoint(x, y);
             return {
-                node, offset,
+                node,
+                offset,
             };
         }
     }
@@ -87,7 +95,6 @@ const extendMiddleButton = new (class {
     }
 
     auxclick(e) {
-        console.info(e);
         this.state = this.STATE_IDLE;
         if (e.button === this.MIDDLE_BUTTON && this.se.toString() !== "") {
             e.preventDefault();
