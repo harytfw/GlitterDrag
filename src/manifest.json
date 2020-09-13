@@ -34,42 +34,35 @@
             "background/background.js"
         ]
     },
-    "content_scripts": [
-        {
-            "run_at": "document_start",
-            "all_frames": true,
-            "matches": [
-                "http://*/*",
-                "https://*/*"
-            ],
-            "js": [
-                "libs/DOMPurify/purify.min.js",
-                "libs/webextension-polyfill/browser-polyfill.min.js",
-                "common/config.js",
-                "common/env.js",
-                "common/i18n_util.js",
-                "common/url_util.js",
-                "common/log.js",
-                "common/query_util.js",
-                "content_scripts/component/range_indicator/range_indicator.js",
-                "content_scripts/component/prompt/prompt.js",
-                "content_scripts/component/query_window/service/dict_bing.js",
-                "content_scripts/component/query_window/service/dict_chinese.js",
-                "content_scripts/component/query_window/service/translation_bing.js",
-                "content_scripts/component/query_window/service/translation_google.js",
-                "content_scripts/component/query_window/window.js",
-                "content_scripts/component/grids/grids.js",
-                "content_scripts/bridge.js",
-                "content_scripts/wrapper.js",
-                "content_scripts/core.js",
-                "content_scripts/dimension_define.js",
-                "content_scripts/storage.js",
-                "content_scripts/features.js",
-                "content_scripts/cs.js",
-                "content_scripts/buttons.js"
-            ]
-        }
-    ],
+    "content_scripts": [{
+        "run_at": "document_start",
+        "all_frames": true,
+        "matches": [
+            "http://*/*",
+            "https://*/*"
+        ],
+        "js": [
+            "libs/DOMPurify/purify.min.js",
+            "libs/webextension-polyfill/browser-polyfill.min.js",
+            "common/config.js",
+            "common/env.js",
+            "common/i18n_util.js",
+            "common/url_util.js",
+            "common/log.js",
+            "common/query_util.js",
+            "content_scripts/component/range_indicator/range_indicator.js",
+            "content_scripts/component/prompt/prompt.js",
+            "content_scripts/component/grids/grids.js",
+            "content_scripts/bridge.js",
+            "content_scripts/wrapper.js",
+            "content_scripts/core.js",
+            "content_scripts/dimension_define.js",
+            "content_scripts/storage.js",
+            "content_scripts/features.js",
+            "content_scripts/cs.js",
+            "content_scripts/buttons.js"
+        ]
+    }],
     "options_ui": {
         "page": "options/index.html",
         "browser_style": false,
