@@ -1,3 +1,11 @@
+import * as logUtil from '../../utils/log'
+import * as env from '../../utils/env'
+import * as i18nUtil from '../../utils/i18n'
+import * as configUtil from '../../utils/config'
+import {
+    searchEngines
+}
+from '../search_engines'
 class SearchEngineProvider extends HTMLElement {
     constructor() {
         super();
@@ -34,7 +42,10 @@ class SearchEngineProvider extends HTMLElement {
             searchOnSite: false,
         }
 
-        logUtil.log(this, "dispatch provideritemselect event", { name: detail.name, url: detail.url });
+        logUtil.log(this, "dispatch provideritemselect event", {
+            name: detail.name,
+            url: detail.url
+        });
         this.dispatchEvent(new CustomEvent("provideritemselect", {
             detail,
             bubbles: true,
@@ -55,7 +66,8 @@ class SearchEngineProvider extends HTMLElement {
             for (const searchEngine of searchEngines[groupName]) {
                 options.push(this.createOptionElement(searchEngine));
             }
-        } else {
+        }
+        else {
             console.warn(this, `not found search engine group: "${groupName}"`);
         }
 
@@ -89,7 +101,7 @@ class BrowserSearchEngineProvider extends SearchEngineProvider {
         this.appendChild(datalist);
         this.dropdown.list = datalist.id;
         const options = [];
-        for (const se of (await browser.search.get())) {
+        for (const se of(await browser.search.get())) {
             const option = document.createElement("option");
             option.value = se.name;
             option.dataset.name = se.name;
@@ -115,7 +127,7 @@ class UserSearchEngineProvider extends SearchEngineProvider {
         const seen = new Set()
         const config = this.configManager.get();
         for (const group of config.actions) {
-            for (const type of ["text", "link", "image"]) {
+            for (const type of["text", "link", "image"]) {
                 for (const detail of group.details[type]) {
                     const name = detail.searchEngine.name;
                     if (seen.has(name)) continue;
@@ -151,4 +163,3 @@ class UserSearchEngineProvider extends SearchEngineProvider {
 customElements.define("search-engine-provider", SearchEngineProvider);
 customElements.define("browser-search-engine-provider", BrowserSearchEngineProvider);
 customElements.define("user-search-engine-provider", UserSearchEngineProvider);
-

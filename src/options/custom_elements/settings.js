@@ -1,3 +1,7 @@
+import * as logUtil from '../../utils/log'
+import * as env from '../../utils/env'
+import * as i18nUtil from '../../utils/i18n'
+import * as configUtil from '../../utils/config'
 class SettingsContainer extends HTMLElement {
     constructor() {
         super();
@@ -50,7 +54,9 @@ class SettingsContainer extends HTMLElement {
     }
 
     onSettingChange(e) {
-        const { target } = e;
+        const {
+            target
+        } = e;
         const settingName = target.name;
         if (target instanceof HTMLInputElement) {
             let val;
@@ -68,7 +74,8 @@ class SettingsContainer extends HTMLElement {
 
             if (settingName === "enableTimeout") {
                 this.querySelector("[name=timeout]").disabled = target.checked ? "" : "disabled";
-            } else if (settingName === "limitRange") {
+            }
+            else if (settingName === "limitRange") {
                 this.querySelector("[name=range0]").disabled = !val;
                 this.querySelector("[name=range1]").disabled = !val;
                 this.querySelector("[name=enableIndicator]").disabled = !val;
@@ -78,11 +85,13 @@ class SettingsContainer extends HTMLElement {
                 const featuresName = settingName.split(".")[1];
                 logUtil.log(`update features: ${featuresName}=${val}`);
                 this.configManager.getProxy().updateFeatures(settingName.split(".")[1], val);
-            } else if (settingName === "range0" || settingName === "range1") {
+            }
+            else if (settingName === "range0" || settingName === "range1") {
                 const index = settingName === "range0" ? 0 : 1;
                 this.configManager.get().range[index] = val;
                 logUtil.log(`update range: `, this.configManager.get().range);
-            } else {
+            }
+            else {
                 logUtil.log(`setting change: ${settingName}=${val}`);
                 this.configManager.get()[settingName] = val;
             }

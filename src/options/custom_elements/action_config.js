@@ -1,5 +1,11 @@
-"use strict";
-const GRIDS_MAPPING = { "grids_3x3": ".grids-3x3", "grids_4x4": ".grids-4x4" };
+import * as logUtil from '../../utils/log'
+import * as env from '../../utils/env'
+import * as i18nUtil from '../../utils/i18n'
+import * as queryUtil from '../../utils/query'
+const GRIDS_MAPPING = {
+    "grids_3x3": ".grids-3x3",
+    "grids_4x4": ".grids-4x4"
+};
 class ActinoConfiguration extends HTMLElement {
     constructor() {
         super();
@@ -24,13 +30,16 @@ class ActinoConfiguration extends HTMLElement {
                     case "loadDefaultScript":
                         this.loadDefaultScript();
                         break;
-                    default: break;
+                    default:
+                        break;
                 }
             }
         });
 
         this.addEventListener("change", (e) => {
-            const { target } = e;
+            const {
+                target
+            } = e;
             if (target instanceof HTMLElement) {
                 switch (target.name) {
                     case "currentGroupName":
@@ -118,7 +127,8 @@ class ActinoConfiguration extends HTMLElement {
             }
             this.querySelector(GRIDS_MAPPING[limitation]).classList.remove("is-hidden");
             this.querySelector(GRIDS_MAPPING[limitation]).querySelector("[name=direction]").checked = true;
-        } else {
+        }
+        else {
 
             for (const div of this.querySelectorAll(".normal-direction,.diagonal-direction")) {
                 div.classList.remove("is-hidden");
@@ -166,7 +176,9 @@ class ActinoConfiguration extends HTMLElement {
         logUtil.log("listen group modal close");
         this.groupModal.addEventListener("close", () => {
             this.updateGroups();
-        }, { once: true });
+        }, {
+            once: true
+        });
         this.groupModal.active();
     }
 
@@ -194,7 +206,8 @@ class ActinoConfiguration extends HTMLElement {
                 let previewContent;
                 if (this.searchEngineEditor.searchEngineBuiltin) {
                     previewContent = "";
-                } else {
+                }
+                else {
                     previewContent = this.searchEngineEditor.searchEngineURL;
                 }
                 this.querySelector(`.searchEngineURLPreview`).textContent = previewContent;
@@ -202,7 +215,9 @@ class ActinoConfiguration extends HTMLElement {
                 this.saveDetail();
                 this.configManager.emitUpdate(this);
             }
-        }, { once: true });
+        }, {
+            once: true
+        });
     }
 
     updateGroups() {
@@ -252,7 +267,8 @@ class ActinoConfiguration extends HTMLElement {
         let previewContent;
         if (detail.searchEngine.builtin) {
             previewContent = "";
-        } else {
+        }
+        else {
             previewContent = detail.searchEngine.url;
         }
         this.querySelector(`.searchEngineURLPreview`).textContent = previewContent;
@@ -305,7 +321,8 @@ class ActinoConfiguration extends HTMLElement {
         const command = this.querySelector("[name=command]").value;
         if (command === "search" && url === "") {
             icon.classList.replace("has-text-grey-light", "has-text-warning");
-        } else {
+        }
+        else {
             icon.classList.replace("has-text-warning", "has-text-grey-light");
         }
     }
@@ -315,7 +332,9 @@ class ActinoConfiguration extends HTMLElement {
         const script = await res.text();
         const textarea = this.querySelector("[name=script]");
         textarea.value = script;
-        textarea.dispatchEvent(new Event("change", { bubbles: true }));
+        textarea.dispatchEvent(new Event("change", {
+            bubbles: true
+        }));
     }
 }
 

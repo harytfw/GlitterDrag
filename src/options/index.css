@@ -1,48 +1,48 @@
 search-engine-manager table img {
-  vertical-align: middle;
-  margin-right: 0.5rem;
+    vertical-align: middle;
+    margin-right: 0.5rem;
 }
 
 .middle-img {
-  vertical-align: middle;
-  margin-right: 0.5rem;
+    vertical-align: middle;
+    margin-right: 0.5rem;
 }
 
 custom-settings .control label {
-  font-weight: 400;
-  margin-right: 0.5em;
+    font-weight: 400;
+    margin-right: 0.5em;
 }
 
 hr {
-  margin: 0.5rem 0;
+    margin: 0.5rem 0;
 }
 
 .tabs-body {
-  width: 60%;
+    width: 60%;
 }
 
 .provider-container {
-  flex-wrap: wrap;
-  flex-direction: column;
-  height: 6rem;
+    flex-wrap: wrap;
+    flex-direction: column;
+    height: 6rem;
 }
 
 .provider-container search-engine-provider {
-  margin-right: 0.8rem;
-  margin-bottom: 1rem;
-  width: 30%;
+    margin-right: 0.8rem;
+    margin-bottom: 1rem;
+    width: 30%;
 }
 
 .simple-pre {
-  white-space: pre;
+    white-space: pre;
 }
 
 .pointer-events-none {
-  pointer-events: none;
+    pointer-events: none;
 }
 
 .sample-img {
-  height: 64px;
-  width: 64px;
-  background: chocolate;
+    height: 64px;
+    width: 64px;
+    background: chocolate;
 }

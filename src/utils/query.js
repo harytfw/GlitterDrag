@@ -1,3 +1,4 @@
+import * as env from './env'
 export const findEventElem = (target) => {
     if (!(target instanceof HTMLElement)) {
         return null;

@@ -1,4 +1,4 @@
-"use strict";
+import * as logUtil from '../utils/log'
 (function() {
 
     console.time("condense whitespace");
@@ -9,7 +9,8 @@
             if (t.length === 0) {
                 node.remove();
             }
-        } else {
+        }
+        else {
             for (const child of Array.from(node.childNodes)) {
                 stripWhitespateTextNode(child);
             }

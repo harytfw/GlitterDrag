@@ -1,3 +1,7 @@
+import * as logUtil from '../../utils/log'
+import * as env from '../../utils/env'
+import * as i18nUtil from '../../utils/i18n'
+import * as configUtil from '../../utils/config'
 class SearchEngineEditorModal extends HTMLElement {
     constructor() {
         super();
@@ -25,7 +29,14 @@ class SearchEngineEditorModal extends HTMLElement {
         });
 
         this.addEventListener("provideritemselect", (e) => {
-            const { name, url, icon, builtin, method, searchOnSite } = e.detail;
+            const {
+                name,
+                url,
+                icon,
+                builtin,
+                method,
+                searchOnSite
+            } = e.detail;
             this.searchEngineURL = builtin ? i18nUtil.getI18n("searchEngineURLNotAvailable") : url;
             this.searchEngineName = name;
             this.searchEngineBuiltin = builtin;
@@ -33,10 +44,13 @@ class SearchEngineEditorModal extends HTMLElement {
             this.searchEngineIcon = icon;
         });
         this.addEventListener("change", (e) => {
-            const { target } = e;
+            const {
+                target
+            } = e;
             if (target.name === "searchEngineIcon") {
                 this.updatePreview();
-            } else if (target.name === "iconInput") {
+            }
+            else if (target.name === "iconInput") {
                 this.processIconInput();
             }
         });
@@ -137,7 +151,8 @@ class SearchEngineEditorModal extends HTMLElement {
 
         if (builtin) {
             this.searchEngineURL = i18nUtil.getI18n("searchEngineURLNotAvailable");
-        } else {
+        }
+        else {
             this.searchEngineURL = url;
         }
 

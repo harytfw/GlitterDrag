@@ -1,3 +1,7 @@
+import * as logUtil from '../../utils/log'
+import * as env from '../../utils/env'
+import * as i18nUtil from '../../utils/i18n'
+import * as configUtil from '../../utils/config'
 class Configuration extends HTMLElement {
     static get fileName() {
         return "foo.json";
@@ -21,7 +25,8 @@ class Configuration extends HTMLElement {
                     this.restoreConfigFromJson(reader.result);
                 };
                 reader.readAsText(input.files[0]);
-            } else {
+            }
+            else {
                 logUtil.log("no files");
             }
         };
@@ -31,7 +36,7 @@ class Configuration extends HTMLElement {
 
         this.downloadAnchor = this.querySelector("[download]");
 
-        this.addEventListener("click", async (e) => {
+        this.addEventListener("click", async(e) => {
             const target = queryUtil.findEventElem(e.target);
             if (target instanceof HTMLButtonElement) {
                 switch (target.dataset.event) {
@@ -63,7 +68,8 @@ class Configuration extends HTMLElement {
         try {
             const obj = JSON.parse(json);
             this.configManager.restoreConfig(obj);
-        } catch (e) {
+        }
+        catch (e) {
             console.error(e);
         }
     }

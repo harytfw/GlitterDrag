@@ -45,4 +45,3 @@ browser.runtime.onMessage.addListener(async(m, sender) => {
     }
 });
 console.info("Glitter Drag: background script executed.");
-console.info(env);

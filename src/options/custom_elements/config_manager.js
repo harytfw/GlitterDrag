@@ -1,4 +1,9 @@
-"use strict";
+import * as logUtil from '../../utils/log'
+import * as env from '../../utils/env'
+import * as i18nUtil from '../../utils/i18n'
+import * as configUtil from '../../utils/config'
+
+
 class ConfigManager extends HTMLElement {
     constructor() {
         super();
@@ -33,7 +38,9 @@ class ConfigManager extends HTMLElement {
         const c = await configUtil.load();
         this.stack.push(c);
         this.stack.push(this._cloneTop());
-        this.dispatchEvent(new Event("configloaded", { bubbles: true }));
+        this.dispatchEvent(new Event("configloaded", {
+            bubbles: true
+        }));
     }
 
     get() {
@@ -48,7 +55,8 @@ class ConfigManager extends HTMLElement {
         const top = this.stack[this.stack.length - 1];
         if (this.weakmap.has(top)) {
             return this.weakmap.get(top);
-        } else {
+        }
+        else {
             const proxy = configUtil.proxyConfig(top);
             this.weakmap.set(top, proxy);
             return proxy;
@@ -57,7 +65,9 @@ class ConfigManager extends HTMLElement {
     }
 
     emitUpdate(src) {
-        src.dispatchEvent(new Event("configupdate", { bubbles: true }));
+        src.dispatchEvent(new Event("configupdate", {
+            bubbles: true
+        }));
     }
 
     async resetConfig() {
@@ -65,27 +75,31 @@ class ConfigManager extends HTMLElement {
         await configUtil.save(configUtil.getTemplateConfig());
 
         this.stack.length = 0;
-        this.stack.push(configUtil.cloneDeep(configUtil.getTemplateConfig()));
+        this.stack.push(configUtil.deepClone(configUtil.getTemplateConfig()));
         this.stack.push(this._cloneTop());
         this._check();
-        this.dispatchEvent(new Event("configloaded", { bubbles: true }));
+        this.dispatchEvent(new Event("configloaded", {
+            bubbles: true
+        }));
     }
 
     async restoreConfig(config) {
         await configUtil.clear(config);
         await configUtil.save(config);
         this.stack.length = 0;
-        this.stack.push(configUtil.cloneDeep(config));
+        this.stack.push(configUtil.deepClone(config));
         this.stack.push(this._cloneTop());
         this._check();
-        this.dispatchEvent(new Event("configloaded", { bubbles: true }));
+        this.dispatchEvent(new Event("configloaded", {
+            bubbles: true
+        }));
     }
 
     async backupConfig() {
         await this._save();
         return this._cloneTop();
     }
-    
+
     async _save() {
         logUtil.log(this, "save");
         await configUtil.save(this.stack[this.stack.length - 1]);
@@ -94,7 +108,9 @@ class ConfigManager extends HTMLElement {
         this._check();
 
         this.discardBtn.disabled = this.saveBtn.disabled = "disabled";
-        this.dispatchEvent(new Event("save", { bubbles: true }));
+        this.dispatchEvent(new Event("save", {
+            bubbles: true
+        }));
     }
 
     _discard() {
@@ -104,13 +120,17 @@ class ConfigManager extends HTMLElement {
         this._check();
 
         this.discardBtn.disabled = this.saveBtn.disabled = "disabled";
-        this.dispatchEvent(new Event("discard", { bubbles: true }));
-        this.dispatchEvent(new Event("configloaded", { bubbles: true }));
+        this.dispatchEvent(new Event("discard", {
+            bubbles: true
+        }));
+        this.dispatchEvent(new Event("configloaded", {
+            bubbles: true
+        }));
     }
 
 
     _cloneTop() {
-        const cloned = configUtil.cloneDeep(this.stack[this.stack.length - 1]);
+        const cloned = configUtil.deepClone(this.stack[this.stack.length - 1]);
         return cloned;
     }
 

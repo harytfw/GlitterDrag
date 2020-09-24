@@ -1,3 +1,4 @@
+import * as env from './env'
 const CANDIDATE_TAG_NAME = ["A", "SPAN", "I", "P", "LABEL", "OPTION", "BUTTON", "PRE"];
 export const getI18n = (strName = "", placeholders) => {
     const message = browser.i18n.getMessage(strName, placeholders);
@@ -10,7 +11,7 @@ export const render = (context) => {
             if (env.isChromium && typeof elem.dataset.i18nChromium === "string") {
                 i18nName = elem.dataset.i18nChromium;
             }
-            const value = i18nUtil.getI18n(i18nName);
+            const value = getI18n(i18nName);
             if (value !== "") {
                 elem.textContent = value;
             }

@@ -1,3 +1,7 @@
+import * as logUtil from '../../utils/log'
+import * as env from '../../utils/env'
+import * as i18nUtil from '../../utils/i18n'
+import * as configUtil from '../../utils/config'
 class BlockList extends HTMLElement {
     constructor() {
         super();

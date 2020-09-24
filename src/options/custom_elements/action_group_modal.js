@@ -1,3 +1,7 @@
+import * as logUtil from '../../utils/log'
+import * as env from '../../utils/env'
+import * as i18nUtil from '../../utils/i18n'
+import * as queryUtil from '../../utils/query'
 class ActionGroupModal extends HTMLElement {
     constructor() {
         super();
@@ -36,7 +40,9 @@ class ActionGroupModal extends HTMLElement {
         });
 
         this.addEventListener("change", (e) => {
-            const { target } = e;
+            const {
+                target
+            } = e;
             if (target instanceof HTMLInputElement) {
                 this.saveGroup(target.closest("tr"));
             }
@@ -117,7 +123,9 @@ class ActionGroupModal extends HTMLElement {
     close() {
         logUtil.log("close group modal");
         this.querySelector(".modal").classList.remove("is-active");
-        this.dispatchEvent(new Event("close", { bubbles: true }));
+        this.dispatchEvent(new Event("close", {
+            bubbles: true
+        }));
     }
 
     addGroup(name, condition, important) {
@@ -197,7 +205,8 @@ class ActionGroupModal extends HTMLElement {
             if (!q) {
                 input.classList.add("is-danger");
                 input.focus();
-            } else {
+            }
+            else {
                 input.classList.remove("is-danger");
             }
             b = b && q;

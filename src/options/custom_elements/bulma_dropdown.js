@@ -1,4 +1,8 @@
-(function () {
+import * as logUtil from '../../utils/log'
+import * as env from '../../utils/env'
+import * as i18nUtil from '../../utils/i18n'
+import * as configUtil from '../../utils/config'
+(function() {
     document.addEventListener("click", () => {
         for (const dropdown of document.querySelectorAll("bulma-dropdown")) {
             dropdown.dispatchEvent(new Event("closedropdown"));
@@ -34,12 +38,16 @@ class BulmaDropdown extends HTMLElement {
         });
 
         this.addEventListener("click", (e) => {
-            const { target } = e;
+            const {
+                target
+            } = e;
             let itemElement;
             if (target instanceof HTMLElement && (itemElement = target.closest(".dropdown-item")) instanceof HTMLElement) {
                 this.updateSelectedOptionByItem(itemElement);
                 this.close();
-                this.dispatchEvent(new Event("change", { bubbles: true }));
+                this.dispatchEvent(new Event("change", {
+                    bubbles: true
+                }));
                 return;
             }
             if (target instanceof HTMLElement && target.closest("button") instanceof HTMLButtonElement) {
@@ -186,7 +194,8 @@ class BulmaDropdown extends HTMLElement {
             items.sort((a, b) => {
                 if (a[1]) {
                     return 1;
-                } else if (b[1]) {
+                }
+                else if (b[1]) {
                     return -1;
                 }
                 return 0;
