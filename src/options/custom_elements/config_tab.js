@@ -2,7 +2,7 @@ import * as logUtil from '../../utils/log'
 import * as env from '../../utils/env'
 import * as i18nUtil from '../../utils/i18n'
 import * as configUtil from '../../utils/config'
-class Configuration extends HTMLElement {
+class ConfigurationTab extends HTMLElement {
     static get fileName() {
         return "foo.json";
     }
@@ -89,4 +89,4 @@ class Configuration extends HTMLElement {
     }
 }
 
-customElements.define("custom-configuration", Configuration);
+customElements.define("custom-configuration", ConfigurationTab);
