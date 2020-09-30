@@ -1,7 +1,5 @@
 import * as logUtil from '../../utils/log'
-import * as env from '../../utils/env'
 import * as i18nUtil from '../../utils/i18n'
-import * as configUtil from '../../utils/config'
 class BlockList extends HTMLElement {
     constructor() {
         super();
@@ -9,7 +7,6 @@ class BlockList extends HTMLElement {
         const template = document.querySelector("#template-blocklist");
         const content = template.content;
         this.appendChild(content.cloneNode(true));
-
 
         this.textarea = this.querySelector("textarea");
         this.textarea.addEventListener("change", this.onBlockListChange.bind(this))
@@ -28,9 +25,26 @@ class BlockList extends HTMLElement {
         let lines = this.textarea.value.split("\n");
         lines = lines
             .map(line => line.trim())
-            .filter(line => line !== "");
+            .filter(line => line !== "")
+        for (const line of lines) {
+            if (!this.checkRegexp(line)) {
+                return
+            }
+        }
         config.blockList = lines
         this.configManager.emitUpdate(this);
+    }
+
+    checkRegexp(pat) {
+        try {
+            new RegExp(pat)
+            return true
+        }
+        catch (err) {
+            logUtil.error(err);
+            document.querySelector('custom-notification').open(`\`${pat}\` is not a valid regular expression`)
+            return false
+        }
     }
 }
 

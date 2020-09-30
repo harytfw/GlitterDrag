@@ -120,7 +120,7 @@ const scrollbarLocker = {
 };
 
 // expose global variable
-var features = Object.freeze({
+export var features = Object.freeze({
     extendMiddleButton,
     scrollbarLocker,
 });

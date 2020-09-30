@@ -1,6 +1,7 @@
 "use strict";
 
-class RangeIndicator {
+import * as logUtil from '../../../utils/log'
+export class RangeIndicator {
 
     static get PATH() {
         return "content_scripts/component/range_indicator";

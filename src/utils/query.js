@@ -29,3 +29,9 @@ export const fixHorizonOffset = (x, width = 0) => {
 export const fixVerticalOffset = (y, height = 0) => {
     return Math.min(Math.max(0, y), document.documentElement.clientHeight - height);
 };
+
+export const importTemplate = (selector) => {
+    const template = document.querySelector(selector);
+    const content = template.content;
+    return content.cloneNode(true);
+}

@@ -1,6 +1,6 @@
 "use strict";
-
-class Prompt {
+import * as logUtil from '../../../utils/log'
+export class Prompt {
 
     static get PATH() {
         return "content_scripts/component/prompt";
@@ -67,9 +67,13 @@ class Prompt {
         let data;
         if (detail.commandTarget === "text") {
             data = selection.text || selection.plainUrl || this.imageLink || "";
-        } else if (detail.commandTarget === "link") {
+        }
+        else if (detail.commandTarget === "link") {
             data = selection.plainUrl || selection.imageLink || selection.text || "";
-        } else { data = selection.imageLink || selection.plainUrl || selection.text || ""; }
+        }
+        else {
+            data = selection.imageLink || selection.plainUrl || selection.text || "";
+        }
         return detail.prompt
             .replace("%s", data);
     }

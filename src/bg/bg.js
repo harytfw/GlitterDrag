@@ -1,11 +1,7 @@
 import 'webextension-polyfill'
 
 import * as logUtil from '../utils/log'
-import {
-    Executor
-}
-from './executor'
-
+import { Executor } from './executor'
 
 
 
@@ -31,7 +27,7 @@ async function insertCSS(sender) {
     }
 }
 
-browser.runtime.onMessage.addListener(async(m, sender) => {
+browser.runtime.onMessage.addListener(async (m, sender) => {
     switch (m.msgCmd) {
         case "removeHighlighting":
             executor.removeHighlighting();

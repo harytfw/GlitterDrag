@@ -1,5 +1,15 @@
 "use strict";
-
+import * as logUtil from '../utils/log'
+import * as urlUtil from '../utils/url'
+import * as env from '../utils/env'
+import { Core } from './core'
+import { Grids } from './component/grids/grids'
+import { Prompt } from './component/prompt/prompt'
+import { DIMENSION, DIRECTION } from './dimension'
+import { features } from './features'
+import { ActionWrapper } from './wrapper'
+import { BlobStorage } from './storage'
+import { RangeIndicator } from './component/range_indicator/range_indicator'
 logUtil.logErrorEvent();
 
 const SELECTION_TYPE = {
@@ -259,7 +269,7 @@ class Controller {
         for (const action of this.config.actions) {
             if (action.condition === this.conditionStore) {
                 //TODO
-                logUtil.log("action details", action.details, ", expceted direction:", this.direction);
+                logUtil.log("action details", action.details, "action type", actionType, ", expceted direction:", this.direction);
                 return action.details[actionType].find(detail => detail.direction === this.direction);
             }
         }
@@ -602,7 +612,7 @@ class Controller {
         logUtil.log("onStartExternal,type:", this.selectionType);
     }
 
-    onMoveExternal(target, dataTransfer) {}
+    onMoveExternal(target, dataTransfer) { }
 
     async onEndExternal(target, dataTransfer) {
         if (dataTransfer === null) {
@@ -668,7 +678,7 @@ browser.runtime.onConnect.addListener(port => {
     port.onDisconnect.addListener(() => {
         logUtil.log("disconnect");
     });
-    port.onMessage.addListener(async(token) => {
+    port.onMessage.addListener(async (token) => {
         port.postMessage(await c.storage.consume(token));
     });
 });

@@ -1,5 +1,5 @@
-
-class Grids {
+import * as logUtil from '../../../utils/log'
+export class Grids {
 
     static get PATH() {
         return "content_scripts/component/grids";
@@ -83,7 +83,8 @@ class Grids {
             this.root.querySelector("#grids-3x3").classList.remove("is-hidden");
             this.root.querySelector("#grids-4x4").classList.add("is-hidden");
             this.render_3x3(actionGroup.details[actionType]);
-        } else if (actionGroup.limitation === "grids_4x4") {
+        }
+        else if (actionGroup.limitation === "grids_4x4") {
             this.root.querySelector("#grids-3x3").classList.add("is-hidden");
             this.root.querySelector("#grids-4x4").classList.remove("is-hidden");
             this.render_4x4(actionGroup.details[actionType]);
@@ -98,7 +99,8 @@ class Grids {
             if (d && d.command !== "") {
                 cell.innerHTML = d.prompt !== "" ? d.prompt : index;
                 cell.style.visibility = "";
-            } else {
+            }
+            else {
                 cell.textContent = "NOOP";
                 cell.style.visibility = "hidden";
             }
@@ -113,7 +115,8 @@ class Grids {
             if (d && d.command !== "") {
                 cell.innerHTML = d.prompt !== "" ? d.prompt : index;
                 cell.style.visibility = "";
-            } else {
+            }
+            else {
                 cell.textContent = "NOOP";
                 cell.style.visibility = "hidden";
             }

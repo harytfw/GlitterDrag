@@ -29,6 +29,7 @@
         </search-engine-editor-modal>
         <!-- <search-engine-editor-modal class="table-row-editor"></search-engine-editor-modal> -->
     </config-manager>
+    <custom-notification></custom-notification>
     <template id="template-tabs">
         <div class="container">
         </div>
@@ -1291,7 +1292,7 @@
                 <input name="icon" type="hidden">
                 <input name="name" type="hidden">
                 <div>
-                    <img class="search-engine-icon" >
+                    <img class="search-engine-icon">
                     <span class="search-engine-name"></span>
                 </div>
             </td>
@@ -1450,6 +1451,20 @@
 
     <template id="template-blocklist">
         <textarea class="textarea"></textarea>
+    </template>
+    <template id="template-notification">
+        <div class="notification is-danger is-light is-hidden">
+            <button class="delete"></button>
+            <span class="text">
+                Primar lorem ipsum dolor sit amet, consectetur
+                adipiscing elit lorem ipsum dolor. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut,
+                porta
+                nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis
+                    venenatis</a> efficitur. Sit amet,
+                consectetur adipiscing elit
+            </span>
+
+        </div>
     </template>
     <script src="./options.js"></script>
 </body>

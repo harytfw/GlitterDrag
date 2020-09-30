@@ -1,4 +1,4 @@
-class BlobStorage {
+export class BlobStorage {
 
     static get EXPIRE_TIME() {
         // 30s

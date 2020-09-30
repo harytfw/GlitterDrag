@@ -1,4 +1,5 @@
 "use strict";
+import * as logUtil from '../utils/log'
 const CyclerCounter = class {
     constructor(limit = 50) {
         if (limit <= 0) {
@@ -21,7 +22,7 @@ const CyclerCounter = class {
     }
 };
 
-class Core {
+export class Core {
 
     static get STATE_STOP() {
         return 0;
@@ -59,11 +60,13 @@ class Core {
     static _getModifierKeyFromEvent(e) {
         if (e.ctrlKey) {
             return "ctrl";
-        } else if (e.shiftKey) {
+        }
+        else if (e.shiftKey) {
             return "shift";
-        } /*  else if (e.altkey) {
-             return Core.KEY_ALT;
-        } */
+        }
+        /*  else if (e.altkey) {
+                    return Core.KEY_ALT;
+               } */
         return "";
     }
 
@@ -120,7 +123,8 @@ class Core {
         if (!this.allowDrag(e.target, e.dataTransfer)) {
             this._log("%cdeny accept drag", "color:yello");
             this.inner_state = Core.STATE_DENY;
-        } else {
+        }
+        else {
             this._log("%caccept drag", "color:green");
             this.inner_state = Core.STATE_NORMAL;
             this.onStart(e.target, e.dataTransfer, false);
@@ -137,21 +141,22 @@ class Core {
         this._log("_dragover, state:", this.inner_state, ", defaultPrevented: ", e.defaultPrevented, 'target:', e.target);
         this.endPos.x = e.clientX;
         this.endPos.y = e.clientY;
-        if (e.defaultPrevented
-            && this.inner_state !== Core.STATE_TEMPORARY_STOP) {
+        if (e.defaultPrevented &&
+            this.inner_state !== Core.STATE_TEMPORARY_STOP) {
 
             this.last_state = this.inner_state;
             this.inner_state = Core.STATE_TEMPORARY_STOP;
 
-            if (this.last_state === Core.STATE_NORMAL
-                || this.last_state === Core.STATE_EXTERNAL) {
+            if (this.last_state === Core.STATE_NORMAL ||
+                this.last_state === Core.STATE_EXTERNAL) {
                 this.onHandleBySite(e.target,
                     e.dataTransfer,
                     this.last_state === Core.STATE_EXTERNAL);
             }
 
-        } else if (!e.preventDefault
-            && this.inner_state === Core.STATE_TEMPORARY_STOP) {
+        }
+        else if (!e.preventDefault &&
+            this.inner_state === Core.STATE_TEMPORARY_STOP) {
             this.inner_state = this.last_state;
         }
 
@@ -197,7 +202,8 @@ class Core {
                 this.inner_state = Core.STATE_EXTERNAL;
                 this.onExternal(e.dataTransfer);
                 this.onStart(null, e.dataTransfer, true);
-            } else {
+            }
+            else {
                 this.inner_state = Core.STATE_DENY_EXTERNAL;
                 this._log("deny accept external action");
             }
@@ -227,18 +233,23 @@ class Core {
             this.doPreventInDropEvent = this.callPreventDefaultInDropEvent(e.target, e.dataTransfer, Core.STATE_EXTERNAL === this.state);
             this.onEnd(e.target, e.dataTransfer, false);
             resetFlag = true;
-        } else if (this.inner_state === Core.STATE_EXTERNAL) {
+        }
+        else if (this.inner_state === Core.STATE_EXTERNAL) {
             this.doPreventInDropEvent = this.callPreventDefaultInDropEvent(e.target, e.dataTransfer, Core.STATE_EXTERNAL === this.state);
             this.onEnd(e.target, e.dataTransfer, true);
             resetFlag = true;
-        } else if (this.inner_state === Core.STATE_DENY_EXTERNAL) {
+        }
+        else if (this.inner_state === Core.STATE_DENY_EXTERNAL) {
             resetFlag = true;
-        } else if (this.inner_state === Core.STATE_DENY) {
+        }
+        else if (this.inner_state === Core.STATE_DENY) {
             resetFlag = true;
-        } else if (this.inner_state === Core.STATE_TEMPORARY_STOP) {
+        }
+        else if (this.inner_state === Core.STATE_TEMPORARY_STOP) {
             this._log("_drop", "temporary stop");
             //
-        } else if (e.preventDefault) {
+        }
+        else if (e.preventDefault) {
             this._log("_drop", `preventDefault = ${e.preventDefault}`);
             //
         }
@@ -336,7 +347,8 @@ class Core {
         this._log("onStart", `angle:${this.angle}`, `distance:${this.distance}`, `modifierKey:${this.modifierKey}`);
         if (isExternal) {
             this.callbacks.onStartExternal(target, dataTransfer);
-        } else {
+        }
+        else {
             this.callbacks.onStart(target, dataTransfer);
         }
     }
@@ -353,7 +365,8 @@ class Core {
         this._log("onMove", `angle:${this.angle}`, `distance:${this.distance}`, `modifierKey:${this.modifierKey}`);
         if (isExternal) {
             this.callbacks.onMoveExternal(target, dataTransfer);
-        } else {
+        }
+        else {
             this.callbacks.onMove(target, dataTransfer);
 
         }
@@ -372,7 +385,8 @@ class Core {
         this._log("onEnd", `angle: ${this.angle}`, `distance: ${this.distance}`, `modifierKey: ${this.modifierKey}`);
         if (isExternal) {
             this.callbacks.onEndExternal(target, dataTransfer);
-        } else {
+        }
+        else {
             this.callbacks.onEnd(target, dataTransfer);
         }
     }

@@ -3,6 +3,13 @@ search-engine-manager table img {
     margin-right: 0.5rem;
 }
 
+custom-notification {
+    top: 1rem;
+    position: absolute;
+    left: 5rem;
+    right: 5rem;
+}
+
 .middle-img {
     vertical-align: middle;
     margin-right: 0.5rem;

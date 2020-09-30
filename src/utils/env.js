@@ -1,5 +1,5 @@
 const userAgent = navigator.userAgent;
-let browser = "";
+export let browser = "";
 if (userAgent.includes("Firefox")) {
     browser = "firefox";
 }
@@ -9,7 +9,6 @@ else if (userAgent.includes("Chrome")) {
 else {
     browser = "other";
 }
-
 export const isFirefox = browser === "firefox";
 export const isChromium = browser === "chromium";
 export const isWebExtension = typeof window.browser !== "undefined" && typeof window.browser.runtime !== "undefined";
