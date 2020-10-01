@@ -1,5 +1,5 @@
 
-import * as logUtil from '../../utils/log'
+import * as logUtil from '../utils/log'
 export class ActionWrapper {
     
 
