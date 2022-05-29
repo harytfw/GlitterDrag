@@ -335,6 +335,7 @@ class ExecutorClass {
         // check if browser.search API available and if I should use it?
         if (browserMajorVersion >= 63 && Boolean(this.action.is_browser_search) === true) {
             const tabHoldingSearch = await this.openTab('about:blank');
+            await new Promise(r => setTimeout(r, 50));
             if (this.action.engine_name !== getI18nMessage('defaultText')) {
                 return browser.search.search({
                     query: keyword,
