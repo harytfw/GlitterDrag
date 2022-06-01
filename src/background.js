@@ -636,18 +636,21 @@ browser.runtime.onInstalled.addListener(async (details) => {
     let changedflag = false;
     const all = await (browser.storage.local.get());
 
+    // WARNING: temporary workaround to fix unknown config lost
     function assign(target, origin) {
+        if (typeof target !== 'object' || typeof origin !== 'object') {
+            return
+        }
         for (const aKey of Object.keys(origin)) {
-            if (aKey in target) {
-                if (typeof target[aKey] === "object") {
-                    assign(target[aKey], origin[aKey]);
-                }
-            }
-            else {
-                $D(aKey, "  ", target[aKey], " -> ", origin[aKey]);
-                target[aKey] = origin[aKey];
-                // console.log(aKey, origin[aKey]);
+            if (typeof target[aKey] === "object" && typeof origin[aKey] === 'object') {
+                assign(target[aKey], origin[aKey]);
+            } else if (typeof target[aKey] !== typeof origin[aKey]) {
+                // two side have different type, use default value
+                target[aKey] = JSON.parse(JSON.stringify(origin[aKey]));
                 changedflag = true;
+            } else {
+                // ignore
+                // both side have some type
             }
         }
     }

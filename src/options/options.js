@@ -562,13 +562,13 @@ class EngineItemWrapper {
         return this.nameInput.value;
     }
     set name(n) {
-        return this.nameInput.value = n;
+        this.nameInput.value = n;
     }
     get url() {
         return this.urlInput.value;
     }
     set url(s) {
-        return this.urlInput.value = s;
+        this.urlInput.value = s;
     }
     get value() {
         return {
@@ -1544,16 +1544,68 @@ class ExcludedRulesWrapper {
 function initTabs() {
 
 
-    new ActionsWrapper();
-    new NewActionsWrapper();
+    try {
+        console.info('actions tab')
+        new ActionsWrapper();
+    } catch (e) {
+        console.error(e)
+    }
 
-    new EngineWrapper();
-    new generalSettingWrapper();
-    new downloadWrapper();
-    new styleWrapper();
-    new PanelWrapper();
-    new TranslatorWrapper();
-    new ExcludedRulesWrapper();
+    try {
+        console.info('new actions tab')
+        new NewActionsWrapper();
+    } catch (e) {
+        console.error(e)
+    }
+
+    try {
+        console.info('engine tab')
+        new EngineWrapper();
+    } catch (e) {
+        console.error(e)
+    }
+
+    try {
+        console.info('general setting tab')
+        new generalSettingWrapper();
+    } catch (e) {
+        console.error(e)
+    }
+
+    try {
+        console.info('download tab')
+        new downloadWrapper();
+    } catch (e) {
+        console.error(e)
+    }
+
+    try {
+        console.info('style tab')
+        new styleWrapper();
+    } catch (e) {
+        console.error(e)
+    }
+
+    try {
+        console.info('panel')
+        new PanelWrapper();
+    } catch (e) {
+        console.error(e)
+    }
+
+    try {
+        console.info('translator')
+        new TranslatorWrapper();
+    } catch (e) {
+        console.error(e)
+    }
+
+    try {
+        console.info('excluded rules')
+        new ExcludedRulesWrapper();
+    } catch (e) {
+        console.error(e)
+    }
 
     doI18n();
 
@@ -1629,6 +1681,33 @@ function initButtons() {
         }
     })
 }
+
+
+
+// WARNING: temporary workaround to fix unknown config lost
+async function assignDefaultConfig() {
+    const storage = await LStorage.get()
+    const assign = (target, origin) => {
+        if (typeof target !== 'object' || typeof origin !== 'object') {
+            return
+        }
+        for (const aKey of Object.keys(origin)) {
+            if (typeof target[aKey] === "object" && typeof origin[aKey] === 'object') {
+                assign(target[aKey], origin[aKey]);
+            } else if (typeof target[aKey] !== typeof origin[aKey]) {
+                // two side have different type, use default value
+                target[aKey] = JSON.parse(JSON.stringify(origin[aKey]));
+            } else {
+                // ignore
+                // both side have some type
+            }
+        }
+    }
+
+    assign(storage, DEFAULT_CONFIG)
+    await LStorage.set(storage)
+}
+
 var browserMajorVersion = 52;
 browser.runtime.getBrowserInfo().then(async info => {
     browserMajorVersion = info.version.split(".")[0];
@@ -1655,6 +1734,8 @@ browser.runtime.getBrowserInfo().then(async info => {
         enumerable: false,
         configurable: false,
     })
+
+    await assignDefaultConfig()
 
     initButtons();
     initTabs();
