@@ -305,6 +305,9 @@ class ActionsWrapper {
                 else if (e.target.value === "false") {
                     res[key][kind][dirName][attribute] = false;
                 }
+                else if (attribute === "download_directory") {
+                    res[key][kind][dirName][attribute] = parseInt(e.target.value);
+                }
                 else if (attribute === "engine_name") {
                     const prefix = getI18nMessage('currentEngine');
                     if (e.target.value.startsWith(prefix)) {
@@ -989,7 +992,7 @@ class ActionsView {
             engine_name: this.$E(".search-engine-name").value,
             engine_url: this.$E(".search-engine-url").value,
             is_browser_search: this.$E(".search-engine-is-browser-search").value === "true" ? true : false,
-            download_directory: this.$E(".download-directory").value,
+            download_directory: parseInt(this.$E(".download-directory").value),
             tab_active: this.getRadioValue(".tab-active"),
             open_type: this.getRadioValue(".open-type"),
             search_type: this.getRadioValue(".search-type"),
@@ -1690,6 +1693,12 @@ async function assignDefaultConfig() {
     const assign = (target, origin) => {
         if (typeof target !== 'object' || typeof origin !== 'object') {
             return
+        }
+        // DIRTY HACK:
+        if (Array.isArray(target) && Array.isArray(origin) ) {
+            if(target.length !== origin.length) {
+                return
+            }
         }
         for (const aKey of Object.keys(origin)) {
             if (typeof target[aKey] === "object" && typeof origin[aKey] === 'object') {

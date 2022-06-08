@@ -462,7 +462,7 @@ class ExecutorClass {
         }
         else {
             const directories = (await LStorage.get("downloadDirectories"))["downloadDirectories"];
-            opt.filename = this.replaceVariables(directories[this.action.download_directory])
+            opt.filename = this.replaceVariables(directories[parseInt(this.action.download_directory)])
             opt.filename += aFilename;
         }
         opt.filename = decodeURIComponent(opt.filename);
@@ -640,6 +640,12 @@ browser.runtime.onInstalled.addListener(async (details) => {
     function assign(target, origin) {
         if (typeof target !== 'object' || typeof origin !== 'object') {
             return
+        }
+        // DIRTY HACK:
+        if (Array.isArray(target) && Array.isArray(origin) ) {
+            if(target.length !== origin.length) {
+                return
+            }
         }
         for (const aKey of Object.keys(origin)) {
             if (typeof target[aKey] === "object" && typeof origin[aKey] === 'object') {
