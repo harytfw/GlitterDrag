@@ -1,0 +1,25 @@
+glitter-drag-status {
+	position: fixed;
+	left: 0;
+	top: 0;
+	background-color: rgba(9, 150, 248, 0.85);
+	color: white !important;
+	pointer-events: none;
+	z-index: 2147483647;
+	font-size: 16px;
+}
+
+glitter-drag-indicator {
+	position: absolute;
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	z-index: 2147483647;
+}
+
+glitter-drag-menu {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 2147483647;
+}
