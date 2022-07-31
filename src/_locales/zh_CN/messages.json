@@ -1,0 +1,278 @@
+{
+  "extensionName": {
+    "message": "Droponfly",
+    "description": "extension name."
+  },
+  "extensionDescription": {
+    "message": "提升浏览体验的网页拖拽扩展"
+  },
+  "tabTitleActions": {
+    "message": "动作"
+  },
+  "tabTitleScripts": {
+    "message": "脚本"
+  },
+  "tabTitleAssets": {
+    "message": "资源素材"
+  },
+  "tabTitleRequests": {
+    "message": "搜索请求"
+  },
+  "requestUrl": {
+    "message": "请求链接"
+  },
+  "requestQuery": {
+    "message": "请求参数"
+  },
+  "edit": {
+    "message": "编辑"
+  },
+  "command": {
+    "message": "命令"
+  },
+  "commandInvalid": {
+    "message": "无效"
+  },
+  "commandOpen": {
+    "message": "打开"
+  },
+  "commandCopy": {
+    "message": "复制"
+  },
+  "commandDownload": {
+    "message": "下载"
+  },
+  "commandRequest": {
+    "message": "搜索请求"
+  },
+  "commandDump": {
+    "message": "导出信息"
+  },
+  "commandScript": {
+    "message": "执行脚本"
+  },
+  "contextType": {
+    "message": "应用场景"
+  },
+  "contextTypeSelection": {
+    "message": "文本"
+  },
+  "contextTypeLink": {
+    "message": "链接"
+  },
+  "contextTypeImage": {
+    "message": "图片"
+  },
+  "direction": {
+    "message": "方向标签"
+  },
+  "directionLeft": {
+    "message": "左"
+  },
+  "directionRight": {
+    "message": "右"
+  },
+  "directionUp": {
+    "message": "上"
+  },
+  "directionDown": {
+    "message": "下"
+  },
+  "tabPosition": {
+    "message": "标签页位置"
+  },
+  "tabPositionStart": {
+    "message": "开头"
+  },
+  "tabPositionEnd": {
+    "message": "末尾"
+  },
+  "tabPositionPrev": {
+    "message": "上一个"
+  },
+  "tabPositionNext": {
+    "message": "下一个"
+  },
+  "tabPositionCurrent": {
+    "message": "当前"
+  },
+  "tabPositionNewWindow": {
+    "message": "新窗口"
+  },
+  "tabPositionPrivateWindow": {
+    "message": "隐私窗口"
+  },
+  "activeTab": {
+    "message": "激活标签页"
+  },
+  "downloadDirectory": {
+    "message": "下载目录"
+  },
+  "showSaveAsDialog": {
+    "message": "显示下载目录"
+  },
+  "requests": {
+    "message": "请求"
+  },
+  "name": {
+    "message": "名称"
+  },
+  "prompt": {
+    "message": "提示"
+  },
+  "operationMode": {
+    "message": "操作方式"
+  },
+  "modeChain": {
+    "message": "方向链"
+  },
+  "modeNormal": {
+    "message": "普通"
+  },
+  "modeLeftRightUpDown": {
+    "message": "上下左右"
+  },
+  "modeCircleMenu": {
+    "message": "环型菜单"
+  },
+  "modeGridMenu": {
+    "message": "方格菜单"
+  },
+  "modeContextMenu": {
+    "message": "右键菜单"
+  },
+  "assetData": {
+    "message": "素材数据"
+  },
+  "add": {
+    "message": "添加"
+  },
+  "save": {
+    "message": "保存"
+  },
+  "operation": {
+    "message": "操作"
+  },
+  "scriptText": {
+    "message": "脚本内容"
+  },
+  "actionIcon": {
+    "message": "动作图标"
+  },
+  "minimumDistance": {
+    "message": "最小距离"
+  },
+  "tabTitleCommon": {
+    "message": "通用"
+  },
+  "cancel": {
+    "message": "取消"
+  },
+  "confirm": {
+    "message": "确定"
+  },
+  "close": {
+    "message": "关闭"
+  },
+  "delete": {
+    "message": "删除"
+  },
+  "confirmDelete": {
+    "message": "确定删除 \"$name$\"?",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "pickImage": {
+    "message": "选择图片"
+  },
+  "duplicate": {
+    "message": "复制"
+  },
+  "preferContextDataType": {
+    "message": "优先的数据类型"
+  },
+  "contextDataTypeSelection": {
+    "message": "选中文本"
+  },
+  "contextDataTypeLink": {
+    "message": "链接"
+  },
+  "contextDataTypeLinkText": {
+    "message": "链接文本"
+  },
+  "contextDataTypeImageSource": {
+    "message": "图片链接"
+  },
+  "reset": {
+    "message": "重置"
+  },
+  "container": {
+    "message": "容器"
+  },
+  "inheritContainer": {
+    "message": "[继承当前的容器]"
+  },
+  "helpActionName": {
+    "message": "动作名称"
+  },
+  "helpActionCommand": {
+    "message": "动作执行的命令。“打开”使用当前的选择内容作为URL在新标签页打开; “复制” 将选择的内容写入剪切板; “搜索请求” 使用URL请求模板构建URL并在新标签页打开; “下载” 用浏览器下载选中的内容; “执行脚本” 用于执行预配置的脚本；"
+  },
+  "helpActionContextType": {
+    "message": "让动作的生效的网页元素"
+  },
+  "helpActionPrompt": {
+    "message": "执行动作时显示的提示文本，如果留空，则使用动作名称作为提示文本"
+  },
+  "helpActionOperationMode": {
+    "message": "限定当前动作只能在指定的操作模式下生效。“方向链”允许用方向组合选择动作。“普通”则只使用一个方向选择动作。“环形菜单”使用菜单+图标的选择动作。“右键菜单”支持将动作注册到右键菜单中使用"
+  },
+  "helpActionDirection": {
+    "message": "只使用一个方向匹配该动作"
+  },
+  "helpActionDirectionChain": {
+    "message": "使用方向组合匹配该动作"
+  },
+  "helpActionPreferDataType": {
+    "message": "在动作的执行时候，可以指定要优先使用哪种数据. 不选择或多选则使用第一种数据"
+  },
+  "helpCommandRequest": {
+    "message": "根据预先配置的URL请求模板构建URL，并在指定的标签页打开该URL"
+  },
+  "helpScript": {
+    "message": "选择需要执行自定义的脚本"
+  },
+  "helpActionIcon": {
+    "message": "配置在 “菜单”操作模式下展示的图标"
+  },
+  "helpActionContainer": {
+    "message": "指定新建标签页时处理容器的行为。默认是“[继承当前容器]”，即新创建的标签页跟当前标签页具有相同的容器，也可以用其他容器创建标签页"
+  },
+  "organizeActionOrder": {
+    "message": "管理动作顺序"
+  },
+  "editConfig": {
+    "message": "编辑配置"
+  },
+  "filterActions": {
+    "message": "过滤器"
+  },
+  "manageActions": {
+    "message": "管理"
+  },
+  "noFilter": {
+    "message": "无"
+  },
+  "importSearchEngineFromBrowser": {
+    "message": "从浏览器导入搜索引擎"
+  },
+  "importSearchEngineFromExtension": {
+    "message": "从扩展导入搜索引擎"
+  },
+  "tabTitleEditor": {
+    "message": "编辑器"
+  }
+}

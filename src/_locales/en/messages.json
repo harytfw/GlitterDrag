@@ -1,0 +1,278 @@
+{
+  "extensionName": {
+    "message": "Droponfly",
+    "description": "extension name."
+  },
+  "extensionDescription": {
+    "message": "A good drag and drop extension that improve your browsing experience"
+  },
+  "tabTitleActions": {
+    "message": "Actions"
+  },
+  "tabTitleScripts": {
+    "message": "Scripts"
+  },
+  "tabTitleAssets": {
+    "message": "Assets"
+  },
+  "tabTitleRequests": {
+    "message": "Search Requests"
+  },
+  "requestUrl": {
+    "message": "Request url"
+  },
+  "requestQuery": {
+    "message": "Request query"
+  },
+  "edit": {
+    "message": "Edit"
+  },
+  "command": {
+    "message": "Command"
+  },
+  "commandInvalid": {
+    "message": "Invalid"
+  },
+  "commandOpen": {
+    "message": "Open"
+  },
+  "commandCopy": {
+    "message": "Copy"
+  },
+  "commandDownload": {
+    "message": "Download"
+  },
+  "commandRequest": {
+    "message": "Search Request"
+  },
+  "commandDump": {
+    "message": "Dump"
+  },
+  "commandScript": {
+    "message": "Execute Script"
+  },
+  "contextType": {
+    "message": "Context"
+  },
+  "contextTypeSelection": {
+    "message": "Selection"
+  },
+  "contextTypeLink": {
+    "message": "Link"
+  },
+  "contextTypeImage": {
+    "message": "Image"
+  },
+  "direction": {
+    "message": "Direction"
+  },
+  "directionLeft": {
+    "message": "Left"
+  },
+  "directionRight": {
+    "message": "Right"
+  },
+  "directionUp": {
+    "message": "Up"
+  },
+  "directionDown": {
+    "message": "Down"
+  },
+  "tabPosition": {
+    "message": "Tab Position"
+  },
+  "tabPositionStart": {
+    "message": "Start"
+  },
+  "tabPositionEnd": {
+    "message": "End"
+  },
+  "tabPositionPrev": {
+    "message": "Previous"
+  },
+  "tabPositionNext": {
+    "message": "Next"
+  },
+  "tabPositionCurrent": {
+    "message": "Current"
+  },
+  "tabPositionNewWindow": {
+    "message": "New Window"
+  },
+  "tabPositionPrivateWindow": {
+    "message": "Private Window"
+  },
+  "activeTab": {
+    "message": "Activate Tab"
+  },
+  "downloadDirectory": {
+    "message": "Download Directory"
+  },
+  "showSaveAsDialog": {
+    "message": "Show SaveAs Dialog"
+  },
+  "requests": {
+    "message": "Request"
+  },
+  "name": {
+    "message": "Name"
+  },
+  "prompt": {
+    "message": "Prompt"
+  },
+  "operationMode": {
+    "message": "Operation Mode"
+  },
+  "modeChain": {
+    "message": "Chain"
+  },
+  "modeNormal": {
+    "message": "Normal"
+  },
+  "modeLeftRightUpDown": {
+    "message": "Left Right Up Down"
+  },
+  "modeCircleMenu": {
+    "message": "Circle Menu"
+  },
+  "modeGridMenu": {
+    "message": "Grid Menu"
+  },
+  "modeContextMenu": {
+    "message": "Context Menu"
+  },
+  "assetData": {
+    "message": "Asset Data"
+  },
+  "add": {
+    "message": "Add"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "operation": {
+    "message": "Operation"
+  },
+  "scriptText": {
+    "message": "Script"
+  },
+  "actionIcon": {
+    "message": "Icon of Actions"
+  },
+  "minimumDistance": {
+    "message": "Minimum Distance"
+  },
+  "tabTitleCommon": {
+    "message": "Common"
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "confirm": {
+    "message": "Confirm"
+  },
+  "close": {
+    "message": "Close"
+  },
+  "delete": {
+    "message": "Delete"
+  },
+  "confirmDelete": {
+    "message": "Confirm Delete \"$name$\"?",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "pickImage": {
+    "message": "Pick Image"
+  },
+  "duplicate": {
+    "message": "Duplicate"
+  },
+  "preferContextDataType": {
+    "message": "Prefer Data Type"
+  },
+  "contextDataTypeSelection": {
+    "message": "Selection"
+  },
+  "contextDataTypeLink": {
+    "message": "Link"
+  },
+  "contextDataTypeLinkText": {
+    "message": "Text Of Link"
+  },
+  "contextDataTypeImageSource": {
+    "message": "Source of Image"
+  },
+  "reset": {
+    "message": "Reset"
+  },
+  "container": {
+    "message": "Container"
+  },
+  "inheritContainer": {
+    "message": "[Inherit Container]"
+  },
+  "helpActionName": {
+    "message": "the name of action"
+  },
+  "helpActionCommand": {
+    "message": "the command of action. \"Open\" will open a tab and use selected content as url; \"Copy\" writes the selected content into clipboard; \"Search Request\" will open a tab with url base on this request template; \"Download\" let browser download selected content; \"Script\" inject script into web page"
+  },
+  "helpActionContextType": {
+    "message": "context type to use action"
+  },
+  "helpActionPrompt": {
+    "message": "the text to show up when action will be performed. if this field left blank, the name of action will show up"
+  },
+  "helpActionOperationMode": {
+    "message": "the operation mode of this action. \"direction chain\" allows multiple direction to pick actions. \"normal\" allows one direction to pick actions. \"circle menu\" shows a menu which you can pick actions。\"context menu\" will register a context menu item associating this action"
+  },
+  "helpActionDirection": {
+    "message": "use one direction to match this action"
+  },
+  "helpActionDirectionChain": {
+    "message": "use multiple directions to match this action"
+  },
+  "helpActionPreferDataType": {
+    "message": "decide which data you prefer to processed when performing action."
+  },
+  "helpCommandRequest": {
+    "message": "open a new tab with the url that is based on request template"
+  },
+  "helpScript": {
+    "message": "select the script"
+  },
+  "helpActionIcon": {
+    "message": "the icon of action that showed under menu operation mode"
+  },
+  "helpActionContainer": {
+    "message": "specific how to deal with container when open new tab. you can use \"[Inherit Container]\" to let new tab inherit the container of opener tab, or specific another container"
+  },
+  "organizeActionOrder": {
+    "message": "Organize action order"
+  },
+  "editConfig": {
+    "message": "Edit Config"
+  },
+  "filterActions": {
+    "message": "Filter"
+  },
+  "manageActions": {
+    "message": "Manage"
+  },
+  "noFilter": {
+    "message": "No"
+  },
+  "importSearchEngineFromBrowser": {
+    "message": "Import Search Engine From Browser "
+  },
+  "importSearchEngineFromExtension": {
+    "message": "Import Search Engine From Extension"
+  },
+  "tabTitleEditor": {
+    "message": "Editor"
+  }
+}

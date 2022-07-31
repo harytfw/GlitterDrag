@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Glitter Drag Pro</title>
+	<link href="/res/simple.min.css" rel="stylesheet">
+	<style>
+		body {
+			grid-template-columns: 1fr 80% 1fr;
+		}
+
+		.h-flex {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-evenly;
+		}
+
+		#filterForm {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: flex-start;
+		}
+
+		#filterForm>select,
+		#filterForm>input {
+			margin: 0.5rem;
+		}
+
+		.organizeOrderItem {
+			cursor: move;
+		}
+
+		.organizeOrderItem>div {
+			display: flex;
+		}
+
+		#actions-ctrl-area {
+			display: grid;
+			grid-template:
+				"row1 row1 " 1fr
+				"row2a row2b" 1fr / 1fr 2fr
+		}
+	</style>
+</head>
+
+<body>
+	<script src="./main.js"></script>
+</body>
+
+</html>

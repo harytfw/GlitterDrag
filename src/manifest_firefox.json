@@ -1,0 +1,57 @@
+{
+    "manifest_version": 2,
+    "name": "__MSG_extensionName__",
+    "description": "__MSG_extensionDescription__",
+    "version": "0.0.1",
+    "homepage_url": "https://github.com/harytfw/droponfly",
+    "icons": {
+        "128": "/icon/drag.png"
+    },
+    "author": "harytfw",
+    "permissions": [
+        "activeTab",
+        "storage",
+        "tabs",
+        "downloads",
+        "search",
+        "scripting",
+        "<all_urls>",
+        "contextualIdentities",
+        "cookies",
+        "contextMenus"
+    ],
+    "optional_permissions": [
+        "clipboardWrite"
+    ],
+    "background": {
+        "scripts": [
+            "background/main.js"
+        ]
+    },
+    "content_scripts": [
+        {
+            "run_at": "document_end",
+            "all_frames": true,
+            "matches": [
+                "*://*/*"
+            ],
+            "js": [
+                "content_scripts/main.js"
+            ]
+        }
+    ],
+    "options_ui": {
+        "page": "options/options.html",
+        "browser_style": true,
+        "open_in_tab": true
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "strict_min_version": "106.0"
+        }
+    },
+    "web_accessible_resources": [
+        "components/main.js"
+    ],
+    "default_locale": "en"
+}
