@@ -1,12 +1,14 @@
-import browser from 'webextension-polyfill'
+import trimStart from 'lodash-es/trimStart';
+import browser from 'webextension-polyfill';
 import { CommandKind, LogLevel, TabPosition } from '../config/config';
-import { newRuntimeMessage as buildRuntimeMessage } from '../message/message';
+import { buildRuntimeMessage } from '../message/message';
 import { rootLog } from '../utils/log';
 import { VarSubstituteTemplate } from '../utils/var_substitute';
 import { primarySelection, primaryType, type ExecuteContext } from './context';
 import { Protocol, RequestResolver } from './resolver';
+import { searchText as searchTextViaBrowser } from './search';
 import { buildDownloadableURL, buildVars, dumpFunc, generatedDownloadFileName, guessImageType, isOpenableURL, urlToArrayBuffer } from './utils';
-import { VolatileState } from './volatile_state';
+import { defaultVolatileState } from './volatile_state';
 
 const log = rootLog.subLogger(LogLevel.VVV, 'executor')
 
@@ -16,22 +18,32 @@ export class Executor {
         log.VVV('command:', ctx.action.command, 'ctx: ', ctx)
 
         switch (ctx.action.command) {
-            case CommandKind.open:
+            case CommandKind.open: {
                 await this.openHandler(ctx);
                 return
-            case CommandKind.copy:
+            }
+            case CommandKind.copy: {
                 await this.copyHandler(ctx);
                 return
-            case CommandKind.request:
+            }
+            case CommandKind.request: {
                 await this.requestHandler(ctx);
                 return
-            case CommandKind.download:
+            }
+            case CommandKind.download: {
                 await this.downloadHandler(ctx);
                 return
-            case CommandKind.dump:
+            }
+            case CommandKind.dump: {
                 await this.dumpHandler(ctx)
-            default:
+                return
+            }
+            case CommandKind.script: {
+                await this.scriptHandler(ctx)
+            }
+            default: {
                 throw new Error("unknown action command: " + ctx.action.command)
+            }
         }
     }
 
@@ -87,10 +99,10 @@ export class Executor {
 
                     log.VV("search: ", query, "with: ", engine)
 
-                    browser.search.search({
+                    await searchTextViaBrowser({
                         query: query,
                         engine: engine,
-                        tabId: tabHoldingSearch.id
+                        tabId: tabHoldingSearch.id,
                     })
                     return
                 }
@@ -115,30 +127,31 @@ export class Executor {
         }
     }
 
-    async downloadHandler(ctx: ExecuteContext) {
+    async downloadHandler(ctx: ExecuteContext): Promise<number> {
         const url = await buildDownloadableURL(ctx)
         const genFilename = generatedDownloadFileName(ctx, url)
-        
-        let fullFilename = undefined
+
+        let fullFilename: string | undefined = undefined
 
         if (genFilename) {
             const vars = buildVars(ctx)
             const template = new VarSubstituteTemplate(ctx.action.config.directory)
             fullFilename = [template.substitute(vars), "/", genFilename].join("")
+            fullFilename = trimStart(fullFilename, '/')
         }
 
         log.VVV("download url: ", url, "genFilename: ", genFilename, "fullFilename: ", fullFilename)
-        
-        await browser.downloads.download({
+
+        const downloadId = await browser.downloads.download({
             url: url.toString(),
             saveAs: ctx.action.config.showSaveAsDialog,
             filename: fullFilename,
         })
 
-        return
+        return downloadId
     }
 
-    async dumpHandler(ctx: ExecuteContext) {
+    async dumpHandler(ctx: ExecuteContext): Promise<browser.Tabs.Tab> {
         const tab = await browser.tabs.create({
             url: "about:blank"
         })
@@ -159,9 +172,31 @@ export class Executor {
             func: dumpFunc,
             args: [arg1]
         })
+        return tab
     }
 
-    private getTabIndex(ctx: ExecuteContext, tabsLength = 0, currentTabIndex = 0) {
+    async scriptHandler(ctx: ExecuteContext): Promise<void> {
+        const script = ctx.config.scripts.find(s => s.id === ctx.action.config.scriptId)
+        if (!script) {
+            log.E(`script "${script.id}" not found`)
+            return
+        }
+
+        await browser.tabs.sendMessage(ctx.tabId, buildRuntimeMessage("doScript", {
+            text: script.text,
+            selection: {
+                text: ctx.text,
+                link: ctx.link,
+                image: ctx.image,
+                primary: primarySelection(ctx),
+            }
+        }), {
+            frameId: ctx.frameId
+        })
+        return
+    }
+
+    private getTabIndex(ctx: ExecuteContext, tabsLength = 0, currentTabIndex = 0): number {
 
         let index = 0;
         switch (ctx.action.config.tabPosition) {
@@ -228,8 +263,8 @@ export class Executor {
         log.VVV('create new tab with option', option)
 
         if (!ctx.action.config.activeTab && ctx.action.config.tabPosition === TabPosition.next) {
-            const state = await VolatileState.load()
-            state.backgroundTabCounter = state.backgroundTabCounter + 1
+            const state = await defaultVolatileState()
+            state.backgroundTabCounter += 1
         }
 
         return browser.tabs.create(option);

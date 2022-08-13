@@ -25,6 +25,7 @@ export async function blankExecuteContext(action?: ActionConfig): Promise<Execut
         endPosition: { x: 0, y: 0 },
         backgroundTabCounter: 0,
         frameId: 0,
-        tabURL: "http://example.com"
+        tabURL: "http://example.com",
+        hostname: "example.com"
     }
 }

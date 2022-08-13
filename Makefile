@@ -10,7 +10,6 @@ export BUILD_DATE = $(shell date --rfc-3339=seconds)
 export BUILD_NODE_VERSION = $(shell node --version)
 export BUILD_ROLLUP_VERSION = $(shell npx rollup --version)
 export BUILD_OS = $(shell node -e "console.log(require('os').platform())")
-export BUILD_TARGET_BROWSER ?= firefox
 
 $(shell [ ! -d $(DIST) ] && mkdir $(DIST))
 
@@ -19,8 +18,22 @@ assets = ./content_scripts/content_script.css \
 	 	./icon/drag.png \
 		./options/options.html
 
-.PHONY: extension
-extension: compile lint
+.PHONY: extension-firefox
+extension-firefox: manifest-firefox compile lint package
+
+.PHONY: extension-chromium
+extension-chromium: manifest-chromium compile package
+
+.PHONY: manifest-firefox
+manifest-firefox:
+	@cp $(SRC)/manifest_firefox.json $(DIST)/manifest.json
+
+.PHONY: manifest-chromium
+manifest-chromium:
+	@cp $(SRC)/manifest_chromium.json $(DIST)/manifest.json
+
+.PHONY: package
+package:
 	@web-ext build -s $(DIST) --overwrite-dest
 
 .PHONY: clean
@@ -28,13 +41,9 @@ clean:
 	@rm -rf $(DIST)
 
 .PHONY: compile
-compile: manifest.json
+compile:
 	@entryPoints="$(entryPoints)" src=$(SRC) dist=$(DIST) npx rollup -c;
 	@echo $(assets) | tr " " "\n" | rsync --files-from=- -r $(SRC) $(DIST)
-
-.PHONY: manifest.json
-manifest.json:
-	@cp $(SRC)/manifest_$(BUILD_TARGET_BROWSER).json $(DIST)/manifest.json
 
 .PHONY: lint
 lint:
@@ -51,15 +60,18 @@ start-server:
 	@python3 -m http.server $(port)
 
 
-.PHONY: compile-test
-compile-test: entryPoints += test
-compile-test: compile
+.PHONY: compile-with-test
+compile-with-test: export BUILD_PROFILE=test
+compile-with-test: export BUILD_MOCHA_FILTER=$(filter)
+compile-with-test: entryPoints += test
+compile-with-test: compile
 	@cp $(NODE_MODULES)/mocha/mocha.js \
 	   $(NODE_MODULES)/mocha/mocha.css \
 	   $(SRC)/test/mocha.html \
 	   $(DIST)/test/
 
-.PHONY: test
-test: export BUILD_PROFILE=test
-test: export BUILD_MOCHA_FILTER=$(filter)
-test: compile-test lint
+.PHONY: test-firefox
+test-firefox: manifest-firefox compile-with-test package
+
+.PHONY: test-chromium
+test-chromium: manifest-chromium compile-with-test package

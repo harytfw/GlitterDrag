@@ -19,6 +19,7 @@ export const enum CommandKind {
 	open = 'open',
 	download = 'download',
 	dump = "dump",
+	script = "script",
 }
 
 export const enum OperationMode {
@@ -145,6 +146,30 @@ export class ListModeConfig {
 
 	constructor(cfg: KVRecord) {
 		this.cfg = cfg
+	}
+}
+
+export class Script {
+
+	private cfg: KVRecord
+
+	constructor (cfg: KVRecord) {
+		this.cfg = cfg
+	}
+
+	toPlainObject() {
+		return {
+			id: this.id,
+			text: this.text
+		}
+	}
+
+	get id() {
+		return defaultTo<string>(this.cfg['id'], "")
+	}
+
+	get text() {
+		return defaultTo<string>(this.cfg['text'], "")
 	}
 }
 
@@ -387,6 +412,7 @@ export class Configuration {
 	private _menu: MenuModeConfig
 	private _requests: CommandRequest[]
 	private _assets: Asset[]
+	private _scripts: Script[]
 
 	constructor(data?: KVRecord) {
 		data = defaultTo(data, {})
@@ -400,6 +426,7 @@ export class Configuration {
 		this._features = new Set(defaultTo(data['features'], []))
 		this._requests = defaultTo(data['requests'], []).map((r: KVRecord) => new CommandRequest(r))
 		this._assets = defaultTo(data['assets'], []).map((r: KVRecord) => new Asset(r))
+		this._scripts = defaultTo(data['scripts'], []).map((r: KVRecord) => new Script(r))
 	}
 
 	get features(): Set<string> {
@@ -436,6 +463,10 @@ export class Configuration {
 
 	get assets(): readonly Asset[] {
 		return this._assets
+	}
+
+	get scripts(): readonly Script[] {
+		return this._scripts
 	}
 }
 

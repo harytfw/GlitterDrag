@@ -68,6 +68,8 @@ export function guessDragContent(sourceTarget: EventTarget, dataTransferStorage:
 		} else if (isInstance(sourceTarget, window.HTMLPictureElement)) {
 			throw new Error("TODO: to support Picture Element")
 		}
+	} else {
+		// TODO: handle web component with closed shadow root.
 	}
 
 	return {
@@ -104,7 +106,7 @@ export function isEditableAndDraggable(elem: HTMLElement): boolean {
 	return true
 }
 
-export function canDestinationAcceptDrop(target: EventTarget) {
+export function canDestinationAcceptDrop(target?: EventTarget) {
 
 	if (isInstance(target, window.Text)) {
 		return true

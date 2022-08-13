@@ -3,7 +3,6 @@
     "manifest_version": 2,
     "name": "Glitter Drag Pro",
     "version": "2.1.0.0",
-    "version_name": "2.1.0.0 alpha",
     "homepage_url": "https://github.com/harytfw/GlitterDrag",
     "icons": {
         "128": "/icon/drag.png"
@@ -16,7 +15,8 @@
         "clipboardWrite",
         "downloads",
         "search",
-        "scripting"
+        "scripting",
+        "<all_urls>"
     ],
     "background": {
         "scripts": [

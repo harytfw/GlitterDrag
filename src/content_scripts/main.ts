@@ -1,14 +1,16 @@
-import browser, { scripting } from 'webextension-polyfill';
+import browser from 'webextension-polyfill';
 import { Configuration, Feature, type ReadonlyConfiguration } from '../config/config';
-import { newRuntimeMessage, type FetchURLReply, type RuntimeMessage, type RuntimeMessageArgs } from '../message/message';
+import { buildRuntimeMessage, type FetchURLReply, type RuntimeMessage, type RuntimeMessageArgs } from '../message/message';
 import type { ExtensionStorage } from '../types';
 import { configureRootLog, rootLog } from '../utils/log';
 import { Controller } from "./drag";
 import { MiddleButtonSelector } from './features/middle_button_selector';
+import { ScriptWrapper as UserScriptWrapper } from './script';
 import { onDocumentLoaded } from './utils';
 
 async function dispatcher(message: RuntimeMessage<keyof RuntimeMessageArgs>) {
     rootLog.V("content script dispatcher:", message)
+
     switch (message.cmd) {
         case "fetchURL":
             return onFetchURLMessage(message as any)
@@ -26,6 +28,10 @@ async function dispatcher(message: RuntimeMessage<keyof RuntimeMessageArgs>) {
             document.execCommand("copy");
             storage.remove();
             return
+        case "doScript": {
+            const wrapper = new UserScriptWrapper(message.args)
+            wrapper.do()
+        }
         default:
             return
     }
@@ -67,7 +73,7 @@ async function setup() {
     controller.start()
 
     onDocumentLoaded(async () => {
-        await browser.runtime.sendMessage(newRuntimeMessage("contentScriptLoaded", null))
+        await browser.runtime.sendMessage(buildRuntimeMessage("contentScriptLoaded", null))
         onConfigChange()
         setupComponents()
     })

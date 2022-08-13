@@ -1,10 +1,4 @@
-import cloneDeep from 'lodash-es/cloneDeep';
-import browser from 'webextension-polyfill'
-import { Configuration, ActionConfig } from "../config/config";
-import type { ExecuteArgs } from "../message/message";
-import type { ExtensionStorage } from "../types";
 import { primarySelection, primaryType, type ExecuteContext } from "./context";
-import { VolatileState } from './volatile_state';
 
 export function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 3) {
     const url = window.URL.createObjectURL(blob);
@@ -169,23 +163,11 @@ export function generatedDownloadFileName(ctx: ExecuteContext, url: URL): string
     }
 }
 
-export async function buildExecuteContext(args: ExecuteArgs, sender: browser.Runtime.MessageSender): Promise<Readonly<ExecuteContext>> {
-    const storage = (await browser.storage.local.get('userConfig')) as ExtensionStorage
-    const state = await VolatileState.load()
-    const config = new Configuration(storage.userConfig)
-    return Object.assign({}, {
-        backgroundTabCounter: state.backgroundTabCounter,
-        windowId: sender.tab.windowId,
-        tabId: sender.tab.id,
-        tabIndex: sender.tab.index,
-        frameId: sender.frameId,
-        tabURL: sender.tab.url,
-        action: new ActionConfig(args.action),
-        config,
-    }, args)
-}
 
-
-export function buildVars(ctx: ExecuteContext): Map<string, string|number> {
-    return new Map([])
+export function buildVars(ctx: ExecuteContext): Map<string, string | number> {
+    return new Map([
+        ["hostname", ctx.hostname],
+        ["title", ctx.title],
+        ["url", ctx.url],
+    ])
 }

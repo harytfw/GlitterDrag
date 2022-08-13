@@ -2,7 +2,7 @@
 import isEqual from 'lodash-es/isEqual'
 import browser from 'webextension-polyfill'
 import { ActionConfig, DirectionLabel, LogLevel, MenuLayout, OperationMode, type ReadonlyConfiguration } from '../config/config'
-import { newRuntimeMessage } from '../message/message'
+import { buildRuntimeMessage } from '../message/message'
 import { ModifierKey, type Position } from '../types'
 import { rootLog } from '../utils/log'
 import { updateIndicatorProxy } from '../components/indicator/indicator_proxy'
@@ -70,7 +70,7 @@ export class Controller {
         this.titleTemplateCache.clear()
         this.config.actions.forEach(a => {
             try {
-                const t =  new VarSubstituteTemplate(a.title)
+                const t = new VarSubstituteTemplate(a.title)
                 this.titleTemplateCache.set(a.title, t)
             } catch (e) {
                 log.E(e)
@@ -124,9 +124,11 @@ export class Controller {
                 'phase': stringifyEventPhase(e.eventPhase),
                 'labels': this.labelChain.labels,
                 target: e.target,
-            }
+            },
+            e,
         )
-        log.VVV('before state: ', this.state)
+
+        log.VVV('before state: ', this.state.toString())
 
         switch (e.type) {
             case 'dragstart':
@@ -159,6 +161,7 @@ export class Controller {
     }
 
     private updateUI(e: DragEvent) {
+
 
         const g = guessDragContent(
             this.sourceTarget,
@@ -194,13 +197,16 @@ export class Controller {
 
         if (this.state.test(States.running)) {
             if (actions.length) {
-                const t = this.titleTemplateCache.get(actions[0].title)
-                let text = actions[0].title
-                if (t) {
+                const title = actions[0].title
+                // TODO: prevent render same "title" multiple times
+                const tmpl = this.titleTemplateCache.get(title)
+                if (tmpl) {
                     // TODO: determine what vars should be
-                    text = t.substitute(new Map())
+                    const text = tmpl.substitute(new Map())
+                    updateStatusProxy({ type: 'show', text: text })
+                } else {
+                    log.V(`missing template instance of title: "${title}"`)
                 }
-                updateStatusProxy({ type: 'show', text: text })
             } else if (this.state.test(States.exceedDistance)) {
                 updateStatusProxy({ type: 'hide' })
             }
@@ -238,20 +244,29 @@ export class Controller {
         this.endPos.x = event.pageX
         this.endPos.y = event.pageY
 
-        const target = event.target
+        let target = event.target
+
+        if (event.composed) {
+            log.VV("composed event, check composed path")
+            const paths = event.composedPath()
+            if (paths.length) {
+                target = paths[0]
+                log.VV("use target of first composed path value:", target)
+            }
+        }
 
         if (!isInstance(target, window.Node)) {
-            log.VV("unsupported target type: ", target)
+            log.VV("target must be instance of node: ", target)
             return
         }
 
         if (isInstance(target, window.HTMLObjectElement)) {
-            log.VV("target is object element, ignore")
+            log.VV("ignore operation because target is object element")
             return;
         }
 
         if (isInstance(target, window.HTMLElement) && isEditableAndDraggable(target)) {
-            log.VV("target is content editable and draggable, ignore")
+            log.VV("ignore operation because target is Editable and Draggable")
             return;
         }
 
@@ -274,6 +289,7 @@ export class Controller {
                     return;
                 }
                 log.VV('not support anchor with javascript:')
+                this.state.set(States.skip)
                 return
             }
 
@@ -320,8 +336,9 @@ export class Controller {
             return
         }
 
+        // TODO: target maybe a customElement with closed mode
 
-        log.V("unknown target: ", target)
+        log.V("unhandled target: ", target)
     }
 
     private checkDragEnter(event: DragEvent) {
@@ -333,6 +350,10 @@ export class Controller {
 
         if (!canDestinationAcceptDrop(target)) {
             log.VV('destination target can not accept drop')
+            return
+        }
+
+        if (this.state.test(States.skip)) {
             return
         }
 
@@ -438,15 +459,32 @@ export class Controller {
             return
         }
 
-        if (!this.state.test(States.resolved)) {
-            log.VV("state is not resolved")
-            this.reset()
+        if (this.state.test(States.skip)) {
             return
+        }
+
+        if (!this.state.test(States.resolved)) {
+            log.VV("state is not resolved, maybe 'checkDrop' was not called, try re-evaluate")
+
+            const b = [
+                this.state.test(States.running),
+                this.dragTriggerSource === TriggerSource.document,
+                canDestinationAcceptDrop(event.target),
+            ]
+
+            if (b.every(v => v)) {
+                log.VV("re-evaluate pass")
+                this.state.set(States.resolved)
+            } else {
+                log.VV("re-evaluate failed")
+                this.reset()
+                return
+            }
         }
 
         if (this.dragTriggerSource !== TriggerSource.document) {
             this.reset()
-            throw new Error("TODO")
+            throw new Error("trigger source is not document")
         }
 
         if (this.state.test(States.skip)) {
@@ -525,7 +563,7 @@ export class Controller {
 
         log.VVV("use action:", action)
 
-        let cmd = newRuntimeMessage("execute", {
+        let cmd = buildRuntimeMessage("execute", {
             action: action.toPlainObject(),
             text: g.textSel,
             link: g.linkSel,
@@ -570,7 +608,6 @@ export class Controller {
     }
 
     filterAction(g: Guess, labels: readonly string[]): ActionConfig[] {
-        log.VVV("filter action, guess: ", g, " labels: ", labels)
         if (!this.config) {
             return
         }

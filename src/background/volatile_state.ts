@@ -5,28 +5,36 @@ const enum States {
 	backgroundTabCounter = "backgroundTabCounter"
 }
 
-const key = "volatileState"
 
-export class VolatileState {
+export interface VolatileState {
+	backgroundTabCounter: number
 
+	load(): Promise<void>
+	save(): Promise<void>
+}
+
+
+class localStorageBackend implements VolatileState {
+
+	static storageKey = "volatileState"
 	private loaded = false
 	private data = new Map<string, unknown>()
 
-	static async load() {
-		if(!state.loaded) {
-			const storageData = await browser.storage.local.get(key)
-			state.data = new Map(defaultTo<[]>(storageData[key], []))
-			state.loaded = true
+	async load() {
+		if (state.loaded) {
+			return
 		}
-		return state
+		const storageData = await browser.storage.local.get(localStorageBackend.storageKey)
+		state.data = new Map(defaultTo<[]>(storageData[localStorageBackend.storageKey], []))
+		state.loaded = true
 	}
 
 	async save() {
-		return browser.storage.local.set({
-			key: this.data
-		})
+		const obj = {}
+		obj[localStorageBackend.storageKey] = this.data
+		return browser.storage.local.set(obj)
 	}
-	
+
 	get backgroundTabCounter() {
 		return Number(defaultTo(this.data.get(States.backgroundTabCounter), 0))
 	}
@@ -36,4 +44,9 @@ export class VolatileState {
 	}
 }
 
-const state = new VolatileState()
+const state = new localStorageBackend()
+
+export async function defaultVolatileState(): Promise<VolatileState> {
+	await state.load()
+	return state
+}

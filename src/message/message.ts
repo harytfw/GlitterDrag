@@ -1,4 +1,4 @@
-import { CommandRequest } from "../config/config"
+import { CommandRequest, Script } from "../config/config"
 import type { ModifierKey, Position, KVRecord } from "../types"
 
 
@@ -36,13 +36,24 @@ export interface openTabArgs {
 	url: string,
 }
 
+export interface ScriptArgs {
+	text: string
+	selection: {
+		text: string,
+		image: string
+		link: string
+		primary: string
+	}
+}
+
 export interface RuntimeMessageArgs {
 	"execute": ExecuteArgs
 	"contentScriptLoaded": any
 	"ping": any
 	"fetchURL": FetchURLArgs
-	"closeTab": null
+	"closeCurrentTab": null
 	"copy": string
+	"doScript": ScriptArgs
 }
 
 export interface RuntimeMessage<K extends keyof RuntimeMessageArgs = any> {
@@ -51,7 +62,7 @@ export interface RuntimeMessage<K extends keyof RuntimeMessageArgs = any> {
 }
 
 
-export function newRuntimeMessage<K extends keyof RuntimeMessageArgs>(cmd: K, args: RuntimeMessageArgs[K]): RuntimeMessage<K> {
+export function buildRuntimeMessage<K extends keyof RuntimeMessageArgs>(cmd: K, args: RuntimeMessageArgs[K]): RuntimeMessage<K> {
 	return {
 		cmd,
 		args

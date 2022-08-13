@@ -5,9 +5,9 @@ import { type RuntimeMessage, type RuntimeMessageArgs } from "../message/message
 import type { ExtensionStorage } from "../types";
 import { captureError } from '../utils/error';
 import { configureRootLog, rootLog } from '../utils/log';
+import { buildExecuteContext } from './context';
 import { Executor } from "./executor";
-import { buildExecuteContext } from "./utils";
-import { VolatileState } from './volatile_state';
+import { defaultVolatileState } from './volatile_state';
 
 captureError()
 
@@ -31,19 +31,19 @@ async function onContentScriptLoaded(tabId: number, frameId?: number) {
 
 browser.tabs.onRemoved.addListener(async () => {
     rootLog.VVV("a tab is remove, reset tab counter")
-    const state = await VolatileState.load()
+    const state = await defaultVolatileState()
     state.backgroundTabCounter = 0;
 });
 
 browser.tabs.onActivated.addListener(async () => {
     rootLog.VVV("a tab is activate, reset tab counter")
-    const state = await VolatileState.load()
+    const state = await defaultVolatileState()
     state.backgroundTabCounter = 0;
 });
 
 browser.runtime.onSuspend.addListener(async () => {
     rootLog.V("saving volatile state")
-    const state = await VolatileState.load()
+    const state = await defaultVolatileState()
     await state.save()
 });
 
@@ -51,24 +51,27 @@ browser.runtime.onMessage.addListener(async (m: RuntimeMessage<keyof RuntimeMess
 
     rootLog.VVV("cmd: ", m.cmd, "sender tabId: ", sender.tab)
 
-    const executor = new Executor();
-
     switch (m.cmd) {
-        case "execute":
+        case "execute": {
+            const executor = new Executor();
             let ctx = await buildExecuteContext(m.args, sender)
-            executor.execute(ctx);
+            executor.execute(ctx)
             return
-        case "contentScriptLoaded":
+        }
+        case "contentScriptLoaded": {
             if (sender.tab) {
                 return onContentScriptLoaded(sender.tab.id, sender.frameId)
             }
             return
-        case "closeTab":
+        }
+        case "closeCurrentTab": {
             await browser.tabs.remove(sender.tab.id)
             return
-        default:
+        }
+        default: {
             rootLog.E("unhandled message: ", m)
             return
+        }
     }
 });
 

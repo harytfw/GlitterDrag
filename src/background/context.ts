@@ -1,6 +1,8 @@
-
+import browser from 'webextension-polyfill';
 import { ActionConfig, Configuration, TypeConstraint, TypePriority } from "../config/config";
 import type { ExecuteArgs } from "../message/message";
+import type { ExtensionStorage } from '../types';
+import { defaultVolatileState } from './volatile_state';
 
 export interface ExecuteContext extends ExecuteArgs {
 	readonly action: ActionConfig
@@ -9,9 +11,30 @@ export interface ExecuteContext extends ExecuteArgs {
 	readonly tabIndex: number,
 	readonly tabURL: string,
 	readonly frameId: number,
-	readonly config: Readonly<Configuration>
-	readonly backgroundTabCounter: number
+	readonly config: Readonly<Configuration>,
+	readonly backgroundTabCounter: number,
+	readonly hostname: string,
 }
+
+
+export async function buildExecuteContext(args: ExecuteArgs, sender: browser.Runtime.MessageSender): Promise<Readonly<ExecuteContext>> {
+	const storage = (await browser.storage.local.get('userConfig')) as ExtensionStorage
+	const state = await defaultVolatileState()
+	const config = new Configuration(storage.userConfig)
+	const urlObj = new URL(args.url)
+	return Object.assign({}, {
+		backgroundTabCounter: state.backgroundTabCounter,
+		windowId: sender.tab.windowId,
+		tabId: sender.tab.id,
+		tabIndex: sender.tab.index,
+		frameId: sender.frameId,
+		tabURL: sender.tab.url,
+		action: new ActionConfig(args.action),
+		hostname: urlObj.hostname,
+		config,
+	}, args)
+}
+
 
 export function primaryType(ctx: ExecuteContext): "text" | "link" | "image" {
 
@@ -60,6 +83,7 @@ export function primarySelection(ctx: ExecuteContext): string {
 		case "text": return ctx.text
 		case "link": return ctx.link
 		case "image": return ctx.image
+		default: throw new Error("unreachable")
 	}
 }
 
