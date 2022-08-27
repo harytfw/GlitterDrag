@@ -123,6 +123,10 @@ export class VarSubstituteTemplate {
 		this.nodes = (new TemplateParser(this.s)).parse()
 	}
 
+	get template(): string {
+		return this.s
+	}
+
 	substitute(vars: Map<string, string | number>): string {
 		return this.nodes.map((node) => {
 			if (node.type === ParserNodeType.var) {

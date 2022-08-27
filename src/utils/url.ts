@@ -30,7 +30,6 @@ function matchRe(s: string, pat: RegExp): boolean {
 function isTopLevelDomain(url: URL): boolean {
     return parse(url.hostname).isIcann
 }
-
 export class URLFixer {
 
     private protocol = "https://"

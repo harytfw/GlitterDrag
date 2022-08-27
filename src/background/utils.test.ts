@@ -8,19 +8,19 @@ describe("background utils", () => {
 	describe("resolve download filename", () => {
 		it("text", async () => {
 			const ctx = await blankExecuteContext()
-			ctx.text = "hello world"
+			ctx.data.selection = "hello world"
 			assertOk(generatedDownloadFileName(ctx, await buildDownloadableURL(ctx)))
 		})
 
 		it("image", async () => {
 			const ctx = await blankExecuteContext()
-			ctx.image = "http://example.com/a.jpg"
+			ctx.data.imageSource = "http://example.com/a.jpg"
 			assertOk(generatedDownloadFileName(ctx, await buildDownloadableURL(ctx)))
 		})
 
 		it("link", async () => {
 			const ctx = await blankExecuteContext()
-			ctx.link = "http://example.com/"
+			ctx.data.link = "http://example.com/"
 			assertOk(generatedDownloadFileName(ctx, await buildDownloadableURL(ctx)))
 		})
 
@@ -39,19 +39,19 @@ describe("background utils", () => {
 
 	it("build url for text", async () => {
 		let ctx = await blankExecuteContext()
-		ctx.text = "hello"
+		ctx.data.selection = "hello"
 		assertOk(buildDownloadableURL(ctx))
 	})
 
 	it("build url for image", async () => {
 		let ctx = await blankExecuteContext()
-		ctx.image = browser.runtime.getURL("icon/drag.png")
+		ctx.data.imageSource = browser.runtime.getURL("icon/drag.png")
 		assertOk(buildDownloadableURL(ctx))
 	})
 
 	it("build url for link", async () => {
 		let ctx = await blankExecuteContext()
-		ctx.link = "http://www.example.com"
+		ctx.data.link = "http://www.example.com"
 		assertOk(buildDownloadableURL(ctx))
 
 	})

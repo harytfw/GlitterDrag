@@ -13,7 +13,7 @@ export class ScriptWrapper {
 	do() {
 		const text = `
 		{
-			const selection = ${JSON.stringify(this.args.selection)};
+			const selection = ${JSON.stringify(this.args.data)};
 			!(function() {
 				${this.args.text}
 			}).apply(selection)

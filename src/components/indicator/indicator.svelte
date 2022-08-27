@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import { get_current_component } from "svelte/internal";
-	import type { IndicatorMessage } from "../message";
+import type { Position } from "../../types";
 
 	
 	// https://github.com/sveltejs/svelte/issues/3091
@@ -17,13 +17,11 @@
 	$: width = `${radius * 2}px`
 	$: borderRadius = `${radius * 2}px ${radius *2}px`
 	
-	const cb = (msg: CustomEvent<IndicatorMessage>)=>{
-		radius = msg.detail.radius
-		x = msg.detail.center.x
-		y = msg.detail.center.y
+	component["update"] = (r: number, pos: Position) => {
+		radius = r
+		x = pos.x
+		y = pos.y
 	}
-
-	component.addEventListener("indicator", cb)
 
 </script>
 

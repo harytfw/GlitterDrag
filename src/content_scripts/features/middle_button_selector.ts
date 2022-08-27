@@ -1,4 +1,3 @@
-
 const MINIUM_MOVEMENT = 10
 const LEFT_BUTTON = 0
 const MIDDLE_BUTTON = 1
@@ -54,14 +53,14 @@ export class MiddleButtonSelector {
 		this.target = target
 	}
 
-	start() {
+	async start() {
 		this.target.addEventListener("mouseup", this.mouseup);
 		this.target.addEventListener("mousedown", this.mousedown);
 		this.target.addEventListener("mousemove", this.mousemove);
 		this.target.addEventListener("auxclick", this.auxclick);
 	}
 
-	stop() {
+	async stop() {
 		this.target.removeEventListener("mouseup", this.mouseup)
 		this.target.removeEventListener("mousedown", this.mousedown)
 		this.target.removeEventListener("mousemove", this.mousemove)

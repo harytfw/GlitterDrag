@@ -9,5 +9,4 @@ export default {
 	os: env["BUILD_OS"],
 	mochaFilter: env["BUILD_MOCHA_FILTER"],
 	profile: env["BUILD_PROFILE"],
-	targetBrowser: env["BUILD_TARGET_BROWSER"]
 } as const

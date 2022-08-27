@@ -1,24 +1,23 @@
 import browser from 'webextension-polyfill';
 import { Configuration, Feature, type ReadonlyConfiguration } from '../config/config';
-import { buildRuntimeMessage, type FetchURLReply, type RuntimeMessage, type RuntimeMessageArgs } from '../message/message';
+import { buildRuntimeMessage, RuntimeMessageName, type FetchURLReply, type RuntimeMessage, type RuntimeMessageArg, type RuntimeMessageArgsMap } from '../message/message';
 import type { ExtensionStorage } from '../types';
 import { configureRootLog, rootLog } from '../utils/log';
-import { Controller } from "./drag";
+import { DragController } from "./drag";
+import { MiddleButtonClose } from './features/auxclose';
 import { MiddleButtonSelector } from './features/middle_button_selector';
+import { OpExecutor } from './op';
 import { ScriptWrapper as UserScriptWrapper } from './script';
 import { onDocumentLoaded } from './utils';
 
-async function dispatcher(message: RuntimeMessage<keyof RuntimeMessageArgs>) {
-    rootLog.V("content script dispatcher:", message)
-
-    switch (message.cmd) {
-        case "fetchURL":
-            return onFetchURLMessage(message as any)
-        case "ping":
-            return "pong"
-        case "copy":
+async function dispatcher(m: any) {
+    rootLog.V("content script dispatcher:", m)
+    const cmd = m.cmd as RuntimeMessageName;
+    switch (cmd) {
+        case RuntimeMessageName.copy: {
+            const args = (m as RuntimeMessage<typeof cmd>).args
             const storage = document.createElement("textarea");
-            storage.value = message.args;
+            storage.value = args;
             storage.setAttribute('readonly', '');
             storage.style.position = 'absolute';
             storage.style.width = '0px';
@@ -28,33 +27,16 @@ async function dispatcher(message: RuntimeMessage<keyof RuntimeMessageArgs>) {
             document.execCommand("copy");
             storage.remove();
             return
-        case "doScript": {
-            const wrapper = new UserScriptWrapper(message.args)
+        }
+        case RuntimeMessageName.executeScript: {
+            const args = (m as RuntimeMessage<typeof cmd>).args
+            const wrapper = new UserScriptWrapper(args)
             wrapper.do()
+            return
         }
         default:
             return
     }
-}
-
-async function onFetchURLMessage(message: RuntimeMessage<"fetchURL">) {
-
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    setTimeout(() => { controller.abort("timeout: " + message.args.timeoutMs + " ms") }, message.args.timeoutMs)
-
-    return window.fetch(message.args.url, { signal }).then((resp) => {
-        return resp.arrayBuffer()
-    }).then(content => {
-        let fetchURLResp: FetchURLReply = {
-            data: String.fromCharCode(...new Uint8Array(content))
-        }
-        if ("base64" === message.args.encoding) {
-            fetchURLResp.data = btoa(fetchURLResp.data);
-        }
-        return fetchURLResp
-    })
 }
 
 function setupComponents() {
@@ -63,17 +45,22 @@ function setupComponents() {
     document.body.appendChild(s)
 }
 
-let controller: Controller | null = null
+let controller: DragController | null = null
+let opExecutor: OpExecutor | null = null
 async function setup() {
 
     browser.storage.onChanged.addListener(onConfigChange)
     browser.runtime.onMessage.addListener(dispatcher as any)
 
-    controller = new Controller(document.documentElement);
+
+    opExecutor = new OpExecutor()
+    opExecutor.reset()
+
+    controller = new DragController(document.documentElement, opExecutor);
     controller.start()
 
     onDocumentLoaded(async () => {
-        await browser.runtime.sendMessage(buildRuntimeMessage("contentScriptLoaded", null))
+        await browser.runtime.sendMessage(buildRuntimeMessage(RuntimeMessageName.contextScriptLoaded, null))
         onConfigChange()
         setupComponents()
     })
@@ -92,7 +79,11 @@ async function manageFeatures(config: ReadonlyConfiguration) {
     featureManagedFlag = true
     if (config.features.has(Feature.middleButtonSelector)) {
         const f = new MiddleButtonSelector(document.getSelection(), document.documentElement)
-        f.start()
+        await f.start()
+    }
+    if (config.features.has(Feature.auxClose)) {
+        const f = new MiddleButtonClose(document.documentElement)
+        await f.start()
     }
 }
 
@@ -103,8 +94,8 @@ async function onConfigChange() {
     configureRootLog(config)
     manageFeatures(config)
 
-    if (controller) {
-        controller.updateStorage(config)
+    if (opExecutor) {
+        opExecutor.updateConfig(config)
     } else {
         throw new Error("controller is null")
     }
@@ -116,8 +107,9 @@ async function main() {
         await setup()
     }
     catch (error) {
-        rootLog.E("failed to setup glitter drag extension");
+        rootLog.E("failed to setup glitter drag extension: ", window.self);
         rootLog.E(error);
+        rootLog.E(error.stack)
     }
 }
 

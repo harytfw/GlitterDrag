@@ -6,8 +6,8 @@
 	import { get_current_component } from "svelte/internal";
 	import { MenuLayout } from "../../config/config";
 	import type { Position } from "../../types";
-	import { updateStatus } from "../status/status";
-	import { EventType, type MenuItem, type MenuMessage } from "../message";
+	import { rootLog } from "../../utils/log";
+	import { EventType, type MenuItem, type ShowMenuOptions } from "../types";
 
 	let component = get_current_component() as HTMLElement;
 	let items: MenuItem[] = [];
@@ -35,21 +35,6 @@
 		}deg) translateY(${-distance}px) rotate(${i * angle * -1}deg`;
 	};
 
-	const cb = (msg: CustomEvent<MenuMessage>) => {
-		if (msg.detail.type === "reset") {
-			selectedMenuId = ""
-			return
-		}
-		center = msg.detail.center;
-		layout = msg.detail.layout;
-		items = cloneDeep(msg.detail.items);
-		if (layout === MenuLayout.circle) {
-			items = items.slice(0, 12);
-		} else {
-			items = items.slice(0, 16);
-		}
-	};
-
 	const closestMenuItem = (target: EventTarget): HTMLElement | null => {
 		if (!(target instanceof Element)) {
 			return null;
@@ -64,16 +49,17 @@
 		return closest;
 	};
 
-	component.addEventListener(EventType.Menu, cb);
-
 	const updateSelectedId = (id: string) => {
 		selectedMenuId = id;
 		component.dataset["id"] = id;
+		rootLog.VVV("update selected id: ", id);
+		window.top.dispatchEvent(
+			new CustomEvent(EventType.MenuSelectedId, { detail: id })
+		);
 	};
 
-	const dragover = (event: DragEvent) => {
+	const dragover = (event: MouseEvent) => {
 		const closest = closestMenuItem(event.target);
-
 
 		if (!(closest instanceof HTMLElement)) {
 			return;
@@ -84,22 +70,58 @@
 
 		if (selectedMenuId !== id) {
 			updateSelectedId(id);
-			updateStatus({
-				type: "show",
-				text: items[idx].title,
-			});
 		}
 	};
 
-	const dragleave = (event: DragEvent) => {
+	const dragleave = (event: MouseEvent) => {
 		const closest = closestMenuItem(event.target);
 
 		if (closest === event.target) {
 			updateSelectedId("");
 		}
 	};
+
+	component["update"] = (opts: ShowMenuOptions) => {
+		const docRect = document.documentElement.getBoundingClientRect();
+
+		let x = opts.position.x;
+		let y = opts.position.y;
+
+		const len = distance + containerOffset;
+
+		const right = x + len;
+		const left = x - len;
+		const top = y - len;
+		const bottom = y + len;
+
+		if (right > docRect.width) {
+			x = docRect.width - len;
+		} else if (left < 0) {
+			x = len;
+		}
+
+		if (bottom > docRect.height) {
+			y = docRect.height - len;
+		} else if (top < 0) {
+			y = len;
+		}
+
+		center = { x, y };
+		layout = cloneDeep(opts.layout);
+		items = cloneDeep(opts.items);
+		if (layout === MenuLayout.circle) {
+			items = items.slice(0, 12);
+		} else {
+			items = items.slice(0, 16);
+		}
+	};
+
+	component["reset"] = () => {
+		updateSelectedId("");
+	};
 </script>
 
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
 	id="container"
 	on:dragover={dragover}
@@ -115,7 +137,7 @@
 				? circularItemStyle(item, i, items)
 				: ""}
 		>
-			{@html item.htmlContent}
+			{@html item.html}
 		</div>
 	{/each}
 </div>
@@ -131,6 +153,6 @@
 		border-radius: 18px;
 		border-style: solid;
 		border-width: 2px;
-		border-color: #777;
+		border-color: #ccc;
 	}
 </style>

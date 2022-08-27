@@ -2,7 +2,7 @@
 import { CommandRequest } from "../config/config"
 import type { KVRecord } from "../types"
 import { VarSubstituteTemplate } from "../utils/var_substitute"
-import { primarySelection, type ExecuteContext } from "./context"
+import { primaryContextData, type ExecuteContext } from "./context"
 
 export type RequestParameterResolver = (key: string, value: string | string[]) => string | string[]
 
@@ -15,7 +15,7 @@ function requestFunc(rawReq: KVRecord) {
 export enum Protocol {
 	http = "http:",
 	https = "https:",
-	search = "search:",
+	browserSearch = "browser:",
 	extension = "extension:",
 }
 
@@ -38,17 +38,24 @@ export class RequestResolver {
 	}
 
 	resolveEngine(): string | undefined {
-		if (!this.req.url.searchParams.has("engine")) {
+		const url = this.resolveURL()
+		const engine = url.searchParams.get("engine")
+		if (!engine) {
 			return undefined
 		}
-		return this.req.url.searchParams.get("engine")
+		return engine
 	}
 
 	resolveURL(): URL {
 
+		// TODO: CACHE
 		const vars = this.buildVars()
 
 		const url = new URL(this.req.url)
+
+		const pathTemplate = new VarSubstituteTemplate(this.req.url.pathname)
+		url.pathname = pathTemplate.substitute(vars)
+
 		for (let [k, v] of Object.entries(this.req.query)) {
 			url.searchParams.set(k, v)
 		}
@@ -64,7 +71,7 @@ export class RequestResolver {
 
 	resolveMessage(): KVRecord {
 		let msg = {
-			"content": primarySelection(this.ctx)
+			"content": primaryContextData(this.ctx)
 		}
 		return msg
 	}
@@ -82,12 +89,12 @@ export class RequestResolver {
 		}
 
 		return new Map([
-			["s", primarySelection(this.ctx)],
+			["s", primaryContextData(this.ctx)],
 			["o", this.req.url.protocol],
 			["d", this.req.url.hostname],
 			["h", mainHost],
 			["p", this.req.url.pathname.substring(1) + this.req.url.search],
-			["x", `site:${this.req.url.hostname} ${primarySelection(this.ctx)}`],
+			["x", `site:${this.req.url.hostname} ${primaryContextData(this.ctx)}`],
 		])
 	}
 

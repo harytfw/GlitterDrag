@@ -1,9 +1,9 @@
 
-SRC = ./src
-DIST = ./dist
-BROWSER ?= $(shell which firefox-developer-edition)
-NODE_MODULES = ./node_modules
-
+export SRC = ./src
+export DIST = ./dist
+export BROWSER ?= $(shell which firefox-developer-edition)
+export NODE_MODULES = ./node_modules
+export WEB_EXT_ARTIFACTS = ./web-ext-artifacts
 export BUILD_PROFILE ?= debug
 export BUILD_COMMIT_ID = $(shell git rev-parse --short HEAD)
 export BUILD_DATE = $(shell date --rfc-3339=seconds)
@@ -16,13 +16,17 @@ $(shell [ ! -d $(DIST) ] && mkdir $(DIST))
 entryPoints = background content_scripts options components
 assets = ./content_scripts/content_script.css \
 	 	./icon/drag.png \
-		./options/options.html
+		./options/options.html \
+		./_locales
+
+.PHONY: extension
+extension: extension-firefox extension-chromium
 
 .PHONY: extension-firefox
-extension-firefox: manifest-firefox compile lint package
+extension-firefox: clean manifest-firefox compile lint package-firefox
 
 .PHONY: extension-chromium
-extension-chromium: manifest-chromium compile package
+extension-chromium: clean manifest-chromium compile package-chromium
 
 .PHONY: manifest-firefox
 manifest-firefox:
@@ -32,18 +36,24 @@ manifest-firefox:
 manifest-chromium:
 	@cp $(SRC)/manifest_chromium.json $(DIST)/manifest.json
 
-.PHONY: package
-package:
-	@web-ext build -s $(DIST) --overwrite-dest
+.PHONY: package-firefox
+package-firefox:
+	@web-ext build -s $(DIST) -a $(WEB_EXT_ARTIFACTS)/firefox  --overwrite-dest
+
+.PHONY: packagec-chromium
+package-chromium:
+	@web-ext build -s $(DIST) -a $(WEB_EXT_ARTIFACTS)/chromium --overwrite-dest
 
 .PHONY: clean
 clean:
 	@rm -rf $(DIST)
+	@mkdir $(DIST)
 
 .PHONY: compile
 compile:
 	@entryPoints="$(entryPoints)" src=$(SRC) dist=$(DIST) npx rollup -c;
 	@echo $(assets) | tr " " "\n" | rsync --files-from=- -r $(SRC) $(DIST)
+	@node scripts/copy_simplecss.mjs
 
 .PHONY: lint
 lint:

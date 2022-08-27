@@ -1,7 +1,22 @@
-import { DirectionLabel } from "../config/config";
+import { Direction } from "../config/config";
+import type { Position } from "../types";
 
-export class LabelChain {
-    private s: DirectionLabel[] = []
+
+
+export class ChainItem {
+    dir: Direction
+    start: Position
+    end: Position
+
+    constructor(dir: Direction, start: Position, end: Position) {
+        this.dir = dir
+        this.start = { x: start.x, y: start.y }
+        this.end = { x: end.x, y: end.y }
+    }
+}
+
+export class DirectionChain {
+    private s: ChainItem[] = []
 
     constructor() {
 
@@ -11,29 +26,33 @@ export class LabelChain {
         return JSON.stringify(this.s)
     }
 
-    overwrite(l: DirectionLabel) {
-        while (this.s.length !== 0) {
-            this.s.pop()
+    overwrite(item: ChainItem) {
+        if (this.s.length != 0) {
+            this.s = []
         }
-        this.s.push(l);
+        this.s.push(item);
     }
 
-    push(l: DirectionLabel) {
+    push(item: ChainItem) {
+        this.s.push(item)
+    }
+
+    pop(): ChainItem | null {
         if (this.s.length == 0) {
-            this.s.push(l)
-            return
+            return null
         }
-        if (this.s[this.s.length - 1] != l) {
-            this.s.push(l)
-            return
-        }
+        return this.s.pop()
+    }
+
+    empty(): boolean {
+        return this.s.length == 0
     }
 
     reset() {
         this.s = []
     }
 
-    get labels(): readonly string[] {
-        return this.s
+    get directions(): readonly Direction[] {
+        return this.s.map(item => item.dir)
     }
 }

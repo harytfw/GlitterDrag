@@ -1,11 +1,29 @@
-import { EventType, type MenuMessage,  } from "../message";
+import { rootLog } from "../../utils/log";
+import { Stub } from "../helper";
+import { EventType, ProxyEventType, type Menu, type ShowMenuOptions, } from "../types";
 
-export function updateMenuProxy(msg: MenuMessage) {
-	globalThis.dispatchEvent(new CustomEvent(EventType.MenuProxy, {detail: JSON.stringify(msg)}))
+
+
+// TODO: test menu under iframe
+export class MenuProxy extends Stub implements Menu {
+
+	constructor() {
+		super(ProxyEventType.Menu)
+	}
+
+	show(opts: ShowMenuOptions) {
+		this.forwardMessage({
+			name: "show",
+			args: [opts],
+		})
+	}
+
+	hide() {
+		this.forwardMessage({
+			name: "hide",
+			args: []
+		})
+	}
 }
 
-export function getMenuSelectedIdProxy(): string {
-	globalThis.dispatchEvent(new CustomEvent(EventType.MenuSelectedIDProxy))
-	const id = document.head.getAttribute("gd-menu-selected-id")
-	return id ? id : ""
-}
+export const menuProxy = new MenuProxy()

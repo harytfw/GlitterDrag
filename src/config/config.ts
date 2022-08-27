@@ -3,7 +3,7 @@ import cloneDeep from 'lodash-es/cloneDeep'
 import type { KVRecord } from "../types";
 
 
-export const enum LogLevel {
+export enum LogLevel {
 	Silent = 0,
 	S = 0,
 	V = 1,
@@ -12,7 +12,7 @@ export const enum LogLevel {
 }
 
 
-export const enum CommandKind {
+export enum CommandKind {
 	invalid = 'invalid',
 	copy = 'copy',
 	request = 'request',
@@ -22,10 +22,10 @@ export const enum CommandKind {
 	script = "script",
 }
 
-export const enum OperationMode {
+export enum OperationMode {
 	chain = 'chain',
 	normal = 'normal',
-	leftRightUpDown = 'normal',
+	leftRightUpDown = 'leftRightUpDown',
 	upDown = 'upDown',
 	leftRight = 'leftRight',
 	diagonal = 'diagonal',
@@ -33,29 +33,24 @@ export const enum OperationMode {
 	upperRightLowerLeft = 'upperRightLowerLeft',
 	full = 'full',
 	any = 'any',
-	circle = 'circle',
-	grid = 'grid',
+	circleMenu = 'circleMenu',
+	gridMenu = 'gridMenu',
+	contextMenu = 'contextMenu',
 }
 
-// 类型优先级
-export enum TypePriority {
-	image = 'image',
-	link = 'link',
-	text = 'text',
-}
 
-export const enum TabPosition {
+export enum TabPosition {
 	start = 'start',
 	end = 'end',
-	before = 'before',
+	prev = 'prev',
 	next = 'next',
 	current = 'current',
-	window = 'newWindow',
+	newWindow = 'newWindow',
 	privateWindow = 'privateWindow'
 }
 
 
-export enum DirectionLabel {
+export enum Direction {
 	any = 'any',
 	left = 'left',
 	right = 'right',
@@ -67,15 +62,27 @@ export enum DirectionLabel {
 	lowerRight = 'lowerRight',
 }
 
-export enum TypeConstraint {
-	text = 'text',
+export enum ContextType {
+	selection = 'selection',
 	image = 'image',
 	link = 'link',
 }
 
+export enum ContextDataType {
+	selection = 'selection',
+	imageSource = 'imageSource',
+	link = 'link',
+	linkText = 'linkText',
+}
+
+export type ContextData = {
+	[k in ContextDataType]: string;
+};
 
 export enum Feature {
-	middleButtonSelector = "middleButtonSelector"
+	middleButtonSelector = "middleButtonSelector",
+	retainComponent = "retainComponent",
+	auxClose = "auxClose",
 }
 
 export class LogConfig {
@@ -91,6 +98,10 @@ export class LogConfig {
 	}
 }
 
+export interface PlainLogConfig {
+	level: number
+}
+
 export class SmartURLConfig {
 	cfg: KVRecord
 
@@ -99,15 +110,41 @@ export class SmartURLConfig {
 	}
 }
 
-export class ExtensionConfig {
-	private _allow: string[] = [];
-	private _disallow: string[] = [];
-	cfg: KVRecord
+
+export class ModeConfig {
+
+	private cfg: KVRecord
 
 	constructor(cfg: KVRecord) {
 		this.cfg = cfg
 	}
 
+	get link(): OperationMode {
+		return defaultTo(this.cfg['link'], OperationMode.normal)
+	}
+
+	get selection(): OperationMode {
+		return defaultTo(this.cfg['selection'], OperationMode.normal)
+	}
+
+	get image(): OperationMode {
+		return defaultTo(this.cfg['image'], OperationMode.normal)
+	}
+
+}
+
+export class CommonConfig {
+	private cfg: KVRecord
+	private _mode: ModeConfig
+
+	constructor(cfg: KVRecord) {
+		this.cfg = cfg
+		this._mode = new ModeConfig(defaultTo(this.cfg['mode'], {}))
+	}
+
+	get mode(): ModeConfig {
+		return this._mode
+	}
 
 	get allow(): string[] {
 		return defaultTo(this.cfg['allow'], [])
@@ -126,18 +163,29 @@ export class ExtensionConfig {
 	}
 }
 
+export interface PlainCommonConfig {
+	mode?: string
+	allowHost?: string[]
+	disallowHost?: string[]
+	minDistance?: number
+	maxDistance?: number
+}
 
 export enum MenuLayout {
 	circle = "circle",
 	grid = "grid"
 }
 
-export class MenuModeConfig {
+export class MenuConfig {
 	cfg: KVRecord
 
 	constructor(cfg: KVRecord) {
 		this.cfg = cfg
 	}
+
+}
+
+export interface PlainMenuConfig {
 
 }
 
@@ -153,7 +201,7 @@ export class Script {
 
 	private cfg: KVRecord
 
-	constructor (cfg: KVRecord) {
+	constructor(cfg: KVRecord) {
 		this.cfg = cfg
 	}
 
@@ -171,7 +219,19 @@ export class Script {
 	get text() {
 		return defaultTo<string>(this.cfg['text'], "")
 	}
+
+	get name() {
+		return defaultTo<string>(this.cfg['name'], this.id)
+	}
 }
+
+export interface PlainScript {
+	id?: string
+	text?: string
+	name?: string
+}
+
+
 
 export class CommandRequest {
 
@@ -184,11 +244,15 @@ export class CommandRequest {
 		this.cfg = cfg
 		this._url = new URL(cfg['url'])
 		this._query = defaultTo(cfg['query'], {})
+		for (const [k, v] of this._url.searchParams) {
+			this._query[k] = cloneDeep(v)
+		}
 	}
 
-	toPlainObject() {
+	toPlainObject(): PlainCommandRequest {
 		return {
 			"id": this.id,
+			"name": this.name,
 			"url": this.url.toString(),
 			"query": this.query
 		}
@@ -200,6 +264,10 @@ export class CommandRequest {
 
 	get id() {
 		return defaultTo(this.cfg['id'], '')
+	}
+
+	get name() {
+		return defaultTo(this.cfg["name"], this.id)
 	}
 
 	get method() {
@@ -215,6 +283,15 @@ export class CommandRequest {
 	}
 }
 
+
+
+export interface PlainCommandRequest {
+	id?: string
+	name?: string
+	url?: string
+	query?: KVRecord
+}
+
 export const enum AssetType {
 	html = "html",
 }
@@ -226,8 +303,12 @@ export class Asset {
 		this.cfg = cfg
 	}
 
-	get id() {
+	get id(): string {
 		return defaultTo(this.cfg["id"], "")
+	}
+
+	get name(): string {
+		return defaultTo(this.cfg["name"], this.id)
 	}
 
 	get type(): AssetType {
@@ -239,6 +320,13 @@ export class Asset {
 	}
 }
 
+export interface PlainAsset {
+	id?: string
+	name?: string
+	type?: string
+	data?: string
+}
+
 export class CommandConfig {
 
 	private cfg: KVRecord
@@ -247,7 +335,7 @@ export class CommandConfig {
 		this.cfg = cfg
 	}
 
-	toPlainObject(): KVRecord {
+	toPlainObject(): PlainCommandConfig {
 		return {
 			activeTab: cloneDeep(this.activeTab),
 			tabPosition: cloneDeep(this.tabPosition),
@@ -255,7 +343,7 @@ export class CommandConfig {
 			directory: cloneDeep(this.directory),
 			showSaveAsDialog: cloneDeep(this.showSaveAsDialog),
 			scriptId: cloneDeep(this.scriptId),
-			priorities: cloneDeep(this.priorities),
+			preferDataTypes: cloneDeep(this.preferDataTypes),
 			container: cloneDeep(this.container),
 		}
 	}
@@ -284,8 +372,8 @@ export class CommandConfig {
 		return defaultTo<boolean>(this.cfg['showSaveAsDialog'], false)
 	}
 
-	get priorities(): TypePriority[] {
-		return defaultTo<TypePriority[]>(this.cfg['priorities'], [])
+	get preferDataTypes(): ContextDataType[] {
+		return defaultTo<ContextDataType[]>(this.cfg['preferDataTypes'], [])
 	}
 
 	get container(): string {
@@ -293,26 +381,16 @@ export class CommandConfig {
 	}
 }
 
-export class ActionStyleConfig {
-
-	private cfg: KVRecord
-
-	constructor(cfg: KVRecord) {
-		this.cfg = cfg
-	}
-
-	toPlainObject(): KVRecord {
-		return {
-			menuIcon: cloneDeep(this.menuIconId),
-		}
-	}
-
-	get menuIconId(): string {
-		return defaultTo<string>(this.cfg['menuIconId'], "")
-	}
-
+export interface PlainCommandConfig {
+	activeTab?: boolean
+	tabPosition?: string
+	requestId?: string
+	scriptId?: string
+	directory?: string
+	showSaveAsDialog?: boolean
+	preferDataTypes?: string[]
+	container?: string
 }
-
 
 export class ConditionConfig {
 	private cfg: KVRecord
@@ -321,10 +399,10 @@ export class ConditionConfig {
 		this.cfg = cfg
 	}
 
-	toPlainObject(): KVRecord {
+	toPlainObject(): PlainConditionConfig {
 		return {
-			types: cloneDeep(this.types),
-			labels: cloneDeep(this.labels),
+			contextTypes: cloneDeep(this.contextTypes),
+			directions: cloneDeep(this.directions),
 			modes: cloneDeep(this.modes),
 		}
 	}
@@ -333,17 +411,24 @@ export class ConditionConfig {
 		return defaultTo<OperationMode[]>(this.cfg['modes'], [])
 	}
 
-	get types(): TypeConstraint[] {
-		return defaultTo<TypeConstraint[]>(this.cfg['types'], [])
+	get contextTypes(): ContextType[] {
+		return defaultTo<ContextType[]>(this.cfg['contextTypes'], [])
 	}
 
-	get labels(): DirectionLabel[] {
-		return defaultTo<DirectionLabel[]>(this.cfg['labels'], [])
+	get directions(): Direction[] {
+		return defaultTo<Direction[]>(this.cfg['directions'], [])
 	}
 
-	get extra(): TypeConstraint[] {
-		return defaultTo<TypeConstraint[]>(this.cfg['extra'], [])
+	get extra(): ContextType[] {
+		return defaultTo<ContextType[]>(this.cfg['extra'], [])
 	}
+}
+
+export interface PlainConditionConfig {
+	modes?: string[]
+	contextTypes?: string[],
+	directions?: string[],
+	extra?: string[]
 }
 
 export class ActionConfig {
@@ -351,38 +436,38 @@ export class ActionConfig {
 	private cfg: KVRecord
 	private _conditionConfig: ConditionConfig
 	private _config: CommandConfig
-	private _style: ActionStyleConfig
 
 	constructor(cfg: KVRecord) {
 		this.cfg = cfg
 		this._conditionConfig = new ConditionConfig(defaultTo(cfg['condition'], {}))
 		this._config = new CommandConfig(defaultTo(cfg['config'], {}))
-		this._style = new ActionStyleConfig(defaultTo(cfg['style'], {}))
 	}
 
-	toPlainObject(): KVRecord {
+	toPlainObject(): PlainActionConfig {
 		return {
 			id: cloneDeep(this.id),
 			command: cloneDeep(this.command),
 			condition: this.condition.toPlainObject(),
 			config: this.config.toPlainObject(),
-			style: this.style.toPlainObject(),
+			icon: this.icon,
+			iconAssetId: this.iconAssetId,
+			prompt: this.prompt
 		}
-	}
-
-	toJSON() {
-		return this.toPlainObject()
 	}
 
 	get id(): string {
 		return defaultTo<string>(this.cfg['id'], "")
 	}
 
-	get title(): string {
-		return defaultTo<string>(this.cfg['title'], this.id)
+	get name(): string {
+		return defaultTo<string>(this.cfg['name'], this.id)
 	}
 
-	get condition(): ConditionConfig {
+	get prompt(): string {
+		return defaultTo<string>(this.cfg['prompt'], "")
+	}
+
+	get condition(): Readonly<ConditionConfig> {
 		return this._conditionConfig
 	}
 
@@ -394,22 +479,34 @@ export class ActionConfig {
 		return this._config
 	}
 
-	get style(): ActionStyleConfig {
-		return this._style
+	get icon(): string {
+		return defaultTo<string>(this.cfg['icon'], "")
 	}
 
+	get iconAssetId(): string {
+		return defaultTo<string>(this.cfg['iconAssetId'], "")
+	}
 }
 
+export interface PlainActionConfig {
+	id?: string
+	name?: string
+	condition?: PlainConditionConfig
+	command?: string
+	config?: PlainCommandConfig
+	icon?: string
+	iconAssetId?: string
+	prompt?: string
+}
 
 export class Configuration {
 
-	private _features: Set<string> = new Set();
-	private _mode: OperationMode;
+	private _features: Set<Feature> = new Set();
 	private _actions: ActionConfig[] = [];
 	private _log: LogConfig
 	private _smartURL: SmartURLConfig
-	private _extension: ExtensionConfig
-	private _menu: MenuModeConfig
+	private _common: CommonConfig
+	private _menu: MenuConfig
 	private _requests: CommandRequest[]
 	private _assets: Asset[]
 	private _scripts: Script[]
@@ -417,11 +514,10 @@ export class Configuration {
 	constructor(data?: KVRecord) {
 		data = defaultTo(data, {})
 
-		this._mode = defaultTo(data['mode'], OperationMode.chain)
 		this._log = new LogConfig(defaultTo(data['log'], {}))
 		this._smartURL = new SmartURLConfig(defaultTo(data['smartURL'], {}))
-		this._extension = new ExtensionConfig(defaultTo(data['extension'], {}))
-		this._menu = new MenuModeConfig(defaultTo(data['grid'], {}))
+		this._common = new CommonConfig(defaultTo(data['common'], {}))
+		this._menu = new MenuConfig(defaultTo(data['grid'], {}))
 		this._actions = defaultTo(data['actions'], []).map((c: KVRecord) => new ActionConfig(c))
 		this._features = new Set(defaultTo(data['features'], []))
 		this._requests = defaultTo(data['requests'], []).map((r: KVRecord) => new CommandRequest(r))
@@ -441,16 +537,12 @@ export class Configuration {
 		return this._smartURL
 	}
 
-	get extension(): ExtensionConfig {
-		return this._extension
+	get common(): CommonConfig {
+		return this._common
 	}
 
-	get menu(): MenuModeConfig {
+	get menu(): MenuConfig {
 		return this._menu
-	}
-
-	get mode(): OperationMode {
-		return this._mode
 	}
 
 	get actions(): readonly ActionConfig[] {
@@ -468,6 +560,20 @@ export class Configuration {
 	get scripts(): readonly Script[] {
 		return this._scripts
 	}
+
+	Enabled(f: Feature): boolean {
+		return this._features.has(f)
+	}
 }
 
 export type ReadonlyConfiguration = Readonly<Configuration>
+
+export interface PlainConfiguration {
+	log?: PlainLogConfig
+	common?: PlainCommonConfig
+	menu?: PlainMenuConfig,
+	actions?: PlainActionConfig[],
+	requests?: PlainCommandRequest[],
+	assets?: PlainAsset[],
+	scripts?: PlainScript[],
+}

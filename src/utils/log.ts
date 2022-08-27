@@ -1,4 +1,4 @@
-import { Configuration, LogLevel, type ReadonlyConfiguration } from "../config/config"
+import { LogLevel, type ReadonlyConfiguration } from "../config/config"
 
 function buildTag(tag: string, parentTag: string): string {
 
@@ -28,19 +28,19 @@ export class Logger {
 	}
 
 	V(...args: any[]) {
-		if (this.isEnableFor(LogLevel.V)) {
+		if (this.isEnable(LogLevel.V)) {
 			this.log(...args)
 		}
 	}
 
 	VV(...args: any[]) {
-		if (this.isEnableFor(LogLevel.VV)) {
+		if (this.isEnable(LogLevel.VV)) {
 			this.log(...args)
 		}
 	}
 
 	VVV(...args: any[]) {
-		if (this.isEnableFor(LogLevel.VVV)) {
+		if (this.isEnable(LogLevel.VVV)) {
 			this.log(...args)
 		}
 	}
@@ -53,8 +53,8 @@ export class Logger {
 		console.trace(...args)
 	}
 
-	protected isEnableFor(level: LogLevel) {
-		if (this.parent && !this.parent.isEnableFor(level)) {
+	public isEnable(level: LogLevel) {
+		if (this.parent && !this.parent.isEnable(level)) {
 			return false
 		}
 		return this.level >= level

@@ -1,20 +1,21 @@
-import { assertEqual, assertFail } from "../utils/test_helper"
-import { primaryType } from "./context"
+import { ContextType } from "../config/config"
+import { assertEqual } from "../utils/test_helper"
+import { primaryContextType } from "./context"
 import { blankExecuteContext } from "./helper.test"
 
 
 describe("test context", () => {
 	it("primary type",async () => {
 		let ctx =  await blankExecuteContext()
-		ctx.text = "hello"
-		assertEqual(primaryType(ctx), "text")
+		ctx.data.selection = "hello"
+		assertEqual(primaryContextType(ctx), ContextType.selection)
 
 		ctx =  await blankExecuteContext()
-		ctx.link = "http://example.com/"
-		assertEqual(primaryType(ctx), "link")
+		ctx.data.link = "http://example.com/"
+		assertEqual(primaryContextType(ctx), ContextType.link)
 
 		ctx =  await blankExecuteContext()
-		ctx.image = "http://example.com/a.jpg"
-		assertEqual(primaryType(ctx), "image")
+		ctx.data.imageSource = "http://example.com/a.jpg"
+		assertEqual(primaryContextType(ctx), ContextType.image)
 	})
 })

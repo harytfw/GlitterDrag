@@ -1,19 +1,14 @@
-import { CommandRequest, Script } from "../config/config"
+import { type ContextData } from "../config/config"
 import type { ModifierKey, Position, KVRecord } from "../types"
 
 
 
-export interface ExecuteArgs {
+export type ExecuteArgs = {
 	action: KVRecord,
-
-	text: string
-	image: string
-	link: string
-
+	data: ContextData,
 	url: string
 	title: string
 	modifierKey: ModifierKey
-
 	startPosition: Position
 	endPosition: Position
 }
@@ -32,37 +27,51 @@ export interface FetchURLReply {
 	data: string
 }
 
-export interface openTabArgs {
-	url: string,
-}
-
 export interface ScriptArgs {
 	text: string
-	selection: {
+	data: {
 		text: string,
-		image: string
+		imageSource: string
+		linkText: string,
 		link: string
 		primary: string
 	}
 }
 
-export interface RuntimeMessageArgs {
+export enum RuntimeMessageName {
+	execute = "execute",
+	contextScriptLoaded = "contentScriptLoaded",
+	ping = "ping",
+	fetchURL = "fetchURL",
+	closeCurrentTab = "closeCurrentTab",
+	copy = "copy",
+	executeScript = "doScript"
+}
+
+export interface RuntimeMessageArgsMap {
 	"execute": ExecuteArgs
-	"contentScriptLoaded": any
-	"ping": any
 	"fetchURL": FetchURLArgs
 	"closeCurrentTab": null
+	"contentScriptLoaded": null
+	"ping": null
 	"copy": string
 	"doScript": ScriptArgs
+
 }
 
-export interface RuntimeMessage<K extends keyof RuntimeMessageArgs = any> {
+export type RuntimeMessageArg<K> =
+	K extends RuntimeMessageName.execute ? ExecuteArgs
+	: K extends RuntimeMessageName.executeScript ? ScriptArgs
+	: K extends RuntimeMessageName.fetchURL ? FetchURLArgs
+	: K extends RuntimeMessageName.copy ? string
+	: null
+
+export interface RuntimeMessage<K extends RuntimeMessageName> {
 	cmd: K,
-	args: RuntimeMessageArgs[K]
+	args: RuntimeMessageArg<K>
 }
 
-
-export function buildRuntimeMessage<K extends keyof RuntimeMessageArgs>(cmd: K, args: RuntimeMessageArgs[K]): RuntimeMessage<K> {
+export function buildRuntimeMessage<K extends RuntimeMessageName>(cmd: K, args: RuntimeMessageArg<K>): RuntimeMessage<K> {
 	return {
 		cmd,
 		args

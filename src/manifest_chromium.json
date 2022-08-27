@@ -1,7 +1,7 @@
 {
-    "description": "A good drag and drop tool",
     "manifest_version": 3,
-    "name": "Glitter Drag Pro",
+    "name": "__MSG_extensionName__",
+    "description": "__MSG_extensionDescription__",
     "version": "2.1.0.0",
     "version_name": "2.1.0.0 alpha",
     "homepage_url": "https://github.com/harytfw/GlitterDrag",
@@ -16,7 +16,8 @@
         "clipboardWrite",
         "downloads",
         "search",
-        "scripting"
+        "scripting",
+        "contextMenus"
     ],
     "host_permissions": [
         "*://*/*"
@@ -41,12 +42,6 @@
         "browser_style": true,
         "open_in_tab": true
     },
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "glitterdrag@harytfw",
-            "strict_min_version": "63.0"
-        }
-    },
     "web_accessible_resources": [
         {
             "resources": [
@@ -56,5 +51,6 @@
                 "*://*/*"
             ]
         }
-    ]
+    ],
+    "default_locale": "en"
 }

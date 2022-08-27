@@ -3,12 +3,11 @@ export enum States {
     initial = 0,
     running = 1 << 1,
     resolved = 1 << 3,
-    exceedDistance = 1 << 4,
-    interfere = 1 << 9,
+    distanceOk = 1 << 4,
     skip = 1 << 10,
 }
 
-export class StateMan {
+export class StateManager {
     private cur: States
 
     constructor() {
@@ -70,9 +69,6 @@ export class StateMan {
         if ((s & States.running) !== 0) {
             a.push('running')
         }
-        if ((s & States.interfere) !== 0) {
-            a.push('interfere')
-        }
         if ((s & States.resolved) !== 0) {
             a.push('resolved')
         }
@@ -80,8 +76,8 @@ export class StateMan {
             a.push('skip')
         }
 
-        if ((s & States.exceedDistance) !== 0) {
-            a.push("badDistance")
+        if ((s & States.distanceOk) !== 0) {
+            a.push("distanceOk")
         }
         return a.join("|")
     }

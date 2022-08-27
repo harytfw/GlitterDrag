@@ -14,11 +14,11 @@ export async function searchText(opt: SearchTextOption): Promise<void> {
 			engine: opt.engine,
 			tabId: opt.tabId,
 		})
-	} else {
-		// https://developer.chrome.com/docs/extensions/reference/search/
-		return chrome.search.query({
-			text: opt.query,
-			tabId: opt.tabId,
-		})
 	}
+
+	// https://developer.chrome.com/docs/extensions/reference/search/
+	return chrome.search.query({
+		text: opt.query,
+		tabId: opt.tabId,
+	})
 }

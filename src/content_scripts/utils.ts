@@ -1,6 +1,6 @@
-import { ActionConfig, Asset, AssetType, DirectionLabel, OperationMode } from "../config/config";
+import { ActionConfig, Asset, AssetType, Configuration, Direction, OperationMode } from "../config/config";
 import type { Position } from "../types";
-import type { MenuItem } from "../components/message";
+import type { MenuItem } from "../components/types";
 
 
 export function getAngle(a: Position, b: Position) {
@@ -18,70 +18,93 @@ export function onDocumentLoaded(cb: Function) {
 
 export type RangeMapping = {
     range: [number, number],
-    label: DirectionLabel
+    label: Direction
 }
 
-export const directionLabelMapping: Record<OperationMode, RangeMapping[]> = {
+export const directionMapping: Record<OperationMode, RangeMapping[]> = {
     any: [
-        { range: [0, 360], label: DirectionLabel.any, }
+        { range: [0, 360], label: Direction.any, }
     ],
     normal: [
-        { range: [45, 135], label: DirectionLabel.up, },
-        { range: [135, 225], label: DirectionLabel.left, },
-        { range: [225, 315], label: DirectionLabel.down, },
-        { range: [315, 360], label: DirectionLabel.right, },
-        { range: [0, 45], label: DirectionLabel.right, }
+        { range: [45, 135], label: Direction.up, },
+        { range: [135, 225], label: Direction.left, },
+        { range: [225, 315], label: Direction.down, },
+        { range: [315, 360], label: Direction.right, },
+        { range: [0, 45], label: Direction.right, }
     ],
     upDown: [
-        { range: [0, 180], label: DirectionLabel.up, },
-        { range: [180, 360], label: DirectionLabel.down, },
+        { range: [0, 180], label: Direction.up, },
+        { range: [180, 360], label: Direction.down, },
     ],
     leftRight: [
-        { range: [90, 270], label: DirectionLabel.left, },
-        { range: [270, 360], label: DirectionLabel.right, },
-        { range: [0, 90], label: DirectionLabel.right, }
+        { range: [90, 270], label: Direction.left, },
+        { range: [270, 360], label: Direction.right, },
+        { range: [0, 90], label: Direction.right, }
     ],
     upperLeftLowerRight: [
-        { range: [45, 225], label: DirectionLabel.upperLeft, },
-        { range: [225, 360], label: DirectionLabel.lowerRight, },
-        { range: [0, 45], label: DirectionLabel.upperLeft, },
+        { range: [45, 225], label: Direction.upperLeft, },
+        { range: [225, 360], label: Direction.lowerRight, },
+        { range: [0, 45], label: Direction.upperLeft, },
     ],
     upperRightLowerLeft: [
-        { range: [135, 275], label: DirectionLabel.lowerLeft, },
-        { range: [275, 360], label: DirectionLabel.upperRight, },
-        { range: [0, 135], label: DirectionLabel.upperRight, },
+        { range: [135, 275], label: Direction.lowerLeft, },
+        { range: [275, 360], label: Direction.upperRight, },
+        { range: [0, 135], label: Direction.upperRight, },
     ],
     diagonal: [
-        { range: [0, 90], label: DirectionLabel.upperRight, },
-        { range: [90, 180], label: DirectionLabel.upperLeft, },
-        { range: [180, 270], label: DirectionLabel.lowerLeft, },
-        { range: [270, 360], label: DirectionLabel.lowerRight, },],
+        { range: [0, 90], label: Direction.upperRight, },
+        { range: [90, 180], label: Direction.upperLeft, },
+        { range: [180, 270], label: Direction.lowerLeft, },
+        { range: [270, 360], label: Direction.lowerRight, },
+    ],
     full: [
-        { range: [22.5, 22.5 * 3], label: DirectionLabel.upperRight, },
-        { range: [22.5 * 3, 22.5 * 5], label: DirectionLabel.up, },
-        { range: [22.5 * 5, 22.5 * 7], label: DirectionLabel.upperLeft, },
-        { range: [22.5 * 7, 22.5 * 9], label: DirectionLabel.left, },
-        { range: [22.5 * 9, 22.5 * 11], label: DirectionLabel.lowerLeft, },
-        { range: [22.5 * 11, 22.5 * 13], label: DirectionLabel.down, },
-        { range: [22.5 * 13, 22.5 * 15], label: DirectionLabel.lowerRight, },
-        { range: [22.5 * 15, 360], label: DirectionLabel.right, },
-        { range: [0, 22.5], label: DirectionLabel.right, }
+        { range: [22.5, 22.5 * 3], label: Direction.upperRight, },
+        { range: [22.5 * 3, 22.5 * 5], label: Direction.up, },
+        { range: [22.5 * 5, 22.5 * 7], label: Direction.upperLeft, },
+        { range: [22.5 * 7, 22.5 * 9], label: Direction.left, },
+        { range: [22.5 * 9, 22.5 * 11], label: Direction.lowerLeft, },
+        { range: [22.5 * 11, 22.5 * 13], label: Direction.down, },
+        { range: [22.5 * 13, 22.5 * 15], label: Direction.lowerRight, },
+        { range: [22.5 * 15, 360], label: Direction.right, },
+        { range: [0, 22.5], label: Direction.right, }
     ],
     chain: [],
-    circle: [],
-    grid: []
+    circleMenu: [],
+    gridMenu: [],
+    contextMenu: [],
+    leftRightUpDown: []
 };
 
-directionLabelMapping.chain = directionLabelMapping.full
+directionMapping.chain = directionMapping.normal
 
+
+export function angleToDirection(mode: OperationMode, angle: number): Direction | null {
+
+    let rangeMapping: RangeMapping[]
+    if (directionMapping[mode]) {
+        rangeMapping = directionMapping[mode]
+    }
+
+    if (!rangeMapping) {
+        return null
+    }
+
+    for (const obj of rangeMapping) {
+        if (obj.range[0] <= angle && angle < obj.range[1]) {
+            return obj.label;
+        }
+    }
+
+    return null
+}
 
 export function transformMenuItem(actions: readonly ActionConfig[], assets: readonly Asset[]): MenuItem[] {
     return actions.map(c => {
-        const asset = assets.find(a => a.id === c.style.menuIconId)
+        const asset = assets.find(a => a.id === c.iconAssetId)
         return {
             id: c.id,
-            title: c.title,
-            htmlContent: asset && asset.type === AssetType.html ? asset.data : ""
+            title: c.name,
+            html: asset && asset.type === AssetType.html ? asset.data : ""
         }
     })
 }

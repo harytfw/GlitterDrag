@@ -1,36 +1,38 @@
 
 import App from './menu.svelte';
-import { EventType, type MenuItem, type MenuMessage } from '../message';
+import { ProxyEventType, type Menu, type ShowMenuOptions } from '../types';
+import { MessageTarget } from '../helper';
+import { rootLog } from '../../utils/log';
+import { LogLevel } from '../../config/config';
 
-export const menuApp = new App({ target: undefined }) as any as HTMLElement;
+const log = rootLog.subLogger(LogLevel.VVV, "menu")
 
-export function updateMenu(msg: MenuMessage) {
-	if (msg.type === "hide") {
-		menuApp.dispatchEvent(new CustomEvent<MenuMessage>(EventType.Menu, {
-			detail: {
-				type: "reset"
-			}
-		}))
+interface MenuElement extends HTMLElement {
+	update(opts: ShowMenuOptions)
+	reset()
+}
+
+const menuApp = new App({ target: undefined }) as any as MenuElement;
+
+class MenuImpl extends MessageTarget implements Menu {
+	constructor() {
+		super(ProxyEventType.Menu)
+	}
+
+	hide() {
+		if (!menuApp.parentElement) {
+			return
+		}
+		log.V("hide menu")
+		menuApp.reset()
 		menuApp.remove()
-		return
 	}
 
-	menuApp.dispatchEvent(new CustomEvent(EventType.Menu, { detail: msg }))
-	!menuApp.parentElement && document.body.append(menuApp)
-}
-
-export function getMenuSelectedId(): string {
-	if ('id' in menuApp.dataset) {
-		return menuApp.dataset['id']
+	show(opts: ShowMenuOptions) {
+		log.V("show menu: ", opts)
+		menuApp.update(opts)
+		!menuApp.parentElement && document.body.append(menuApp)
 	}
-	return ""
 }
 
-globalThis.addEventListener(EventType.MenuProxy, (event: CustomEvent<string>) => {
-	updateMenu(JSON.parse(event.detail) as MenuMessage)
-})
-
-globalThis.addEventListener(EventType.MenuSelectedIDProxy, (event: CustomEvent) => {
-	const id = getMenuSelectedId()
-	document.head.setAttribute("gd-menu-selected-id", id)
-})
+export const menuImpl = new MenuImpl()

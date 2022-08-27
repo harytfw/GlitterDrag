@@ -1,5 +1,27 @@
-import { EventType, type IndicatorMessage } from "../message";
+import type { Position } from "../../types";
+import { Stub } from "../helper";
+import { ProxyEventType, type Indicator } from "../types";
 
-export function updateIndicatorProxy(msg: IndicatorMessage) {
-	globalThis.dispatchEvent(new CustomEvent(EventType.IndicatorProxy, {detail: JSON.stringify(msg)}))
+
+export class IndicatorProxy extends Stub implements Indicator {
+
+	constructor() {
+		super(ProxyEventType.Indicator)
+	}
+
+	show(radius: number, center: Position) {
+		this.forwardMessage({
+			name: "show",
+			args: [radius, center]
+		})
+	}
+
+	hide() {
+		this.forwardMessage({
+			name: "hide",
+			args: []
+		})
+	}
 }
+
+export const indicatorProxy = new IndicatorProxy()

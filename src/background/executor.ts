@@ -1,10 +1,11 @@
 import trimStart from 'lodash-es/trimStart';
 import browser from 'webextension-polyfill';
-import { CommandKind, LogLevel, TabPosition } from '../config/config';
-import { buildRuntimeMessage } from '../message/message';
+import { CommandKind, ContextType, LogLevel, TabPosition } from '../config/config';
+import { buildRuntimeMessage, RuntimeMessageName as RuntimeMessageName } from '../message/message';
 import { rootLog } from '../utils/log';
 import { VarSubstituteTemplate } from '../utils/var_substitute';
-import { primarySelection, primaryType, type ExecuteContext } from './context';
+import { isFirefox } from '../utils/vendor';
+import { getTabIndex, primaryContextData, primaryContextType, type ExecuteContext } from './context';
 import { Protocol, RequestResolver } from './resolver';
 import { searchText as searchTextViaBrowser } from './search';
 import { buildDownloadableURL, buildVars, dumpFunc, generatedDownloadFileName, guessImageType, isOpenableURL, urlToArrayBuffer } from './utils';
@@ -48,27 +49,27 @@ export class Executor {
     }
 
     async openHandler(ctx: ExecuteContext) {
-        this.openTab(ctx, primarySelection(ctx))
+        this.openTab(ctx, primaryContextData(ctx))
     }
 
     async copyHandler(ctx: ExecuteContext) {
-        const type = primaryType(ctx)
+        const type = primaryContextType(ctx)
         switch (type) {
-            case "text":
-            case "link":
-                browser.tabs.sendMessage(ctx.tabId, buildRuntimeMessage("copy", primarySelection(ctx)), {
-                    frameId: ctx.frameId
-                })
-                return
-            case "image":
+            case ContextType.image: {
                 // TODO: chrome
-                const buf = await urlToArrayBuffer(new URL(primarySelection(ctx)))
+                const buf = await urlToArrayBuffer(new URL(primaryContextData(ctx)))
                 const imageType = guessImageType(buf)
                 if (imageType === "jpeg" || imageType === "png") {
                     browser.clipboard.setImageData(buf, imageType)
                 } else {
                     log.E("unknown image type", buf.slice(0, 4))
                 }
+                return
+            }
+            default: {
+                browser.tabs.sendMessage(ctx.tab.id, buildRuntimeMessage(RuntimeMessageName.copy, primaryContextData(ctx)))
+                return
+            }
         }
     }
 
@@ -89,12 +90,12 @@ export class Executor {
         const resolver = new RequestResolver(ctx, request)
 
         switch (resolver.protocol) {
-            case Protocol.search:
+            case Protocol.browserSearch:
                 {
                     const tabHoldingSearch = await this.openTab(ctx, 'about:blank')
                     await new Promise(r => setTimeout(r, 50))
 
-                    const query = primarySelection(ctx)
+                    const query = primaryContextData(ctx)
                     const engine = resolver.resolveEngine()
 
                     log.VV("search: ", query, "with: ", engine)
@@ -161,7 +162,7 @@ export class Executor {
 
         let arg1 = {
             ctx: plainCtx,
-            backgroundTabCounter: ctx.backgroundTabCounter,
+            backgroundTabCounter: ctx.state.backgroundTabCounter,
             localStorage: await browser.storage.local.get()
         }
 
@@ -182,13 +183,14 @@ export class Executor {
             return
         }
 
-        await browser.tabs.sendMessage(ctx.tabId, buildRuntimeMessage("doScript", {
+        await browser.tabs.sendMessage(ctx.tab.id, buildRuntimeMessage(RuntimeMessageName.executeScript, {
             text: script.text,
-            selection: {
-                text: ctx.text,
-                link: ctx.link,
-                image: ctx.image,
-                primary: primarySelection(ctx),
+            data: {
+                text: ctx.data.selection,
+                link: ctx.data.link,
+                linkText: ctx.data.linkText,
+                imageSource: ctx.data.imageSource,
+                primary: primaryContextData(ctx),
             }
         }), {
             frameId: ctx.frameId
@@ -196,28 +198,6 @@ export class Executor {
         return
     }
 
-    private getTabIndex(ctx: ExecuteContext, tabsLength = 0, currentTabIndex = 0): number {
-
-        let index = 0;
-        switch (ctx.action.config.tabPosition) {
-            case TabPosition.before: index = currentTabIndex; break;
-            case TabPosition.next: index = currentTabIndex + ctx.backgroundTabCounter + 1; break;
-            case TabPosition.start: index = 0; break;
-            case TabPosition.end: index = tabsLength; break;
-            default: throw new Error("unknown tab position:" + ctx.action.config.tabPosition);
-        }
-
-        log.VVV({
-            tabsLength,
-            currentTabIndex,
-            activeTab: ctx.action.config.activeTab,
-            tabPosition: ctx.action.config.tabPosition,
-            childTabCount: ctx.backgroundTabCounter,
-            index
-        });
-
-        return index;
-    }
 
     async openTab(ctx: ExecuteContext, urlArg: string | URL) {
 
@@ -227,7 +207,7 @@ export class Executor {
             log.V(urlArg, "is not openable")
         }
 
-        if ([TabPosition.window, TabPosition.privateWindow].includes(ctx.action.config.tabPosition!)) {
+        if ([TabPosition.newWindow, TabPosition.privateWindow].includes(ctx.action.config.tabPosition!)) {
 
             const incognito = ctx.action.config.tabPosition === TabPosition.privateWindow
 
@@ -245,20 +225,36 @@ export class Executor {
 
         if (ctx.action.config.tabPosition === TabPosition.current) {
             log.VVV('update current active tab with url', url)
-            return browser.tabs.update(ctx.tabId, { url });
+            return browser.tabs.update(ctx.tab.id, { url });
         }
 
         const tabsOfCurrentWindow = await browser.tabs.query({
-            windowId: ctx.windowId,
+            windowId: ctx.tab.windowId,
         });
+
 
         const option: browser.Tabs.CreateCreatePropertiesType = {
             active: Boolean(ctx.action.config.activeTab),
-            index: this.getTabIndex(ctx, tabsOfCurrentWindow.length, ctx.tabIndex),
+            index: getTabIndex(ctx, tabsOfCurrentWindow.length),
             url,
-            windowId: ctx.windowId,
-            openerTabId: ctx.tabId
+            windowId: ctx.tab.windowId,
+            openerTabId: ctx.tab.id,
         };
+
+        if (isFirefox()) {
+            let cookieStoreId = ctx.tab.cookieStoreId
+
+            if (ctx.action.config.container) {
+                const arr = await browser.contextualIdentities.query({ name: ctx.action.config.container })
+                for (const c of arr) {
+                    cookieStoreId = c.cookieStoreId
+                    break
+                }
+            }
+
+            option.cookieStoreId = cookieStoreId
+        }
+
 
         log.VVV('create new tab with option', option)
 

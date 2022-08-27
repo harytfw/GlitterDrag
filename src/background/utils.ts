@@ -1,4 +1,6 @@
-import { primarySelection, primaryType, type ExecuteContext } from "./context";
+import browser from 'webextension-polyfill';
+import { ContextType } from "../config/config";
+import { primaryContextData, primaryContextType, type ExecuteContext } from "./context";
 
 export function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 3) {
     const url = window.URL.createObjectURL(blob);
@@ -103,14 +105,14 @@ export function dateTimeAsFileName(date: Date): string {
 
 
 export async function buildDownloadableURL(ctx: ExecuteContext): Promise<URL> {
-    const type = primaryType(ctx)
+    const type = primaryContextType(ctx)
     switch (type) {
-        case "text":
+        case ContextType.selection:
             const encoder = new TextEncoder()
-            const buf = encoder.encode(primarySelection(ctx))
+            const buf = encoder.encode(primaryContextData(ctx))
             return bufferToObjectURL(buf)
-        case "image":
-            const url = new URL(primarySelection(ctx))
+        case ContextType.image:
+            const url = new URL(primaryContextData(ctx))
             switch (url.protocol) {
                 case "data:":
                     const buf = await urlToArrayBuffer(url)
@@ -119,8 +121,8 @@ export async function buildDownloadableURL(ctx: ExecuteContext): Promise<URL> {
                 case "https:":
                     return url
             }
-        case "link":
-            return new URL(primarySelection(ctx))
+        case ContextType.link:
+            return new URL(primaryContextData(ctx))
     }
 }
 
@@ -137,13 +139,13 @@ export function guessFilenameFromURL(url: URL): string | null {
 }
 
 export function generatedDownloadFileName(ctx: ExecuteContext, url: URL): string | null {
-    const type = primaryType(ctx)
+    const type = primaryContextType(ctx)
     switch (type) {
-        case "text": {
+        case ContextType.selection: {
             return dateTimeAsFileName(new Date()) + ".txt"
         }
-        case "image": {
-            const sel = primarySelection(ctx)
+        case ContextType.image: {
+            const sel = primaryContextData(ctx)
             if (sel.startsWith("data:")) {
                 const type = guessImageTypeFromBase64(sel)
                 if (type === "png" || type === "jpeg") {
@@ -154,7 +156,7 @@ export function generatedDownloadFileName(ctx: ExecuteContext, url: URL): string
             const filename = guessFilenameFromURL(url)
             return filename
         }
-        case "link": {
+        case ContextType.link: {
             const filename = guessFilenameFromURL(url)
             return filename
         }

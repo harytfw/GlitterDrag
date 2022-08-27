@@ -1,18 +1,31 @@
 
 import App from './indicator.svelte';
-import { EventType, type IndicatorMessage } from '../message';
+import { ProxyEventType, type Indicator } from '../types';
+import type { Position } from '../../types';
+import { MessageTarget } from '../helper';
 
-const indicatorApp = new App({ target: undefined }) as any as HTMLElement;
 
-export function updateIndicator(msg: IndicatorMessage) {
-	if (msg.type === "hide") {
-		indicatorApp.remove()
-	} else {
-		indicatorApp.dispatchEvent(new CustomEvent(EventType.Indicator, { detail: msg }))
-		!indicatorApp.parentElement && document.body.append(indicatorApp)
+interface IndicatorElement extends HTMLElement {
+	update(radius: number, position: Position)
+}
+
+const indicatorElem = new App({ target: undefined }) as any as IndicatorElement;
+
+class IndicatorImpl extends MessageTarget implements Indicator {
+
+	constructor() {
+		super(ProxyEventType.Indicator)
+	}
+
+	show(radius: number, pos: Position) {
+		indicatorElem.update(radius, pos);
+		!indicatorElem.parentElement && document.body.append(indicatorElem)
+	}
+
+	hide() {
+		indicatorElem.remove()
 	}
 }
 
-globalThis.addEventListener("indicator-proxy", (event: CustomEvent<string>) => {
-	updateIndicator(JSON.parse(event.detail) as IndicatorMessage)
-})
+export const indicatorImpl = new IndicatorImpl()
+

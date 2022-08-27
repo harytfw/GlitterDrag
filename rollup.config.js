@@ -8,56 +8,61 @@ import commonjs from '@rollup/plugin-commonjs';
 import pathLib from 'path'
 
 const PROD = process.env.BUILD_ENV === 'prod';
-const src = process.env.src
-const dist = process.env.dist;
-const entryPoints = process.env.entryPoints.split(" ")
+const SRC = process.env.src
+const DIST = process.env.dist;
+const ENTRYPOINT_LIST = process.env.entryPoints.split(" ")
 
 
 const safeEnvVar = Object.fromEntries(Object.entries(process.env).filter((entry) => entry[0].startsWith("BUILD")))
 
-const plugins = [
-	commonjs(),
-	replace({
-		values: {
-			// avoid "Function constructor" warning
-			"Function('return this')()": "globalThis",
-		},
-		delimiters: ["", ""],
-		preventAssignment: true
-	}),
-	replace({
-		__ENV: JSON.stringify(safeEnvVar),
-		__BUILD_PROFILE: JSON.stringify(process.env.BUILD_PROFILE),
-		preventAssignment: true
-	}),
-	svelte({
+const useCustomElement = ["components"]
 
-		preprocess: autoPreprocess(),
+function getPlugins(entrypoint) {
+	const plugins = [
+		commonjs(),
+		replace({
+			values: {
+				// avoid "Function constructor" warning
+				"Function('return this')()": "globalThis",
+			},
+			delimiters: ["", ""],
+			preventAssignment: true
+		}),
+		replace({
+			__ENV: JSON.stringify(safeEnvVar),
+			__BUILD_PROFILE: JSON.stringify(process.env.BUILD_PROFILE),
+			preventAssignment: true
+		}),
+		svelte({
 
-		compilerOptions: {
-			customElement: true
-		}
-	}),
-	typescript({ sourceMap: false }),
-	resolve({ browser: true }),
-]
+			preprocess: autoPreprocess(),
 
-if (PROD) {
-	plugins.push(terser())
+			compilerOptions: {
+				customElement: useCustomElement.includes(entrypoint)
+			}
+		}),
+		typescript({ sourceMap: false }),
+		resolve({ browser: true }),
+	]
+
+	if (PROD) {
+		plugins.push(terser())
+	}
+
+	return plugins
 }
-
 
 const output = []
 
-for (const e of entryPoints) {
+for (const e of ENTRYPOINT_LIST) {
 	output.push({
-		input: pathLib.join(src, e, "main.ts"),
+		input: pathLib.join(SRC, e, "main.ts"),
 		output: {
 			sourcemap: !PROD,
-			file: pathLib.join(dist, e, "main.js"),
+			file: pathLib.join(DIST, e, "main.js"),
 			format: 'iife'
 		},
-		plugins: plugins
+		plugins: getPlugins(e)
 	})
 }
 
