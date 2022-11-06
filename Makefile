@@ -38,11 +38,11 @@ manifest-chromium:
 
 .PHONY: package-firefox
 package-firefox:
-	@web-ext build -s $(DIST) -a $(WEB_EXT_ARTIFACTS)/firefox  --overwrite-dest
+	@pnpm exec web-ext build -s $(DIST) -a $(WEB_EXT_ARTIFACTS)/firefox  --overwrite-dest
 
 .PHONY: packagec-chromium
 package-chromium:
-	@web-ext build -s $(DIST) -a $(WEB_EXT_ARTIFACTS)/chromium --overwrite-dest
+	@pnpm exec web-ext build -s $(DIST) -a $(WEB_EXT_ARTIFACTS)/chromium --overwrite-dest
 
 .PHONY: clean
 clean:
