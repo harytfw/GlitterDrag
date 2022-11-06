@@ -57,7 +57,7 @@ compile:
 
 .PHONY: lint
 lint:
-	@web-ext lint -s $(DIST)
+	@pnpm exec web-ext lint -s $(DIST)
 
 .PHONY: run-browser
 run-browser:
