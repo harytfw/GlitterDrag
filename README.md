@@ -1,5 +1,8 @@
 
+
 ## droponfly
+
+![](https://img.shields.io/github/license/harytfw/droponfly)
 
 A good drag and drop extension that improve your browsing experience. Currently support Firefox, Chrome, Edge and other chromium-based browser.
 
