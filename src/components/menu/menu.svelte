@@ -1,4 +1,4 @@
-<svelte:options tag="glitter-drag-menu" />
+<svelte:options tag="droponfly-menu" />
 
 <script lang="ts">
 	import cloneDeep from "lodash-es/cloneDeep";

@@ -1,6 +1,5 @@
 {
-    "name": "glitterdrag",
-    "description": "An drag extension for Firefox Browser.",
+    "name": "droponfly",
     "type": "module",
     "devDependencies": {
         "@rollup/plugin-commonjs": "^23.0.2",

@@ -107,7 +107,7 @@ async function main() {
         await setup()
     }
     catch (error) {
-        rootLog.E("failed to setup glitter drag extension: ", window.self);
+        rootLog.E("failed to setup extension: ", window.self);
         rootLog.E(error);
         rootLog.E(error.stack)
     }
