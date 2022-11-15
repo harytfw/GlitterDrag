@@ -237,7 +237,6 @@ export class DragController {
             return
         }
         event.preventDefault()
-        // this.c.applyOp(this.makeOp(OpType.end, event.target, event))
     }
 
     private makeOp(type: OpType, target: Node, e: DragEvent): Op {

@@ -119,7 +119,7 @@ export class OpExecutor {
         })
         window.addEventListener(EventType.MenuSelectedId, (e: CustomEvent<string>) => {
             this.selectedMenuId = e.detail
-            log.VVV("menu id: ", this.selectedMenuId)
+            log.VVV("new menu id: ", this.selectedMenuId)
         })
     }
 
@@ -182,7 +182,6 @@ export class OpExecutor {
     }
 
     private updateUI(op: Op) {
-        log.VVV("update ui:", op)
 
         if (!this.state.test(States.running)) {
             return
@@ -331,7 +330,7 @@ export class OpExecutor {
     private onEnd(op: Op): OpResult {
 
         if (!this.state.test(States.running)) {
-            log.VV("not running")
+            log.VV("state: not running")
             return { cancelDrop: false }
         }
 
@@ -348,7 +347,7 @@ export class OpExecutor {
         }
 
         if (this.state.test(States.skip)) {
-            log.VV("ski p")
+            log.VV("state: skip")
             this.reset()
             return { cancelDrop: false }
         }
@@ -484,7 +483,6 @@ export class OpExecutor {
         }
 
         const g = this.source.summary()
-        log.V("D", g)
 
         if (!g.contextTypes.length) {
             throw new Error("require context type")
