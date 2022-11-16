@@ -39,7 +39,7 @@ lint:
 
 .PHONY: compile
 compile:
-	@ENTRY_POINTS="$(ENTRY_POINTS)" src=$(SRC) dist=$(TARGET_DIST) npx rollup -c;
+	@npx rollup -c;
 
 .PHONY: assets
 assets:

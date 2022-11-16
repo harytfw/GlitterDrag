@@ -92,14 +92,36 @@ browser.contextMenus.onClicked.addListener(onMenuItemClick)
 
 
 console.log("background script executed.")
-console.log(buildInfo)
+console.log("build info: ", buildInfo)
 
-if (__BUILD_PROFILE === "debug") {
+
+async function openMocha() {
     const url = new URL(browser.runtime.getURL("test/mocha.html"))
+
+    try {
+        const res = await fetch(url)
+        if (!res.ok) {
+            return
+        }
+        const text = await res.text()
+        if (text.length <= 0) {
+            return
+        }
+    } catch (e) {
+        console.error(e)
+        return
+    }
+
     if (buildInfo.mochaFilter) {
         url.searchParams.set("grep", `/${buildInfo.mochaFilter}/`)
     }
+
     browser.tabs.create({
         url: url.toString()
     })
+
+}
+
+if (__BUILD_PROFILE === "debug") {
+    openMocha()
 }

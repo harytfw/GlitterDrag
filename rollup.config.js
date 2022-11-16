@@ -7,11 +7,19 @@ import autoPreprocess from 'svelte-preprocess';
 import commonjs from '@rollup/plugin-commonjs';
 import pathLib from 'path'
 
-const PROD = process.env.BUILD_ENV === 'prod';
-const SRC = process.env.src
-const DIST = process.env.dist;
-const ENTRYPOINT_LIST = process.env.ENTRY_POINTS.split(" ")
+function mustEnv(name) {
+	const value = process.env[name]
+	if (!value) {
+		console.error("require env: " + name)
+		process.exit(1)
+	}
+	return value
+}
 
+const isProd = mustEnv("BUILD_PROFILE").toLowerCase() === 'prod';
+const src = mustEnv("SRC")
+const dist = mustEnv("TARGET_DIST")
+const entryPoints = mustEnv("ENTRY_POINTS").split(" ")
 
 const safeEnvVar = Object.fromEntries(Object.entries(process.env).filter((entry) => entry[0].startsWith("BUILD")))
 
@@ -36,16 +44,15 @@ function getPlugins(entrypoint) {
 		svelte({
 
 			preprocess: autoPreprocess(),
-
 			compilerOptions: {
 				customElement: useCustomElement.includes(entrypoint)
 			}
 		}),
-		typescript({ sourceMap: false }),
+		typescript({sourceMap: false}),
 		resolve({ browser: true }),
 	]
 
-	if (PROD) {
+	if (isProd) {
 		plugins.push(terser())
 	}
 
@@ -53,13 +60,14 @@ function getPlugins(entrypoint) {
 }
 
 const output = []
+console.log("sourcemap: ", !isProd)
 
-for (const e of ENTRYPOINT_LIST) {
+for (const e of entryPoints) {
 	output.push({
-		input: pathLib.join(SRC, e, "main.ts"),
+		input: pathLib.join(src, e, "main.ts"),
 		output: {
-			sourcemap: !PROD,
-			file: pathLib.join(DIST, e, "main.js"),
+			sourcemap: !isProd,
+			file: pathLib.join(dist, e, "main.js"),
 			format: 'iife'
 		},
 		plugins: getPlugins(e)
