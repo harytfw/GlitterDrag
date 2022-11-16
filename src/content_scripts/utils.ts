@@ -108,3 +108,51 @@ export function transformMenuItem(actions: readonly ActionConfig[], assets: read
         }
     })
 }
+
+
+export class TinyLRU<K, V> {
+
+    static SIZE = 3
+    private kv: [K, V, number][] = []
+
+    constructor() {
+
+    }
+
+    get(key: K): V | undefined {
+        
+        for (const tuple of this.kv) {
+            if (tuple[0] === key) {
+                tuple[2] += 1
+                return tuple[1]
+            }
+        }
+
+        return undefined
+    }
+
+    put(key: K, value: V) {
+        
+        if (this.kv.length > TinyLRU.SIZE) {
+            let evicted_index = 0
+            let cnt = this.kv[evicted_index][2]
+            for (let i = 1; i < this.kv.length; i++) {
+                if (this.kv[i][2] < cnt) {
+                    evicted_index = i
+                    cnt = this.kv[evicted_index][2]
+                }
+            }
+            this.kv = this.kv.splice(evicted_index, 1)
+        }
+
+        this.kv.push([key, value, 0])
+    }
+
+    clear() {
+        this.kv = []
+    }
+
+    size(): number {
+        return this.kv.length
+    }
+}
