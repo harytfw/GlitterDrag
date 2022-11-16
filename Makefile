@@ -10,7 +10,7 @@ export BUILD_ROLLUP_VERSION ?= $(shell npx rollup --version)
 export BUILD_OS ?= $(shell node -e "console.log(require('os').platform())")
 
 export TARGET_BROWSER = firefox
-export TARGET_DIST = ./$(BUILD_DIR)/$(TARGET_BROWSER)-dist
+export TARGET_DIST = ./$(BUILD_DIR)/$(TARGET_BROWSER)/dist
 
 export ENTRY_POINTS = background content_scripts options components
 
@@ -29,7 +29,7 @@ ext-test: export BUILD_PROFILE = debug
 ext-test: setup-dist assets mocha-assets compile
 
 .PHONY: setup-dist
-setup-dist: TARGET_DIST = ./$(BUILD_DIR)/$(TARGET_BROWSER)-dist
+setup-dist: TARGET_DIST = ./$(BUILD_DIR)/$(TARGET_BROWSER)/dist
 setup-dist:
 	$(shell [ ! -d $(TARGET_DIST) ] && mkdir -p $(TARGET_DIST)/)
 
@@ -68,7 +68,7 @@ mocha-assets:
 
 .PHONY: package
 package:
-	@pnpm exec web-ext build -s $(TARGET_DIST)/ -a ./$(BUILD_DIR)/$(TARGET_BROWSER)-artifacts  --overwrite-dest
+	@pnpm exec web-ext build -s $(TARGET_DIST)/ -a ./$(BUILD_DIR)/$(TARGET_BROWSER)/artifacts  --overwrite-dest
 
 .PHONY: clean
 clean:

@@ -41,5 +41,5 @@ jobs:
         with:
           name: artifacts
           path: |
-            build/firefox-artifacts/*
-            build/chromium-artifacts/*
+            build/firefox/*
+            build/chromium/*
