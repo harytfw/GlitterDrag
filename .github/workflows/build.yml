@@ -31,7 +31,15 @@ jobs:
         run: pnpm install
       
       - name: Make Firefox
-        run: make clean && make extension-firefox
+        run: BUILD_PROFILE=prod make ext-firefox
 
       - name: Make Chromium
-        run: make clean && make extension-chromium
+        run: BUILD_PROFILE=prod make ext-chromium
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: |
+            build/firefox-artifacts/*
+            build/chromium-artifacts/*

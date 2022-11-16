@@ -94,7 +94,7 @@ browser.contextMenus.onClicked.addListener(onMenuItemClick)
 console.log("background script executed.")
 console.log(buildInfo)
 
-if (__BUILD_PROFILE === "test") {
+if (__BUILD_PROFILE === "debug") {
     const url = new URL(browser.runtime.getURL("test/mocha.html"))
     if (buildInfo.mochaFilter) {
         url.searchParams.set("grep", `/${buildInfo.mochaFilter}/`)

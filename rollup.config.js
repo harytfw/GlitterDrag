@@ -10,7 +10,7 @@ import pathLib from 'path'
 const PROD = process.env.BUILD_ENV === 'prod';
 const SRC = process.env.src
 const DIST = process.env.dist;
-const ENTRYPOINT_LIST = process.env.entryPoints.split(" ")
+const ENTRYPOINT_LIST = process.env.ENTRY_POINTS.split(" ")
 
 
 const safeEnvVar = Object.fromEntries(Object.entries(process.env).filter((entry) => entry[0].startsWith("BUILD")))
