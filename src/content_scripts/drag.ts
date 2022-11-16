@@ -27,8 +27,6 @@ export class DragController {
     frameX: number
     frameY: number
 
-    opQueue: Op[]
-
     constructor(eventSource: GlobalEventHandlers, opExecutor: OpExecutor) {
         this.dragTriggerSource = TriggerSource.unknown
         this.sourceTarget = null
@@ -62,7 +60,8 @@ export class DragController {
                 this.checkDragStart(e)
                 if (this.sourceTarget != null) {
                     this.initFramePosition()
-                    this.c.applyOp(this.makeOp(OpType.start, this.sourceTarget, e))
+                    const op = this.makeOp(OpType.start, this.sourceTarget, e)
+                    this.c.applyOp(op)
                 }
                 break
             case 'dragend':
@@ -240,9 +239,12 @@ export class DragController {
     }
 
     private makeOp(type: OpType, target: Node, e: DragEvent): Op {
+
+        const source = OpSource.fromNode(target)
+
         return Op.make({
             type: type,
-            source: OpSource.fromNode(target),
+            source: source,
             position: buildOpPosition(e, this.frameX, this.frameY),
             dt: e.dataTransfer
         })

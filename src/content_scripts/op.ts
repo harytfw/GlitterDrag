@@ -306,7 +306,7 @@ export class OpExecutor {
         this.startPos = op.positions.real
         this.endPos = op.positions.real
 
-        this.source = op.source
+        this.source = op.source.clone()
         this.state.set(States.running)
     }
 

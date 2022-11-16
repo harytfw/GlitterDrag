@@ -29,6 +29,12 @@ export class OpSource {
         return os
     }
 
+    clone(): OpSource {
+        const os = new OpSource()
+        Object.assign(os, this)
+        return os
+    }
+
     static fromNode(target: Node): OpSource {
         const os = new OpSource()
         const win = target.ownerDocument.defaultView
