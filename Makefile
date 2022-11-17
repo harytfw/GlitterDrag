@@ -54,9 +54,7 @@ assets:
 	@mkdir -p $(TARGET_DIST)/res && \
 		cp -r -f $(NODE_MODULES)/simpledotcss/simple.min.css $(TARGET_DIST)/res/simple.min.css
 
-	@cp -r -f $(SRC)/icon/ $(TARGET_DIST)/icon
-	
-	@cp -f -r $(SRC)/_locales $(TARGET_DIST)/_locales
+	@cp -r -f $(SRC)/icon/ $(SRC)/_locales/ $(TARGET_DIST)/
 
 .PHONY: mocha-assets
 mocha-assets:
