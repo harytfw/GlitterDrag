@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 import buildInfo from "../build_info";
 import { Configuration } from "../config/config";
+import { StateManager } from '../content_scripts/state_man';
 import { RuntimeMessageName, type RuntimeMessage, type RuntimeMessageArgsMap } from "../message/message";
 import { ExtensionStorageKey, type ExtensionStorage } from "../types";
 import { captureError } from '../utils/error';
@@ -31,6 +32,12 @@ async function onContentScriptLoaded(tabId: number, frameId?: number) {
     })
 }
 
+async function saveVolatileState() {
+    rootLog.V("saving volatile state")
+    const state = await defaultVolatileState()
+    await state.save()
+}
+
 browser.tabs.onRemoved.addListener(async (tabId,) => {
     rootLog.VVV("a tab is remove, reset tab counter")
     const state = await defaultVolatileState()
@@ -43,10 +50,17 @@ browser.tabs.onActivated.addListener(async () => {
     state.backgroundTabCounter = 0;
 });
 
+
+browser.alarms.create("save-state", { periodInMinutes: 3.0 })
+
+browser.alarms.onAlarm.addListener(async (alarm) => {
+    if (alarm.name === "save-state") {
+        await saveVolatileState()
+    }
+})
+
 browser.runtime.onSuspend.addListener(async () => {
-    rootLog.V("saving volatile state")
-    const state = await defaultVolatileState()
-    await state.save()
+    await saveVolatileState()
 });
 
 browser.runtime.onMessage.addListener(async (m: any, sender: browser.Runtime.MessageSender) => {
@@ -78,10 +92,7 @@ browser.runtime.onMessage.addListener(async (m: any, sender: browser.Runtime.Mes
     }
 });
 
-browser.storage.local.get().then((storage) => {
-    const config = new Configuration(storage[ExtensionStorageKey.userConfig])
-    onLoadConfiguration(config)
-})
+
 
 browser.storage.local.onChanged.addListener(async () => {
     const storage = (await browser.storage.local.get(ExtensionStorageKey.userConfig)) as ExtensionStorage
@@ -89,11 +100,6 @@ browser.storage.local.onChanged.addListener(async () => {
 })
 
 browser.contextMenus.onClicked.addListener(onMenuItemClick)
-
-
-console.log("background script executed.")
-console.log("build info: ", buildInfo)
-
 
 async function openMocha() {
     const url = new URL(browser.runtime.getURL("test/mocha.html"))
@@ -122,6 +128,17 @@ async function openMocha() {
 
 }
 
-if (__BUILD_PROFILE === "debug") {
-    openMocha()
-}
+browser.runtime.onInstalled.addListener((detail) => {
+    console.log("on installed: ", detail)
+    if (__BUILD_PROFILE === "debug") {
+        openMocha()
+    }
+})
+
+console.log("background script executed.")
+console.log("build info: ", buildInfo)
+
+browser.storage.local.get().then((storage) => {
+    const config = new Configuration(storage[ExtensionStorageKey.userConfig])
+    onLoadConfiguration(config)
+})
