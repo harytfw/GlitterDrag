@@ -4,7 +4,7 @@
     "description": "__MSG_extensionDescription__",
     "version": "0.0.2",
     "version_name": "0.0.2 alpha",
-    "homepage_url": "https://github.com/harytfw/droponfly",
+    "homepage_url": "https://github.com/harytfw/GlitterDrag",
     "icons": {
         "128": "/icon/drag.png"
     },
@@ -17,7 +17,8 @@
         "downloads",
         "search",
         "scripting",
-        "contextMenus"
+        "contextMenus",
+        "alarms"
     ],
     "host_permissions": [
         "*://*/*"

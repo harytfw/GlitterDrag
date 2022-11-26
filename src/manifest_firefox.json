@@ -1,9 +1,9 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "__MSG_extensionName__",
     "description": "__MSG_extensionDescription__",
     "version": "0.0.2",
-    "homepage_url": "https://github.com/harytfw/droponfly",
+    "homepage_url": "https://github.com/harytfw/GlitterDrag",
     "icons": {
         "128": "/icon/drag.png"
     },
@@ -12,16 +12,16 @@
         "activeTab",
         "storage",
         "tabs",
+        "clipboardWrite",
         "downloads",
         "search",
         "scripting",
-        "<all_urls>",
+        "contextMenus",
         "contextualIdentities",
-        "cookies",
-        "contextMenus"
+        "alarms"
     ],
-    "optional_permissions": [
-        "clipboardWrite"
+    "host_permissions": [
+        "*://*/*"
     ],
     "background": {
         "scripts": [
@@ -45,13 +45,21 @@
         "browser_style": true,
         "open_in_tab": true
     },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "components/main.js"
+            ],
+            "matches": [
+                "*://*/*"
+            ]
+        }
+    ],
     "browser_specific_settings": {
         "gecko": {
+            "id": "glitterdrag@harytfw.com",
             "strict_min_version": "106.0"
         }
     },
-    "web_accessible_resources": [
-        "components/main.js"
-    ],
     "default_locale": "en"
 }

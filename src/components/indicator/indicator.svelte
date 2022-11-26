@@ -1,4 +1,4 @@
-<svelte:options tag="droponfly-indicator" />
+<svelte:options tag="glitterdrag-indicator" />
 
 <script lang="ts">
 	import { get_current_component } from "svelte/internal";

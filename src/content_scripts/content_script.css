@@ -1,4 +1,4 @@
-droponfly-status {
+glitterdrag-status {
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -9,7 +9,7 @@ droponfly-status {
 	font-size: 14px;
 }
 
-droponfly-indicator {
+glitterdrag-indicator {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -17,7 +17,7 @@ droponfly-indicator {
 	z-index: 2147483647;
 }
 
-droponfly-menu {
+glitterdrag-menu {
 	position: absolute;
 	left: 0;
 	top: 0;

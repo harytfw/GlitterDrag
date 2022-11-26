@@ -104,28 +104,31 @@
 	{:else if tab === Tab.common}
 		<Common />
 	{:else if tab === Tab.configEditor}
-		<input
-			type="file"
-			style="display: none"
-			bind:this={filePicker}
-			on:change={onFileChange}
-		/>
-		<a href="" style="display:none" bind:this={fileDownloader}>Downloader</a
-		>
-		<p>
-			<button
-				on:click={() => {
-					filePicker.click();
-					return false;
-				}}>Import</button
+		<section>
+			<input
+				type="file"
+				style="display: none"
+				bind:this={filePicker}
+				on:change={onFileChange}
+			/>
+			<a href="javscript:void" style="display:none" bind:this={fileDownloader}
+				>Downloader</a
 			>
-			<button on:click={onExportConfig}>Export</button>
-			<button on:click={onLoadConfig}>Load</button>
-			<button on:click={onSaveConfig}>Save</button>
-			<button on:click={format}>Format</button>
-		</p>
-		<p>
-			<textarea style="width: 90%;" rows="30" bind:value={config} />
-		</p>
+			<p>
+				<button
+					on:click={() => {
+						filePicker.click();
+						return false;
+					}}>Import</button
+				>
+				<button on:click={onExportConfig}>Export</button>
+				<button on:click={onLoadConfig}>Load</button>
+				<button on:click={onSaveConfig}>Save</button>
+				<button on:click={format}>Format</button>
+			</p>
+			<p>
+				<textarea style="width: 90%;" rows="30" bind:value={config} />
+			</p>
+		</section>
 	{/if}
 </main>
