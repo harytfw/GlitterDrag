@@ -18,7 +18,8 @@
         "scripting",
         "contextMenus",
         "contextualIdentities",
-        "alarms"
+        "alarms",
+        "cookies"
     ],
     "host_permissions": [
         "*://*/*"
