@@ -69,4 +69,4 @@ jobs:
         with:
           draft: true
           files: |
-            artifacts/firefox/artifacts/
+            artifacts/*
