@@ -58,6 +58,7 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v3
         with:
+          name: artifacts
           path: artifacts/
 
       - name: Display structure of downloaded files
