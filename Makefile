@@ -1,7 +1,8 @@
-export SRC ?= ./src
-export BUILD_DIR ?= ./build
+export BUILD_VERSION ?= 2.1.2
+export SRC ?= $(shell realpath ./src)
+export BUILD_DIR ?= $(shell realpath ./build)
 export BROWSER ?= $(shell which firefox-developer-edition)
-export NODE_MODULES ?= ./node_modules
+export NODE_MODULES ?= $(shell realpath ./node_modules)
 export BUILD_PROFILE ?= debug
 export BUILD_COMMIT_ID ?= $(shell git rev-parse --short HEAD)
 export BUILD_DATE ?= $(shell date --rfc-3339=seconds)
@@ -10,7 +11,7 @@ export BUILD_ROLLUP_VERSION ?= $(shell npx rollup --version)
 export BUILD_OS ?= $(shell node -e "console.log(require('os').platform())")
 
 export TARGET_BROWSER = firefox
-export TARGET_DIST = ./$(BUILD_DIR)/$(TARGET_BROWSER)/dist
+export TARGET_DIST = $(BUILD_DIR)/$(TARGET_BROWSER)/dist
 
 export ENTRY_POINTS = background content_scripts options components
 
@@ -23,13 +24,13 @@ ext-chromium: export TARGET_BROWSER = chromium
 ext-chromium: setup-dist assets compile package
 
 .PHONY: ext-test
-ext-test: TARGET_BROWSER = test
+ext-test: TARGET_BROWSER = firefox
 ext-test: ENTRY_POINTS += test
 ext-test: export BUILD_PROFILE = debug
 ext-test: setup-dist assets mocha-assets compile
 
 .PHONY: setup-dist
-setup-dist: TARGET_DIST = ./$(BUILD_DIR)/$(TARGET_BROWSER)/dist
+setup-dist: TARGET_DIST = $(BUILD_DIR)/$(TARGET_BROWSER)/dist
 setup-dist:
 	$(shell [ ! -d $(TARGET_DIST) ] && mkdir -p $(TARGET_DIST)/)
 
@@ -41,9 +42,12 @@ lint:
 compile:
 	@npx rollup -c;
 
+.PHONY: manifest
+manifest:
+	@node scripts/gen_manifest.js > $(TARGET_DIST)/manifest.json
+
 .PHONY: assets
-assets:
-	@cp $(SRC)/manifest_$(TARGET_BROWSER).json $(TARGET_DIST)/manifest.json
+assets: manifest
 	
 	@mkdir -p $(TARGET_DIST)/content_scripts && \
 		cp -f -r $(SRC)/content_scripts/content_script.css $(TARGET_DIST)/content_scripts/
@@ -66,11 +70,12 @@ mocha-assets:
 
 .PHONY: package
 package:
-	@pnpm exec web-ext build -s $(TARGET_DIST)/ -a ./$(BUILD_DIR)/$(TARGET_BROWSER)/artifacts  --overwrite-dest
+	@mkdir -p $(BUILD_DIR)/artifacts
+	@cd $(TARGET_DIST) && zip -r $(BUILD_DIR)/artifacts/gliiterdrag-pro-$(BUILD_VERSION)-$(TARGET_BROWSER).zip .
 
 .PHONY: clean
 clean:
-	@rm -rf ./$(BUILD_DIR)
+	@rm -rf $(BUILD_DIR)
 
 .PHONY: run-browser
 run-browser:
