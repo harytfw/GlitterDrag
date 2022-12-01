@@ -274,5 +274,8 @@
   },
   "tabTitleEditor": {
     "message": "Editor"
+  },
+  "firstTimeUsePrompt": {
+    "message": "Want to use default configuration ?"
   }
 }

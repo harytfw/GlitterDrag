@@ -274,5 +274,8 @@
   },
   "tabTitleEditor": {
     "message": "编辑器"
+  },
+  "firstTimeUsePrompt": {
+    "message": "是否使用默认配置 ?"
   }
 }

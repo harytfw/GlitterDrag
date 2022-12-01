@@ -12,8 +12,9 @@ export enum ModifierKey {
 	alt,
 }
 
-export const enum ExtensionStorageKey {
-	userConfig = 'userConfig'
+export enum ExtensionStorageKey {
+	userConfig = 'userConfig',
+	firstTimeUse = "firstTimeUse"
 }
 
-export type ExtensionStorage = { [key in ExtensionStorageKey]?: KVRecord<unknown> }
+export type ExtensionStorage = { [key in ExtensionStorageKey]?: KVRecord<unknown> | unknown }

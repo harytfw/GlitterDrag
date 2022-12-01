@@ -3,7 +3,9 @@
 <script lang="ts">
 	import defaultTo from "lodash-es/defaultTo";
 	import browser from "webextension-polyfill";
-	import { type ExtensionStorage } from "../types";
+	import { simpleConfig } from "../config/simple_config";
+	import { defaultLocaleMessage } from "../localization/helper";
+	import { ExtensionStorageKey, type ExtensionStorage } from "../types";
 	import Actions from "./actions.svelte";
 	import Assets from "./assets.svelte";
 	import { Tab } from "./common";
@@ -25,6 +27,10 @@
 			null,
 			indent
 		);
+	}
+
+	async function onLoadDefaultConfig() {
+		config = JSON.stringify(simpleConfig, null, indent)
 	}
 
 	async function onSaveConfig() {
@@ -77,11 +83,33 @@
 	}
 
 	let tab = Tab.actions;
+	let loadDefaultConfigDialog: HTMLDialogElement;
+	const locale = defaultLocaleMessage;
 
 	async function setup() {
 		store.currentTab.subscribe((val) => {
 			tab = val;
 		});
+		const storage: ExtensionStorage = await browser.storage.local.get(
+			ExtensionStorageKey.firstTimeUse
+		);
+		storage.firstTimeUse = defaultTo(
+			storage.firstTimeUse as boolean,
+			true
+		);
+		if (storage.firstTimeUse) {
+			storage.firstTimeUse = false;
+			await browser.storage.local.set(storage);
+			loadDefaultConfigDialog.showModal();
+		}
+	}
+
+	async function onLoadDefaultConfigDialogClose() {
+		if (loadDefaultConfigDialog.returnValue === "default") {
+			store.userConfig.update(() => {
+				return JSON.parse(JSON.stringify(simpleConfig));
+			});
+		}
 	}
 
 	setup();
@@ -111,8 +139,10 @@
 				bind:this={filePicker}
 				on:change={onFileChange}
 			/>
-			<a href="javscript:void" style="display:none" bind:this={fileDownloader}
-				>Downloader</a
+			<a
+				href="javscript:void"
+				style="display:none"
+				bind:this={fileDownloader}>Downloader</a
 			>
 			<p>
 				<button
@@ -123,6 +153,7 @@
 				>
 				<button on:click={onExportConfig}>Export</button>
 				<button on:click={onLoadConfig}>Load</button>
+				<button on:click={onLoadDefaultConfig}>Load Default Config</button>
 				<button on:click={onSaveConfig}>Save</button>
 				<button on:click={format}>Format</button>
 			</p>
@@ -131,4 +162,18 @@
 			</p>
 		</section>
 	{/if}
+	<dialog
+		bind:this={loadDefaultConfigDialog}
+		on:close={onLoadDefaultConfigDialogClose}
+	>
+		<form method="dialog">
+			<p>
+				{locale.firstTimeUsePrompt}
+			</p>
+			<div>
+				<button value="default">{locale.confirm}</button>
+				<button value="cancel">{locale.cancel}</button>
+			</div>
+		</form>
+	</dialog>
 </main>
