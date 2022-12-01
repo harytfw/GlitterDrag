@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill';
 import { ActionConfig, Configuration, ContextType, ContextDataType, TabPosition } from "../config/config";
 import type { ExecuteArgs } from "../message/message";
 import { ExtensionStorageKey, type ExtensionStorage } from '../types';
+import { urlToArrayBuffer } from './utils';
 import { defaultVolatileState, type VolatileState } from './volatile_state';
 
 export type ExecuteContext = Readonly<ExecuteArgs & {
@@ -90,6 +91,19 @@ export function primaryContextData(ctx: ExecuteContext): string {
 		default: throw new Error("unreachable")
 	}
 }
+
+export async function handlePreferContextData(ctx: ExecuteContext, defaultCallback: (ExecuteContext) => Promise<void>, callbacks?: { [key in ContextDataType]?: (ExecuteContext) => Promise<void> }) {
+
+	for (const p of ctx.action.config.preferDataTypes) {
+		if (callbacks && callbacks[p]) {
+			callbacks[p](ctx)
+			return
+		}
+	}
+
+	defaultCallback(ctx)
+}
+
 
 export function getTabIndex(ctx: ExecuteContext, tabsLength = 0): number {
 

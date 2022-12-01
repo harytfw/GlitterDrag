@@ -1,11 +1,11 @@
 import trimStart from 'lodash-es/trimStart';
 import browser from 'webextension-polyfill';
-import { CommandKind, ContextDataType, ContextType, LogLevel, TabPosition } from '../config/config';
-import { buildRuntimeMessage, RuntimeMessageName as RuntimeMessageName } from '../message/message';
+import { CommandKind, ContextType, LogLevel, TabPosition } from '../config/config';
+import { buildRuntimeMessage, RuntimeMessageName } from '../message/message';
 import { rootLog } from '../utils/log';
 import { VarSubstituteTemplate } from '../utils/var_substitute';
 import { isFirefox } from '../utils/vendor';
-import { getTabIndex, primaryContextData, primaryContextType, type ExecuteContext } from './context';
+import { getTabIndex, handlePreferContextData, primaryContextData, primaryContextType, type ExecuteContext } from './context';
 import { Protocol, RequestResolver } from './resolver';
 import { searchText as searchTextViaBrowser } from './search';
 import { buildDownloadableURL, buildVars, dumpFunc, generatedDownloadFileName, guessImageType, isOpenableURL, urlToArrayBuffer } from './utils';
@@ -52,37 +52,28 @@ export class Executor {
         this.openTab(ctx, primaryContextData(ctx))
     }
 
+    async copyImage(ctx: ExecuteContext) {
+        // TODO: chrome
+        const buf = await urlToArrayBuffer(new URL(ctx.data.imageSource))
+        const imageType = guessImageType(buf)
+        if (imageType === "jpeg" || imageType === "png") {
+            browser.clipboard.setImageData(buf, imageType)
+        } else {
+            log.E("unknown image type", buf.slice(0, 4))
+        }
+    }
+
     async copyHandler(ctx: ExecuteContext) {
         const type = primaryContextType(ctx)
         switch (type) {
             case ContextType.image: {
 
-                async function copyImage() {
-                    // TODO: chrome
-                    const buf = await urlToArrayBuffer(new URL(ctx.data.imageSource))
-                    const imageType = guessImageType(buf)
-                    if (imageType === "jpeg" || imageType === "png") {
-                        browser.clipboard.setImageData(buf, imageType)
-                    } else {
-                        log.E("unknown image type", buf.slice(0, 4))
-                    }
-                }
-
                 async function copyImageSource() {
                     browser.tabs.sendMessage(ctx.tab.id, buildRuntimeMessage(RuntimeMessageName.copy, ctx.data.imageSource))
                 }
 
-                let fn: () => Promise<void> = copyImage
-                for (const p of ctx.action.config.preferDataTypes) {
-                    if (p == ContextDataType.image) {
-                        fn = copyImage
-                        break
-                    } else if (p === ContextDataType.imageSource) {
-                        fn = copyImageSource
-                        break
-                    }
-                }
-                await fn()
+                handlePreferContextData(ctx, copyImageSource, { "image": this.copyImage, "imageSource": copyImageSource })
+                return
             }
             default: {
                 browser.tabs.sendMessage(ctx.tab.id, buildRuntimeMessage(RuntimeMessageName.copy, primaryContextData(ctx)))
