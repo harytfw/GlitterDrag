@@ -16,7 +16,7 @@
         OperationMode,
         Script,
         type PlainActionConfig,
-        type PlainCommonConfig
+        type PlainCommonConfig,
     } from "../config/config";
 
     import { rootLog } from "../utils/log";
@@ -27,18 +27,14 @@
         directionOptions,
         modeOptions,
         tabPositionOptions,
-        type MultipleOptionModel
+        type MultipleOptionModel,
     } from "./common";
     import * as store from "./store";
-    import {
-        isValueInputElement,
-        titleCase,
-        uuidv4
-    } from "./utils";
+    import { isValueInputElement, titleCase, uuidv4 } from "./utils";
 
     import {
         angleToDirection,
-        getAngle as transformAngle
+        getAngle as transformAngle,
     } from "../content_scripts/utils";
     import { defaultLocaleMessage as locale } from "../localization/helper";
     import { isFirefox } from "../utils/vendor";
@@ -46,7 +42,7 @@
         actionOptionConfig,
         applyValueChange,
         collectChange,
-        type ValueChange
+        type ValueChange,
     } from "./cfg_utils";
     import ConfirmDialog from "./confirm_dialog.svelte";
 
@@ -196,13 +192,13 @@
         applyFilter();
     };
 
-    const getActionId = (target: EventTarget): string => {
+    const queryActionId = (target: EventTarget): string => {
         if (!(target instanceof HTMLElement)) {
             return "";
         }
-        const form = target.closest("form");
-        if (form) {
-            return form.querySelector<HTMLInputElement>("[name='id']").value;
+        let cur: HTMLElement = target.closest("[data-id]")
+        if (cur) {
+            return cur.dataset["id"]
         }
         return "";
     };
@@ -259,7 +255,7 @@
         if (!(e.target instanceof HTMLElement)) {
             return;
         }
-        const id = getActionId(e.target);
+        const id = queryActionId(e.target);
         editId = id;
         editPlainAction = cloneDeep(curentActions.find((a) => a.id === id));
         log.V("edit action: ", editId, editPlainAction);
@@ -267,7 +263,7 @@
     };
 
     const onDuplicateAction = (e: MouseEvent) => {
-        const id = getActionId(e.target);
+        const id = queryActionId(e.target);
         if (!id.length) {
             log.E("id not found: ", e);
             return;
@@ -298,7 +294,7 @@
     };
 
     const onDeleteAction = async (e: MouseEvent) => {
-        const id = getActionId(e.target);
+        const id = queryActionId(e.target);
         if (!id.length) {
             return;
         }
@@ -560,7 +556,7 @@
     };
 </script>
 
-<section>
+<div>
     <div id="actions-ctrl-area">
         <form
             style="grid-area: row1"
@@ -611,7 +607,7 @@
                 </div>
             </fieldset>
         </form>
-        <form style="grid-area: row2a" on:submit|preventDefault={() => {}}>
+        <form style="grid-area: row2" on:submit|preventDefault={() => {}}>
             <fieldset>
                 <legend>
                     {locale.manageActions}
@@ -637,7 +633,8 @@
         </form>
 
         <form
-            style="grid-area: row2b;"
+            id="actions-filter"
+            style="grid-area: row3;"
             on:change={onFilterChange}
             on:reset={resetFilter}
             on:submit|preventDefault={() => {}}
@@ -679,12 +676,74 @@
             </fieldset>
         </form>
     </div>
-</section>
+</div>
 <section>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-        {#each transformedActions as action}
+        <table style="display: table;">
+            <thead>
+                <tr>
+                    <th>
+                        {locale.name}
+                    </th>
+                    <th>
+                        {locale.contextType}
+                    </th>
+                    <th>
+                        {locale.command}
+                    </th>
+                    <th> Operation </th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each transformedActions as action}
+                    <tr id="action-{action.id}" data-id={action.id}>
+                        <td>
+                            {action.name}
+                        </td>
+                        <td>
+                            {action.condition.contextTypes.length > 0
+                                ? locale[
+                                      "contextType" +
+                                          titleCase(
+                                              action.condition.contextTypes[0]
+                                          )
+                                  ]
+                                : ""}
+                        </td>
+                        <td>
+                            {locale["command" + titleCase(action.command)]}
+                        </td>
+                        <!-- svelte-ignore a11y-invalid-attribute -->
+                        <td>
+                            <a
+                                class="editAction"
+                                href="#action-{action.id}"
+                                on:click={onOpenEditActionDialog}
+                            >
+                                {locale.edit}
+                            </a>
+                            <a
+                                class="duplicateAction"
+                                href="#action-{action.id}"
+                                on:click={onDuplicateAction}
+                            >
+                                {locale.duplicate}
+                            </a>
+                            <a
+                                class="deleteAction"
+                                href="#action-{action.id}"
+                                on:click={onDeleteAction}
+                            >
+                                {locale.delete}
+                            </a>
+                        </td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+        <!-- {#each [] as action}
             <form>
-                <fieldset style="height: 30rem; overflow-y: auto;">
+                <fieldset>
                     <input type="hidden" name="id" value={action.id} />
                     <legend>{action.name}</legend>
                     <p>
@@ -748,7 +807,7 @@
                     </div>
                 </fieldset>
             </form>
-        {/each}
+        {/each} -->
     </div>
     <dialog bind:this={addActionDialog}>
         <form method="dialog">

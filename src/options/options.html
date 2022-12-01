@@ -43,7 +43,18 @@
 			display: grid;
 			grid-template:
 				"row1 row1 " 1fr
-				"row2a row2b" 1fr / 1fr 2fr
+				"row2 row2" 1fr
+				"row3 row3" 1fr
+		}
+
+		header>nav a:hover {
+			color: var(--accent);
+			border-color: var(--accent);
+		}
+
+		header>nav a.current {
+			color: var(--accent);
+			border-color: var(--accent);
 		}
 	</style>
 </head>

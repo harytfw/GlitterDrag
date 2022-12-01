@@ -216,7 +216,7 @@
 	
 </script>
 
-<section style="display: flex;">
+<div style="display: flex;">
 	<div>
 		<button type="button" on:click={showAddDialog}
 			>{locale.add}</button
@@ -291,4 +291,4 @@
 		</form>
 	</dialog>
 	<ConfirmDialog bind:this={confirmDeleteDialog} />
-</section>
+</div>

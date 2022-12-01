@@ -247,7 +247,7 @@
 	}
 </script>
 
-<section style="display: flex;">
+<div style="display: flex;">
 	<div>
 		<button on:click={showAddDialog}>{locale.add}</button>
 		{#if isFirefox()}
@@ -360,4 +360,4 @@
 		</form>
 	</dialog>
 	<ConfirmDialog bind:this={confirmDeleteDialog} />
-</section>
+</div>

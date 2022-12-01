@@ -30,7 +30,7 @@
 	}
 
 	async function onLoadDefaultConfig() {
-		config = JSON.stringify(simpleConfig, null, indent)
+		config = JSON.stringify(simpleConfig, null, indent);
 	}
 
 	async function onSaveConfig() {
@@ -93,10 +93,7 @@
 		const storage: ExtensionStorage = await browser.storage.local.get(
 			ExtensionStorageKey.firstTimeUse
 		);
-		storage.firstTimeUse = defaultTo(
-			storage.firstTimeUse as boolean,
-			true
-		);
+		storage.firstTimeUse = defaultTo(storage.firstTimeUse as boolean, true);
 		if (storage.firstTimeUse) {
 			storage.firstTimeUse = false;
 			await browser.storage.local.set(storage);
@@ -117,63 +114,73 @@
 	export {};
 </script>
 
-<main>
-	<header>
-		<Nav />
-	</header>
-	{#if tab === Tab.scripts}
-		<Scripts />
-	{:else if tab === Tab.actions}
-		<Actions />
-	{:else if tab === Tab.assets}
-		<Assets />
-	{:else if tab === Tab.requests}
-		<Requests />
-	{:else if tab === Tab.common}
-		<Common />
-	{:else if tab === Tab.configEditor}
-		<section>
-			<input
-				type="file"
-				style="display: none"
-				bind:this={filePicker}
-				on:change={onFileChange}
-			/>
-			<a
-				href="javscript:void"
-				style="display:none"
-				bind:this={fileDownloader}>Downloader</a
-			>
-			<p>
-				<button
-					on:click={() => {
-						filePicker.click();
-						return false;
-					}}>Import</button
+<main style="display: flex;">
+	<div style="flex: 1;">
+		<header>
+			<Nav />
+		</header>
+	</div>
+	<div style="flex: 6;">
+		{#if tab === Tab.scripts}
+			<Scripts />
+		{:else if tab === Tab.actions}
+			<Actions />
+		{:else if tab === Tab.assets}
+			<Assets />
+		{:else if tab === Tab.requests}
+			<Requests />
+		{:else if tab === Tab.common}
+			<Common />
+		{:else if tab === Tab.configEditor}
+			<section>
+				<input
+					type="file"
+					style="display: none"
+					bind:this={filePicker}
+					on:change={onFileChange}
+				/>
+				<a
+					href="javscript:void"
+					style="display:none"
+					bind:this={fileDownloader}>Downloader</a
 				>
-				<button on:click={onExportConfig}>Export</button>
-				<button on:click={onLoadConfig}>Load</button>
-				<button on:click={onLoadDefaultConfig}>Load Default Config</button>
-				<button on:click={onSaveConfig}>Save</button>
-				<button on:click={format}>Format</button>
-			</p>
-			<p>
-				<textarea style="width: 90%;" rows="30" bind:value={config} />
-			</p>
-		</section>
-	{/if}
-	<dialog
-		bind:this={loadDefaultConfigDialog}
-		on:close={onLoadDefaultConfigDialogClose}
-	>
-		<form method="dialog">
-			<p>
-				{locale.firstTimeUsePrompt}
-			</p>
-			<div>
-				<button value="default">{locale.confirm}</button>
-				<button value="cancel">{locale.cancel}</button>
-			</div>
-		</form>
-	</dialog>
+				<p>
+					<button
+						on:click={() => {
+							filePicker.click();
+							return false;
+						}}>Import</button
+					>
+					<button on:click={onExportConfig}>Export</button>
+					<button on:click={onLoadConfig}>Load</button>
+					<button on:click={onLoadDefaultConfig}
+						>Load Default Config</button
+					>
+					<button on:click={onSaveConfig}>Save</button>
+					<button on:click={format}>Format</button>
+				</p>
+				<p>
+					<textarea
+						style="width: 90%;"
+						rows="30"
+						bind:value={config}
+					/>
+				</p>
+			</section>
+		{/if}
+		<dialog
+			bind:this={loadDefaultConfigDialog}
+			on:close={onLoadDefaultConfigDialogClose}
+		>
+			<form method="dialog">
+				<p>
+					{locale.firstTimeUsePrompt}
+				</p>
+				<div>
+					<button value="default">{locale.confirm}</button>
+					<button value="cancel">{locale.cancel}</button>
+				</div>
+			</form>
+		</dialog>
+	</div>
 </main>

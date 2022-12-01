@@ -66,7 +66,7 @@
 	};
 </script>
 
-<section style="display: flex;">
+<div style="display: flex;">
 	<form on:change={onFormChange} on:submit|preventDefault={() => {}}>
 		<p>
 			<label for="minDistance">{locale.minimumDistance}</label>
@@ -77,4 +77,4 @@
 			/>
 		</p>
 	</form>
-</section>
+</div>
