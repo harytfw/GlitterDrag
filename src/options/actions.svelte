@@ -2,6 +2,7 @@
 
 <script lang="ts">
     import cloneDeep from "lodash-es/cloneDeep";
+    import intersection from "lodash-es/intersection";
 
     import browser from "webextension-polyfill";
 
@@ -11,6 +12,7 @@
         CommandKind,
         CommandRequest,
         CommonConfig,
+        ContextDataType,
         ContextType,
         LogLevel,
         OperationMode,
@@ -45,6 +47,7 @@
         type ValueChange,
     } from "./cfg_utils";
     import ConfirmDialog from "./confirm_dialog.svelte";
+    import { includes } from "lodash-es";
 
     const log = rootLog.subLogger(LogLevel.V, "actions");
 
@@ -196,9 +199,9 @@
         if (!(target instanceof HTMLElement)) {
             return "";
         }
-        let cur: HTMLElement = target.closest("[data-id]")
+        let cur: HTMLElement = target.closest("[data-id]");
         if (cur) {
-            return cur.dataset["id"]
+            return cur.dataset["id"];
         }
         return "";
     };
@@ -1047,7 +1050,7 @@ align-items: center; width: 100px; height: 100px; background-color: #0909090f; j
                 </p>
             {/if}
 
-            {#if editAction.condition.contextTypes.includes(ContextType.link)}
+            {#if intersection( editAction.condition.contextTypes, [ContextType.link, ContextType.image] ).length > 0}
                 <p>
                     <label for=""
                         >{locale.preferContextDataType}<span
@@ -1059,19 +1062,42 @@ align-items: center; width: 100px; height: 100px; background-color: #0909090f; j
                 <div
                     style="display: flex; justify-content: start; align-items: center;"
                 >
-                    {#each contextDataTypeOptionsForLink as t}
-                        <label>
-                            <input
-                                type="checkbox"
-                                name="config.preferDataTypes"
-                                value={t.value}
-                                checked={editAction.config.preferDataTypes.includes(
-                                    t.value
-                                )}
-                            />
-                            {t.label}
-                        </label>
-                    {/each}
+                    {#if editAction.condition.contextTypes.includes(ContextType.link)}
+                        {#each [ContextDataType.link, ContextDataType.linkText] as t}
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    name="config.preferDataTypes"
+                                    value={t}
+                                    checked={editAction.config.preferDataTypes.includes(
+                                        t
+                                    )}
+                                />
+                                {locale[
+                                    "contextDataType" +
+                                        titleCase(t)
+                                ]}
+                            </label>
+                        {/each}
+                    {/if}
+                    {#if editAction.condition.contextTypes.includes(ContextType.image)}
+                        {#each [ContextDataType.image, ContextDataType.imageSource] as t}
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    name="config.preferDataTypes"
+                                    value={t}
+                                    checked={editAction.config.preferDataTypes.includes(
+                                        t
+                                    )}
+                                />
+                                {locale[
+                                    "contextDataType" +
+                                        titleCase(t)
+                                ]}
+                            </label>
+                        {/each}
+                    {/if}
                 </div>
             {/if}
             {#if [CommandKind.request, CommandKind.open].includes(editAction.command)}

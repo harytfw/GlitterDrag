@@ -203,6 +203,9 @@
   "contextDataTypeLinkText": {
     "message": "Text Of Link"
   },
+  "contextDataTypeImage": {
+    "message": "Image Data"
+  },
   "contextDataTypeImageSource": {
     "message": "Source of Image"
   },

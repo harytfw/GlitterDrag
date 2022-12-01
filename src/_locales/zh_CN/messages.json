@@ -203,6 +203,9 @@
   "contextDataTypeLinkText": {
     "message": "链接文本"
   },
+  "contextDataTypeImage": {
+    "message": "图片数据"
+  },
   "contextDataTypeImageSource": {
     "message": "图片链接"
   },

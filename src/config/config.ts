@@ -70,13 +70,17 @@ export enum ContextType {
 
 export enum ContextDataType {
 	selection = 'selection',
+	image = "image",
 	imageSource = 'imageSource',
 	link = 'link',
 	linkText = 'linkText',
 }
 
 export type ContextData = {
-	[k in ContextDataType]: string;
+	selection: string
+	imageSource: string
+	link: string
+	linkText: string
 };
 
 export enum Feature {

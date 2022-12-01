@@ -1,6 +1,6 @@
 import trimStart from 'lodash-es/trimStart';
 import browser from 'webextension-polyfill';
-import { CommandKind, ContextType, LogLevel, TabPosition } from '../config/config';
+import { CommandKind, ContextDataType, ContextType, LogLevel, TabPosition } from '../config/config';
 import { buildRuntimeMessage, RuntimeMessageName as RuntimeMessageName } from '../message/message';
 import { rootLog } from '../utils/log';
 import { VarSubstituteTemplate } from '../utils/var_substitute';
@@ -56,15 +56,33 @@ export class Executor {
         const type = primaryContextType(ctx)
         switch (type) {
             case ContextType.image: {
-                // TODO: chrome
-                const buf = await urlToArrayBuffer(new URL(primaryContextData(ctx)))
-                const imageType = guessImageType(buf)
-                if (imageType === "jpeg" || imageType === "png") {
-                    browser.clipboard.setImageData(buf, imageType)
-                } else {
-                    log.E("unknown image type", buf.slice(0, 4))
+
+                async function copyImage() {
+                    // TODO: chrome
+                    const buf = await urlToArrayBuffer(new URL(ctx.data.imageSource))
+                    const imageType = guessImageType(buf)
+                    if (imageType === "jpeg" || imageType === "png") {
+                        browser.clipboard.setImageData(buf, imageType)
+                    } else {
+                        log.E("unknown image type", buf.slice(0, 4))
+                    }
                 }
-                return
+
+                async function copyImageSource() {
+                    browser.tabs.sendMessage(ctx.tab.id, buildRuntimeMessage(RuntimeMessageName.copy, ctx.data.imageSource))
+                }
+
+                let fn: () => Promise<void> = copyImage
+                for (const p of ctx.action.config.preferDataTypes) {
+                    if (p == ContextDataType.image) {
+                        fn = copyImage
+                        break
+                    } else if (p === ContextDataType.imageSource) {
+                        fn = copyImageSource
+                        break
+                    }
+                }
+                await fn()
             }
             default: {
                 browser.tabs.sendMessage(ctx.tab.id, buildRuntimeMessage(RuntimeMessageName.copy, primaryContextData(ctx)))
