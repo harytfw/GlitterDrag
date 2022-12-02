@@ -2,7 +2,6 @@ import browser from 'webextension-polyfill';
 import { ActionConfig, Configuration, ContextType, ContextDataType, TabPosition } from "../config/config";
 import type { ExecuteArgs } from "../message/message";
 import { ExtensionStorageKey, type ExtensionStorage } from '../types';
-import { urlToArrayBuffer } from './utils';
 import { defaultVolatileState, type VolatileState } from './volatile_state';
 
 export type ExecuteContext = Readonly<ExecuteArgs & {

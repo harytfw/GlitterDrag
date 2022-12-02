@@ -15,7 +15,7 @@ export class LocaleMessageHelper {
 	}
 
 	getDefault(name: string, defaultValue?: string): string {
-		const m = this.get(name)
+		const m = browser.i18n.getMessage(name)
 		if (m) {
 			return m
 		}

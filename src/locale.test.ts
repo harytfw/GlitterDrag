@@ -1,15 +1,19 @@
-import { assertOk } from "./utils/test_helper"
 import { LocaleMessageHelper, localeMessageProxy } from "./locale"
+import chai from "chai"
+const assert = chai.assert
 
 describe("locale", () => {
-	
+
 	it("proxy", () => {
 		const locale = localeMessageProxy()
-		assertOk(locale.extensionName)
+		assert.ok(locale.extensionName)
+		assert.equal("notExists", locale.notExists)
 	})
 
 	it("helper", () => {
 		const localeHelper = new LocaleMessageHelper()
-		assertOk(localeHelper.get("extensionName"))
+		assert.ok(localeHelper.get("extensionName"))
+		assert.equal("notExists", localeHelper.get("notExists"))
+		assert.equal("default", localeHelper.getDefault("notExists", "default"))
 	})
 })

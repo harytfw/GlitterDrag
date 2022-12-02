@@ -65,6 +65,7 @@ mocha-assets:
 	@mkdir -p $(TARGET_DIST)/test && \
 		cp $(NODE_MODULES)/mocha/mocha.js \
 			$(NODE_MODULES)/mocha/mocha.css \
+			$(NODE_MODULES)/chai/chai.js \
 			$(SRC)/test/mocha.html \
 			$(TARGET_DIST)/test
 

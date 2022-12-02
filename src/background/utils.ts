@@ -1,4 +1,3 @@
-import browser from 'webextension-polyfill';
 import { ContextType } from "../config/config";
 import { primaryContextData, primaryContextType, type ExecuteContext } from "./context";
 
