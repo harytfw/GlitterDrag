@@ -4,7 +4,7 @@
 	import defaultTo from "lodash-es/defaultTo";
 	import browser from "webextension-polyfill";
 	import { simpleConfig } from "../config/simple_config";
-	import { defaultLocaleMessage } from "../localization/helper";
+	import { localeMessageProxy } from "../locale";
 	import { ExtensionStorageKey, type ExtensionStorage } from "../types";
 	import Actions from "./actions.svelte";
 	import Assets from "./assets.svelte";
@@ -15,8 +15,10 @@
 	import Scripts from "./scripts.svelte";
 	import * as store from "./store";
 
-	let config = "";
+	const locale = localeMessageProxy() 
 	const indent = 2;
+
+	let config = "";
 
 	async function onLoadConfig() {
 		let storage = (await browser.storage.local.get(
@@ -84,7 +86,6 @@
 
 	let tab = Tab.actions;
 	let loadDefaultConfigDialog: HTMLDialogElement;
-	const locale = defaultLocaleMessage;
 
 	async function setup() {
 		store.currentTab.subscribe((val) => {

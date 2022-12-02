@@ -10,7 +10,7 @@
 	    type PlainCommandRequest
 	} from "../config/config";
 
-	import { defaultLocaleMessage } from "../localization/helper";
+	import { localeMessageProxy } from "../locale";
 	import type { KVRecord } from "../types";
 	import { rootLog } from "../utils/log";
 	import { isFirefox } from "../utils/vendor";
@@ -24,7 +24,7 @@
 	} from "./utils";
 
 	const log = rootLog.subLogger(LogLevel.V, "requests");
-	const locale = defaultLocaleMessage;
+	const locale = localeMessageProxy();
 
 	let origin: PlainCommandRequest[] = [];
 	let transformed: CommandRequest[] = [];

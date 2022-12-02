@@ -11,14 +11,14 @@
 		type PlainAsset,
 	} from "../config/config";
 
-	import { defaultLocaleMessage } from "../localization/helper";
+	import { localeMessageProxy } from "../locale";
 	import { rootLog } from "../utils/log";
 	import ConfirmDialog from "./confirm_dialog.svelte";
 	import * as store from "./store";
 	import { uuidv4 } from "./utils";
 
 	const log = rootLog.subLogger(LogLevel.V, "assets");
-	const locale = defaultLocaleMessage;
+	const locale = localeMessageProxy();
 
 	let origin: PlainAsset[] = [];
 	let transformed: Asset[] = [];

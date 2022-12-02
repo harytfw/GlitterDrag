@@ -24,7 +24,6 @@
     import { rootLog } from "../utils/log";
     import {
         commands,
-        contextDataTypeOptionsForLink,
         contextTypeOptions,
         directionOptions,
         modeOptions,
@@ -38,7 +37,7 @@
         angleToDirection,
         getAngle as transformAngle,
     } from "../content_scripts/utils";
-    import { defaultLocaleMessage as locale } from "../localization/helper";
+    import { localeMessageProxy } from "../locale";
     import { isFirefox } from "../utils/vendor";
     import {
         actionOptionConfig,
@@ -47,9 +46,9 @@
         type ValueChange,
     } from "./cfg_utils";
     import ConfirmDialog from "./confirm_dialog.svelte";
-    import { includes } from "lodash-es";
 
     const log = rootLog.subLogger(LogLevel.V, "actions");
+    const locale = localeMessageProxy();
 
     let originActions: PlainActionConfig[] = [];
     let curentActions: PlainActionConfig[] = [];
@@ -697,7 +696,9 @@
                     <th>
                         {locale.command}
                     </th>
-                    <th> Operation </th>
+                    <th>
+                        {locale.operation}
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -710,12 +711,9 @@
                             {action.condition.modes.length > 0
                                 ? locale[
                                       "mode" +
-                                          titleCase(
-                                              action.condition.modes[0]
-                                          )
+                                          titleCase(action.condition.modes[0])
                                   ]
-                                : ""
-                                }
+                                : ""}
                         </td>
                         <td>
                             {action.condition.contextTypes.length > 0

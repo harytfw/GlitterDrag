@@ -12,5 +12,6 @@ import "../background/search.test"
 import "../components/indicator/indicator.test"
 import "../components/menu/menu.test"
 import "../components/menu/menu.test"
+import "../locale.test"
 
 mocha.run()

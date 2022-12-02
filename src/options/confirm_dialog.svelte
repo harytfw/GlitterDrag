@@ -1,9 +1,9 @@
 <svelte:options/>
 
 <script lang="ts">
-	import { defaultLocaleMessage } from "../localization/helper";
+	import { localeMessageProxy } from "../locale";
 
-	const locale = defaultLocaleMessage;
+	const locale = localeMessageProxy();
 
 	let dialog: HTMLDialogElement;
 	let text: string = "";
