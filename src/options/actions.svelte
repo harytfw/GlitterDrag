@@ -689,6 +689,9 @@
                         {locale.name}
                     </th>
                     <th>
+                        {locale.operationMode}
+                    </th>
+                    <th>
                         {locale.contextType}
                     </th>
                     <th>
@@ -702,6 +705,17 @@
                     <tr id="action-{action.id}" data-id={action.id}>
                         <td>
                             {action.name}
+                        </td>
+                        <td>
+                            {action.condition.modes.length > 0
+                                ? locale[
+                                      "mode" +
+                                          titleCase(
+                                              action.condition.modes[0]
+                                          )
+                                  ]
+                                : ""
+                                }
                         </td>
                         <td>
                             {action.condition.contextTypes.length > 0
@@ -1073,10 +1087,7 @@ align-items: center; width: 100px; height: 100px; background-color: #0909090f; j
                                         t
                                     )}
                                 />
-                                {locale[
-                                    "contextDataType" +
-                                        titleCase(t)
-                                ]}
+                                {locale["contextDataType" + titleCase(t)]}
                             </label>
                         {/each}
                     {/if}
@@ -1091,10 +1102,7 @@ align-items: center; width: 100px; height: 100px; background-color: #0909090f; j
                                         t
                                     )}
                                 />
-                                {locale[
-                                    "contextDataType" +
-                                        titleCase(t)
-                                ]}
+                                {locale["contextDataType" + titleCase(t)]}
                             </label>
                         {/each}
                     {/if}
