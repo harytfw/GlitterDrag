@@ -80,7 +80,7 @@ async function onConfigChange() {
         return
     }
 
-    controller.start()
+    controller.start(state)
 }
 
 

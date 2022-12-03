@@ -1,5 +1,5 @@
 
-import { LogLevel } from '../config/config'
+import { CompatibilityStatus, LogLevel } from '../config/config'
 import { rootLog } from '../utils/log'
 import { EventPhase, isEditableAndDraggable, isInstance } from './drag_utils'
 import { buildOpPosition, Op, OpExecutor, OpType } from './op'
@@ -26,6 +26,7 @@ export class DragController {
     c: OpExecutor
     frameX: number
     frameY: number
+    compat: CompatibilityStatus = CompatibilityStatus.enable
 
     constructor(eventSource: GlobalEventHandlers, opExecutor: OpExecutor) {
         this.dragTriggerSource = TriggerSource.unknown
@@ -38,7 +39,12 @@ export class DragController {
         this.frameY = 0
     }
 
-    start() {
+    start(compat: CompatibilityStatus) {
+        this.compat = compat
+        if (this.compat === CompatibilityStatus.disable) {
+            this.stop()
+            return
+        }
         for (const n of ["dragstart", "dragover", "dragenter", 'dragleave', "drop", "dragend"]) {
             this.eventSource.addEventListener(n as any, this.dragHandler, true)
             this.eventSource.addEventListener(n as any, this.dragHandler, false)
@@ -210,7 +216,7 @@ export class DragController {
             return
         }
 
-        if (event.defaultPrevented) {
+        if (event.defaultPrevented && this.compat !== CompatibilityStatus.force) {
             this.c.applyOp(this.makeOp(OpType.reset, event.target, event))
             return
         }
