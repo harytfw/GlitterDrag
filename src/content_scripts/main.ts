@@ -71,16 +71,16 @@ async function onConfigChange() {
     const config = new Configuration(storage.userConfig)
     configBroadcast.notify(config)
 
-    const state = checkCompatibility(location.href, config.compatibility)
+    const status = checkCompatibility(location.href, config.compatibility)
 
-    rootLog.V("location: ", location.href, "compatible state: ", state)
+    rootLog.V("location: ", location.href, "compatible status: ", status)
 
-    if (state === CompatibilityStatus.disable) {
+    if (status === CompatibilityStatus.disable) {
         controller.stop()
         return
     }
 
-    controller.start(state)
+    controller.start(status)
 }
 
 

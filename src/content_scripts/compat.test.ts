@@ -41,6 +41,20 @@ describe("compatibility", () => {
 				rules: [
 				],
 				result: CompatibilityStatus.enable
+			},
+			{
+				location: "http://example.com/?host-force",
+				rules: [
+					{ host: "example.com", status: CompatibilityStatus.force }
+				],
+				result: CompatibilityStatus.force
+			},
+			{
+				location: "http://a.example.com/?host-force",
+				rules: [
+					{ host: "a.example.com", status: CompatibilityStatus.force }
+				],
+				result: CompatibilityStatus.force
 			}
 		]
 

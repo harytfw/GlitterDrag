@@ -517,20 +517,20 @@ export class CompatibilityRule {
 	private cfg: KVRecord
 	private _host: string
 	private _regexp: string
-	private _state: CompatibilityStatus
+	private _status: CompatibilityStatus
 
-	constructor(cfg: KVRecord) {
+	constructor(cfg: PlainCompatibilityRule) {
 		this.cfg = cfg
-		this._host = defaultTo(cfg["host"], "")
-		this._regexp = defaultTo(cfg["regexp"], "")
-		this._state = defaultTo(cfg["state"], CompatibilityStatus.enable)
+		this._host = defaultTo(cfg.host, "")
+		this._regexp = defaultTo(cfg.regexp, "")
+		this._status = defaultTo(cfg.status, CompatibilityStatus.enable)
 	}
 
 	toPlainObject(): PlainCompatibilityRule {
 		return {
 			host: this._host,
 			regexp: this.regexp,
-			status: this.state,
+			status: this.status,
 		}
 	}
 
@@ -542,8 +542,8 @@ export class CompatibilityRule {
 		return this._regexp
 	}
 
-	get state(): CompatibilityStatus {
-		return this._state
+	get status(): CompatibilityStatus {
+		return this._status
 	}
 }
 

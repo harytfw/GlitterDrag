@@ -17,18 +17,18 @@ export function checkCompatibility(location: string, userRules: readonly Compati
 
 	const url = new URL(location)
 
-	let state: CompatibilityStatus = CompatibilityStatus.enable
+	let status: CompatibilityStatus = CompatibilityStatus.enable
 
 	for (const rule of [...userRules, ...builtinCompatibilityRules]) {
 		if (rule.host && rule.host === url.host) {
-			state = rule.state
+			status = rule.status
 			break
 		}
 		if (rule.regexp) {
 			try {
 				const re = new RegExp(rule.regexp)
 				if (re.test(url.href)) {
-					state = rule.state
+					status = rule.status
 					break
 				}
 			} catch (e) {
@@ -37,5 +37,5 @@ export function checkCompatibility(location: string, userRules: readonly Compati
 		}
 	}
 
-	return state
+	return status
 }
