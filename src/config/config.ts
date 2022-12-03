@@ -632,7 +632,7 @@ export interface PlainConfiguration {
 	scripts?: PlainScript[],
 }
 
-class BroadcastEventTarget {
+class BroadcastEventTarget<T> {
 
 	private target: EventTarget
 	private callbacks: { origin: Function, wrap: EventListener }[]
@@ -642,15 +642,15 @@ class BroadcastEventTarget {
 		this.callbacks = []
 	}
 
-	addListener(cb: (cfg: ReadonlyConfiguration) => any) {
-		const wrap = (event: CustomEvent<Configuration>) => {
+	addListener(cb: (cfg: T) => any) {
+		const wrap = (event: CustomEvent<T>) => {
 			cb(event.detail)
 		}
 		this.callbacks.push({ origin: cb, wrap: wrap })
 		this.target.addEventListener("data", wrap)
 	}
 
-	removeListener(cb: (cfg: ReadonlyConfiguration) => any) {
+	removeListener(cb: (cfg: T) => any) {
 		while (true) {
 			const item = this.callbacks.find(item => item.origin === cb)
 			if (!item) {
@@ -661,9 +661,9 @@ class BroadcastEventTarget {
 		}
 	}
 
-	notify(cfg: ReadonlyConfiguration) {
+	notify(cfg: T) {
 		this.target.dispatchEvent(new CustomEvent("data", { detail: cfg }))
 	}
 }
 
-export const configBroadcast = new BroadcastEventTarget()
+export const configBroadcast = new BroadcastEventTarget<ReadonlyConfiguration>()
