@@ -1,6 +1,6 @@
 import defaultTo from 'lodash-es/defaultTo';
 import browser from 'webextension-polyfill'
-import { Configuration, OperationMode, ContextType } from "../config/config";
+import { Configuration, OperationMode, ContextType, type ReadonlyConfiguration } from "../config/config";
 import type { ExecuteArgs } from '../message/message';
 import { buildExecuteContext } from './context';
 import { Executor } from './executor';
@@ -17,7 +17,7 @@ function actionTypeToContextType(tc: ContextType[]): BrowserContextType[] {
 	return result
 }
 
-export async function registerContextMenuActions(config: Configuration) {
+export async function registerContextMenuActions(config: ReadonlyConfiguration) {
 	browser.contextMenus.removeAll()
 
 	for (const action of config.actions) {

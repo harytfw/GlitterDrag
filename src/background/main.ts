@@ -1,11 +1,10 @@
 import browser from 'webextension-polyfill';
 import buildInfo from "../build_info";
-import { Configuration } from "../config/config";
-import { StateManager } from '../content_scripts/state_man';
-import { RuntimeMessageName, type RuntimeMessage, type RuntimeMessageArgsMap } from "../message/message";
+import { configBroadcast, Configuration } from "../config/config";
+import { RuntimeMessageName, type RuntimeMessage } from "../message/message";
 import { ExtensionStorageKey, type ExtensionStorage } from "../types";
 import { captureError } from '../utils/error';
-import { configureRootLog, rootLog } from '../utils/log';
+import { rootLog } from '../utils/log';
 import { buildExecuteContextFromMessageSender } from './context';
 import { Executor } from "./executor";
 import { onMenuItemClick, registerContextMenuActions } from './menu';
@@ -13,10 +12,9 @@ import { defaultVolatileState } from './volatile_state';
 
 captureError()
 
-async function onLoadConfiguration(config: Configuration) {
-    configureRootLog(config)
-    registerContextMenuActions(config)
-}
+configBroadcast.addListener(cfg => {
+    registerContextMenuActions(cfg)
+})
 
 async function onContentScriptLoaded(tabId: number, frameId?: number) {
     let frameIds = frameId ? [frameId] : undefined
@@ -96,7 +94,8 @@ browser.runtime.onMessage.addListener(async (m: any, sender: browser.Runtime.Mes
 
 browser.storage.local.onChanged.addListener(async () => {
     const storage = (await browser.storage.local.get(ExtensionStorageKey.userConfig)) as ExtensionStorage
-    onLoadConfiguration(new Configuration(storage.userConfig))
+    const config = new Configuration(storage.userConfig)
+    configBroadcast.notify(config)
 })
 
 browser.contextMenus.onClicked.addListener(onMenuItemClick)
@@ -140,5 +139,5 @@ console.log("build info: ", buildInfo)
 
 browser.storage.local.get().then((storage) => {
     const config = new Configuration(storage[ExtensionStorageKey.userConfig])
-    onLoadConfiguration(config)
+    configBroadcast.notify(config)
 })

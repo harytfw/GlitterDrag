@@ -1,4 +1,4 @@
-import { LogLevel, type ReadonlyConfiguration } from "../config/config"
+import { configBroadcast, LogLevel } from "../config/config"
 
 function buildTag(tag: string, parentTag: string): string {
 
@@ -79,6 +79,6 @@ export class Logger {
 
 export const rootLog = new Logger(__BUILD_PROFILE === "prod" ? LogLevel.S : LogLevel.VVV, "root")
 
-export function configureRootLog(cfg: ReadonlyConfiguration) {
+configBroadcast.addListener(cfg => {
 	rootLog.setLevel(cfg.log.level)
-}
+})

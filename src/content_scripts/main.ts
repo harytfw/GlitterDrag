@@ -1,12 +1,11 @@
 import browser from 'webextension-polyfill';
-import { CompatibilityRule, CompatibilityStatus, Configuration, Feature, type ReadonlyConfiguration } from '../config/config';
-import { buildRuntimeMessage, RuntimeMessageName, type FetchURLReply, type RuntimeMessage, type RuntimeMessageArg, type RuntimeMessageArgsMap } from '../message/message';
+import { CompatibilityStatus, configBroadcast, Configuration } from '../config/config';
+import { buildRuntimeMessage, RuntimeMessageName, type RuntimeMessage } from '../message/message';
 import type { ExtensionStorage } from '../types';
-import { configureRootLog, rootLog } from '../utils/log';
+import { rootLog } from '../utils/log';
 import { checkCompatibility } from './compat';
 import { DragController } from "./drag";
-import { MiddleButtonClose } from './features/auxclose';
-import { MiddleButtonSelector } from './features/middle_button_selector';
+import { manageFeatures } from './features/features';
 import { OpExecutor } from './op';
 import { ScriptWrapper as UserScriptWrapper } from './script';
 import { onDocumentLoaded } from './utils';
@@ -47,18 +46,18 @@ function setupComponents() {
 }
 
 let controller: DragController | null = null
-let opExecutor: OpExecutor | null = null
+
 async function setup() {
+
+    configBroadcast.addListener(manageFeatures)
 
     browser.storage.onChanged.addListener(onConfigChange)
     browser.runtime.onMessage.addListener(dispatcher as any)
 
-
-    opExecutor = new OpExecutor()
+    const opExecutor = new OpExecutor()
     opExecutor.reset()
 
     controller = new DragController(document.documentElement, opExecutor);
-    controller.start()
 
     onDocumentLoaded(async () => {
         await browser.runtime.sendMessage(buildRuntimeMessage(RuntimeMessageName.contextScriptLoaded, null))
@@ -67,34 +66,13 @@ async function setup() {
     })
 }
 
-
-let featureManagedFlag = false
-
-async function manageFeatures(config: ReadonlyConfiguration) {
-    // TODO: allow initialize feature multiple times
-    if (featureManagedFlag) {
-        rootLog.VV("already manage feature")
-        return
-    }
-
-    featureManagedFlag = true
-    if (config.features.has(Feature.middleButtonSelector)) {
-        const f = new MiddleButtonSelector(document.getSelection(), document.documentElement)
-        await f.start()
-    }
-    if (config.features.has(Feature.auxClose)) {
-        const f = new MiddleButtonClose(document.documentElement)
-        await f.start()
-    }
-}
-
 async function onConfigChange() {
-
-    let storage = (await browser.storage.local.get()) as ExtensionStorage
-    let config = new Configuration(storage.userConfig)
+    const storage = (await browser.storage.local.get()) as ExtensionStorage
+    const config = new Configuration(storage.userConfig)
+    configBroadcast.notify(config)
 
     const state = checkCompatibility(location.href, config.compatibility)
-    
+
     rootLog.V("location: ", location.href, "compatible state: ", state)
 
     if (state === CompatibilityStatus.disable) {
@@ -102,14 +80,7 @@ async function onConfigChange() {
         return
     }
 
-    configureRootLog(config)
-    manageFeatures(config)
-
-    if (opExecutor) {
-        opExecutor.updateConfig(config)
-    } else {
-        throw new Error("controller is null")
-    }
+    controller.start()
 }
 
 

@@ -631,3 +631,39 @@ export interface PlainConfiguration {
 	assets?: PlainAsset[],
 	scripts?: PlainScript[],
 }
+
+class BroadcastEventTarget {
+
+	private target: EventTarget
+	private callbacks: { origin: Function, wrap: EventListener }[]
+
+	constructor() {
+		this.target = new EventTarget()
+		this.callbacks = []
+	}
+
+	addListener(cb: (cfg: ReadonlyConfiguration) => any) {
+		const wrap = (event: CustomEvent<Configuration>) => {
+			cb(event.detail)
+		}
+		this.callbacks.push({ origin: cb, wrap: wrap })
+		this.target.addEventListener("data", wrap)
+	}
+
+	removeListener(cb: (cfg: ReadonlyConfiguration) => any) {
+		while (true) {
+			const item = this.callbacks.find(item => item.origin === cb)
+			if (!item) {
+				return
+			}
+			this.callbacks = this.callbacks.filter(a => a !== item)
+			this.target.removeEventListener("data", item.wrap)
+		}
+	}
+
+	notify(cfg: ReadonlyConfiguration) {
+		this.target.dispatchEvent(new CustomEvent("data", { detail: cfg }))
+	}
+}
+
+export const configBroadcast = new BroadcastEventTarget()

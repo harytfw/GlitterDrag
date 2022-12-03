@@ -6,7 +6,7 @@ import { indicatorProxy } from '../components/indicator/indicator_proxy'
 import { menuProxy } from '../components/menu/menu_proxy'
 import { promptProxy } from '../components/prompt/prompt_proxy'
 import { EventType } from '../components/types'
-import { ActionConfig, ContextType, Feature, LogLevel, MenuLayout, OperationMode, type ReadonlyConfiguration } from '../config/config'
+import { ActionConfig, configBroadcast, ContextType, Feature, LogLevel, MenuLayout, OperationMode, type ReadonlyConfiguration } from '../config/config'
 import { buildRuntimeMessage, RuntimeMessageName } from '../message/message'
 import { ModifierKey, type KVRecord, type Position } from '../types'
 import { rootLog } from '../utils/log'
@@ -121,9 +121,10 @@ export class OpExecutor {
             this.selectedMenuId = e.detail
             log.VVV("new menu id: ", this.selectedMenuId)
         })
+        configBroadcast.addListener(this.updateConfig.bind(this))
     }
 
-    async updateConfig(config: ReadonlyConfiguration) {
+    private async updateConfig(config: ReadonlyConfiguration) {
         this.config = config
         this.titleTemplateCache.clear()
         this.config.actions.forEach(a => {
