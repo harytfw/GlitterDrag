@@ -503,6 +503,50 @@ export interface PlainActionConfig {
 	prompt?: string
 }
 
+
+export enum CompatibilityStatus {
+	enable = "enable",
+	force = "force",
+	disable = "disable"
+}
+
+export interface PlainCompatibilityRule { host?: string, regexp?: string, status?: CompatibilityStatus }
+
+export class CompatibilityRule {
+
+	private cfg: KVRecord
+	private _host: string
+	private _regexp: string
+	private _state: CompatibilityStatus
+
+	constructor(cfg: KVRecord) {
+		this.cfg = cfg
+		this._host = defaultTo(cfg["host"], "")
+		this._regexp = defaultTo(cfg["regexp"], "")
+		this._state = defaultTo(cfg["state"], CompatibilityStatus.enable)
+	}
+
+	toPlainObject(): PlainCompatibilityRule {
+		return {
+			host: this._host,
+			regexp: this.regexp,
+			status: this.state,
+		}
+	}
+
+	get host() {
+		return this._host
+	}
+
+	get regexp() {
+		return this._regexp
+	}
+
+	get state(): CompatibilityStatus {
+		return this._state
+	}
+}
+
 export class Configuration {
 
 	private _features: Set<Feature> = new Set();
@@ -514,6 +558,7 @@ export class Configuration {
 	private _requests: CommandRequest[]
 	private _assets: Asset[]
 	private _scripts: Script[]
+	private _compatibility: CompatibilityRule[]
 
 	constructor(data?: KVRecord) {
 		data = defaultTo(data, {})
@@ -527,6 +572,7 @@ export class Configuration {
 		this._requests = defaultTo(data['requests'], []).map((r: KVRecord) => new CommandRequest(r))
 		this._assets = defaultTo(data['assets'], []).map((r: KVRecord) => new Asset(r))
 		this._scripts = defaultTo(data['scripts'], []).map((r: KVRecord) => new Script(r))
+		this._compatibility = defaultTo(data["compatibility"], []).map((r: KVRecord) => new CompatibilityRule(r))
 	}
 
 	get features(): Set<string> {
@@ -563,6 +609,10 @@ export class Configuration {
 
 	get scripts(): readonly Script[] {
 		return this._scripts
+	}
+
+	get compatibility(): readonly CompatibilityRule[] {
+		return this._compatibility
 	}
 
 	Enabled(f: Feature): boolean {

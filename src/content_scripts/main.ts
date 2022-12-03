@@ -1,8 +1,9 @@
 import browser from 'webextension-polyfill';
-import { Configuration, Feature, type ReadonlyConfiguration } from '../config/config';
+import { CompatibilityRule, CompatibilityStatus, Configuration, Feature, type ReadonlyConfiguration } from '../config/config';
 import { buildRuntimeMessage, RuntimeMessageName, type FetchURLReply, type RuntimeMessage, type RuntimeMessageArg, type RuntimeMessageArgsMap } from '../message/message';
 import type { ExtensionStorage } from '../types';
 import { configureRootLog, rootLog } from '../utils/log';
+import { checkCompatibility } from './compat';
 import { DragController } from "./drag";
 import { MiddleButtonClose } from './features/auxclose';
 import { MiddleButtonSelector } from './features/middle_button_selector';
@@ -88,8 +89,18 @@ async function manageFeatures(config: ReadonlyConfiguration) {
 }
 
 async function onConfigChange() {
+
     let storage = (await browser.storage.local.get()) as ExtensionStorage
     let config = new Configuration(storage.userConfig)
+
+    const state = checkCompatibility(location.href, config.compatibility)
+    
+    rootLog.V("location: ", location.href, "compatible state: ", state)
+
+    if (state === CompatibilityStatus.disable) {
+        controller.stop()
+        return
+    }
 
     configureRootLog(config)
     manageFeatures(config)
