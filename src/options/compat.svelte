@@ -49,9 +49,19 @@
 		if (!isValueInputElement(target)) {
 			return;
 		}
+
 		const index = queryIndex(target);
 		if (index < 0) {
 			return;
+		}
+
+		if (target.name === "regexp") {
+			try {
+				new RegExp(target.value);
+				errorText = ""
+			} catch (e) {
+				errorText = "\""+ target.value +"\": " + e
+			}
 		}
 
 		const change: ValueChange = {
@@ -89,28 +99,26 @@
 		const tabs = await browser.tabs.query({});
 		const urls = tabs.map((tab) => tab.url);
 		ruleMatchResult = urls.map((url) => {
-			let info = "ok";
 			let status = CompatibilityStatus.enable;
 
 			try {
 				status = checkCompatibility(url, rules);
 			} catch (e) {
 				console.error(e);
-				info = "" + e;
 			}
 
 			return {
 				url: url,
 				status: status,
-				info: info,
 			};
 		});
 	}
 
+	let errorText = "";
+
 	let ruleMatchResult: {
 		url: string;
 		status: CompatibilityStatus;
-		info: string;
 	}[] = [];
 
 	let plainRules: PlainCompatibilityRule[] = [];
@@ -168,17 +176,19 @@
 			{/each}
 		</tbody>
 	</table>
+	{#if errorText.length > 0}
+		<p>
+			{errorText}
+		</p>
+	{/if}
 	<p>
-		<button on:click={matchRules}
-			>{locale.checkCompatibilityRule}</button
-		>
+		<button on:click={matchRules}>{locale.checkCompatibilityRule}</button>
 	</p>
 	<table>
 		<thead>
 			<tr>
 				<th> {locale.compatibilityStatus} </th>
 				<th> URL </th>
-				<th> Info </th>
 			</tr>
 		</thead>
 		<tbody>
@@ -186,7 +196,6 @@
 				<tr>
 					<td>{localeHelper.compatibilityStatus(result.status)}</td>
 					<td>{result.url}</td>
-					<td>{result.info}</td>
 				</tr>
 			{/each}
 		</tbody>

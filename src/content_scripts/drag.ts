@@ -40,9 +40,9 @@ export class DragController {
     }
 
     start(compat: CompatibilityStatus) {
+        this.stop()
         this.compat = compat
         if (this.compat === CompatibilityStatus.disable) {
-            this.stop()
             return
         }
         for (const n of ["dragstart", "dragover", "dragenter", 'dragleave', "drop", "dragend"]) {

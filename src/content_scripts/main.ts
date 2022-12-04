@@ -71,7 +71,13 @@ async function onConfigChange() {
     const config = new Configuration(storage.userConfig)
     configBroadcast.notify(config)
 
-    const status = checkCompatibility(location.href, config.compatibility)
+    let status = CompatibilityStatus.enable
+
+    try {
+        status = checkCompatibility(location.href, config.compatibility)
+    } catch (e) {
+        console.error(e)
+    }
 
     rootLog.V("location: ", location.href, "compatible status: ", status)
 

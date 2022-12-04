@@ -33,6 +33,7 @@ export function checkCompatibility(location: string, userRules: readonly Compati
 				}
 			} catch (e) {
 				console.error("build compatibility rule for regexp failed: ", rule.regexp)
+				throw e
 			}
 		}
 	}
