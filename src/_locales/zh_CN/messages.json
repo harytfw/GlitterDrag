@@ -280,5 +280,32 @@
   },
   "firstTimeUsePrompt": {
     "message": "是否使用默认配置 ?"
+  },
+  "tabTitleCompatibility": {
+    "message": "兼容性"
+  },
+  "helpCompatibility": {
+    "message": "用于管理网站自身与本扩展的在拖拽行为上的兼容问题 (还是无法在特权页面工作)。“匹配规则” 是 JavaScript 的正则表达式，用于匹配网站的URL。 “启用” 表示本扩展会在指定的网站正常工作，但是当扩展检测到网站对拖拽行为进行管理时，会自动禁用扩展的功能。“禁用” 表示本扩展不会在该网站启用功能。“强制启用” 的表现和 “启用” 类似，不过当检测网站到对拖拽行为的管理时，不会自动禁用功能，并继续工作。"
+  },
+  "addRule": {
+    "message": "添加规则"
+  },
+  "compatibilityPattern": {
+    "message": "匹配规则"
+  },
+  "compatibilityStatus": {
+    "message": "状态"
+  },
+  "checkCompatibilityRule": {
+    "message": "检查规则"
+  },
+  "compatibilityStatusEnable": {
+    "message": "启用"
+  },
+  "compatibilityStatusDisable": {
+    "message": "禁用"
+  },
+  "compatibilityStatusForce": {
+    "message": "强制启用"
   }
 }

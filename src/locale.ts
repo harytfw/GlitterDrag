@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { CommandKind, ContextDataType, ContextType, Direction, OperationMode, TabPosition } from './config/config';
+import { CommandKind, CompatibilityStatus, ContextDataType, ContextType, Direction, OperationMode, TabPosition } from './config/config';
 import { titleCase } from './options/utils';
 
 export class LocaleMessageHelper {
@@ -48,6 +48,10 @@ export class LocaleMessageHelper {
 
 	contextDataType(type: ContextDataType): string {
 		return this.get("contextDataType" + titleCase(type))
+	}
+
+	compatibilityStatus(status: CompatibilityStatus): string {
+		return this.get("compatibilityStatus" + titleCase(status))
 	}
 }
 

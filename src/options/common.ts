@@ -1,4 +1,4 @@
-import { CommandKind, Direction, OperationMode, TabPosition, ContextType, ContextDataType } from "../config/config";
+import { CommandKind, Direction, OperationMode, TabPosition, ContextType, ContextDataType, CompatibilityStatus } from "../config/config";
 import { LocaleMessageHelper } from "../locale";
 import { titleCase } from "./utils";
 
@@ -13,6 +13,7 @@ export enum Tab {
 	requests = "requests",
 	common = "common",
 	configEditor = "configEditor",
+	compatibility = "compatibility",
 }
 
 
@@ -92,3 +93,11 @@ export const contextDataTypeOptionsForLink: Readonly<MultipleOptionModel<Context
 				value: t,
 			};
 		});
+
+export const compatibilityStatusOptions: Readonly<MultipleOptionModel<CompatibilityStatus>> = Object.values(CompatibilityStatus)
+	.map(s => {
+		return {
+			label: localeHelper.compatibilityStatus(s),
+			value: s
+		}
+	})

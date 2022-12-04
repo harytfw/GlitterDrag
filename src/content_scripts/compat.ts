@@ -32,7 +32,7 @@ export function checkCompatibility(location: string, userRules: readonly Compati
 					break
 				}
 			} catch (e) {
-				console.error("build compatibility rule for regexp failed: ", + rule.regexp)
+				console.error("build compatibility rule for regexp failed: ", rule.regexp)
 			}
 		}
 	}

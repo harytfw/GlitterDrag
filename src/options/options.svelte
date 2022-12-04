@@ -10,6 +10,7 @@
 	import Assets from "./assets.svelte";
 	import { Tab } from "./common";
 	import Common from "./common.svelte";
+    import Compat from "./compat.svelte";
 	import Nav from "./nav.svelte";
 	import Requests from "./requests.svelte";
 	import Scripts from "./scripts.svelte";
@@ -132,6 +133,8 @@
 			<Requests />
 		{:else if tab === Tab.common}
 			<Common />
+		{:else if tab === Tab.compatibility}
+			<Compat />
 		{:else if tab === Tab.configEditor}
 			<section>
 				<input

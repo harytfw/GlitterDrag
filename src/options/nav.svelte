@@ -35,5 +35,6 @@
 	<a href="#{Tab.scripts}" class:current="{tabName === Tab.scripts}" data-tab={Tab.scripts}>{locale.tabTitleScripts}</a>
 	<a href="#{Tab.assets}" class:current="{tabName === Tab.assets}" data-tab={Tab.assets}>{locale.tabTitleAssets}</a>
 	<a href="#{Tab.requests}" class:current="{tabName === Tab.requests}" data-tab={Tab.requests}>{locale.tabTitleRequests}</a>
+	<a href="#{Tab.compatibility}" class:current="{tabName === Tab.compatibility}" data-tab={Tab.compatibility}>{locale.tabTitleCompatibility}</a>
 	<a href="#{Tab.configEditor}" class:current="{tabName === Tab.configEditor}" data-tab={Tab.configEditor}>{locale.tabTitleEditor}</a>
 </nav>

@@ -630,6 +630,7 @@ export interface PlainConfiguration {
 	requests?: PlainCommandRequest[],
 	assets?: PlainAsset[],
 	scripts?: PlainScript[],
+	compatibility?: PlainCompatibilityRule[],
 }
 
 class BroadcastEventTarget<T> {
