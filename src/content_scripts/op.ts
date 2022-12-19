@@ -111,6 +111,8 @@ export class OpExecutor {
     dirChain: DirectionChain = new DirectionChain()
     selectedMenuId = ""
 
+    timerId = 0
+
     constructor() {
         this.state = new StateManager()
         this.source = null
@@ -143,6 +145,14 @@ export class OpExecutor {
         return Math.hypot(this.startPos.x - this.endPos.x, this.startPos.y - this.endPos.y);
     }
 
+    private get timerTimeout(): number {
+        let timeout = 5 * 1000//5 second
+        if (this.config.features.has(Feature.retainComponent)) {
+            timeout = 30 * 60 * 1000 // 30minute
+        }
+        return timeout
+    }
+
     public applyOp(op: Op): OpResult {
         if (window.top != window.self) {
             if (window.frameElement) {
@@ -154,8 +164,18 @@ export class OpExecutor {
             return defaultOpResult
         }
 
+
         log.VVV('apply op: ', op)
         log.VVV('apply op, position: ', JSON.stringify(op.positions), JSON.stringify(this.data), JSON.stringify(this.dirChain))
+
+        if (this.timerId > 0) {
+            clearTimeout(this.timerId)
+        }
+
+        this.timerId = setTimeout(() => {
+            log.V("reset because of timeout")
+            this.reset()
+        }, this.timerTimeout)
 
 
         switch (op.type) {
@@ -180,6 +200,7 @@ export class OpExecutor {
             default:
                 throw new Error("unknown op type: " + op.type)
         }
+
     }
 
     private updateUI(op: Op) {
@@ -253,15 +274,18 @@ export class OpExecutor {
         this.data.clear()
         this.source = null
         this.selectedMenuId = ""
+        clearTimeout(this.timerId)
         this.resetUI()
     }
 
     private resetUI() {
-        if (this.config && !this.config.Enabled(Feature.retainComponent)) {
-            indicatorProxy.hide()
-            menuProxy.hide()
-            promptProxy.hide()
+        if (this.config.Enabled(Feature.retainComponent)) {
+            return
         }
+
+        indicatorProxy.hide()
+        menuProxy.hide()
+        promptProxy.hide()
     }
 
     private updateDirChain() {
