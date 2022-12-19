@@ -1,4 +1,4 @@
-<svelte:options tag="glitterdrag-menu" />
+<svelte:options tag={null} />
 
 <script lang="ts">
 	import cloneDeep from "lodash-es/cloneDeep";
@@ -81,7 +81,7 @@
 		}
 	};
 
-	component["update"] = (opts: ShowMenuOptions) => {
+	export function show(opts: ShowMenuOptions) {
 		const docRect = document.documentElement.getBoundingClientRect();
 
 		let x = opts.position.x;
@@ -114,11 +114,11 @@
 		} else {
 			items = items.slice(0, 16);
 		}
-	};
+	}
 
-	component["reset"] = () => {
+	export function reset() {
 		updateSelectedId("");
-	};
+	}
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->

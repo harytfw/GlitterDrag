@@ -49,9 +49,6 @@ manifest:
 .PHONY: assets
 assets: manifest
 	
-	@mkdir -p $(TARGET_DIST)/content_scripts && \
-		cp -f -r $(SRC)/content_scripts/content_script.css $(TARGET_DIST)/content_scripts/
-	
 	@mkdir -p $(TARGET_DIST)/options && \
 		cp -f $(SRC)/options/options.html $(TARGET_DIST)/options/options.html
 	

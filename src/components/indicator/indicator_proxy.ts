@@ -1,9 +1,9 @@
 import type { Position } from "../../types";
 import { Stub } from "../helper";
-import { ProxyEventType, type Indicator } from "../types";
+import { ProxyEventType, type IndicatorInterface } from "../types";
 
 
-export class IndicatorProxy extends Stub implements Indicator {
+export class IndicatorProxy extends Stub implements IndicatorInterface {
 
 	constructor() {
 		super(ProxyEventType.Indicator)

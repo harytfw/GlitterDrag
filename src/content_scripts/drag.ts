@@ -46,15 +46,15 @@ export class DragController {
             return
         }
         for (const n of ["dragstart", "dragover", "dragenter", 'dragleave', "drop", "dragend"]) {
-            this.eventSource.addEventListener(n as any, this.dragHandler, true)
-            this.eventSource.addEventListener(n as any, this.dragHandler, false)
+            this.eventSource.addEventListener(n, this.dragHandler, true)
+            this.eventSource.addEventListener(n, this.dragHandler, false)
         }
     }
 
     stop() {
         for (const n of ["dragstart", "dragover", "dragenter", 'dragleave', "drop", "dragend"]) {
-            this.eventSource.removeEventListener(n as any, this.dragHandler, true);
-            this.eventSource.removeEventListener(n as any, this.dragHandler, false);
+            this.eventSource.removeEventListener(n, this.dragHandler, true);
+            this.eventSource.removeEventListener(n, this.dragHandler, false);
         }
     }
 

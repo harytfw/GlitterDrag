@@ -1,23 +1,25 @@
-<svelte:options tag="glitterdrag-status" />
+<svelte:options tag={null} />
 
 <script lang="ts">
-	import { get_current_component } from "svelte/internal";
-	import { EventType } from "../types";
-	let content = ""
-	$: style = "margin: 0px 8px 0px 8px;"
+	let content = "";
 
-
-	let component = get_current_component();
-
-	// https://github.com/sveltejs/svelte/issues/3091
-	component.addEventListener(EventType.Status, (msg: CustomEvent)=>{
-		content = msg.detail.content
-	})
-
-	component["update"] = (text: string) => {
-		content = text
+	export function show(html: string) {
+		content = html;
 	}
-
 </script>
 
-<div style="{style}">{content}</div>
+<div id="main">{@html content}</div>
+
+<style>
+	#main {
+		position: fixed;
+		left: 0;
+		top: 0;
+		background-color: rgba(9, 150, 248, 0.85);
+		color: white !important;
+		pointer-events: none;
+		z-index: 2147483647;
+		font-size: 14px;
+		padding: 0px 8px 0px 8px;
+	}
+</style>

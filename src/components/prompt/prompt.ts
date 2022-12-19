@@ -1,28 +1,24 @@
 import { MessageTarget } from '../helper';
-import { ProxyEventType, type Prompt } from '../types';
-import App from './prompt.svelte';
+import { ProxyEventType, type PromptInterface } from '../types';
+import PromptElement from './prompt.svelte';
 
+export class PromptImpl extends MessageTarget implements PromptInterface {
 
-interface PromptElement extends HTMLElement {
-	update(text: string)
-}
-
-export const promptApp = new App({ target: undefined }) as any as PromptElement;
-
-
-export class PromptImpl extends MessageTarget implements Prompt {
+	elem: HTMLElement & PromptElement
 
 	constructor() {
-		super(ProxyEventType.Status)
+		super(ProxyEventType.Prompt)
+		customElements.define('glitterdrag-prompt', PromptElement as any);
+		this.elem = document.createElement("glitterdrag-prompt") as HTMLElement & PromptElement;
 	}
 
 	show(text: string) {
-		promptApp.update(text)
-		!promptApp.parentElement && document.body.append(promptApp)
+		this.elem.show(text)
+		!this.elem.parentElement && document.body.append(this.elem);
 	}
 
 	hide() {
-		promptApp.remove()
+		this.elem.remove()
 	}
 }
 

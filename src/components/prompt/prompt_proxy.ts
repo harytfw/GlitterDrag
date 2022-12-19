@@ -1,10 +1,10 @@
 import { Stub } from "../helper";
-import { ProxyEventType, type Prompt } from "../types";
+import { ProxyEventType, type PromptInterface } from "../types";
 
-export class PromptProxy extends Stub implements Prompt {
+export class PromptProxy extends Stub implements PromptInterface {
 
 	constructor() {
-		super(ProxyEventType.Status)
+		super(ProxyEventType.Prompt)
 	}
 
 	show(text: string) {

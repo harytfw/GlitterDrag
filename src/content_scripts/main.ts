@@ -43,6 +43,8 @@ function setupComponents() {
     const s = document.createElement("script")
     s.src = browser.runtime.getURL("components/main.js")
     document.body.appendChild(s)
+    // prevent script exposes to web page
+    setTimeout(() => { s.remove() }, 0)
 }
 
 let controller: DragController | null = null

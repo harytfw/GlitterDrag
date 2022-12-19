@@ -6,7 +6,7 @@ import { indicatorProxy } from '../components/indicator/indicator_proxy'
 import { menuProxy } from '../components/menu/menu_proxy'
 import { promptProxy } from '../components/prompt/prompt_proxy'
 import { EventType } from '../components/types'
-import { ActionConfig, configBroadcast, ContextType, Feature, LogLevel, MenuLayout, OperationMode, type ReadonlyConfiguration } from '../config/config'
+import { ActionConfig, configBroadcast, Configuration, ContextType, Feature, LogLevel, MenuLayout, OperationMode, type ReadonlyConfiguration } from '../config/config'
 import { buildRuntimeMessage, RuntimeMessageName } from '../message/message'
 import { ModifierKey, type KVRecord, type Position } from '../types'
 import { rootLog } from '../utils/log'
@@ -98,14 +98,14 @@ export interface OpSummary {
     imgSrc: string
 }
 
-const forwardOpEventName = "gdp-forward-op"
+const forwardOpEventName = "glitter-drag:forward-op"
 
 export class OpExecutor {
     state: StateManager
     source: OpSource | null
     startPos: Position = { x: 0, y: 0 }
     endPos: Position = { x: 0, y: 0 }
-    config: ReadonlyConfiguration | null = null
+    config: ReadonlyConfiguration = new Configuration({})
     data: Map<string, string> = new Map()
     titleTemplateCache: Map<string, VarSubstituteTemplate> = new Map()
     dirChain: DirectionChain = new DirectionChain()
@@ -225,7 +225,9 @@ export class OpExecutor {
                 action = actions[0]
             }
 
-            if (action) {
+            if (!this.checkDistance()) {
+                promptProxy.show("<em>out of range</em>")
+            } else if (action) {
                 const template = action.prompt ? action.prompt : action.name
                 const tmpl = this.titleTemplateCache.get(template)
                 if (tmpl) {
@@ -236,7 +238,7 @@ export class OpExecutor {
                     promptProxy.hide()
                 }
             } else {
-                promptProxy.hide()
+                promptProxy.show("<em>no action</em>")
             }
 
 

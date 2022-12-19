@@ -17,17 +17,7 @@ configBroadcast.addListener(cfg => {
 })
 
 async function onContentScriptLoaded(tabId: number, frameId?: number) {
-    let frameIds = frameId ? [frameId] : undefined
 
-    await browser.scripting.insertCSS({
-        target: {
-            tabId,
-            frameIds
-        },
-        files: [
-            "content_scripts/content_script.css"
-        ]
-    })
 }
 
 async function saveVolatileState() {
