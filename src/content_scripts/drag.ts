@@ -32,7 +32,7 @@ export class DragController {
         this.dragTriggerSource = TriggerSource.unknown
         this.sourceTarget = null
         this.destTarget = null
-        this.dragHandler = this.dragHandler.bind(this)
+        this.handler = this.handler.bind(this)
         this.eventSource = eventSource
         this.c = opExecutor
         this.frameX = 0
@@ -46,30 +46,24 @@ export class DragController {
             return
         }
         for (const n of ["dragstart", "dragover", "dragenter", 'dragleave', "drop", "dragend"]) {
-            this.eventSource.addEventListener(n, this.dragHandler, true)
-            this.eventSource.addEventListener(n, this.dragHandler, false)
+            this.eventSource.addEventListener(n, this.handler, true)
+            this.eventSource.addEventListener(n, this.handler, false)
         }
     }
 
     stop() {
         for (const n of ["dragstart", "dragover", "dragenter", 'dragleave', "drop", "dragend"]) {
-            this.eventSource.removeEventListener(n, this.dragHandler, true);
-            this.eventSource.removeEventListener(n, this.dragHandler, false);
+            this.eventSource.removeEventListener(n, this.handler, true);
+            this.eventSource.removeEventListener(n, this.handler, false);
         }
     }
 
-    private dragHandler(e: DragEvent) {
-        log.VV(e)
+    private handler(e: DragEvent) {
+        log.VVV(e)
 
         switch (e.type) {
             case 'dragstart':
-                // TODO: clean code
                 this.checkDragStart(e)
-                if (this.sourceTarget != null && e.eventPhase === EventPhase.capturing) {
-                    this.initFramePosition()
-                    const op = this.makeOp(OpType.start, this.sourceTarget, e)
-                    this.c.applyOp(op)
-                }
                 break
             case 'dragend':
                 this.checkDragEnd(e)
@@ -93,13 +87,10 @@ export class DragController {
         return true
     }
 
-    private checkDragStart(event: DragEvent) {
-        if (event.eventPhase !== EventPhase.capturing) {
-            return
-        }
 
+    private findSourceTarget(event: DragEvent): Node | null {
         if (!(event.target instanceof Node)) {
-            return
+            return null
         }
 
         let target = event.target
@@ -115,23 +106,23 @@ export class DragController {
 
         if (!isInstance(target, window.Node)) {
             log.VV("target must be instance of node: ", target)
-            return
+            return null
         }
 
         if (isInstance(target, window.HTMLObjectElement)) {
             log.VV("ignore operation because target is object element")
-            return;
+            return null
         }
 
         if (isInstance(target, window.HTMLElement) && isEditableAndDraggable(target)) {
             log.VV("ignore operation because target is Editable and Draggable")
-            return;
+            return null
         }
 
         if (isInstance(target, window.HTMLAnchorElement)) {
             if (target.href.startsWith("#")) {
                 log.VV("target's anchor starts with '#', ignore")
-                return;
+                return null
             }
 
             if (target.href.startsWith("javascript:")) {
@@ -139,48 +130,54 @@ export class DragController {
                 const firstChild = target.firstElementChild
                 if (isInstance(firstChild, window.HTMLImageElement)) {
                     log.VV('first child is image element')
-                    this.sourceTarget = firstChild
-                    return;
+                    return firstChild
                 }
                 log.VV('not support anchor with javascript:')
-                return
+                return null
             }
-            this.sourceTarget = target
-            return
+            return target
         }
 
         if (isInstance(target, window.HTMLImageElement)) {
             const a = target.closest("a") as HTMLAnchorElement | null
             if (a) {
-                this.sourceTarget = a
+                return a
             } else {
-                this.sourceTarget = target
+                return target
             }
-            return
         }
 
         if (isInstance(target, window.Text)) {
-            this.sourceTarget = target
-            return
+            return target
         }
 
         if (isInstance(target, window.HTMLInputElement)) {
             log.VV('target is input element, input type: ', target.type)
             if (["text", "number", "url"].includes(target.type.toLowerCase())) {
-                this.sourceTarget = target
-                return
+                return target
             }
         }
 
         if (isInstance(target, window.HTMLTextAreaElement)) {
             log.VV('target is text area')
-            this.sourceTarget = target
-            return
+            return target
         }
 
         // TODO: target maybe a customElement with closed mode
-
         log.V("unhandled target: ", target)
+        return null
+    }
+
+    private checkDragStart(event: DragEvent) {
+        if (event.eventPhase !== EventPhase.capturing) {
+            return
+        }
+        this.sourceTarget = this.findSourceTarget(event)
+        if (this.sourceTarget != null) {
+            this.initFramePosition()
+            const op = this.makeOp(OpType.start, this.sourceTarget, event)
+            this.c.applyOp(op)
+        }
     }
 
     private checkDragEnter(event: DragEvent) {
