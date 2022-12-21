@@ -1,7 +1,9 @@
 import { configBroadcast, LogLevel } from "../config/config"
 
 function buildTag(tag: string, parentTag: string): string {
-
+	if (parentTag.length === 0) {
+		return tag
+	}
 	return parentTag + ":" + tag
 }
 
@@ -77,7 +79,7 @@ export class Logger {
 }
 
 
-export const rootLog = new Logger(__BUILD_PROFILE === "prod" ? LogLevel.S : LogLevel.VVV, "root")
+export const rootLog = new Logger(__BUILD_PROFILE === "prod" ? LogLevel.S : LogLevel.VVV, "")
 
 configBroadcast.addListener(cfg => {
 	rootLog.setLevel(cfg.log.level)

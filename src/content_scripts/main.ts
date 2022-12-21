@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { CompatibilityStatus, configBroadcast, Configuration } from '../config/config';
+import { CompatibilityStatus, configBroadcast, Configuration, LogLevel } from '../config/config';
 import { buildRuntimeMessage, RuntimeMessageName, type RuntimeMessage } from '../message/message';
 import type { ExtensionStorage } from '../types';
 import { rootLog } from '../utils/log';
@@ -10,8 +10,10 @@ import { OpExecutor } from './op';
 import { ScriptWrapper as UserScriptWrapper } from './script';
 import { onDocumentLoaded } from './utils';
 
+const log = rootLog.subLogger(LogLevel.VVV, "cs")
+
 async function dispatcher(m: any) {
-    rootLog.V("content script dispatcher:", m)
+    log.V("content script dispatcher:", m)
     const cmd = m.cmd as RuntimeMessageName;
     switch (cmd) {
         case RuntimeMessageName.copy: {
@@ -81,7 +83,7 @@ async function onConfigChange() {
         console.error(e)
     }
 
-    rootLog.V("location: ", location.href, "compatible status: ", status)
+    log.V("location: ", location.href, "compatible status: ", status)
 
     if (status === CompatibilityStatus.disable) {
         controller.stop()
@@ -97,9 +99,9 @@ async function main() {
         await setup()
     }
     catch (error) {
-        rootLog.E("failed to setup extension: ", window.self);
-        rootLog.E(error);
-        rootLog.E(error.stack)
+        log.E("failed to setup extension: ", window.self);
+        log.E(error);
+        log.E(error.stack)
     }
 }
 
