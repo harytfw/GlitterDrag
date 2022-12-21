@@ -63,8 +63,9 @@ export class DragController {
 
         switch (e.type) {
             case 'dragstart':
+                // TODO: clean code
                 this.checkDragStart(e)
-                if (this.sourceTarget != null) {
+                if (this.sourceTarget != null && e.eventPhase === EventPhase.capturing) {
                     this.initFramePosition()
                     const op = this.makeOp(OpType.start, this.sourceTarget, e)
                     this.c.applyOp(op)

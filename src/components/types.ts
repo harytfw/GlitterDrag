@@ -43,7 +43,8 @@ export interface MenuMessage {
 export interface ShowMenuOptions {
 	position: Position,
 	layout: MenuLayout,
-	items: MenuItem[]
+	items: MenuItem[],
+	circleRadius: number,
 }
 
 export interface GenericFunction {
@@ -64,4 +65,14 @@ export interface PromptInterface {
 export interface MenuInterface {
 	show(opts: ShowMenuOptions): void
 	hide(): void
+}
+
+
+export interface MenuOptions {
+	items: MenuItem[];
+	dividerLineLength: number;
+	circleRadius: number;
+	iconOffset: number;
+	iconSize: number;
+	textOffset: number;
 }

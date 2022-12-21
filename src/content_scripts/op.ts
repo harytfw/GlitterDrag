@@ -214,13 +214,6 @@ export class OpExecutor {
         const actions = this.filterActionConfig(g)
 
         if (op.type === OpType.start) {
-            if (this.config.common.minDistance > 0) {
-                indicatorProxy.show(
-                    this.config.common.minDistance,
-                    op.positions.page,
-                )
-            }
-
             if (actions.length && (mode === OperationMode.circleMenu || mode === OperationMode.gridMenu)) {
                 let layout = MenuLayout.circle
                 if (mode === OperationMode.gridMenu) {
@@ -230,7 +223,13 @@ export class OpExecutor {
                     position: op.positions.page,
                     layout: layout,
                     items: transformMenuItem(actions, this.config.assets),
+                    circleRadius: this.config.common.minDistance
                 })
+            } else if (this.config.common.minDistance > 0) {
+                indicatorProxy.show(
+                    this.config.common.minDistance,
+                    op.positions.page,
+                )
             }
             return
         }
@@ -479,6 +478,9 @@ export class OpExecutor {
                     || action.condition.contextTypes.every((t) => g.contextTypes.includes(t))
             })
             .filter((action) => {
+                if (action.condition.modes.some(m => m === OperationMode.circleMenu || m === OperationMode.gridMenu)) {
+                    return true
+                }
                 return action.condition.directions.length === 0
                     // equal
                     || isEqual(action.condition.directions, dirs)

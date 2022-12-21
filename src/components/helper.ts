@@ -34,3 +34,4 @@ export class MessageTarget {
 		fn.apply(this, msg.args);
 	}
 }
+
