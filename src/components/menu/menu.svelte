@@ -180,7 +180,7 @@
 					center
 				);
 				const startDivider = polar2cartesian(
-					circleRadius + dividerLineLength,
+					dividerLineLength,
 					degToRad(startAngle),
 					start
 				);
@@ -191,7 +191,7 @@
 					center
 				);
 				const endDivider = polar2cartesian(
-					circleRadius + dividerLineLength,
+					dividerLineLength,
 					degToRad(endAngle),
 					end
 				);
