@@ -1,6 +1,9 @@
 import defaultTo from 'lodash-es/defaultTo'
 import browser from 'webextension-polyfill'
-import type { KVRecord, Position } from '../types'
+import { LogLevel } from '../config/config'
+import { rootLog } from '../utils/log'
+
+const log = rootLog.subLogger(LogLevel.VVV, "state")
 
 const enum State {
 	backgroundTabCounter = "backgroundTabCounter",
@@ -20,26 +23,36 @@ class localStorageBackend implements VolatileState {
 	static storageKey = "volatileState"
 	private loaded = false
 	private data = new Map<string, unknown>()
-
+	private dirty = false
 	async load() {
 		if (state.loaded) {
+			log.VVV("already loaded")
 			return
 		}
 		state.loaded = true
 
 		const storageData = await browser.storage.local.get(localStorageBackend.storageKey)
 		state.data = new Map(defaultTo<[]>(storageData[localStorageBackend.storageKey], []))
+		this.dirty = false
+		log.VVV("load state done")
 	}
 
-	async save() {
+	async save(force = false) {
+		if (!force && !this.dirty) {
+			log.VVV("skip save")
+			return
+		}
 		const obj = {}
 		obj[localStorageBackend.storageKey] = Array.from(this.data.entries())
-		return browser.storage.local.set(obj)
+		await browser.storage.local.set(obj)
+		this.dirty = false
+		log.VVV("save state done")
 	}
 
 	async reset() {
+		log.VVV("reset state")
 		this.data = new Map()
-		await this.save()
+		await this.save(true)
 		return
 	}
 
@@ -49,6 +62,7 @@ class localStorageBackend implements VolatileState {
 
 	set backgroundTabCounter(val) {
 		this.data.set(State.backgroundTabCounter, val)
+		this.dirty = true
 	}
 }
 

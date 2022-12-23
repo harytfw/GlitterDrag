@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 import { CompatibilityStatus, configBroadcast, Configuration, LogLevel } from '../config/config';
 import { buildRuntimeMessage, RuntimeMessageName, type RuntimeMessage } from '../message/message';
-import type { ExtensionStorage } from '../types';
+import { ExtensionStorageKey, type ExtensionStorage } from '../types';
 import { rootLog } from '../utils/log';
 import { checkCompatibility } from './compat';
 import { DragController } from "./drag";
@@ -55,7 +55,13 @@ async function setup() {
 
     configBroadcast.addListener(manageFeatures)
 
-    browser.storage.onChanged.addListener(onConfigChange)
+    browser.storage.onChanged.addListener((detail) => {
+        if (ExtensionStorageKey.userConfig in detail) {
+            loadConfig()
+        } else {
+            log.VVV("not interesting storage key changed: ", Object.keys(detail))
+        }
+    })
     browser.runtime.onMessage.addListener(dispatcher as any)
 
     const opExecutor = new OpExecutor()
@@ -65,12 +71,13 @@ async function setup() {
 
     onDocumentLoaded(async () => {
         await browser.runtime.sendMessage(buildRuntimeMessage(RuntimeMessageName.contextScriptLoaded, null))
-        onConfigChange()
+        loadConfig()
         setupComponents()
     })
 }
 
-async function onConfigChange() {
+async function loadConfig() {
+    log.VVV("load user config from storage")
     const storage = (await browser.storage.local.get()) as ExtensionStorage
     const config = new Configuration(storage.userConfig)
     configBroadcast.notify(config)
