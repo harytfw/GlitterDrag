@@ -132,7 +132,6 @@ export class OpExecutor {
         this.config.actions.forEach(a => {
             try {
                 const t = new VarSubstituteTemplate(a.prompt ? a.prompt : a.name)
-                log.V("new template: ", t.template)
                 this.titleTemplateCache.set(t.template, t)
             } catch (e) {
                 log.E(e)
