@@ -10,13 +10,13 @@
 	import Assets from "./assets.svelte";
 	import { Tab } from "./common";
 	import Common from "./common.svelte";
-    import Compat from "./compat.svelte";
+	import Compat from "./compat.svelte";
 	import Nav from "./nav.svelte";
 	import Requests from "./requests.svelte";
 	import Scripts from "./scripts.svelte";
 	import * as store from "./store";
 
-	const locale = localeMessageProxy() 
+	const locale = localeMessageProxy();
 	const indent = 2;
 
 	let config = "";
@@ -71,7 +71,15 @@
 		setTimeout(() => {
 			URL.revokeObjectURL(url);
 		}, 1000 * 60);
-		fileDownloader.download = `config-${now.getTime()}.json`;
+
+		const y = now.getFullYear().toString();
+		const M = (now.getMonth() + 1).toString().padStart(2, "0");
+		const d = now.getDate().toString().padStart(2, "0");
+		const h = now.getHours().toString().padStart(2, "0");
+		const m = now.getMinutes().toString().padStart(2, "0");
+		const s = now.getSeconds().toString().padStart(2, "0");
+
+		fileDownloader.download = `GlitterDrag-Config-${y}${M}${d}${h}${m}${s}.json`;
 		fileDownloader.href = url;
 		fileDownloader.click();
 	}

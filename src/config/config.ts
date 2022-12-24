@@ -137,6 +137,12 @@ export class ModeConfig {
 
 }
 
+export interface PlainModeConfig {
+	link?: string
+	selection?: string
+	image?: string
+}
+
 export class CommonConfig {
 	private cfg: KVRecord
 	private _mode: ModeConfig
@@ -168,7 +174,7 @@ export class CommonConfig {
 }
 
 export interface PlainCommonConfig {
-	mode?: string
+	mode?: PlainModeConfig
 	allowHost?: string[]
 	disallowHost?: string[]
 	minDistance?: number
