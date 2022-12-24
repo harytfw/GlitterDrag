@@ -1,13 +1,14 @@
 import { ContextType } from "../config/config";
+import { formatDateWithZeroPadding } from "../utils/date";
 import { primaryContextData, primaryContextType, type ExecuteContext } from "./context";
 
-export function createObjectURL(blob = new Blob(), revokeTime = 1000 * 60 * 3) {
+export function createObjectURL(blob: Blob, revokeTime = 1000 * 60 * 3) {
     const url = window.URL.createObjectURL(blob);
     setTimeout((u: string) => window.URL.revokeObjectURL(u), revokeTime, url); // auto revoke
     return url;
 }
 
-export function createBlobObjectURLForText(text = "") {
+export function createBlobObjectURLForText(text: string) {
     let blob = new window.Blob([text], {
         type: "text/plain"
     });
@@ -98,11 +99,6 @@ export function guessImageTypeFromBase64(data: string): "png" | "jpeg" | "unknow
     return "unknown"
 }
 
-export function dateTimeAsFileName(date: Date): string {
-    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
-}
-
-
 export async function buildDownloadableURL(ctx: ExecuteContext): Promise<URL> {
     const type = primaryContextType(ctx)
     switch (type) {
@@ -141,16 +137,16 @@ export function generatedDownloadFileName(ctx: ExecuteContext, url: URL): string
     const type = primaryContextType(ctx)
     switch (type) {
         case ContextType.selection: {
-            return dateTimeAsFileName(new Date()) + ".txt"
+            return formatDateWithZeroPadding(new Date()).join("") + '.txt'
         }
         case ContextType.image: {
             const sel = primaryContextData(ctx)
             if (sel.startsWith("data:")) {
                 const type = guessImageTypeFromBase64(sel)
                 if (type === "png" || type === "jpeg") {
-                    return [dateTimeAsFileName(new Date()), ".", type].join("")
+                    return [...formatDateWithZeroPadding(new Date()), ".", type].join("")
                 }
-                return dateTimeAsFileName(new Date())
+                return formatDateWithZeroPadding(new Date()).join("")
             }
             const filename = guessFilenameFromURL(url)
             return filename

@@ -6,6 +6,7 @@
 	import { simpleConfig } from "../config/simple_config";
 	import { localeMessageProxy } from "../locale";
 	import { ExtensionStorageKey, type ExtensionStorage } from "../types";
+	import { formatDateWithZeroPadding } from "../utils/date";
 	import Actions from "./actions.svelte";
 	import Assets from "./assets.svelte";
 	import { Tab } from "./common";
@@ -71,15 +72,9 @@
 		setTimeout(() => {
 			URL.revokeObjectURL(url);
 		}, 1000 * 60);
-
-		const y = now.getFullYear().toString();
-		const M = (now.getMonth() + 1).toString().padStart(2, "0");
-		const d = now.getDate().toString().padStart(2, "0");
-		const h = now.getHours().toString().padStart(2, "0");
-		const m = now.getMinutes().toString().padStart(2, "0");
-		const s = now.getSeconds().toString().padStart(2, "0");
-
-		fileDownloader.download = `GlitterDrag-Config-${y}${M}${d}${h}${m}${s}.json`;
+		fileDownloader.download = `GlitterDrag-Config-${formatDateWithZeroPadding(now).join(
+			""
+		)}.json`;
 		fileDownloader.href = url;
 		fileDownloader.click();
 	}
