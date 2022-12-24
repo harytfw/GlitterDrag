@@ -213,17 +213,18 @@ export class OpExecutor {
         const actions = this.filterActionConfig(g)
 
         if (op.type === OpType.start) {
-            if (actions.length && (mode === OperationMode.circleMenu || mode === OperationMode.gridMenu)) {
-                let layout = MenuLayout.circle
-                if (mode === OperationMode.gridMenu) {
-                    layout = MenuLayout.grid
-                }
-                menuProxy.show({
-                    position: op.positions.page,
-                    layout: layout,
-                    items: transformMenuItem(actions, this.config.assets),
-                    circleRadius: this.config.common.minDistance
-                })
+            if (actions.length && (mode === OperationMode.circleMenu)) {
+                const layout = MenuLayout.circle
+                // chrome won't produce dragover event if we display menu element at "dragstart" event immediately
+                // WORKAROUND: use setTimeout to delay the display of menu 
+                setTimeout(() => {
+                    menuProxy.show({
+                        position: op.positions.page,
+                        layout: layout,
+                        items: transformMenuItem(actions, this.config.assets),
+                        circleRadius: this.config.common.minDistance
+                    })
+                }, 0)
             } else if (this.config.common.minDistance > 0) {
                 indicatorProxy.show(
                     this.config.common.minDistance,
@@ -236,14 +237,15 @@ export class OpExecutor {
         if (op.type === OpType.running) {
             let action: ActionConfig | null = null
 
-            if (mode === OperationMode.circleMenu || mode === OperationMode.gridMenu) {
+            if (mode === OperationMode.circleMenu) {
                 if (this.selectedMenuId.length > 0) {
-                    action = this.config.actions.find(a => a.id === this.selectedMenuId)
+                    action = actions.find(a => a.id === this.selectedMenuId)
                 }
             } else if (actions.length > 0) {
                 action = actions[0]
             }
 
+            // TODO: avoid update prompt every time
             if (!this.checkDistance()) {
                 promptProxy.show("<em>out of range</em>")
             } else if (action) {
@@ -254,7 +256,7 @@ export class OpExecutor {
                     promptProxy.show(text)
                 } else {
                     log.V(`missing template instance: "${prompt}"`)
-                    promptProxy.hide()
+                    promptProxy.show("<em>no template</em>")
                 }
             } else {
                 promptProxy.show("<em>no action</em>")

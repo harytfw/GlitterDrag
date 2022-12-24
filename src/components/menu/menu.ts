@@ -15,6 +15,7 @@ function computeStyle(x: number, y: number, width: number, height: number) {
 		z-index: 2147483647;
 		width: ${width}px;
 		height: ${height}px;
+		user-select: none;
 	`
 	return style
 }

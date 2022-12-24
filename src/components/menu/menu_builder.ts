@@ -38,8 +38,9 @@ const styleContent = `
 	g text {
 		font-size: 4px;
 		fill: white; 
-		text-shadow: #000 0px 0 2px;
-	)
+		text-shadow: #000 0px 0 4px;
+		font-weight: bold;
+	}
 `;
 
 export function polar2cartesian(
