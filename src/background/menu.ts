@@ -2,7 +2,7 @@ import defaultTo from 'lodash-es/defaultTo';
 import browser from 'webextension-polyfill'
 import { Configuration, OperationMode, ContextType, type ReadonlyConfiguration, LogLevel } from "../config/config";
 import type { ExecuteArgs } from '../message/message';
-import { buildExecuteContext } from './context';
+import { buildExecuteContext } from '../context/utils';
 import { Executor } from './executor';
 import { ExtensionStorageKey, ModifierKey } from '../types';
 import { rootLog } from '../utils/log';

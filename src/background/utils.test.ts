@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 import { assertOk } from "../utils/test_helper"
-import { blankExecuteContext } from "./helper.test"
+import { blankExecuteContext } from "../context/test_helper"
 import { bufferToObjectURL, buildDownloadableURL, generatedDownloadFileName } from "./utils"
 
 describe("background utils", () => {

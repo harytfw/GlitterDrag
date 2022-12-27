@@ -1,6 +1,7 @@
 import { ContextType } from "../config/config";
+import type { ExecuteContext } from "../context/context";
 import { formatDateWithZeroPadding } from "../utils/date";
-import { primaryContextData, primaryContextType, type ExecuteContext } from "./context";
+import { primaryContextData, primaryContextType, } from "../context/utils";
 
 export function createObjectURL(blob: Blob, revokeTime = 1000 * 60 * 3) {
     const url = window.URL.createObjectURL(blob);

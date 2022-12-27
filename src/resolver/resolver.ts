@@ -1,8 +1,9 @@
 
 import { CommandRequest } from "../config/config"
+import type { ExecuteContext } from "../context/context"
+import { primaryContextData } from "../context/utils"
 import type { KVRecord } from "../types"
 import { VarSubstituteTemplate } from "../utils/var_substitute"
-import { primaryContextData, type ExecuteContext } from "./context"
 
 export type RequestParameterResolver = (key: string, value: string | string[]) => string | string[]
 

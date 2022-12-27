@@ -1,18 +1,9 @@
 import browser from 'webextension-polyfill';
 import { ActionConfig, Configuration, ContextType, ContextDataType, TabPosition } from "../config/config";
+import type { ExecuteContext } from './context';
 import type { ExecuteArgs } from "../message/message";
 import { ExtensionStorageKey, type ExtensionStorage } from '../types';
-import { defaultVolatileState, type VolatileState } from './volatile_state';
-
-export type ExecuteContext = Readonly<ExecuteArgs & {
-	action: ActionConfig
-	tabURL: string,
-	frameId: number,
-	config: Readonly<Configuration>,
-	hostname: string,
-	tab: browser.Tabs.Tab,
-	state: VolatileState
-}>
+import { defaultVolatileState } from '../state/state';
 
 
 export async function buildExecuteContextFromMessageSender(args: ExecuteArgs, sender: browser.Runtime.MessageSender): Promise<Readonly<ExecuteContext>> {

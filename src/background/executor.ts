@@ -5,11 +5,12 @@ import { buildRuntimeMessage, RuntimeMessageName } from '../message/message';
 import { rootLog } from '../utils/log';
 import { VarSubstituteTemplate } from '../utils/var_substitute';
 import { isFirefox } from '../utils/vendor';
-import { getTabIndex, handlePreferContextData, primaryContextData, primaryContextType, type ExecuteContext } from './context';
-import { Protocol, RequestResolver } from './resolver';
+import { getTabIndex, handlePreferContextData, primaryContextData, primaryContextType, } from '../context/utils';
+import { Protocol, RequestResolver } from '../resolver/resolver';
 import { searchText as searchTextViaBrowser } from './search';
 import { buildDownloadableURL, buildVars, dumpFunc, generatedDownloadFileName, guessImageType, isOpenableURL, urlToArrayBuffer } from './utils';
-import { defaultVolatileState } from './volatile_state';
+import { defaultVolatileState } from '../state/state';
+import type { ExecuteContext } from '../context/context';
 
 const log = rootLog.subLogger(LogLevel.VVV, 'executor')
 
@@ -114,15 +115,6 @@ export class Executor {
                         engine: engine,
                         tabId: tabHoldingSearch.id,
                     })
-                    return
-                }
-            case Protocol.extension:
-                {
-                    const message = resolver.resolveMessage()
-                    const resp = await browser.runtime.sendMessage(resolver.resolveExtensionId(), message)
-
-                    log.V("send message ", message, " to extension ", resolver.resolveExtensionId(), "response: ", resp)
-
                     return
                 }
             default:

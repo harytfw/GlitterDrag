@@ -3,7 +3,7 @@ import browser, { tabs } from 'webextension-polyfill';
 import { ActionConfig, CommandKind } from "../config/config"
 import { closeTab } from '../utils/test_helper';
 import { Executor } from "./executor"
-import { blankExecuteContext } from "./helper.test"
+import { blankExecuteContext } from "../context/test_helper"
 
 function buildActionConfig(command: CommandKind): ActionConfig {
     return new ActionConfig({ "command": command })

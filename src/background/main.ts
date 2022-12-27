@@ -5,10 +5,10 @@ import { RuntimeMessageName, type RuntimeMessage } from "../message/message";
 import { ExtensionStorageKey, type ExtensionStorage } from "../types";
 import { captureError } from '../utils/error';
 import { rootLog } from '../utils/log';
-import { buildExecuteContextFromMessageSender } from './context';
+import { buildExecuteContextFromMessageSender } from '../context/utils';
 import { Executor } from "./executor";
 import { onMenuItemClick, registerContextMenuActions } from './menu';
-import { defaultVolatileState } from './volatile_state';
+import { defaultVolatileState } from '../state/state';
 
 captureError()
 
