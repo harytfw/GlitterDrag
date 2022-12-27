@@ -18,32 +18,32 @@ export interface VolatileState {
 }
 
 
-class localStorageBackend implements VolatileState {
+export class LocalStorageBackend implements VolatileState {
 
-	static storageKey = "volatileState"
-	private loaded = false
-	private data = new Map<string, unknown>()
+	private readonly storageKey: string
+	private data: Map<string, number | string>
 	private dirty = false
-	async load() {
-		if (state.loaded) {
-			log.VVV("already loaded")
-			return
-		}
-		state.loaded = true
 
-		const storageData = await browser.storage.local.get(localStorageBackend.storageKey)
-		state.data = new Map(defaultTo<[]>(storageData[localStorageBackend.storageKey], []))
-		this.dirty = false
+
+	constructor(key: string) {
+		this.storageKey = key
+		this.data = new Map()
+	}
+
+	async load() {
+		this.innerReset()
+		const storageData = await browser.storage.local.get(this.storageKey)
+		this.data = new Map(defaultTo<[]>(storageData[this.storageKey], []))
 		log.VVV("load state done")
 	}
 
 	async save(force = false) {
 		if (!force && !this.dirty) {
-			log.VVV("skip save")
+			log.VVV("skip save, dirty: ", this.dirty, "force: ", force)
 			return
 		}
 		const obj = {}
-		obj[localStorageBackend.storageKey] = Array.from(this.data.entries())
+		obj[this.storageKey] = Array.from(this.data.entries())
 		await browser.storage.local.set(obj)
 		this.dirty = false
 		log.VVV("save state done")
@@ -51,9 +51,18 @@ class localStorageBackend implements VolatileState {
 
 	async reset() {
 		log.VVV("reset state")
-		this.data = new Map()
+		this.innerReset()
 		await this.save(true)
-		return
+	}
+
+	async remove() {
+		this.innerReset()
+		await browser.storage.local.remove(this.storageKey)
+	}
+
+	private innerReset() {
+		this.data = new Map()
+		this.dirty = false
 	}
 
 	get backgroundTabCounter() {
@@ -66,9 +75,9 @@ class localStorageBackend implements VolatileState {
 	}
 }
 
-const state = new localStorageBackend()
+const localState = new LocalStorageBackend("volatileState")
 
 export async function defaultVolatileState(): Promise<VolatileState> {
-	await state.load()
-	return state
+	await localState.load()
+	return localState
 }
