@@ -95,6 +95,11 @@
         originCommonConfig
     );
 
+    let permissions = [] as browser.Manifest.Permission[];
+    browser.permissions.getAll().then((perms) => {
+        permissions = perms.permissions;
+    });
+
     store.assets.subscribe((arr) => {
         assetOptions = arr
             .map((s) => new Asset(s))
@@ -1219,7 +1224,7 @@ align-items: center; width: 100px; height: 100px; background-color: #0909090f; j
                 </p>
             {/if}
 
-            {#if isFirefox()}
+            {#if isFirefox() && permissions.includes("contextualIdentities")}
                 <p>
                     <label for=""
                         >{locale.container}<span
