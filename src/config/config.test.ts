@@ -1,5 +1,5 @@
 import { assertOk } from "../utils/test_helper"
-import { ActionConfig, CommandRequest, configBroadcast as configBroadcast, Configuration, type ReadonlyConfiguration } from "./config"
+import { ActionConfig, BroadcastEventTarget, CommandRequest, configBroadcast as configBroadcast, Configuration, type ReadonlyConfiguration } from "./config"
 
 import chai from "chai"
 const assert = chai.assert
@@ -21,8 +21,9 @@ describe("test configuration", () => {
 		assertOk(req.toPlainObject())
 	})
 
-	it("config listener", () => {
+	it("broadcast", () => {
 
+		const broadcast = new BroadcastEventTarget<ReadonlyConfiguration>()
 		let listener0Result: ReadonlyConfiguration[] = []
 		let listener1Result: ReadonlyConfiguration[] = []
 
@@ -37,27 +38,27 @@ describe("test configuration", () => {
 		function reset() {
 			listener0Result = []
 			listener1Result = []
-			configBroadcast.removeListener(listener0)
-			configBroadcast.removeListener(listener1)
+			broadcast.removeListener(listener0)
+			broadcast.removeListener(listener1)
 		}
 
-		configBroadcast.addListener(listener0)
-		configBroadcast.notify(new Configuration())
+		broadcast.addListener(listener0)
+		broadcast.notify(new Configuration())
 		assert.isNotEmpty(listener0Result)
 		assert.isEmpty(listener1Result)
 		reset()
 
-		configBroadcast.addListener(listener1)
-		configBroadcast.removeListener(listener0)
-		configBroadcast.notify(new Configuration())
+		broadcast.addListener(listener1)
+		broadcast.removeListener(listener0)
+		broadcast.notify(new Configuration())
 		assert.isEmpty(listener0Result)
 		assert.isNotEmpty(listener1Result)
 		reset()
 
-		configBroadcast.addListener(listener0)
-		configBroadcast.addListener(listener0)
-		configBroadcast.addListener(listener1)
-		configBroadcast.notify(new Configuration())
+		broadcast.addListener(listener0)
+		broadcast.addListener(listener0)
+		broadcast.addListener(listener1)
+		broadcast.notify(new Configuration())
 		assert.isNotEmpty(listener0Result)
 		assert.equal(listener0Result.length, 2, "call listener0 twice")
 		assert.isNotEmpty(listener1Result)

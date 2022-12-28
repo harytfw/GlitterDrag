@@ -655,7 +655,7 @@ export interface PlainConfiguration {
 	compatibility?: PlainCompatibilityRule[],
 }
 
-class BroadcastEventTarget<T> {
+export class BroadcastEventTarget<T> {
 
 	private target: EventTarget
 	private callbacks: { origin: Function, wrap: EventListener }[]
