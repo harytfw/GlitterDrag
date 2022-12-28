@@ -1,101 +1,70 @@
 
+import { parse } from 'tldts';
+import defaultTo from "lodash-es/defaultTo"
 import { CommandRequest } from "../config/config"
-import type { ExecuteContext } from "../context/context"
-import { primaryContextData } from "../context/utils"
 import type { KVRecord } from "../types"
 import { VarSubstituteTemplate } from "../utils/var_substitute"
-
-export type RequestParameterResolver = (key: string, value: string | string[]) => string | string[]
-
-function requestFunc(rawReq: KVRecord) {
-	const req = new CommandRequest(rawReq)
-	console.debug(req)
-}
-
 
 export enum Protocol {
 	http = "http:",
 	https = "https:",
-	browserSearch = "browser:",
+	browserSearch = "ext-gdp:",
 	extension = "extension:",
 }
+
+export const browserSearchEngineURL = `${Protocol.browserSearch}//browser-search`
 
 export class RequestResolver {
 
 	private req: CommandRequest
-	private ctx: ExecuteContext
 
-	constructor(ctx: ExecuteContext, req: CommandRequest) {
+	constructor(req: CommandRequest) {
 		this.req = req
-		this.ctx = ctx
 	}
 
 	get protocol() {
-		return this.req.url.protocol as Protocol
+		return this.req.protocol as Protocol
 	}
 
-	resolveExtensionId() {
-		return this.req.url.host
-	}
-
-	resolveEngine(): string | undefined {
-		const url = this.resolveURL()
-		const engine = url.searchParams.get("engine")
+	resolveEngine(): string {
+		const engine = defaultTo(this.req.query["engine"], "")
 		if (!engine) {
-			return undefined
+			return ""
 		}
 		return engine
 	}
 
-	resolveURL(): URL {
+	resolveURL(query: string): URL {
 
-		// TODO: CACHE
-		const vars = this.buildVars()
+		const vars = this.buildVars(query ? query : "")
 
-		const url = new URL(this.req.url)
+		const clone = new URL(this.req.url)
+		const pathTemplate = new VarSubstituteTemplate(clone.pathname)
+		clone.pathname = pathTemplate.substitute(vars)
 
-		const pathTemplate = new VarSubstituteTemplate(this.req.url.pathname)
-		url.pathname = pathTemplate.substitute(vars)
-
-		for (let [k, v] of Object.entries(this.req.query)) {
-			url.searchParams.set(k, v)
-		}
-
-		for (const [k, v] of url.searchParams) {
+		const newQuery: KVRecord<string> = {}
+		for (const [k, v] of Object.entries(this.req.query)) {
 			const template = new VarSubstituteTemplate(v)
-			const result = template.substitute(vars)
-			url.searchParams.set(k, result)
+			newQuery[k] = template.substitute(vars)
 		}
 
-		return url
+		for (let [k, v] of Object.entries(newQuery)) {
+			clone.searchParams.set(k, v)
+		}
+		clone.searchParams.sort()
+		return clone
 	}
 
-	resolveMessage(): KVRecord {
-		let msg = {
-			"content": primaryContextData(this.ctx)
-		}
-		return msg
-	}
+	private buildVars(query: string): Map<string, string> {
+		const merged = this.req.mergeURLAndQuery()
 
-
-	private buildVars(): Map<string, string> {
-		const domainName = this.req.url.hostname;
-		let mainHost = domainName
-		let tmp = domainName.split('.');
-		if (tmp.length < 2) {
-			// 链接不包含二级域名(例如example.org, 其中example为二级域, org为顶级域) 使用domainName替代
-			mainHost = domainName;
-		} else {
-			mainHost = tmp[tmp.length - 2] + "." + tmp[tmp.length - 1]
-		}
+		const result = parse(merged.hostname)
 
 		return new Map([
-			["s", primaryContextData(this.ctx)],
-			["o", this.req.url.protocol],
-			["d", this.req.url.hostname],
-			["h", mainHost],
-			["p", this.req.url.pathname.substring(1) + this.req.url.search],
-			["x", `site:${this.req.url.hostname} ${primaryContextData(this.ctx)}`],
+			["s", query],
+			["d", result.domain], // top level domain + 1
+			["h", result.hostname], // host name
+			["x", `site:${merged.hostname} ${query}`], // search on site
 		])
 	}
 

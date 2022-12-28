@@ -14,4 +14,5 @@ import "../background/search.test"
 import "../components/menu/menu_builder.test"
 import "../locale.test"
 import "../state/state.test"
+import "../resolver/resolver.test"
 mocha.run()

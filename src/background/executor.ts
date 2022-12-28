@@ -97,7 +97,7 @@ export class Executor {
             return
         }
 
-        const resolver = new RequestResolver(ctx, request)
+        const resolver = new RequestResolver(request)
 
         switch (resolver.protocol) {
             case Protocol.browserSearch:
@@ -106,8 +106,10 @@ export class Executor {
                     await new Promise(r => setTimeout(r, 50))
 
                     const query = primaryContextData(ctx)
-                    const engine = resolver.resolveEngine()
-
+                    let engine = resolver.resolveEngine()
+                    if (engine === "") {
+                        engine = undefined
+                    }
                     log.VV("search: ", query, "with: ", engine)
 
                     await searchTextViaBrowser({
@@ -119,7 +121,7 @@ export class Executor {
                 }
             default:
                 {
-                    const url = resolver.resolveURL()
+                    const url = resolver.resolveURL(primaryContextData(ctx))
                     log.VVV(request, "resolved url:", url)
 
                     await this.openTab(ctx, url)

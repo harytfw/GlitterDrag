@@ -245,31 +245,39 @@ export interface PlainScript {
 
 export class CommandRequest {
 
-	private _url: URL
+	private _url: string
 	private _query: KVRecord<string>
-
+	private _protocol: string
 	private cfg: KVRecord
 
-	constructor(cfg: KVRecord) {
-		this.cfg = cfg
-		this._url = new URL(cfg['url'])
+	constructor(cfg: PlainCommandRequest) {
+		this.cfg = cloneDeep(cfg)
+
+		const urlObj = new URL(cfg['url'])
+
 		this._query = defaultTo(cfg['query'], {})
-		for (const [k, v] of this._url.searchParams) {
+		for (const [k, v] of urlObj.searchParams) {
 			this._query[k] = cloneDeep(v)
 		}
+
+		//strip query parameter
+		urlObj.search = ""
+		this._url = urlObj.toString()
+		this._protocol = urlObj.protocol
+
 	}
 
 	toPlainObject(): PlainCommandRequest {
 		return {
 			"id": this.id,
 			"name": this.name,
-			"url": this.url.toString(),
-			"query": this.query
+			"url": this.url,
+			"query": this.query,
 		}
 	}
 
 	get protocol() {
-		return this._url.protocol
+		return this._protocol
 	}
 
 	get id() {
@@ -284,12 +292,20 @@ export class CommandRequest {
 		return "GET"
 	}
 
-	get url(): Readonly<URL> {
+	get url(): Readonly<string> {
 		return this._url
 	}
 
-	get query() {
+	get query(): Readonly<KVRecord<string>> {
 		return this._query
+	}
+
+	mergeURLAndQuery(): URL {
+		const clone = new URL(this.url)
+		for (const [k, v] of Object.entries(this.query)) {
+			clone.searchParams.set(k, v)
+		}
+		return clone
 	}
 }
 

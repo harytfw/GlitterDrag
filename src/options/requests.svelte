@@ -5,23 +5,23 @@
 	import browser from "webextension-polyfill";
 
 	import {
-	    CommandRequest,
-	    LogLevel,
-	    type PlainCommandRequest
+		CommandRequest,
+		LogLevel,
+		type PlainCommandRequest,
 	} from "../config/config";
 
 	import { localeMessageProxy } from "../locale";
+	import {
+		browserSearchEngineToCommandRequests,
+		getBrowserSearchEngineName,
+	} from "../resolver/engine";
 	import type { KVRecord } from "../types";
 	import { rootLog } from "../utils/log";
 	import { isFirefox } from "../utils/vendor";
 	import ConfirmDialog from "./confirm_dialog.svelte";
 	import { builtinSearchEngines } from "./search_engines";
 	import * as store from "./store";
-	import {
-	    browserSearchEngineToCommandRequest,
-	    getBrowserSearchEngineName,
-	    uuidv4
-	} from "./utils";
+	import { uuidv4 } from "./utils";
 
 	const log = rootLog.subLogger(LogLevel.V, "requests");
 	const locale = localeMessageProxy();
@@ -89,10 +89,7 @@
 			throw new Error("TODO:");
 		}
 
-		let query = cloneDeep(cfg.query);
-		for (const key of cfg.url.searchParams.keys()) {
-			query[key] = cfg.url.searchParams.get(key);
-		}
+		let query = cloneDeep(cfg.query) as KVRecord<string>;
 
 		editModel = {
 			id: cfg.id,
@@ -139,14 +136,23 @@
 	};
 
 	const importSearchEngineFromBrowser = async () => {
-		const reqs = await browserSearchEngineToCommandRequest();
+		const reqs = await browserSearchEngineToCommandRequests();
+		const originEngines = new Map(
+			origin
+				.map(
+					(o) =>
+						[getBrowserSearchEngineName(o), o] as [
+							string,
+							PlainCommandRequest
+						]
+				)
+				.filter((pair) => pair[0].length > 0)
+		);
+
 		const added: PlainCommandRequest[] = [];
 		for (const req of reqs) {
 			const name = getBrowserSearchEngineName(req);
-			const dup = origin.find(
-				(o) => getBrowserSearchEngineName(o) === name
-			);
-			if (!dup) {
+			if (!originEngines.has(name)) {
 				added.push(req);
 			}
 		}
