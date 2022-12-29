@@ -63,12 +63,14 @@ console.log("sourcemap: ", !isProd)
 
 for (const e of entryPoints) {
 	output.push({
-		external: ["chai"],
+		external: ["chai", "mocha", "Mocha"],
 		input: pathLib.join(src, e, "main.ts"),
 		output: {
 			sourcemap: !isProd,
 			globals: {
-				"chai": "chai"
+				"chai": "chai",
+				"mocha": "mocha",
+				"Mocha": "Mocha"
 			},
 			file: pathLib.join(dist, e, "main.js"),
 			format: 'iife'

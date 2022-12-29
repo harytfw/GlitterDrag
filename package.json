@@ -29,7 +29,8 @@
         "typescript": "^4.9.3",
         "uuid": "^9.0.0",
         "web-ext": "7.4.0",
-        "webextension-polyfill": "^0.10.0"
+        "webextension-polyfill": "^0.10.0",
+        "ws": "^8.11.0"
     },
     "license": "MIT"
 }

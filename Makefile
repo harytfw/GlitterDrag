@@ -1,7 +1,7 @@
 export BUILD_VERSION ?= 2.1.2
 export SRC ?= $(shell realpath ./src)
 export BUILD_DIR ?= $(shell realpath ./build)
-export BROWSER ?= $(shell which firefox-developer-edition)
+export BROWSER_LOCATION ?= $(shell which firefox-developer-edition)
 export NODE_MODULES ?= $(shell realpath ./node_modules)
 export BUILD_PROFILE ?= debug
 export BUILD_COMMIT_ID ?= $(shell git rev-parse --short HEAD)
@@ -9,6 +9,7 @@ export BUILD_DATE ?= $(shell date --rfc-3339=seconds)
 export BUILD_NODE_VERSION ?= $(shell node --version)
 export BUILD_ROLLUP_VERSION ?= $(shell npx rollup --version)
 export BUILD_OS ?= $(shell node -e "console.log(require('os').platform())")
+export BUILD_WEBSOCKET_SERVER = 
 
 export TARGET_BROWSER = firefox
 export TARGET_DIST = $(BUILD_DIR)/$(TARGET_BROWSER)/dist
@@ -16,18 +17,27 @@ export TARGET_DIST = $(BUILD_DIR)/$(TARGET_BROWSER)/dist
 export ENTRY_POINTS = background content_scripts options components
 
 .PHONY: ext-firefox
-ext-firefox: export TARGET_BROWSER = firefox
+ext-firefox: TARGET_BROWSER = firefox
 ext-firefox: setup-dist assets compile lint package
 
 .PHONY: ext-chromium
-ext-chromium: export TARGET_BROWSER = chromium
+ext-chromium: TARGET_BROWSER = chromium
 ext-chromium: setup-dist assets compile package
 
-.PHONY: ext-test
-ext-test: TARGET_BROWSER = firefox
-ext-test: ENTRY_POINTS += test
-ext-test: export BUILD_PROFILE = debug
-ext-test: setup-dist assets mocha-assets compile
+.PHONY: test
+test: TARGET_BROWSER = firefox-test
+test: ENTRY_POINTS += test
+test: BUILD_WEBSOCKET_SERVER = ws://localhost:8000
+test: setup-dist assets mocha-assets compile
+	@node test/bootstrap.mjs
+
+.PHONY: open-mocha
+open-mocha: TARGET_BROWSER = firefox-test
+open-mocha: ENTRY_POINTS += test
+open-mocha: setup-dist assets mocha-assets compile
+	web-ext run -v \
+			-s $(TARGET_DIST) \
+			-f "$(BROWSER_LOCATION)"
 
 .PHONY: setup-dist
 setup-dist: TARGET_DIST = $(BUILD_DIR)/$(TARGET_BROWSER)/dist
@@ -75,11 +85,6 @@ package:
 clean:
 	@rm -rf $(BUILD_DIR)
 
-.PHONY: run-browser
-run-browser:
-	web-ext run -v \
-		-s $(TARGET_DIST) \
-		-f "$(BROWSER)"
 
 start-server: port ?= 8000
 start-server:

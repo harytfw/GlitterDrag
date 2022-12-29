@@ -107,10 +107,6 @@ async function openMocha() {
         return
     }
 
-    if (buildInfo.mochaFilter) {
-        url.searchParams.set("grep", `/${buildInfo.mochaFilter}/`)
-    }
-
     browser.tabs.create({
         url: url.toString()
     })

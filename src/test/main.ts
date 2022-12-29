@@ -1,5 +1,4 @@
-import './mocha_init'
-
+import { ws } from './mocha_init'
 import '../utils/url.test'
 import '../utils/log.test'
 import '../utils/var_substitute.test'
@@ -15,4 +14,11 @@ import "../components/menu/menu_builder.test"
 import "../locale.test"
 import "../state/state.test"
 import "../resolver/resolver.test"
-mocha.run()
+
+if (ws) {
+	ws.addEventListener("open", () => {
+		mocha.run()
+	})
+} else {
+	mocha.run()
+}
