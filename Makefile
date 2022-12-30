@@ -1,4 +1,4 @@
-export BUILD_VERSION ?= 2.1.3
+export BUILD_VERSION ?= 2.1.4
 export SRC ?= $(shell realpath ./src)
 export BUILD_DIR ?= $(shell realpath ./build)
 export BROWSER_LOCATION ?= $(shell which firefox-developer-edition)
