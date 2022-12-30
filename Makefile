@@ -79,7 +79,7 @@ mocha-assets:
 .PHONY: package
 package:
 	@mkdir -p $(BUILD_DIR)/artifacts
-	@cd $(TARGET_DIST) && zip -r $(BUILD_DIR)/artifacts/gliiterdrag-pro-$(BUILD_VERSION)-$(TARGET_BROWSER).zip .
+	@cd $(TARGET_DIST) && zip -r $(BUILD_DIR)/artifacts/glitterdrag-pro-$(BUILD_VERSION)-$(TARGET_BROWSER).zip .
 
 .PHONY: clean
 clean:
