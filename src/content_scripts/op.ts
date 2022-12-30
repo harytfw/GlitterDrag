@@ -6,7 +6,7 @@ import { indicatorProxy } from '../components/indicator/indicator_proxy'
 import { menuProxy } from '../components/menu/menu_proxy'
 import { promptProxy } from '../components/prompt/prompt_proxy'
 import { EventType } from '../components/types'
-import { ActionConfig, ContextType, Feature, LogLevel, MenuLayout, OperationMode, type ReadonlyConfiguration } from '../config/config'
+import { ActionConfig, configBroadcast, Configuration, ContextType, Feature, LogLevel, MenuLayout, OperationMode, type ReadonlyConfiguration } from '../config/config'
 import { buildRuntimeMessage, RuntimeMessageName } from '../message/message'
 import { ModifierKey, type KVRecord, type Position } from '../types'
 import { rootLog } from '../utils/log'
@@ -98,18 +98,20 @@ export interface OpSummary {
     imgSrc: string
 }
 
-const forwardOpEventName = "gdp-forward-op"
+const forwardOpEventName = "glitter-drag:forward-op"
 
 export class OpExecutor {
     state: StateManager
     source: OpSource | null
     startPos: Position = { x: 0, y: 0 }
     endPos: Position = { x: 0, y: 0 }
-    config: ReadonlyConfiguration | null = null
+    config: ReadonlyConfiguration = new Configuration({})
     data: Map<string, string> = new Map()
     titleTemplateCache: Map<string, VarSubstituteTemplate> = new Map()
     dirChain: DirectionChain = new DirectionChain()
     selectedMenuId = ""
+
+    timerId = 0
 
     constructor() {
         this.state = new StateManager()
@@ -121,15 +123,15 @@ export class OpExecutor {
             this.selectedMenuId = e.detail
             log.VVV("new menu id: ", this.selectedMenuId)
         })
+        configBroadcast.addListener(this.updateConfig.bind(this))
     }
 
-    async updateConfig(config: ReadonlyConfiguration) {
+    private async updateConfig(config: ReadonlyConfiguration) {
         this.config = config
         this.titleTemplateCache.clear()
         this.config.actions.forEach(a => {
             try {
                 const t = new VarSubstituteTemplate(a.prompt ? a.prompt : a.name)
-                log.V("new template: ", t.template)
                 this.titleTemplateCache.set(t.template, t)
             } catch (e) {
                 log.E(e)
@@ -140,6 +142,14 @@ export class OpExecutor {
 
     private get distance(): number {
         return Math.hypot(this.startPos.x - this.endPos.x, this.startPos.y - this.endPos.y);
+    }
+
+    private get timerTimeout(): number {
+        let timeout = 5 * 1000//5 second
+        if (this.config.features.has(Feature.retainComponent)) {
+            timeout = 30 * 60 * 1000 // 30minute
+        }
+        return timeout
     }
 
     public applyOp(op: Op): OpResult {
@@ -153,8 +163,18 @@ export class OpExecutor {
             return defaultOpResult
         }
 
+
         log.VVV('apply op: ', op)
         log.VVV('apply op, position: ', JSON.stringify(op.positions), JSON.stringify(this.data), JSON.stringify(this.dirChain))
+
+        if (this.timerId > 0) {
+            clearTimeout(this.timerId)
+        }
+
+        this.timerId = setTimeout(() => {
+            log.V("reset because of timeout")
+            this.reset()
+        }, this.timerTimeout)
 
 
         switch (op.type) {
@@ -179,6 +199,7 @@ export class OpExecutor {
             default:
                 throw new Error("unknown op type: " + op.type)
         }
+
     }
 
     private updateUI(op: Op) {
@@ -192,23 +213,23 @@ export class OpExecutor {
         const actions = this.filterActionConfig(g)
 
         if (op.type === OpType.start) {
-            if (this.config.common.minDistance > 0) {
+            if (actions.length && (mode === OperationMode.circleMenu)) {
+                const layout = MenuLayout.circle
+                // chrome won't produce dragover event if we display menu element at "dragstart" event immediately
+                // WORKAROUND: use setTimeout to delay the display of menu 
+                setTimeout(() => {
+                    menuProxy.show({
+                        position: op.positions.page,
+                        layout: layout,
+                        items: transformMenuItem(actions, this.config.assets),
+                        circleRadius: this.config.common.minDistance
+                    })
+                }, 0)
+            } else if (this.config.common.minDistance > 0) {
                 indicatorProxy.show(
                     this.config.common.minDistance,
                     op.positions.page,
                 )
-            }
-
-            if (actions.length && (mode === OperationMode.circleMenu || mode === OperationMode.gridMenu)) {
-                let layout = MenuLayout.circle
-                if (mode === OperationMode.gridMenu) {
-                    layout = MenuLayout.grid
-                }
-                menuProxy.show({
-                    position: op.positions.page,
-                    layout: layout,
-                    items: transformMenuItem(actions, this.config.assets),
-                })
             }
             return
         }
@@ -216,15 +237,18 @@ export class OpExecutor {
         if (op.type === OpType.running) {
             let action: ActionConfig | null = null
 
-            if (mode === OperationMode.circleMenu || mode === OperationMode.gridMenu) {
+            if (mode === OperationMode.circleMenu) {
                 if (this.selectedMenuId.length > 0) {
-                    action = this.config.actions.find(a => a.id === this.selectedMenuId)
+                    action = actions.find(a => a.id === this.selectedMenuId)
                 }
             } else if (actions.length > 0) {
                 action = actions[0]
             }
 
-            if (action) {
+            // TODO: avoid update prompt every time
+            if (!this.checkDistance()) {
+                promptProxy.show("<em>out of range</em>")
+            } else if (action) {
                 const template = action.prompt ? action.prompt : action.name
                 const tmpl = this.titleTemplateCache.get(template)
                 if (tmpl) {
@@ -232,10 +256,10 @@ export class OpExecutor {
                     promptProxy.show(text)
                 } else {
                     log.V(`missing template instance: "${prompt}"`)
-                    promptProxy.hide()
+                    promptProxy.show("<em>no template</em>")
                 }
             } else {
-                promptProxy.hide()
+                promptProxy.show("<em>no action</em>")
             }
 
 
@@ -250,15 +274,18 @@ export class OpExecutor {
         this.data.clear()
         this.source = null
         this.selectedMenuId = ""
+        clearTimeout(this.timerId)
         this.resetUI()
     }
 
     private resetUI() {
-        if (this.config && !this.config.Enabled(Feature.retainComponent)) {
-            indicatorProxy.hide()
-            menuProxy.hide()
-            promptProxy.hide()
+        if (this.config.Enabled(Feature.retainComponent)) {
+            return
         }
+
+        indicatorProxy.hide()
+        menuProxy.hide()
+        promptProxy.hide()
     }
 
     private updateDirChain() {
@@ -452,6 +479,9 @@ export class OpExecutor {
                     || action.condition.contextTypes.every((t) => g.contextTypes.includes(t))
             })
             .filter((action) => {
+                if (action.condition.modes.some(m => m === OperationMode.circleMenu || m === OperationMode.gridMenu)) {
+                    return true
+                }
                 return action.condition.directions.length === 0
                     // equal
                     || isEqual(action.condition.directions, dirs)

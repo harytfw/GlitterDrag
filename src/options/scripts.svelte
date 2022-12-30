@@ -6,12 +6,12 @@
 
 	import { Script, type PlainScript } from "../config/config";
 
-	import { defaultLocaleMessage } from "../localization/helper";
+	import { localeMessageProxy } from "../locale";
 	import ConfirmDialog from "./confirm_dialog.svelte";
 	import * as store from "./store";
 	import { uuidv4 } from "./utils";
 
-	const locale = defaultLocaleMessage;
+	const locale = localeMessageProxy();
 
 	let origin: PlainScript[] = [];
 	let transformed: Script[] = [];

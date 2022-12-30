@@ -1,15 +1,16 @@
 import trimStart from 'lodash-es/trimStart';
 import browser from 'webextension-polyfill';
 import { CommandKind, ContextType, LogLevel, TabPosition } from '../config/config';
-import { buildRuntimeMessage, RuntimeMessageName as RuntimeMessageName } from '../message/message';
+import { buildRuntimeMessage, RuntimeMessageName } from '../message/message';
 import { rootLog } from '../utils/log';
 import { VarSubstituteTemplate } from '../utils/var_substitute';
 import { isFirefox } from '../utils/vendor';
-import { getTabIndex, primaryContextData, primaryContextType, type ExecuteContext } from './context';
-import { Protocol, RequestResolver } from './resolver';
+import { getTabIndex, handlePreferContextData, primaryContextData, primaryContextType, } from '../context/utils';
+import { Protocol, RequestResolver } from '../resolver/resolver';
 import { searchText as searchTextViaBrowser } from './search';
 import { buildDownloadableURL, buildVars, dumpFunc, generatedDownloadFileName, guessImageType, isOpenableURL, urlToArrayBuffer } from './utils';
-import { defaultVolatileState } from './volatile_state';
+import { defaultVolatileState } from '../state/state';
+import type { ExecuteContext } from '../context/context';
 
 const log = rootLog.subLogger(LogLevel.VVV, 'executor')
 
@@ -52,18 +53,27 @@ export class Executor {
         this.openTab(ctx, primaryContextData(ctx))
     }
 
+    async copyImage(ctx: ExecuteContext) {
+        // TODO: chrome
+        const buf = await urlToArrayBuffer(new URL(ctx.data.imageSource))
+        const imageType = guessImageType(buf)
+        if (imageType === "jpeg" || imageType === "png") {
+            browser.clipboard.setImageData(buf, imageType)
+        } else {
+            log.E("unknown image type", buf.slice(0, 4))
+        }
+    }
+
     async copyHandler(ctx: ExecuteContext) {
         const type = primaryContextType(ctx)
         switch (type) {
             case ContextType.image: {
-                // TODO: chrome
-                const buf = await urlToArrayBuffer(new URL(primaryContextData(ctx)))
-                const imageType = guessImageType(buf)
-                if (imageType === "jpeg" || imageType === "png") {
-                    browser.clipboard.setImageData(buf, imageType)
-                } else {
-                    log.E("unknown image type", buf.slice(0, 4))
+
+                async function copyImageSource() {
+                    browser.tabs.sendMessage(ctx.tab.id, buildRuntimeMessage(RuntimeMessageName.copy, ctx.data.imageSource))
                 }
+
+                handlePreferContextData(ctx, copyImageSource, { "image": this.copyImage, "imageSource": copyImageSource })
                 return
             }
             default: {
@@ -87,7 +97,7 @@ export class Executor {
             return
         }
 
-        const resolver = new RequestResolver(ctx, request)
+        const resolver = new RequestResolver(request)
 
         switch (resolver.protocol) {
             case Protocol.browserSearch:
@@ -96,8 +106,10 @@ export class Executor {
                     await new Promise(r => setTimeout(r, 50))
 
                     const query = primaryContextData(ctx)
-                    const engine = resolver.resolveEngine()
-
+                    let engine = resolver.resolveEngine()
+                    if (engine === "") {
+                        engine = undefined
+                    }
                     log.VV("search: ", query, "with: ", engine)
 
                     await searchTextViaBrowser({
@@ -107,18 +119,9 @@ export class Executor {
                     })
                     return
                 }
-            case Protocol.extension:
-                {
-                    const message = resolver.resolveMessage()
-                    const resp = await browser.runtime.sendMessage(resolver.resolveExtensionId(), message)
-
-                    log.V("send message ", message, " to extension ", resolver.resolveExtensionId(), "response: ", resp)
-
-                    return
-                }
             default:
                 {
-                    const url = resolver.resolveURL()
+                    const url = resolver.resolveURL(primaryContextData(ctx))
                     log.VVV(request, "resolved url:", url)
 
                     await this.openTab(ctx, url)

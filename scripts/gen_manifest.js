@@ -11,7 +11,20 @@ function mustEnv(key) {
 
 const version = mustEnv("BUILD_VERSION")
 const targetBrowser = mustEnv("TARGET_BROWSER")
+const isFirefox = targetBrowser.startsWith("firefox")
+const isChromium = targetBrowser.startsWith("chromium")
+const isTest = targetBrowser.endsWith("test")
 
+function contentSecurityPolicy() {
+    if (isFirefox && isTest) {
+        // override CSP to allow mocha test connect to a insecure websocket 
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1797086
+        return {
+            "extension_pages": "script-src 'self'"
+        }
+    }
+    return undefined
+}
 
 function manifestPermissions() {
     const permissions = [
@@ -26,7 +39,7 @@ function manifestPermissions() {
         "alarms"
     ]
 
-    if (targetBrowser === "firefox") {
+    if (isFirefox) {
         permissions.push(...[
             "contextualIdentities",
             "cookies"
@@ -37,7 +50,7 @@ function manifestPermissions() {
 }
 
 function manifestBackground() {
-    if (targetBrowser === "chromium") {
+    if (isChromium) {
         return {
             "service_worker": "background/main.js"
         }
@@ -54,7 +67,7 @@ function manifestVersion() {
 }
 
 function browserSpecificSetting() {
-    if (targetBrowser === "firefox") {
+    if (isFirefox) {
         return {
             "gecko": {
                 "id": "glitterdragpro@harytfw",
@@ -109,6 +122,7 @@ const manifest = {
     ],
     "default_locale": "en",
     "browser_specific_settings": browserSpecificSetting(),
+    "content_security_policy": contentSecurityPolicy()
 }
 
 console.log(JSON.stringify(manifest, null, "    "))

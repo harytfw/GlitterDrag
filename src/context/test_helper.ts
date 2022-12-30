@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill'
 import { ActionConfig, Configuration } from "../config/config"
+import type { ExecuteContext } from './context'
 import { ModifierKey } from "../types"
-import type { ExecuteContext } from "./context"
-import { defaultVolatileState } from './volatile_state'
+import { defaultVolatileState } from '../state/state'
 
 export async function blankExecuteContext(action?: ActionConfig): Promise<ExecuteContext> {
     const tabs = await browser.tabs.query({ title: "*Mocha*" })

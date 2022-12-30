@@ -1,6 +1,9 @@
-import { CommandKind, Direction, OperationMode, TabPosition, ContextType, ContextDataType } from "../config/config";
-import { defaultLocaleMessage } from "../localization/helper";
+import { CommandKind, Direction, OperationMode, TabPosition, ContextType, ContextDataType, CompatibilityStatus } from "../config/config";
+import { LocaleMessageHelper } from "../locale";
 import { titleCase } from "./utils";
+
+
+const localeHelper = new LocaleMessageHelper()
 
 export enum Tab {
 	actions = "actions",
@@ -10,6 +13,7 @@ export enum Tab {
 	requests = "requests",
 	common = "common",
 	configEditor = "configEditor",
+	compatibility = "compatibility",
 }
 
 
@@ -23,7 +27,7 @@ export const commands: Readonly<MultipleOptionModel<CommandKind>> = Object.value
 	CommandKind
 ).map((c) => {
 	return {
-		label: defaultLocaleMessage["command" + titleCase(c)],
+		label: localeHelper.command(c),
 		value: c,
 	};
 });
@@ -42,7 +46,7 @@ export const modeOptions: Readonly<MultipleOptionModel<OperationMode>> = Object.
 	})
 	.map((m) => {
 		return {
-			label: defaultLocaleMessage["mode" + titleCase(m)],
+			label: localeHelper.mode(m),
 			value: m,
 		};
 	});
@@ -50,7 +54,7 @@ export const modeOptions: Readonly<MultipleOptionModel<OperationMode>> = Object.
 export const contextTypeOptions: Readonly<MultipleOptionModel<ContextType>> =
 	Object.values(ContextType).map((t) => {
 		return {
-			label: defaultLocaleMessage["contextType" + titleCase(t)],
+			label: localeHelper.contextType(t),
 			value: t,
 		};
 	});
@@ -65,7 +69,7 @@ export const directionOptions: Readonly<MultipleOptionModel<Direction>> =
 	Array.from(enableDirection)
 		.map((l) => {
 			return {
-				label: defaultLocaleMessage["direction" + titleCase(l)],
+				label: localeHelper.direction(l),
 				value: l,
 			};
 		});
@@ -73,7 +77,7 @@ export const directionOptions: Readonly<MultipleOptionModel<Direction>> =
 export const tabPositionOptions: Readonly<MultipleOptionModel<TabPosition>> =
 	Object.values(TabPosition).map((pos) => {
 		return {
-			label: defaultLocaleMessage["tabPosition" + titleCase(pos)],
+			label: localeHelper.tabPosition(pos),
 			value: pos,
 		};
 	});
@@ -85,7 +89,15 @@ export const contextDataTypeOptionsForLink: Readonly<MultipleOptionModel<Context
 		})
 		.map((t) => {
 			return {
-				label: defaultLocaleMessage["contextDataType" + titleCase(t)],
+				label: localeHelper.contextDataType(t),
 				value: t,
 			};
 		});
+
+export const compatibilityStatusOptions: Readonly<MultipleOptionModel<CompatibilityStatus>> = Object.values(CompatibilityStatus)
+	.map(s => {
+		return {
+			label: localeHelper.compatibilityStatus(s),
+			value: s
+		}
+	})

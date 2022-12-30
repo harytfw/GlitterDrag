@@ -2,8 +2,8 @@
 import browser from 'webextension-polyfill';
 import isEqual from "lodash-es/isEqual"
 
-export function assertEqual(actually: any, expected: any, ...message: any[]) {
-	return assertOk(isEqual(actually, expected), ...message)
+export function assertEqual(expected: any, actual: any, ...message: any[]) {
+	return assertOk(isEqual(actual, expected), ...message)
 }
 
 export function assertOk(value: any, ...message: any[]) {

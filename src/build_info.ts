@@ -7,6 +7,6 @@ export default {
 	nodeVersion: env["BUILD_NODE_VERSION"],
 	rollupVersion: env["BUILD_ROLLUP_VERSION"],
 	os: env["BUILD_OS"],
-	mochaFilter: env["BUILD_MOCHA_FILTER"],
+	websocketServer: env["BUILD_WEBSOCKET_SERVER"],
 	profile: env["BUILD_PROFILE"],
 } as const

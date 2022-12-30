@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill'
 import { assertOk } from "../utils/test_helper"
-import { blankExecuteContext } from "./helper.test"
-import { bufferToObjectURL, buildDownloadableURL, dateTimeAsFileName, generatedDownloadFileName } from "./utils"
+import { blankExecuteContext } from "../context/test_helper"
+import { bufferToObjectURL, buildDownloadableURL, generatedDownloadFileName } from "./utils"
 
 describe("background utils", () => {
 
@@ -30,12 +30,6 @@ describe("background utils", () => {
 	it("buffer to object url", () => {
 		assertOk(bufferToObjectURL(new ArrayBuffer(10)))
 	})
-
-	it("dateTime as filename", () => {
-		const name = dateTimeAsFileName(new Date("2022-01-01"))
-		assertOk(name.startsWith("2022"))
-	})
-
 
 	it("build url for text", async () => {
 		let ctx = await blankExecuteContext()

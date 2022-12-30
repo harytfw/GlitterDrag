@@ -70,13 +70,17 @@ export enum ContextType {
 
 export enum ContextDataType {
 	selection = 'selection',
+	image = "image",
 	imageSource = 'imageSource',
 	link = 'link',
 	linkText = 'linkText',
 }
 
 export type ContextData = {
-	[k in ContextDataType]: string;
+	selection: string
+	imageSource: string
+	link: string
+	linkText: string
 };
 
 export enum Feature {
@@ -133,6 +137,12 @@ export class ModeConfig {
 
 }
 
+export interface PlainModeConfig {
+	link?: string
+	selection?: string
+	image?: string
+}
+
 export class CommonConfig {
 	private cfg: KVRecord
 	private _mode: ModeConfig
@@ -164,7 +174,7 @@ export class CommonConfig {
 }
 
 export interface PlainCommonConfig {
-	mode?: string
+	mode?: PlainModeConfig
 	allowHost?: string[]
 	disallowHost?: string[]
 	minDistance?: number
@@ -235,31 +245,39 @@ export interface PlainScript {
 
 export class CommandRequest {
 
-	private _url: URL
+	private _url: string
 	private _query: KVRecord<string>
-
+	private _protocol: string
 	private cfg: KVRecord
 
-	constructor(cfg: KVRecord) {
-		this.cfg = cfg
-		this._url = new URL(cfg['url'])
+	constructor(cfg: PlainCommandRequest) {
+		this.cfg = cloneDeep(cfg)
+
+		const urlObj = new URL(cfg['url'])
+
 		this._query = defaultTo(cfg['query'], {})
-		for (const [k, v] of this._url.searchParams) {
+		for (const [k, v] of urlObj.searchParams) {
 			this._query[k] = cloneDeep(v)
 		}
+
+		//strip query parameter
+		urlObj.search = ""
+		this._url = urlObj.toString()
+		this._protocol = urlObj.protocol
+
 	}
 
 	toPlainObject(): PlainCommandRequest {
 		return {
 			"id": this.id,
 			"name": this.name,
-			"url": this.url.toString(),
-			"query": this.query
+			"url": this.url,
+			"query": this.query,
 		}
 	}
 
 	get protocol() {
-		return this._url.protocol
+		return this._protocol
 	}
 
 	get id() {
@@ -274,12 +292,20 @@ export class CommandRequest {
 		return "GET"
 	}
 
-	get url(): Readonly<URL> {
+	get url(): Readonly<string> {
 		return this._url
 	}
 
-	get query() {
+	get query(): Readonly<KVRecord<string>> {
 		return this._query
+	}
+
+	mergeURLAndQuery(): URL {
+		const clone = new URL(this.url)
+		for (const [k, v] of Object.entries(this.query)) {
+			clone.searchParams.set(k, v)
+		}
+		return clone
 	}
 }
 
@@ -499,6 +525,50 @@ export interface PlainActionConfig {
 	prompt?: string
 }
 
+
+export enum CompatibilityStatus {
+	enable = "enable",
+	force = "force",
+	disable = "disable"
+}
+
+export interface PlainCompatibilityRule { host?: string, regexp?: string, status?: CompatibilityStatus }
+
+export class CompatibilityRule {
+
+	private cfg: KVRecord
+	private _host: string
+	private _regexp: string
+	private _status: CompatibilityStatus
+
+	constructor(cfg: PlainCompatibilityRule) {
+		this.cfg = cfg
+		this._host = defaultTo(cfg.host, "")
+		this._regexp = defaultTo(cfg.regexp, "")
+		this._status = defaultTo(cfg.status, CompatibilityStatus.enable)
+	}
+
+	toPlainObject(): PlainCompatibilityRule {
+		return {
+			host: this._host,
+			regexp: this.regexp,
+			status: this.status,
+		}
+	}
+
+	get host() {
+		return this._host
+	}
+
+	get regexp() {
+		return this._regexp
+	}
+
+	get status(): CompatibilityStatus {
+		return this._status
+	}
+}
+
 export class Configuration {
 
 	private _features: Set<Feature> = new Set();
@@ -510,6 +580,7 @@ export class Configuration {
 	private _requests: CommandRequest[]
 	private _assets: Asset[]
 	private _scripts: Script[]
+	private _compatibility: CompatibilityRule[]
 
 	constructor(data?: KVRecord) {
 		data = defaultTo(data, {})
@@ -523,6 +594,7 @@ export class Configuration {
 		this._requests = defaultTo(data['requests'], []).map((r: KVRecord) => new CommandRequest(r))
 		this._assets = defaultTo(data['assets'], []).map((r: KVRecord) => new Asset(r))
 		this._scripts = defaultTo(data['scripts'], []).map((r: KVRecord) => new Script(r))
+		this._compatibility = defaultTo(data["compatibility"], []).map((r: KVRecord) => new CompatibilityRule(r))
 	}
 
 	get features(): Set<string> {
@@ -561,6 +633,10 @@ export class Configuration {
 		return this._scripts
 	}
 
+	get compatibility(): readonly CompatibilityRule[] {
+		return this._compatibility
+	}
+
 	Enabled(f: Feature): boolean {
 		return this._features.has(f)
 	}
@@ -576,4 +652,41 @@ export interface PlainConfiguration {
 	requests?: PlainCommandRequest[],
 	assets?: PlainAsset[],
 	scripts?: PlainScript[],
+	compatibility?: PlainCompatibilityRule[],
 }
+
+export class BroadcastEventTarget<T> {
+
+	private target: EventTarget
+	private callbacks: { origin: Function, wrap: EventListener }[]
+
+	constructor() {
+		this.target = new EventTarget()
+		this.callbacks = []
+	}
+
+	addListener(cb: (cfg: T) => any) {
+		const wrap = (event: CustomEvent<T>) => {
+			cb(event.detail)
+		}
+		this.callbacks.push({ origin: cb, wrap: wrap })
+		this.target.addEventListener("data", wrap)
+	}
+
+	removeListener(cb: (cfg: T) => any) {
+		while (true) {
+			const item = this.callbacks.find(item => item.origin === cb)
+			if (!item) {
+				return
+			}
+			this.callbacks = this.callbacks.filter(a => a !== item)
+			this.target.removeEventListener("data", item.wrap)
+		}
+	}
+
+	notify(cfg: T) {
+		this.target.dispatchEvent(new CustomEvent("data", { detail: cfg }))
+	}
+}
+
+export const configBroadcast = new BroadcastEventTarget<ReadonlyConfiguration>()

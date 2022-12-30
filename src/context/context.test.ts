@@ -1,7 +1,7 @@
+import { blankExecuteContext } from "./test_helper"
 import { ContextType } from "../config/config"
 import { assertEqual } from "../utils/test_helper"
-import { primaryContextType } from "./context"
-import { blankExecuteContext } from "./helper.test"
+import { primaryContextType } from "./utils"
 
 
 describe("test context", () => {

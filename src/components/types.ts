@@ -4,19 +4,13 @@ import type { Position } from "../types"
 
 
 export enum EventType {
-	Status = "gd-status",
-	StatusProxy = "gd-status-proxy",
-	Indicator = "gd-indicator",
-	IndicatorProxy = "gd-indicator-proxy",
-	Menu = "gd-menu",
-	MenuProxy = "gd-menu-proxy",
-	MenuSelectedId = "gd-menu-id"
+	MenuSelectedId = "glitter-drag:menu-id"
 }
 
 export enum ProxyEventType {
-	Menu = "gd-proxy:menu",
-	Status = "gd-proxy:status",
-	Indicator = "gd-proxy:indicator",
+	Menu = "glitter-drag:menu-proxy",
+	Prompt = "glitter-drag:prompt-proxy",
+	Indicator = "glitter-drag:indicator-proxy",
 }
 
 export interface IndicatorMessage {
@@ -49,7 +43,8 @@ export interface MenuMessage {
 export interface ShowMenuOptions {
 	position: Position,
 	layout: MenuLayout,
-	items: MenuItem[]
+	items: MenuItem[],
+	circleRadius: number,
 }
 
 export interface GenericFunction {
@@ -57,17 +52,27 @@ export interface GenericFunction {
 	args: unknown[]
 }
 
-export interface Indicator {
+export interface IndicatorInterface {
 	show(radius: number, pos: Position)
 	hide()
 }
 
-export interface Prompt {
+export interface PromptInterface {
 	show(text: string)
 	hide()
 }
 
-export interface Menu {
+export interface MenuInterface {
 	show(opts: ShowMenuOptions): void
 	hide(): void
+}
+
+
+export interface MenuOptions {
+	items: MenuItem[];
+	dividerLineLength: number;
+	circleRadius: number;
+	iconOffset: number;
+	iconSize: number;
+	textOffset: number;
 }

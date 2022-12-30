@@ -1,17 +1,19 @@
 import browser from 'webextension-polyfill';
-import { Configuration, Feature, type ReadonlyConfiguration } from '../config/config';
-import { buildRuntimeMessage, RuntimeMessageName, type FetchURLReply, type RuntimeMessage, type RuntimeMessageArg, type RuntimeMessageArgsMap } from '../message/message';
-import type { ExtensionStorage } from '../types';
-import { configureRootLog, rootLog } from '../utils/log';
+import { CompatibilityStatus, configBroadcast, Configuration, LogLevel } from '../config/config';
+import { buildRuntimeMessage, RuntimeMessageName, type RuntimeMessage } from '../message/message';
+import { ExtensionStorageKey, type ExtensionStorage } from '../types';
+import { rootLog } from '../utils/log';
+import { checkCompatibility } from './compat';
 import { DragController } from "./drag";
-import { MiddleButtonClose } from './features/auxclose';
-import { MiddleButtonSelector } from './features/middle_button_selector';
+import { manageFeatures } from './features/features';
 import { OpExecutor } from './op';
 import { ScriptWrapper as UserScriptWrapper } from './script';
 import { onDocumentLoaded } from './utils';
 
+const log = rootLog.subLogger(LogLevel.VVV, "cs")
+
 async function dispatcher(m: any) {
-    rootLog.V("content script dispatcher:", m)
+    log.V("content script dispatcher:", m)
     const cmd = m.cmd as RuntimeMessageName;
     switch (cmd) {
         case RuntimeMessageName.copy: {
@@ -43,62 +45,59 @@ function setupComponents() {
     const s = document.createElement("script")
     s.src = browser.runtime.getURL("components/main.js")
     document.body.appendChild(s)
+    // prevent script exposes to web page
+    setTimeout(() => { s.remove() }, 0)
 }
 
 let controller: DragController | null = null
-let opExecutor: OpExecutor | null = null
+
 async function setup() {
 
-    browser.storage.onChanged.addListener(onConfigChange)
+    configBroadcast.addListener(manageFeatures)
+
+    browser.storage.onChanged.addListener((detail) => {
+        if (ExtensionStorageKey.userConfig in detail) {
+            loadConfig()
+        } else {
+            log.VVV("not interesting storage key changed: ", Object.keys(detail))
+        }
+    })
     browser.runtime.onMessage.addListener(dispatcher as any)
 
-
-    opExecutor = new OpExecutor()
+    const opExecutor = new OpExecutor()
     opExecutor.reset()
 
     controller = new DragController(document.documentElement, opExecutor);
-    controller.start()
 
     onDocumentLoaded(async () => {
         await browser.runtime.sendMessage(buildRuntimeMessage(RuntimeMessageName.contextScriptLoaded, null))
-        onConfigChange()
+        loadConfig()
         setupComponents()
     })
 }
 
+async function loadConfig() {
+    log.VVV("load user config from storage")
+    const storage = (await browser.storage.local.get()) as ExtensionStorage
+    const config = new Configuration(storage.userConfig)
+    configBroadcast.notify(config)
 
-let featureManagedFlag = false
+    let status = CompatibilityStatus.enable
 
-async function manageFeatures(config: ReadonlyConfiguration) {
-    // TODO: allow initialize feature multiple times
-    if (featureManagedFlag) {
-        rootLog.VV("already manage feature")
+    try {
+        status = checkCompatibility(location.href, config.compatibility)
+    } catch (e) {
+        console.error(e)
+    }
+
+    log.V("location: ", location.href, "compatible status: ", status)
+
+    if (status === CompatibilityStatus.disable) {
+        controller.stop()
         return
     }
 
-    featureManagedFlag = true
-    if (config.features.has(Feature.middleButtonSelector)) {
-        const f = new MiddleButtonSelector(document.getSelection(), document.documentElement)
-        await f.start()
-    }
-    if (config.features.has(Feature.auxClose)) {
-        const f = new MiddleButtonClose(document.documentElement)
-        await f.start()
-    }
-}
-
-async function onConfigChange() {
-    let storage = (await browser.storage.local.get()) as ExtensionStorage
-    let config = new Configuration(storage.userConfig)
-
-    configureRootLog(config)
-    manageFeatures(config)
-
-    if (opExecutor) {
-        opExecutor.updateConfig(config)
-    } else {
-        throw new Error("controller is null")
-    }
+    controller.start(status)
 }
 
 
@@ -107,9 +106,9 @@ async function main() {
         await setup()
     }
     catch (error) {
-        rootLog.E("failed to setup extension: ", window.self);
-        rootLog.E(error);
-        rootLog.E(error.stack)
+        log.E("failed to setup extension: ", window.self);
+        log.E(error);
+        log.E(error.stack)
     }
 }
 

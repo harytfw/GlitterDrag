@@ -11,10 +11,13 @@
 		type PlainCommonConfig,
 	} from "../config/config";
 
-	import { defaultLocaleMessage } from "../localization/helper";
+	import { localeMessageProxy } from "../locale";
 	import { rootLog } from "../utils/log";
-	import { modeOptions, type PrimitiveType } from "./common";
+	import { type PrimitiveType } from "./common";
 	import * as store from "./store";
+
+	const log = rootLog.subLogger(LogLevel.V, "common");
+	const locale = localeMessageProxy();
 
 	let origin: PlainCommonConfig = {};
 	let transformed: CommonConfig = new CommonConfig(origin);
@@ -22,8 +25,6 @@
 		origin = cloneDeep(val);
 		transformed = new CommonConfig(origin);
 	});
-	const log = rootLog.subLogger(LogLevel.V, "common");
-	const locale = defaultLocaleMessage;
 
 	const onFormChange = (e: Event) => {
 		const c = e.target as HTMLElement;

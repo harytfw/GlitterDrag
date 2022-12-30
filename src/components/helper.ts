@@ -20,7 +20,6 @@ export class MessageTarget {
 
 	constructor(event: string) {
 		this.event = event
-
 		globalThis.addEventListener(this.event, (event: CustomEvent<string>) => {
 			this.onMessage(JSON.parse(event.detail) as any as GenericFunction)
 		})
@@ -35,3 +34,4 @@ export class MessageTarget {
 		fn.apply(this, msg.args);
 	}
 }
+

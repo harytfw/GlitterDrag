@@ -1,11 +1,10 @@
-import { rootLog } from "../../utils/log";
 import { Stub } from "../helper";
-import { EventType, ProxyEventType, type Menu, type ShowMenuOptions, } from "../types";
+import { ProxyEventType, type MenuInterface, type ShowMenuOptions } from "../types";
 
 
 
 // TODO: test menu under iframe
-export class MenuProxy extends Stub implements Menu {
+export class MenuProxy extends Stub implements MenuInterface {
 
 	constructor() {
 		super(ProxyEventType.Menu)

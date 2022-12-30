@@ -1,38 +1,55 @@
 
-import App from './menu.svelte';
-import { ProxyEventType, type Menu, type ShowMenuOptions } from '../types';
+import MenuElement from './menu.svelte';
+import { ProxyEventType, type MenuInterface, type ShowMenuOptions } from '../types';
 import { MessageTarget } from '../helper';
 import { rootLog } from '../../utils/log';
 import { LogLevel } from '../../config/config';
 
 const log = rootLog.subLogger(LogLevel.VVV, "menu")
+const tag = "glitterdrag-menu"
 
-interface MenuElement extends HTMLElement {
-	update(opts: ShowMenuOptions)
-	reset()
+function computeStyle(x: number, y: number, width: number, height: number) {
+	const style = `position: absolute;
+		left: ${x}px;
+		top: ${y}px;
+		z-index: 2147483647;
+		width: ${width}px;
+		height: ${height}px;
+		user-select: none;
+	`
+	return style
 }
 
-const menuApp = new App({ target: undefined }) as any as MenuElement;
+class MenuImpl extends MessageTarget implements MenuInterface {
+	elem: MenuElement & HTMLElement
 
-class MenuImpl extends MessageTarget implements Menu {
 	constructor() {
 		super(ProxyEventType.Menu)
+		customElements.define(tag, MenuElement as any);
+		this.elem = document.createElement(tag) as HTMLElement & MenuElement
+		this.elem.setAttribute("style", computeStyle(0, 0, 0, 0));
 	}
 
-	hide() {
-		if (!menuApp.parentElement) {
-			return
-		}
-		log.V("hide menu")
-		menuApp.reset()
-		menuApp.remove()
-	}
 
 	show(opts: ShowMenuOptions) {
 		log.V("show menu: ", opts)
-		menuApp.update(opts)
-		!menuApp.parentElement && document.body.append(menuApp)
+		const [width, height] = this.elem.box()
+		const x = opts.position.x - width / 2
+		const y = opts.position.y - height / 2
+		this.elem.setAttribute("style", computeStyle(x, y, width, height));
+		this.elem.show(opts)
+		!this.elem.parentElement && document.body.append(this.elem)
 	}
+
+	hide() {
+		if (!this.elem.parentElement) {
+			return
+		}
+		log.V("hide menu")
+		this.elem.reset()
+		this.elem.remove()
+	}
+
 }
 
 export const menuImpl = new MenuImpl()

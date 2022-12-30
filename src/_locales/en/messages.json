@@ -203,6 +203,9 @@
   "contextDataTypeLinkText": {
     "message": "Text Of Link"
   },
+  "contextDataTypeImage": {
+    "message": "Image Data"
+  },
   "contextDataTypeImageSource": {
     "message": "Source of Image"
   },
@@ -277,5 +280,32 @@
   },
   "firstTimeUsePrompt": {
     "message": "Want to use default configuration ?"
+  },
+  "tabTitleCompatibility": {
+    "message": "Compatibility"
+  },
+  "helpCompatibility": {
+    "message": "Configure the compatibility of dragging behavior between the site and extension (Still can't work on Privileged Page). \"Pattern\" is a JavaScript regular expression used for match the url of site. \"Enable\" means the extension will normally work on that site; however, when the extension detects the site itself is managing the dragging action, the extension will stop working. \"Disable\" means the extension won't work at that site. \"Force\" is similar to \"Enable\", except that extension will continue working although the site manages the dragging action."
+  },
+  "addRule": {
+    "message": "Add Rule"
+  },
+  "compatibilityPattern": {
+    "message": "Pattern"
+  },
+  "compatibilityStatus": {
+    "message": "Status"
+  },
+  "checkCompatibilityRule": {
+    "message": "Check Rules"
+  },
+  "compatibilityStatusEnable": {
+    "message": "Enable"
+  },
+  "compatibilityStatusDisable": {
+    "message": "Disable"
+  },
+  "compatibilityStatusForce": {
+    "message": "Force"
   }
 }

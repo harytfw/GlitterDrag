@@ -1,11 +1,13 @@
 import defaultTo from 'lodash-es/defaultTo';
 import browser from 'webextension-polyfill'
-import { Configuration, OperationMode, ContextType } from "../config/config";
+import { Configuration, OperationMode, ContextType, type ReadonlyConfiguration, LogLevel } from "../config/config";
 import type { ExecuteArgs } from '../message/message';
-import { buildExecuteContext } from './context';
+import { buildExecuteContext } from '../context/utils';
 import { Executor } from './executor';
 import { ExtensionStorageKey, ModifierKey } from '../types';
 import { rootLog } from '../utils/log';
+
+const log = rootLog.subLogger(LogLevel.VVV, "contextMenu")
 
 type BrowserContextType = browser.Menus.ContextType
 
@@ -17,7 +19,7 @@ function actionTypeToContextType(tc: ContextType[]): BrowserContextType[] {
 	return result
 }
 
-export async function registerContextMenuActions(config: Configuration) {
+export async function registerContextMenuActions(config: ReadonlyConfiguration) {
 	browser.contextMenus.removeAll()
 
 	for (const action of config.actions) {
@@ -33,7 +35,7 @@ export async function registerContextMenuActions(config: Configuration) {
 				contexts: contexts,
 			}
 		)
-		rootLog.V("add context menu: ", action.id)
+		log.V("add context menu: ", action.id)
 	}
 }
 
@@ -48,7 +50,7 @@ export async function onMenuItemClick(info: browser.Menus.OnClickData, tab: brow
 	const action = config.actions.find(action => action.id === info.menuItemId);
 
 	if (!action) {
-		rootLog.E("action with menu id %s not found", info.menuItemId)
+		log.E("action with menu id %s not found", info.menuItemId)
 		return
 	}
 
