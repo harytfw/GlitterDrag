@@ -67,7 +67,7 @@ async function setup() {
     const opExecutor = new OpExecutor()
     opExecutor.reset()
 
-    controller = new DragController(document.documentElement, opExecutor);
+    controller = new DragController(window, opExecutor);
 
     onDocumentLoaded(async () => {
         await browser.runtime.sendMessage(buildRuntimeMessage(RuntimeMessageName.contextScriptLoaded, null))
