@@ -1,16 +1,17 @@
 import { WebSocketServer } from 'ws';
 import { spawn } from 'node:child_process';
+import webExt from 'web-ext'
 
 
 const TEST_TIMEOUT_MS = 1000 * 60 * 5
 
-const { BROWSER_LOCATION, TARGET_DIST, BUILD_WEBSOCKET_SERVER } = process.env
+const { TARGET_DIST, BUILD_WEBSOCKET_SERVER } = process.env
 
 async function runBrowser(signal) {
 
   return new Promise((resolve, reject) => {
 
-    const proc = spawn("web-ext", ["run", "-f", BROWSER_LOCATION, "-s", TARGET_DIST], {
+    const proc = spawn("pnpm", ["exec", "web-ext", "run", "-f", "firefox-developer-edition" , "-s", TARGET_DIST], {
       stdio: ["ignore", process.stdout, process.stderr],
       signal: signal
     })

@@ -1,3 +1,5 @@
+import { mustEnv, readStdout } from "./utils.js"
+
 import svelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
@@ -5,23 +7,32 @@ import replace from '@rollup/plugin-replace';
 import { terser } from 'rollup-plugin-terser';
 import autoPreprocess from 'svelte-preprocess';
 import commonjs from '@rollup/plugin-commonjs';
-import pathLib from 'path'
+import pathLib from 'node:path'
+import os from "node:os"
 
-function mustEnv(name) {
-	const value = process.env[name]
-	if (!value) {
-		console.error("require env: " + name)
-		process.exit(1)
-	}
-	return value
-}
+const BUILD_COMMIT_ID = readStdout("git rev-parse --short HEAD")
+const BUILD_DATE = readStdout("date --rfc-3339=seconds")
+const BUILD_NODE_VERSION = readStdout("node --version")
+const BUILD_ROLLUP_VERSION = readStdout("npx rollup --version")
+const BUILD_OS = os.platform()
+const BUILD_PROFILE = mustEnv("BUILD_PROFILE")
+const BUILD_WEBSOCKET_SERVER = mustEnv("BUILD_WEBSOCKET_SERVER")
 
-const isProd = mustEnv("BUILD_PROFILE").toLowerCase() === 'prod';
+const isProd = BUILD_PROFILE.toLowerCase() === 'prod';
+const sourceMap = !isProd
 const src = mustEnv("SRC")
 const dist = mustEnv("TARGET_DIST")
 const entryPoints = mustEnv("ENTRY_POINTS").split(" ")
 
-const safeEnvVar = Object.fromEntries(Object.entries(process.env).filter((entry) => entry[0].startsWith("BUILD")))
+const safeEnvVar = {
+	BUILD_COMMIT_ID,
+	BUILD_DATE,
+	BUILD_NODE_VERSION,
+	BUILD_ROLLUP_VERSION,
+	BUILD_OS,
+	BUILD_PROFILE,
+	BUILD_WEBSOCKET_SERVER,
+}
 
 const useCustomElement = ["components"]
 
@@ -38,7 +49,7 @@ function getPlugins(entrypoint) {
 		}),
 		replace({
 			__ENV: JSON.stringify(safeEnvVar),
-			__BUILD_PROFILE: JSON.stringify(process.env.BUILD_PROFILE),
+			__BUILD_PROFILE: JSON.stringify(BUILD_PROFILE),
 			preventAssignment: true
 		}),
 		svelte({
@@ -58,15 +69,16 @@ function getPlugins(entrypoint) {
 	return plugins
 }
 
+console.log("sourcemap: ", sourceMap)
+
 const output = []
-console.log("sourcemap: ", !isProd)
 
 for (const e of entryPoints) {
 	output.push({
 		external: ["chai", "mocha", "Mocha"],
 		input: pathLib.join(src, e, "main.ts"),
 		output: {
-			sourcemap: !isProd,
+			sourcemap: sourceMap,
 			globals: {
 				"chai": "chai",
 				"mocha": "mocha",

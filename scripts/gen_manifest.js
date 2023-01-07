@@ -1,13 +1,4 @@
-
-function mustEnv(key) {
-    const value = process.env[key]
-    if (!value || value.length === 0) {
-        console.error("require environment: " + key)
-        process.exit(1)
-    }
-    return value
-}
-
+import { mustEnv } from "./utils.js"
 
 const version = mustEnv("BUILD_VERSION")
 const targetBrowser = mustEnv("TARGET_BROWSER")
