@@ -16,7 +16,7 @@ const BUILD_NODE_VERSION = readStdout("node --version")
 const BUILD_ROLLUP_VERSION = readStdout("npx rollup --version")
 const BUILD_OS = os.platform()
 const BUILD_PROFILE = mustEnv("BUILD_PROFILE")
-const BUILD_WEBSOCKET_SERVER = mustEnv("BUILD_WEBSOCKET_SERVER")
+const BUILD_WEBSOCKET_SERVER = mustEnv("BUILD_WEBSOCKET_SERVER", "")
 
 const isProd = BUILD_PROFILE.toLowerCase() === 'prod';
 const sourceMap = !isProd

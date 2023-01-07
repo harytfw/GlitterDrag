@@ -1,9 +1,12 @@
 
 import { execSync } from 'node:child_process'
 
-export function mustEnv(key) {
+export function mustEnv(key, default_value) {
 	const value = process.env[key]
 	if (!value || value.length === 0) {
+		if (typeof default_value !== "undefined") {
+			return default_value
+		}
 		console.error("require environment: " + key)
 		process.exit(1)
 	}

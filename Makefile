@@ -7,6 +7,8 @@ export ENTRY_POINTS = background content_scripts options components
 export TARGET_BROWSER = firefox
 export TARGET_DIST = $(BUILD_DIR)/firefox/dist
 
+$(shell mkdir -p $(BUILD_DIR)/artifacts/)
+
 .PHONY: ext-firefox
 ext-firefox: TARGET_BROWSER = firefox
 ext-firefox: TARGET_DIST = $(BUILD_DIR)/firefox/dist
