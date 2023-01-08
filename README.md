@@ -25,3 +25,12 @@ make ext-chromium
 ```
 
 After the build process completed, `./build/firefox/dist` contains compiled result, `./build/firefox/artifacts` contains package file.
+
+## Limitation
+
+The extension has limited support at these situation:
+
+- Can not work on privilege pages or restricted pages, like <about:home>, <https://addons.mozilla.org>, <chrome:newtab>
+- Can not work when dragging any selection from page A and dropping at page B, and page A and page B have different origin. (For example, [host page](www.example.com) is A, it embeds [youtube video](https://www.youtube.com/embed/-88qGXDmh3E) as B)
+- When host page explicitly uses drag-and-drop features, the extension will stop working temporarily
+- Unable show icon of menu on when [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/Sources#sources) of host page prohibits *data:* URLs
