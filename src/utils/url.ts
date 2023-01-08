@@ -28,18 +28,18 @@ function matchRe(s: string, pat: RegExp): boolean {
     return r && r.length > 0
 }
 
-function isTopLevelDomain(url: URL): boolean {
-    return parse(url.hostname).isIcann
-}
-
 const log = rootLog.subLogger(LogLevel.VVV, "urlFixer")
 const urlLRU = new TinyLRU<string, null | URL>()
 
 export class URLFixer {
 
     private protocol = "https://"
+    private specialProtocols: Set<string> = new Set()
 
-    constructor() {
+    constructor(extraProtocols?: string[]) {
+        if (Array.isArray(extraProtocols)) {
+            this.specialProtocols = new Set(extraProtocols)
+        }
     }
 
     fix(urlLike?: string): URL | null {
@@ -52,7 +52,13 @@ export class URLFixer {
         return res
     }
 
-    internalFix(urlLike?: string): URL | null {
+    private isTopLevelDomain(url: URL): boolean {
+        if (parse(url.hostname).isIcann) {
+            return true
+        }
+    }
+
+    private internalFix(urlLike?: string): URL | null {
 
         log.VVV("try fix url: ", urlLike)
 
@@ -97,7 +103,12 @@ export class URLFixer {
 
         const url = this.tryBuildURL(urlLike)
         if (url) {
-            if (isTopLevelDomain(url)) {
+            if (this.isTopLevelDomain(url)) {
+                log.VVV(urlLike, "is top level domain")
+                return url
+            }
+            if (this.specialProtocols.has(url.protocol)) {
+                log.VVV(urlLike, "has special protocol", url.protocol)
                 return url
             }
             return null
