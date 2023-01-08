@@ -1,22 +1,23 @@
 import { URLFixer } from './url'
-import { assertEqual, assertFail, assertOk } from './test_helper';
 import { rootLog } from './log';
+import { assert } from 'chai'
 
 describe('test url fixer', () => {
-  const fixer = new URLFixer()
 
   it('good url', () => {
+    const fixer = new URLFixer()
     const urls = [
       "http://example.com/",
       "http://example.org/",
       "http://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/win-64"
     ]
     for (const c of urls) {
-      assertEqual(fixer.fix(c).toString(), c)
+      assert.deepEqual(fixer.fix(c).toString(), c)
     }
   })
 
   it('bad url', () => {
+    const fixer = new URLFixer()
 
     const urls = [
       "12345",
@@ -24,35 +25,38 @@ describe('test url fixer', () => {
     ]
 
     for (const c of urls) {
-      assertFail(fixer.fix(c), c)
+      assert.notOk(fixer.fix(c), c)
     }
 
   });
 
   it('valid ipv4', () => {
+    const fixer = new URLFixer()
     const urls = [
       "8.8.8.8",
       "192.168.1.1",
       "127.0.0.1"
     ]
     for (const c of urls) {
-      assertOk(fixer.fix(c), c)
+      assert.ok(fixer.fix(c), c)
     }
   });
 
   it('valid ipv6', () => {
+    const fixer = new URLFixer()
     const urls = [
       "2001:db8:0:0:1:0:0:1",
       "2001:db8::1:0:0:1",
       "::1"
     ]
     for (const c of urls) {
-      assertFail(fixer.fix(c), "not support plain ipv6: ", c)
-      assertOk(fixer.fix("[" + c + "]"), "ipv6 url: ", c)
+      assert.notOk(fixer.fix(c), "not support plain ipv6: " + c)
+      assert.ok(fixer.fix("[" + c + "]"), "ipv6 url: " + c)
     }
   });
 
   it('fix url', () => {
+    const fixer = new URLFixer()
     const urls = [
       [
         "www.example.com/a",
@@ -79,7 +83,17 @@ describe('test url fixer', () => {
     for (const c of urls) {
       const fixed = fixer.fix(c[0]).toString()
       rootLog.VVV("origin: ", c[0], "fixed:", fixed, " expected: ", c[1], " same: ", fixed == c[1])
-      assertEqual(fixed, c[1], "expected: ", c[1], "but got:", fixed)
+      assert.deepEqual(fixed, c[1])
     }
   });
+  it('special protocol url', function () {
+    const fixer = new URLFixer(["magnet:", "mailto:"])
+    const urls = [
+      "magnet:?xt=urn:btih:000000000000000000000000000&dn",
+      "mailto:someone@example.com"
+    ]
+    for (const url of urls) {
+      assert.ok(fixer.fix(url))
+    }
+  })
 });

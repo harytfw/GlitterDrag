@@ -1,21 +1,17 @@
 
 import browser from 'webextension-polyfill';
-import isEqual from "lodash-es/isEqual"
+import { assert } from 'chai'
 
 export function assertEqual(expected: any, actual: any, ...message: any[]) {
-	return assertOk(isEqual(actual, expected), ...message)
+	return assert.deepEqual(actual, expected, ...message)
 }
 
 export function assertOk(value: any, ...message: any[]) {
-	if (!value) {
-		throw new Error(message.join(" "))
-	}
+	return assert.ok(value, ...message)
 }
 
 export function assertFail(value: any, ...message: any[]) {
-	if (!!value) {
-		throw new Error(message.join(" "))
-	}
+	return assert.notOk(value, ...message)
 }
 
 export async function closeTab(tabIds: number | number[], delayMs?: number) {

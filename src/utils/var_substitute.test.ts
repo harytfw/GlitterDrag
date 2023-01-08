@@ -1,6 +1,6 @@
 import { assertEqual } from "./test_helper"
 import { VarSubstituteTemplate } from "./var_substitute"
-
+import { assert } from 'chai'
 
 
 describe('test variable substitute', () => {
@@ -20,7 +20,7 @@ describe('test variable substitute', () => {
 		for (const c of cases) {
 			const template = new VarSubstituteTemplate(c)
 			const result = template.substitute(m)
-			assertEqual(result, c, "expected: ", c, ", actually: ", result)
+			assert.deepEqual(result, c)
 		}
 	})
 
@@ -52,7 +52,7 @@ describe('test variable substitute', () => {
 		for (const [s, expected] of cases) {
 			const template = new VarSubstituteTemplate(s)
 			const result = template.substitute(m)
-			assertEqual(result, expected, "expected: ", expected, ", actually: ", result)
+			assert.deepEqual(result, expected)
 		}
 	})
 })
