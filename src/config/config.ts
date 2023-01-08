@@ -91,19 +91,19 @@ export enum Feature {
 
 export class LogConfig {
 
-	private cfg: KVRecord
+	private cfg: PlainLogConfig
 
-	constructor(cfg: KVRecord) {
+	constructor(cfg: PlainLogConfig) {
 		this.cfg = cfg
 	}
 
 	get level(): LogLevel {
-		return defaultTo(this.cfg['level'], LogLevel.S)
+		return defaultTo(this.cfg.level, LogLevel.S)
 	}
 }
 
 export interface PlainLogConfig {
-	level: number
+	level?: number
 }
 
 export class SmartURLConfig {
@@ -125,66 +125,56 @@ export interface PlainSmartURLConfig {
 
 export class ModeConfig {
 
-	private cfg: KVRecord
+	private cfg: PlainModeConfig
 
-	constructor(cfg: KVRecord) {
+	constructor(cfg: PlainModeConfig) {
 		this.cfg = cfg
 	}
 
 	get link(): OperationMode {
-		return defaultTo(this.cfg['link'], OperationMode.normal)
+		return defaultTo(this.cfg.link, OperationMode.normal)
 	}
 
 	get selection(): OperationMode {
-		return defaultTo(this.cfg['selection'], OperationMode.normal)
+		return defaultTo(this.cfg.selection, OperationMode.normal)
 	}
 
 	get image(): OperationMode {
-		return defaultTo(this.cfg['image'], OperationMode.normal)
+		return defaultTo(this.cfg.image, OperationMode.normal)
 	}
 
 }
 
 export interface PlainModeConfig {
-	link?: string
-	selection?: string
-	image?: string
+	link?: OperationMode
+	selection?: OperationMode
+	image?: OperationMode
 }
 
 export class CommonConfig {
-	private cfg: KVRecord
+	private cfg: PlainCommonConfig
 	private _mode: ModeConfig
 
-	constructor(cfg: KVRecord) {
+	constructor(cfg: PlainCommonConfig) {
 		this.cfg = cfg
-		this._mode = new ModeConfig(defaultTo(this.cfg['mode'], {}))
+		this._mode = new ModeConfig(defaultTo(this.cfg.mode, {}))
 	}
 
 	get mode(): ModeConfig {
 		return this._mode
 	}
 
-	get allow(): string[] {
-		return defaultTo(this.cfg['allow'], [])
-	}
-
-	get disallow(): string[] {
-		return defaultTo(this.cfg['disallow'], [])
-	}
-
 	get minDistance(): number {
-		return defaultTo(this.cfg['minDistance'], 0)
+		return defaultTo(this.cfg.minDistance, 0)
 	}
 
 	get maxDistance(): number {
-		return defaultTo(this.cfg['maxDistance'], 0)
+		return defaultTo(this.cfg.maxDistance, 0)
 	}
 }
 
 export interface PlainCommonConfig {
 	mode?: PlainModeConfig
-	allowHost?: string[]
-	disallowHost?: string[]
 	minDistance?: number
 	maxDistance?: number
 }
@@ -195,9 +185,9 @@ export enum MenuLayout {
 }
 
 export class MenuConfig {
-	cfg: KVRecord
+	cfg: PlainMenuConfig
 
-	constructor(cfg: KVRecord) {
+	constructor(cfg: PlainMenuConfig) {
 		this.cfg = cfg
 	}
 
@@ -207,19 +197,11 @@ export interface PlainMenuConfig {
 
 }
 
-export class ListModeConfig {
-	cfg: KVRecord
-
-	constructor(cfg: KVRecord) {
-		this.cfg = cfg
-	}
-}
-
 export class Script {
 
-	private cfg: KVRecord
+	private cfg: PlainScript
 
-	constructor(cfg: KVRecord) {
+	constructor(cfg: PlainScript) {
 		this.cfg = cfg
 	}
 
@@ -231,15 +213,15 @@ export class Script {
 	}
 
 	get id() {
-		return defaultTo<string>(this.cfg['id'], "")
+		return defaultTo<string>(this.cfg.id, "")
 	}
 
 	get text() {
-		return defaultTo<string>(this.cfg['text'], "")
+		return defaultTo<string>(this.cfg.text, "")
 	}
 
 	get name() {
-		return defaultTo<string>(this.cfg['name'], this.id)
+		return defaultTo<string>(this.cfg.name, this.id)
 	}
 }
 
@@ -256,14 +238,14 @@ export class CommandRequest {
 	private _url: string
 	private _query: KVRecord<string>
 	private _protocol: string
-	private cfg: KVRecord
+	private cfg: PlainCommandRequest
 
 	constructor(cfg: PlainCommandRequest) {
 		this.cfg = cloneDeep(cfg)
 
-		const urlObj = new URL(cfg['url'])
+		const urlObj = new URL(cfg.url)
 
-		this._query = defaultTo(cfg['query'], {})
+		this._query = defaultTo(cfg.query, {})
 		for (const [k, v] of urlObj.searchParams) {
 			this._query[k] = cloneDeep(v)
 		}
@@ -289,11 +271,11 @@ export class CommandRequest {
 	}
 
 	get id() {
-		return defaultTo(this.cfg['id'], '')
+		return defaultTo(this.cfg.id, '')
 	}
 
 	get name() {
-		return defaultTo(this.cfg["name"], this.id)
+		return defaultTo(this.cfg.name, this.id)
 	}
 
 	get method() {
@@ -331,41 +313,41 @@ export const enum AssetType {
 }
 
 export class Asset {
-	private cfg: KVRecord
+	private cfg: PlainAsset
 
-	constructor(cfg: KVRecord) {
+	constructor(cfg: PlainAsset) {
 		this.cfg = cfg
 	}
 
 	get id(): string {
-		return defaultTo(this.cfg["id"], "")
+		return defaultTo(this.cfg.id, "")
 	}
 
 	get name(): string {
-		return defaultTo(this.cfg["name"], this.id)
+		return defaultTo(this.cfg.name, this.id)
 	}
 
 	get type(): AssetType {
-		return defaultTo(this.cfg["type"], AssetType.html)
+		return defaultTo(this.cfg.type, AssetType.html)
 	}
 
 	get data(): string {
-		return defaultTo(this.cfg["data"], "")
+		return defaultTo(this.cfg.data, "")
 	}
 }
 
 export interface PlainAsset {
 	id?: string
 	name?: string
-	type?: string
+	type?: AssetType
 	data?: string
 }
 
 export class CommandConfig {
 
-	private cfg: KVRecord
+	private cfg: PlainCommandConfig
 
-	constructor(cfg: KVRecord) {
+	constructor(cfg: PlainCommandConfig) {
 		this.cfg = cfg
 	}
 
@@ -383,53 +365,53 @@ export class CommandConfig {
 	}
 
 	get activeTab(): boolean {
-		return defaultTo<boolean>(this.cfg['activeTab'], true)
+		return defaultTo<boolean>(this.cfg.activeTab, true)
 	}
 
 	get tabPosition(): TabPosition {
-		return defaultTo<TabPosition>(this.cfg['tabPosition'], TabPosition.next)
+		return defaultTo<TabPosition>(this.cfg.tabPosition, TabPosition.next)
 	}
 
 	get requestId(): string {
-		return defaultTo<string>(this.cfg['requestId'], "")
+		return defaultTo<string>(this.cfg.requestId, "")
 	}
 
 	get scriptId(): string {
-		return defaultTo<string>(this.cfg['scriptId'], "")
+		return defaultTo<string>(this.cfg.scriptId, "")
 	}
 
 	get directory(): string {
-		return defaultTo<string>(this.cfg['directory'], "")
+		return defaultTo<string>(this.cfg.directory, "")
 	}
 
 	get showSaveAsDialog(): boolean {
-		return defaultTo<boolean>(this.cfg['showSaveAsDialog'], false)
+		return defaultTo<boolean>(this.cfg.showSaveAsDialog, false)
 	}
 
 	get preferDataTypes(): ContextDataType[] {
-		return defaultTo<ContextDataType[]>(this.cfg['preferDataTypes'], [])
+		return defaultTo<ContextDataType[]>(this.cfg.preferDataTypes, [])
 	}
 
 	get container(): string {
-		return defaultTo<string>(this.cfg['container'], "")
+		return defaultTo<string>(this.cfg.container, "")
 	}
 }
 
 export interface PlainCommandConfig {
 	activeTab?: boolean
-	tabPosition?: string
+	tabPosition?: TabPosition
 	requestId?: string
 	scriptId?: string
 	directory?: string
 	showSaveAsDialog?: boolean
-	preferDataTypes?: string[]
+	preferDataTypes?: ContextDataType[]
 	container?: string
 }
 
 export class ConditionConfig {
-	private cfg: KVRecord
+	private cfg: PlainConditionConfig
 
-	constructor(cfg: KVRecord) {
+	constructor(cfg: PlainConditionConfig) {
 		this.cfg = cfg
 	}
 
@@ -442,39 +424,39 @@ export class ConditionConfig {
 	}
 
 	get modes(): OperationMode[] {
-		return defaultTo<OperationMode[]>(this.cfg['modes'], [])
+		return defaultTo<OperationMode[]>(this.cfg.modes, [])
 	}
 
 	get contextTypes(): ContextType[] {
-		return defaultTo<ContextType[]>(this.cfg['contextTypes'], [])
+		return defaultTo<ContextType[]>(this.cfg.contextTypes, [])
 	}
 
 	get directions(): Direction[] {
-		return defaultTo<Direction[]>(this.cfg['directions'], [])
+		return defaultTo<Direction[]>(this.cfg.directions, [])
 	}
 
 	get extra(): ContextType[] {
-		return defaultTo<ContextType[]>(this.cfg['extra'], [])
+		return defaultTo<ContextType[]>(this.cfg.extra, [])
 	}
 }
 
 export interface PlainConditionConfig {
-	modes?: string[]
-	contextTypes?: string[],
-	directions?: string[],
-	extra?: string[]
+	modes?: OperationMode[]
+	contextTypes?: ContextType[],
+	directions?: Direction[],
+	extra?: ContextType[]
 }
 
 export class ActionConfig {
 
-	private cfg: KVRecord
+	private cfg: PlainActionConfig
 	private _conditionConfig: ConditionConfig
 	private _config: CommandConfig
 
-	constructor(cfg: KVRecord) {
+	constructor(cfg: PlainActionConfig) {
 		this.cfg = cfg
-		this._conditionConfig = new ConditionConfig(defaultTo(cfg['condition'], {}))
-		this._config = new CommandConfig(defaultTo(cfg['config'], {}))
+		this._conditionConfig = new ConditionConfig(defaultTo(cfg.condition, {}))
+		this._config = new CommandConfig(defaultTo(cfg.config, {}))
 	}
 
 	toPlainObject(): PlainActionConfig {
@@ -490,15 +472,15 @@ export class ActionConfig {
 	}
 
 	get id(): string {
-		return defaultTo<string>(this.cfg['id'], "")
+		return defaultTo<string>(this.cfg.id, "")
 	}
 
 	get name(): string {
-		return defaultTo<string>(this.cfg['name'], this.id)
+		return defaultTo<string>(this.cfg.name, this.id)
 	}
 
 	get prompt(): string {
-		return defaultTo<string>(this.cfg['prompt'], "")
+		return defaultTo<string>(this.cfg.prompt, "")
 	}
 
 	get condition(): Readonly<ConditionConfig> {
@@ -506,7 +488,7 @@ export class ActionConfig {
 	}
 
 	get command(): CommandKind {
-		return defaultTo(this.cfg['command'], CommandKind.invalid)
+		return defaultTo(this.cfg.command, CommandKind.invalid)
 	}
 
 	get config(): CommandConfig {
@@ -514,11 +496,11 @@ export class ActionConfig {
 	}
 
 	get icon(): string {
-		return defaultTo<string>(this.cfg['icon'], "")
+		return defaultTo<string>(this.cfg.icon, "")
 	}
 
 	get iconAssetId(): string {
-		return defaultTo<string>(this.cfg['iconAssetId'], "")
+		return defaultTo<string>(this.cfg.iconAssetId, "")
 	}
 }
 
@@ -526,7 +508,7 @@ export interface PlainActionConfig {
 	id?: string
 	name?: string
 	condition?: PlainConditionConfig
-	command?: string
+	command?: CommandKind
 	config?: PlainCommandConfig
 	icon?: string
 	iconAssetId?: string
@@ -544,13 +526,11 @@ export interface PlainCompatibilityRule { host?: string, regexp?: string, status
 
 export class CompatibilityRule {
 
-	private cfg: KVRecord
 	private _host: string
 	private _regexp: string
 	private _status: CompatibilityStatus
 
 	constructor(cfg: PlainCompatibilityRule) {
-		this.cfg = cfg
 		this._host = defaultTo(cfg.host, "")
 		this._regexp = defaultTo(cfg.regexp, "")
 		this._status = defaultTo(cfg.status, CompatibilityStatus.enable)
@@ -590,19 +570,19 @@ export class Configuration {
 	private _scripts: Script[]
 	private _compatibility: CompatibilityRule[]
 
-	constructor(data?: KVRecord) {
-		data = defaultTo(data, {})
+	constructor(cfg?: PlainConfiguration) {
+		cfg = defaultTo(cfg, {})
 
-		this._log = new LogConfig(defaultTo(data['log'], {}))
-		this._smartURL = new SmartURLConfig(defaultTo(data['smartURL'], {}))
-		this._common = new CommonConfig(defaultTo(data['common'], {}))
-		this._menu = new MenuConfig(defaultTo(data['grid'], {}))
-		this._actions = defaultTo(data['actions'], []).map((c: KVRecord) => new ActionConfig(c))
-		this._features = new Set(defaultTo(data['features'], []))
-		this._requests = defaultTo(data['requests'], []).map((r: KVRecord) => new CommandRequest(r))
-		this._assets = defaultTo(data['assets'], []).map((r: KVRecord) => new Asset(r))
-		this._scripts = defaultTo(data['scripts'], []).map((r: KVRecord) => new Script(r))
-		this._compatibility = defaultTo(data["compatibility"], []).map((r: KVRecord) => new CompatibilityRule(r))
+		this._log = new LogConfig(defaultTo(cfg.log, {}))
+		this._smartURL = new SmartURLConfig(defaultTo(cfg.smartURL, {}))
+		this._common = new CommonConfig(defaultTo(cfg.common, {}))
+		this._menu = new MenuConfig(defaultTo(cfg.menu, {}))
+		this._actions = defaultTo(cfg.actions, []).map((c: PlainActionConfig) => new ActionConfig(c))
+		this._requests = defaultTo(cfg.requests, []).map((r: PlainCommandRequest) => new CommandRequest(r))
+		this._assets = defaultTo(cfg.assets, []).map((r: PlainAsset) => new Asset(r))
+		this._scripts = defaultTo(cfg.scripts, []).map((r: PlainScript) => new Script(r))
+		this._compatibility = defaultTo(cfg.compatibility, []).map((r: PlainCompatibilityRule) => new CompatibilityRule(r))
+		this._features = new Set(defaultTo(cfg.features as Feature[], []))
 	}
 
 	get features(): Set<string> {
@@ -662,6 +642,7 @@ export interface PlainConfiguration {
 	scripts?: PlainScript[],
 	compatibility?: PlainCompatibilityRule[],
 	smartURL?: PlainSmartURLConfig,
+	features?: string[]
 }
 
 export class BroadcastEventTarget<T> {
