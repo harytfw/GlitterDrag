@@ -107,13 +107,21 @@ export interface PlainLogConfig {
 }
 
 export class SmartURLConfig {
-	cfg: KVRecord
 
-	constructor(cfg: KVRecord) {
+	cfg: PlainSmartURLConfig
+
+	constructor(cfg: PlainSmartURLConfig) {
 		this.cfg = cfg
+	}
+
+	get protocols(): string[] {
+		return defaultTo(this.cfg.protocols, [])
 	}
 }
 
+export interface PlainSmartURLConfig {
+	protocols?: string[]
+}
 
 export class ModeConfig {
 
@@ -653,6 +661,7 @@ export interface PlainConfiguration {
 	assets?: PlainAsset[],
 	scripts?: PlainScript[],
 	compatibility?: PlainCompatibilityRule[],
+	smartURL?: PlainSmartURLConfig,
 }
 
 export class BroadcastEventTarget<T> {
