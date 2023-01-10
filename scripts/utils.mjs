@@ -18,3 +18,7 @@ export function readStdout(command) {
 	const result = execSync(command)
 	return result.toString("utf8")
 }
+
+export function isTestTarget(target) {
+	return target.endsWith("test")
+}

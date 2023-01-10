@@ -67,7 +67,7 @@ async function closeInstance() {
 }
 
 export let ws = null
-if (buildInfo.websocketServer) {
+if (buildInfo.target.endsWith("test") && buildInfo.websocketServer) {
 	ws = new WebSocket(buildInfo.websocketServer)
 	ws.addEventListener("open", (event) => {
 		console.log("open", event)

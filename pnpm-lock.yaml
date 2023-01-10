@@ -4,6 +4,7 @@ specifiers:
   '@rollup/plugin-commonjs': ^23.0.2
   '@rollup/plugin-node-resolve': ^15.0.1
   '@rollup/plugin-replace': ^5.0.1
+  '@rollup/plugin-terser': ^0.3.0
   '@rollup/plugin-typescript': ^9.0.2
   '@tsconfig/svelte': ^3.0.0
   '@types/chai': ^4.3.4
@@ -12,14 +13,16 @@ specifiers:
   '@types/node': ^18.11.9
   '@types/uuid': ^8.3.4
   '@types/webextension-polyfill': ^0.9.1
+  '@types/ws': ^8.5.4
   chai: ^4.3.7
+  commander: ^9.5.0
+  fs-extra: ^11.1.0
   lodash: ^4.17.21
   lodash-core: ^4.17.19
   lodash-es: ^4.17.21
   mocha: ^10.1.0
   rollup: ^3.4.0
   rollup-plugin-svelte: ^7.1.0
-  rollup-plugin-terser: ^7.0.2
   simpledotcss: ^2.1.1
   svelte: ^3.53.1
   svelte-preprocess: ^4.10.7
@@ -30,11 +33,13 @@ specifiers:
   web-ext: 7.4.0
   webextension-polyfill: ^0.10.0
   ws: ^8.11.0
+  zip-dir: ^2.0.0
 
 devDependencies:
   '@rollup/plugin-commonjs': 23.0.2_rollup@3.4.0
   '@rollup/plugin-node-resolve': 15.0.1_rollup@3.4.0
   '@rollup/plugin-replace': 5.0.1_rollup@3.4.0
+  '@rollup/plugin-terser': 0.3.0_rollup@3.4.0
   '@rollup/plugin-typescript': 9.0.2_vmrh7niimjcuan47h4hgsgyxjy
   '@tsconfig/svelte': 3.0.0
   '@types/chai': 4.3.4
@@ -43,14 +48,16 @@ devDependencies:
   '@types/node': 18.11.9
   '@types/uuid': 8.3.4
   '@types/webextension-polyfill': 0.9.1
+  '@types/ws': 8.5.4
   chai: 4.3.7
+  commander: 9.5.0
+  fs-extra: 11.1.0
   lodash: 4.17.21
   lodash-core: 4.17.19
   lodash-es: 4.17.21
   mocha: 10.1.0
   rollup: 3.4.0
   rollup-plugin-svelte: 7.1.0_rollup@3.4.0+svelte@3.53.1
-  rollup-plugin-terser: 7.0.2_rollup@3.4.0
   simpledotcss: 2.1.1
   svelte: 3.53.1
   svelte-preprocess: 4.10.7_7dvewpees4iyn2tkw2qzal77a4
@@ -61,6 +68,7 @@ devDependencies:
   web-ext: 7.4.0
   webextension-polyfill: 0.10.0
   ws: 8.11.0
+  zip-dir: 2.0.0
 
 packages:
 
@@ -110,7 +118,7 @@ packages:
       '@devicefarmer/adbkit-logcat': 2.1.2
       '@devicefarmer/adbkit-monkey': 1.2.1
       bluebird: 3.7.2
-      commander: 9.4.1
+      commander: 9.5.0
       debug: 4.3.4
       node-forge: 1.3.1
       split: 1.0.1
@@ -282,6 +290,21 @@ packages:
       rollup: 3.4.0
     dev: true
 
+  /@rollup/plugin-terser/0.3.0_rollup@3.4.0:
+    resolution: {integrity: sha512-mYTkNW9KjOscS/3QWU5LfOKsR3/fAAVDaqcAe2TZ7ng6pN46f+C7FOZbITuIW/neA+PhcjoKl7yMyB3XcmA4gw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.x || ^3.x
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      rollup: 3.4.0
+      serialize-javascript: 6.0.0
+      smob: 0.0.6
+      terser: 5.16.1
+    dev: true
+
   /@rollup/plugin-typescript/9.0.2_vmrh7niimjcuan47h4hgsgyxjy:
     resolution: {integrity: sha512-/sS93vmHUMjzDUsl5scNQr1mUlNE1QjBBvOhmRwJCH8k2RRhDIm3c977B3wdu3t3Ap17W6dDeXP3hj1P1Un1bA==}
     engines: {node: '>=14.0.0'}
@@ -387,6 +410,12 @@ packages:
 
   /@types/webextension-polyfill/0.9.1:
     resolution: {integrity: sha512-6aNzPIhqKlAV9t06nwSH3/veAceYE2dS2RVFZI8V1+UXHqsFNB6cRwxNmheiBvEGRc45E/gyZNzH0xAYIC27KA==}
+    dev: true
+
+  /@types/ws/8.5.4:
+    resolution: {integrity: sha512-zdQDHKUgcX/zBc4GrwsE/7dVdAD8JR4EuiAXiiUhhfyIJXXb2+PrGshFyeXWQPMmmZ2XxgaqclgpIC7eTXc1mg==}
+    dependencies:
+      '@types/node': 18.11.9
     dev: true
 
   /@types/yauzl/2.10.0:
@@ -937,8 +966,8 @@ packages:
       graceful-readlink: 1.0.1
     dev: true
 
-  /commander/9.4.1:
-    resolution: {integrity: sha512-5EEkTNyHNGFPD2H+c/dXXfQZYa/scCKasxWcXJaWnNJ99pnQN9Vnmqow+p+PlFPE63Q6mThaZws1T+HxfpgtPw==}
+  /commander/9.5.0:
+    resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
     engines: {node: ^12.20.0 || >=14}
     dev: true
 
@@ -1586,6 +1615,15 @@ packages:
       universalify: 2.0.0
     dev: true
 
+  /fs-extra/11.1.0:
+    resolution: {integrity: sha512-0rcTq621PD5jM/e0a3EJoGC/1TC5ZBCERW82LQuwfGnCa1V8w7dpYH1yNu+SLb6E5dkeCBzKEyLGlFrnr+dUyw==}
+    engines: {node: '>=14.14'}
+    dependencies:
+      graceful-fs: 4.2.10
+      jsonfile: 6.1.0
+      universalify: 2.0.0
+    dev: true
+
   /fs-extra/9.0.1:
     resolution: {integrity: sha512-h2iAoN838FqAFJY2/qVpzFXy+EBxfVE220PalAqQLDVsFOHLJrZvut5puAbCdNv6WJk+B8ihI+k0c7JK5erwqQ==}
     engines: {node: '>=10'}
@@ -2061,15 +2099,6 @@ packages:
 
   /jed/1.1.1:
     resolution: {integrity: sha1-elSbvZ/+FYWwzQoZHiAwVb7ldLQ=}
-    dev: true
-
-  /jest-worker/26.6.2:
-    resolution: {integrity: sha512-KWYVV1c4i+jbMpaBC+U++4Va0cp8OisU185o73T1vo99hqi7w8tSJfUXYswwqqrjzwxa6KpRK54WhPvwf5w6PQ==}
-    engines: {node: '>= 10.13.0'}
-    dependencies:
-      '@types/node': 18.11.9
-      merge-stream: 2.0.0
-      supports-color: 7.2.0
     dev: true
 
   /jose/4.11.1:
@@ -3052,18 +3081,6 @@ packages:
       svelte: 3.53.1
     dev: true
 
-  /rollup-plugin-terser/7.0.2_rollup@3.4.0:
-    resolution: {integrity: sha512-w3iIaU4OxcF52UUXiZNsNeuXIMDvFrr+ZXK6bFZ0Q60qyVfq4uLptoS4bbq3paG3x216eQllFZX7zt6TIImguQ==}
-    peerDependencies:
-      rollup: ^2.0.0
-    dependencies:
-      '@babel/code-frame': 7.18.6
-      jest-worker: 26.6.2
-      rollup: 3.4.0
-      serialize-javascript: 4.0.0
-      terser: 5.16.0
-    dev: true
-
   /rollup-pluginutils/2.8.2:
     resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
     dependencies:
@@ -3140,12 +3157,6 @@ packages:
       lru-cache: 6.0.0
     dev: true
 
-  /serialize-javascript/4.0.0:
-    resolution: {integrity: sha512-GaNA54380uFefWghODBWEGisLZFj00nS5ACs6yHa9nLqlLpVLO8ChDGeKRjZnV4Nh4n0Qi7nhYZD/9fCPzEqkw==}
-    dependencies:
-      randombytes: 2.1.0
-    dev: true
-
   /serialize-javascript/6.0.0:
     resolution: {integrity: sha512-Qr3TosvguFt8ePWqsvRfrKyQXIiW+nGbYpy8XK24NQHE83caxWt+mIymTT19DGFbNWNLfEwsrkSmN64lVWB9ag==}
     dependencies:
@@ -3205,6 +3216,10 @@ packages:
 
   /simpledotcss/2.1.1:
     resolution: {integrity: sha512-BhqPaXVd8yGiZucZzn8rRV+1q19iVUvkv4mVXvtc4KMuf8H7/FrreTqzDcTfOl8X44DftHdn/laMkAKtX/itcw==}
+    dev: true
+
+  /smob/0.0.6:
+    resolution: {integrity: sha512-V21+XeNni+tTyiST1MHsa84AQhT1aFZipzPpOFAVB8DkHzwJyjjAmt9bgwnuZiZWnIbMo2duE29wybxv/7HWUw==}
     dev: true
 
   /sonic-boom/3.2.0:
@@ -3461,8 +3476,8 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
-  /terser/5.16.0:
-    resolution: {integrity: sha512-KjTV81QKStSfwbNiwlBXfcgMcOloyuRdb62/iLFPGBcVNF4EXjhdYBhYHmbJpiBrVxZhDvltE11j+LBQUxEEJg==}
+  /terser/5.16.1:
+    resolution: {integrity: sha512-xvQfyfA1ayT0qdK47zskQgRZeWLoOQ8JQ6mIgRGVNwZKdQMU+5FkCBjmv4QjcrTzyZquRw2FVtlJSRUmMKQslw==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
