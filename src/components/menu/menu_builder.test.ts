@@ -56,7 +56,10 @@ describe("menu builder", () => {
 			dividerLineLength: 10,
 			iconOffset: 10,
 			iconSize: 10,
-			textOffset: 10
+			textOffset: 10,
+			fontSize: 4,
+			width: 100,
+			height: 100
 		})
 		assert.equal(svg.querySelectorAll("g").length, 2)
 	})
