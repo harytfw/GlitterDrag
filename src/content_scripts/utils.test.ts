@@ -1,4 +1,4 @@
-import { assertOk } from "../utils/test_helper"
+import { assert } from "chai"
 import { getAngle, TinyLRU } from "./utils"
 
 describe("content script utils", () => {
@@ -27,28 +27,28 @@ describe("content script utils", () => {
 		]
 		for (const tt of testCases) {
 			let a = getAngle(tt.args[0], tt.args[1])
-			assertOk(tt.angle === a, tt.angle, " != ", a)
+			assert.ok(tt.angle === a)
 		}
 	})
 
 	it('tiny lru', () => {
 		const lru = new TinyLRU<number, number>()
 
-		assertOk(lru.get(1) === undefined)
-		assertOk(lru.get(2) === undefined)
-		assertOk(lru.get(undefined) === undefined)
+		assert.ok(lru.get(1) === undefined)
+		assert.ok(lru.get(2) === undefined)
+		assert.ok(lru.get(undefined) === undefined)
 
 		lru.put(1, 1)
 		lru.put(2, 2)
 
-		assertOk(lru.get(1) === 1)
-		assertOk(lru.get(2) === 2)
+		assert.ok(lru.get(1) === 1)
+		assert.ok(lru.get(2) === 2)
 
-		assertOk(lru.get(0) === undefined)
-		assertOk(lru.size() === 2)
+		assert.ok(lru.get(0) === undefined)
+		assert.ok(lru.size() === 2)
 
 		lru.clear()
 
-		assertOk(lru.size() === 0)
+		assert.ok(lru.size() === 0)
 	})
 })

@@ -1,8 +1,5 @@
-import { assertOk } from "../utils/test_helper"
+import { assert } from "chai"
 import { ActionConfig, BroadcastEventTarget, CommandRequest, configBroadcast as configBroadcast, Configuration, type ReadonlyConfiguration } from "./config"
-
-import chai from "chai"
-const assert = chai.assert
 
 describe("test configuration", () => {
 	it("empty config", () => {
@@ -11,14 +8,14 @@ describe("test configuration", () => {
 
 	it("action config", () => {
 		const action = new ActionConfig({})
-		assertOk(action.toPlainObject())
+		assert.ok(action.toPlainObject())
 	})
 
 	it("request config", () => {
 		const req = new CommandRequest({
 			"url": "http://example.com"
 		})
-		assertOk(req.toPlainObject())
+		assert.ok(req.toPlainObject())
 	})
 
 	it("broadcast", () => {

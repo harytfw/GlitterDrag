@@ -1,4 +1,3 @@
-import { assertEqual } from "./test_helper"
 import { VarSubstituteTemplate } from "./var_substitute"
 import { assert } from 'chai'
 

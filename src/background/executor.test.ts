@@ -1,7 +1,7 @@
 
 import browser, { tabs } from 'webextension-polyfill';
 import { ActionConfig, CommandKind } from "../config/config"
-import { closeTab } from '../utils/test_helper';
+import { closeTab } from '../utils/test';
 import { Executor } from "./executor"
 import { blankExecuteContext } from "../context/test_helper"
 

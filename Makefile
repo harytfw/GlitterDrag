@@ -24,7 +24,7 @@ ext-chromium:
 	$(cli) build --target chromium --profile $(BUILD_PROFILE)
 
 .PHONY: test
-test: TARGET ?= firefox 
+test: TARGET ?= firefox-test 
 test:
 	$(cli) test --target $(TARGET)
 
