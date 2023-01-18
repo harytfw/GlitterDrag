@@ -15,6 +15,7 @@ const BUILD_SRC = mustEnv("BUILD_SRC", "./src")
 const BUILD_VERSION = mustEnv("BUILD_VERSION", "2.1.0")
 
 const FIREFOX = "firefox-developer-edition"
+
 function copyAssets(destDir) {
 	const assets = [
 		{
@@ -79,23 +80,19 @@ function buildManifest(dist, version, target) {
 
 async function buildWithRollup(config) {
 	for (const optionsObj of config) {
-		try {
-			const bundle = await rollup.rollup(optionsObj);
-			await bundle.write(optionsObj.output);
-			if (bundle) {
-				// closes the bundle
-				await bundle.close();
-			}
-		} catch (err) {
-			console.error(err)
+		const bundle = await rollup.rollup(optionsObj);
+		await bundle.write(optionsObj.output);
+		if (bundle) {
+			await bundle.close();
 		}
 	}
 }
 
 function validateTarget(target) {
-	if (!["firefox", "chromium", "firefox-test"].includes(target)) {
-		throw new Error("not support build target: " + target)
+	if (["firefox", "chromium", "firefox-test"].includes(target)) {
+		return
 	}
+	throw new Error("not support build target: " + target)
 }
 
 const defaultEntryPoints = ["background", "content_scripts", "options", "components"]
@@ -105,7 +102,7 @@ program.command('build')
 	.option('-t, --target <target>', "The browser target to build", "firefox")
 	.option('--profile <profile>', "The profile of compilation", "debug")
 	.option('--artifacts <dir>', "The directory to store artifacts", "artifacts")
-	.option('--lint', "Use web-ext the validate extension source", false)
+	.option('--lint', "Use web-ext validates extension source", false)
 	.option('--watch', "Watch source file change", false)
 	.option('--websocket-server <addr>', "The address of websocket server for capture event of unit test", "ws://localhost:8000")
 	.action(async (args, options) => {
@@ -263,7 +260,7 @@ program.command('watch')
 	.action((args) => {
 
 		validateTarget(args.target)
-		
+
 		const dist = buildDist(args.target)
 
 		return new Promise((resolve, reject) => {
