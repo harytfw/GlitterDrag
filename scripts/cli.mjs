@@ -147,10 +147,6 @@ program.command('build')
 			});
 		} else {
 			await buildWithRollup(config)
-
-			if (args.lint) {
-				webExt.cmd.lint({ sourceDir: dist })
-			}
 			await zipDir(
 				dist,
 				{
@@ -161,7 +157,10 @@ program.command('build')
 				}
 			);
 		}
-
+		if (args.lint) {
+			// linter will terminate program with proper exit code
+			await webExt.cmd.lint({ sourceDir: dist }, { shouldExitProgram: true })
+		}
 	});
 
 program.command('test')
