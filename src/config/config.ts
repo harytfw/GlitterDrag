@@ -84,6 +84,7 @@ export type ContextData = {
 };
 
 export enum Feature {
+	featureTab = "featureTab",
 	middleButtonSelector = "middleButtonSelector",
 	retainComponent = "retainComponent",
 	auxClose = "auxClose",

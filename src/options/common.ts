@@ -1,6 +1,5 @@
-import { CommandKind, Direction, OperationMode, TabPosition, ContextType, ContextDataType, CompatibilityStatus } from "../config/config";
+import { CommandKind, Direction, OperationMode, TabPosition, ContextType, ContextDataType, CompatibilityStatus, Feature } from "../config/config";
 import { LocaleMessageHelper } from "../locale";
-import { titleCase } from "./utils";
 
 
 const localeHelper = new LocaleMessageHelper()
@@ -14,6 +13,7 @@ export enum Tab {
 	common = "common",
 	configEditor = "configEditor",
 	compatibility = "compatibility",
+	feature = "feature",
 }
 
 
@@ -99,5 +99,13 @@ export const compatibilityStatusOptions: Readonly<MultipleOptionModel<Compatibil
 		return {
 			label: localeHelper.compatibilityStatus(s),
 			value: s
+		}
+	})
+
+export const featureOptions: Readonly<MultipleOptionModel<Feature>> = Object.values(Feature)
+	.map(s => {
+		return {
+			label: s as string,
+			value: s,
 		}
 	})
