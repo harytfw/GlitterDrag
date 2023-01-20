@@ -46,7 +46,8 @@ export enum TabPosition {
 	next = 'next',
 	current = 'current',
 	newWindow = 'newWindow',
-	privateWindow = 'privateWindow'
+	privateWindow = 'privateWindow',
+	ignore = 'ignore'
 }
 
 
@@ -370,7 +371,7 @@ export class CommandConfig {
 	}
 
 	get tabPosition(): TabPosition {
-		return defaultTo<TabPosition>(this.cfg.tabPosition, TabPosition.next)
+		return defaultTo<TabPosition>(this.cfg.tabPosition, TabPosition.ignore)
 	}
 
 	get requestId(): string {

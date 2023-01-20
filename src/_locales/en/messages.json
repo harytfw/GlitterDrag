@@ -307,5 +307,11 @@
   },
   "compatibilityStatusForce": {
     "message": "Force"
+  },
+  "helpTabPosition": {
+    "message": "specific the position of new created tab. Choosing \"Ignore\" indicates the position is controlled by browser"
+  },
+  "tabPositionIgnore": {
+    "message": "Ignore"
   }
 }

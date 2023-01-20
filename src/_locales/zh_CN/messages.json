@@ -307,5 +307,11 @@
   },
   "compatibilityStatusForce": {
     "message": "强制启用"
+  },
+  "helpTabPosition": {
+    "message": "指定新标签的位置. 选择 \"忽略\" 让浏览器决定新标签的位置"
+  },
+  "tabPositionIgnore": {
+    "message": "忽略"
   }
 }

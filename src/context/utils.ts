@@ -95,14 +95,15 @@ export async function handlePreferContextData(ctx: ExecuteContext, defaultCallba
 }
 
 
-export function getTabIndex(ctx: ExecuteContext, tabsLength = 0): number {
+export function getTabIndex(ctx: ExecuteContext, tabsLength = 0): number | undefined {
 
-	let index = 0;
+	let index = undefined;
 	switch (ctx.action.config.tabPosition) {
 		case TabPosition.prev: index = ctx.tab.index; break;
 		case TabPosition.next: index = ctx.tab.index + ctx.state.backgroundTabCounter + 1; break;
 		case TabPosition.start: index = 0; break;
 		case TabPosition.end: index = tabsLength; break;
+		case TabPosition.ignore: index = undefined; break;
 		default: throw new Error("unknown tab position: " + ctx.action.config.tabPosition);
 	}
 
