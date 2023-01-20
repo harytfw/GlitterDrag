@@ -76,8 +76,10 @@ export class LocalStorageBackend implements VolatileState {
 }
 
 const localState = new LocalStorageBackend("volatileState")
-
+const loadOnce = localState.load()
 export async function defaultVolatileState(): Promise<VolatileState> {
-	await localState.load()
+	// if this promise is fulfilled, it means load procedure is done, await the promise does nothing. 
+	// otherwise we wait the load procedure
+	await loadOnce
 	return localState
 }
