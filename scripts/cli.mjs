@@ -114,7 +114,7 @@ program.command('build')
 		const entryPoints = [...defaultEntryPoints]
 		if (isTestTarget(args.target)) {
 			entryPoints.push("test")
-			copyTestAssets()
+			copyTestAssets(dist)
 		}
 		console.debug("args:", args)
 		console.debug("entryPoints: ", entryPoints)
