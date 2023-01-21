@@ -6,7 +6,7 @@ type EnvVariable = {
 	nodeVersion: string
 	rollupVersion: string
 	os: string
-	websocketServer: string
+	webSocketServer: string
 	profile: string
 	target: string
 }

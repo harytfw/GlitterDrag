@@ -1,4 +1,4 @@
-import { ws } from './mocha_init'
+import { webSocketAvailable, ws } from './mocha_init'
 import '../utils/url.test'
 import '../utils/log.test'
 import '../utils/var_substitute.test'
@@ -15,7 +15,7 @@ import "../locale.test"
 import "../state/state.test"
 import "../resolver/resolver.test"
 
-if (ws) {
+if (webSocketAvailable()) {
 	ws.addEventListener("open", () => {
 		mocha.run()
 	})
