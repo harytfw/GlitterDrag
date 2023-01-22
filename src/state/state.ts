@@ -6,11 +6,11 @@ import { rootLog } from '../utils/log'
 const log = rootLog.subLogger(LogLevel.VVV, "state")
 
 const enum State {
-	backgroundTabCounter = "backgroundTabCounter",
+	backgroundTabIds = "backgroundTabIds",
 }
 
 export interface VolatileState {
-	backgroundTabCounter: number
+	backgroundTabIds: readonly number[]
 
 	load(): Promise<void>
 	save(): Promise<void>
@@ -21,7 +21,7 @@ export interface VolatileState {
 export class LocalStorageBackend implements VolatileState {
 
 	private readonly storageKey: string
-	private data: Map<string, number | string>
+	private data: Map<string, number | string | number[] | string[]>
 	private dirty = false
 
 
@@ -65,12 +65,12 @@ export class LocalStorageBackend implements VolatileState {
 		this.dirty = false
 	}
 
-	get backgroundTabCounter() {
-		return Number(defaultTo(this.data.get(State.backgroundTabCounter), 0))
+	get backgroundTabIds(): readonly number[] {
+		return defaultTo(this.data.get(State.backgroundTabIds), []) as number[]
 	}
 
-	set backgroundTabCounter(val) {
-		this.data.set(State.backgroundTabCounter, val)
+	set backgroundTabIds(val: readonly number[]) {
+		this.data.set(State.backgroundTabIds, Array.from(val))
 		this.dirty = true
 	}
 }

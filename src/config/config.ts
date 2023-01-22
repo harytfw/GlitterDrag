@@ -40,14 +40,15 @@ export enum OperationMode {
 
 
 export enum TabPosition {
+	ignore = 'ignore',
+	after = 'after',
+	next = 'next',
+	prev = 'prev',
 	start = 'start',
 	end = 'end',
-	prev = 'prev',
-	next = 'next',
 	current = 'current',
 	newWindow = 'newWindow',
 	privateWindow = 'privateWindow',
-	ignore = 'ignore'
 }
 
 
@@ -88,7 +89,7 @@ export enum Feature {
 	featureTab = "featureTab",
 	middleButtonSelector = "middleButtonSelector",
 	retainComponent = "retainComponent",
-	auxClose = "auxClose",
+	auxClose = "auxClose"
 }
 
 export class LogConfig {

@@ -309,9 +309,12 @@
     "message": "Force"
   },
   "helpTabPosition": {
-    "message": "specific the position of new created tab. Choosing \"Ignore\" indicates the position is controlled by browser"
+    "message": "specific the position of new created tab. Choosing \"Ignore\" indicates the position is controlled by browser; \"Next\" places the new tab after to the current tab, when continuously opening many background tabs, the new tab will be placed at the end of those background tabs; \"After\" always places the new tab after the current tab"
   },
   "tabPositionIgnore": {
     "message": "Ignore"
+  },
+  "tabPositionAfter": {
+    "message": "After Current"
   }
 }

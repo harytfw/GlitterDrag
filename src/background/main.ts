@@ -29,13 +29,13 @@ async function saveVolatileState() {
 browser.tabs.onRemoved.addListener(async (tabId,) => {
     rootLog.VVV("a tab is remove, reset tab counter")
     const state = await defaultVolatileState()
-    state.backgroundTabCounter = 0;
+    state.backgroundTabIds = []
 });
 
 browser.tabs.onActivated.addListener(async () => {
     rootLog.VVV("a tab is activate, reset tab counter")
     const state = await defaultVolatileState()
-    state.backgroundTabCounter = 0;
+    state.backgroundTabIds = []
 });
 
 

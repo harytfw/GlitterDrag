@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { ActionConfig, Configuration, ContextType, ContextDataType, TabPosition } from "../config/config";
+import { ActionConfig, Configuration, ContextType, ContextDataType } from "../config/config";
 import type { ExecuteContext } from './context';
 import type { ExecuteArgs } from "../message/message";
 import { ExtensionStorageKey, type ExtensionStorage } from '../types';
@@ -95,17 +95,4 @@ export async function handlePreferContextData(ctx: ExecuteContext, defaultCallba
 }
 
 
-export function getTabIndex(ctx: ExecuteContext, tabsLength = 0): number | undefined {
 
-	let index = undefined;
-	switch (ctx.action.config.tabPosition) {
-		case TabPosition.prev: index = ctx.tab.index; break;
-		case TabPosition.next: index = ctx.tab.index + ctx.state.backgroundTabCounter + 1; break;
-		case TabPosition.start: index = 0; break;
-		case TabPosition.end: index = tabsLength; break;
-		case TabPosition.ignore: index = undefined; break;
-		default: throw new Error("unknown tab position: " + ctx.action.config.tabPosition);
-	}
-
-	return index;
-}
