@@ -1,108 +1,6 @@
 export const simpleConfig = {
   "actions": [
     {
-      "id": "b8df32df-ac46-4bec-b83b-8de262c790e9",
-      "name": "Download Image",
-      "command": "download",
-      "condition": {
-        "contextTypes": [
-          "image"
-        ],
-        "modes": [
-          "normal"
-        ],
-        "directions": [
-          "right"
-        ]
-      },
-      "prompt": "",
-      "config": {
-        "preferDataTypes": [
-          "link"
-        ],
-        "activeTab": false,
-        "tabPosition": "next",
-        "container": "",
-        "directory": "",
-        "showSaveAsDialog": false
-      }
-    },
-    {
-      "id": "3364a61b-4646-487d-ba5d-9006a16ccfb2",
-      "name": "Copy Image",
-      "command": "copy",
-      "condition": {
-        "contextTypes": [
-          "image"
-        ],
-        "modes": [
-          "normal"
-        ],
-        "directions": [
-          "left"
-        ]
-      },
-      "prompt": "",
-      "config": {
-        "preferDataTypes": [
-          "link"
-        ],
-        "activeTab": false,
-        "tabPosition": "next",
-        "container": ""
-      }
-    },
-    {
-      "id": "a0157052-c4df-416c-8f28-e59d57ca0fa5",
-      "name": "Open Image Background",
-      "command": "open",
-      "condition": {
-        "contextTypes": [
-          "image"
-        ],
-        "modes": [
-          "normal"
-        ],
-        "directions": [
-          "down"
-        ]
-      },
-      "prompt": "",
-      "config": {
-        "preferDataTypes": [
-          "linkText"
-        ],
-        "activeTab": false,
-        "tabPosition": "next",
-        "container": ""
-      }
-    },
-    {
-      "id": "aa0bd4df-5008-4ddb-877c-64f934544403",
-      "name": "Open Image Foreground",
-      "command": "open",
-      "condition": {
-        "contextTypes": [
-          "image"
-        ],
-        "modes": [
-          "normal"
-        ],
-        "directions": [
-          "up"
-        ]
-      },
-      "prompt": "",
-      "config": {
-        "preferDataTypes": [
-          "linkText"
-        ],
-        "activeTab": true,
-        "tabPosition": "next",
-        "container": ""
-      }
-    },
-    {
       "id": "3009c98e-cc46-4451-a30b-1680bb61aacc",
       "name": "Copy Link  Text",
       "command": "copy",
@@ -193,6 +91,108 @@ export const simpleConfig = {
       "prompt": "",
       "config": {
         "preferDataTypes": [],
+        "activeTab": true,
+        "tabPosition": "next",
+        "container": ""
+      }
+    },
+    {
+      "id": "b8df32df-ac46-4bec-b83b-8de262c790e9",
+      "name": "Download Image",
+      "command": "download",
+      "condition": {
+        "contextTypes": [
+          "image"
+        ],
+        "modes": [
+          "normal"
+        ],
+        "directions": [
+          "right"
+        ]
+      },
+      "prompt": "",
+      "config": {
+        "preferDataTypes": [
+          "imageSource"
+        ],
+        "activeTab": false,
+        "tabPosition": "next",
+        "container": "",
+        "directory": "",
+        "showSaveAsDialog": false
+      }
+    },
+    {
+      "id": "3364a61b-4646-487d-ba5d-9006a16ccfb2",
+      "name": "Copy Image",
+      "command": "copy",
+      "condition": {
+        "contextTypes": [
+          "image"
+        ],
+        "modes": [
+          "normal"
+        ],
+        "directions": [
+          "left"
+        ]
+      },
+      "prompt": "",
+      "config": {
+        "preferDataTypes": [
+          "image"
+        ],
+        "activeTab": false,
+        "tabPosition": "next",
+        "container": ""
+      }
+    },
+    {
+      "id": "a0157052-c4df-416c-8f28-e59d57ca0fa5",
+      "name": "Open Image Background",
+      "command": "open",
+      "condition": {
+        "contextTypes": [
+          "image"
+        ],
+        "modes": [
+          "normal"
+        ],
+        "directions": [
+          "down"
+        ]
+      },
+      "prompt": "",
+      "config": {
+        "preferDataTypes": [
+          "imageSource"
+        ],
+        "activeTab": false,
+        "tabPosition": "next",
+        "container": ""
+      }
+    },
+    {
+      "id": "aa0bd4df-5008-4ddb-877c-64f934544403",
+      "name": "Open Image Foreground",
+      "command": "open",
+      "condition": {
+        "contextTypes": [
+          "image"
+        ],
+        "modes": [
+          "normal"
+        ],
+        "directions": [
+          "up"
+        ]
+      },
+      "prompt": "",
+      "config": {
+        "preferDataTypes": [
+          "imageSource"
+        ],
         "activeTab": true,
         "tabPosition": "next",
         "container": ""
