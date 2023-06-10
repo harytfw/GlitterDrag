@@ -1,4 +1,4 @@
-export BUILD_VERSION ?= 2.1.4
+export BUILD_VERSION ?= 2.2.1
 export BUILD_DIR ?= $(shell realpath ./build)
 export BUILD_SRC ?= $(shell realpath ./src)
 
