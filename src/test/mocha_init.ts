@@ -58,17 +58,20 @@ class StreamReporter extends Mocha.reporters.HTML {
 	}
 }
 
+export function webSocketAvailable() {
+	return ws && [WebSocket.OPEN, WebSocket.CONNECTING].includes(ws.readyState)
+}
 
-async function closeInstance() {
+export async function closeInstance() {
 	const ids = (await browser.windows.getAll()).map(w => w.id)
 	for (const id of ids) {
 		await browser.windows.remove(id)
 	}
 }
 
-export let ws = null
-if (buildInfo.websocketServer) {
-	ws = new WebSocket(buildInfo.websocketServer)
+export let ws: WebSocket | null = null
+if (buildInfo.target.endsWith("test") && buildInfo.webSocketServer) {
+	ws = new WebSocket(buildInfo.webSocketServer)
 	ws.addEventListener("open", (event) => {
 		console.log("open", event)
 	})
@@ -96,7 +99,7 @@ mocha.reporter(StreamReporter, {
 		if (ws) {
 			ws.send(JSON.stringify(event))
 			const [type, _payload] = event
-			if (type === "end") {
+			if (type === "end" && webSocketAvailable()) {
 				closeInstance()
 			}
 		}

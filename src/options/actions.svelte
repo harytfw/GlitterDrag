@@ -1124,7 +1124,15 @@ align-items: center; width: 100px; height: 100px; background-color: #0909090f; j
                     </label>
                 </p>
                 <p>
-                    <label for="">{locale.tabPosition}</label>
+                    <label for="">
+                        {locale.tabPosition}
+                        <span
+                            class="help-question-mark"
+                            title={locale.helpTabPosition}
+                        >
+                            ❔
+                        </span>
+                    </label>
                     <select name="config.tabPosition">
                         {#each tabPositionOptions as pos}
                             <option

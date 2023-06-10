@@ -46,15 +46,15 @@ export class DragController {
             return
         }
         for (const n of ["dragstart", "dragover", "dragenter", 'dragleave', "drop", "dragend"]) {
-            this.eventSource.addEventListener(n, this.handler, true)
-            this.eventSource.addEventListener(n, this.handler, false)
+            this.eventSource.addEventListener(n, this.handler, {capture: true})
+            this.eventSource.addEventListener(n, this.handler, {capture: false})
         }
     }
 
     stop() {
         for (const n of ["dragstart", "dragover", "dragenter", 'dragleave', "drop", "dragend"]) {
-            this.eventSource.removeEventListener(n, this.handler, true);
-            this.eventSource.removeEventListener(n, this.handler, false);
+            this.eventSource.removeEventListener(n, this.handler, {capture: true});
+            this.eventSource.removeEventListener(n, this.handler, {capture: false});
         }
     }
 
@@ -169,14 +169,17 @@ export class DragController {
     }
 
     private checkDragStart(event: DragEvent) {
-        if (event.eventPhase !== EventPhase.capturing) {
-            return
-        }
-        this.sourceTarget = this.findSourceTarget(event)
-        if (this.sourceTarget != null) {
-            this.initFramePosition()
-            const op = this.makeOp(OpType.start, this.sourceTarget, event)
-            this.c.applyOp(op)
+        if (event.eventPhase === EventPhase.bubbling) {
+            if (!event.defaultPrevented) {
+                this.sourceTarget = this.findSourceTarget(event)
+                if (this.sourceTarget != null) {
+                    this.initFramePosition()
+                    const op = this.makeOp(OpType.start, this.sourceTarget, event)
+                    this.c.applyOp(op)
+                }
+            } else {
+                log.V("host page cancel dragtart event")
+            }
         }
     }
 

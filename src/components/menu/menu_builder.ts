@@ -17,31 +17,6 @@ const colorDef = `
          id="stop14618" />
 	</radialGradient>
 	`;
-const styleContent = `
-	g .sector-fill {
-		fill: #fff0;
-		stroke: none;
-	}
-
-	g:hover .sector-fill {
-		fill: url("#sector-color");
-	}
-
-	g.hover .sector-fill {
-		fill: url("#sector-color");
-	}
-
-	g.hover .sector-fill text {
-		fill: white;
-	}
-
-	g text {
-		font-size: 4px;
-		fill: white; 
-		text-shadow: #000 0px 0 4px;
-		font-weight: bold;
-	}
-`;
 
 export function polar2cartesian(
 	r: number,
@@ -80,7 +55,7 @@ export async function toDataURL(text: string, type: string): Promise<string> {
 
 export async function rebuildMenu(svg: SVGSVGElement, opt: MenuOptions) {
 
-	const [width, height] = [200, 200];
+	const { width, height } = opt
 	const center = [width / 2, height / 2];
 	const arcRadius = opt.dividerLineLength + opt.circleRadius;
 	const angleUnit = 360 / opt.items.length;
@@ -96,6 +71,35 @@ export async function rebuildMenu(svg: SVGSVGElement, opt: MenuOptions) {
 	svg.dataset["iconOffset"] = `${opt.iconOffset}`;
 	svg.dataset["iconSize"] = `${opt.iconSize}`;
 	svg.dataset["textOffset"] = `${opt.textOffset}`;
+	svg.dataset["fontSize"] = `${opt.fontSize}`;
+
+
+	const styleContent = `
+	g .sector-fill {
+		fill: #fff0;
+		stroke: none;
+	}
+
+	g:hover .sector-fill {
+		fill: url("#sector-color");
+	}
+
+	g.hover .sector-fill {
+		fill: url("#sector-color");
+	}
+
+	g.hover .sector-fill text {
+		fill: white;
+	}
+
+	g text {
+		font-size: ${opt.fontSize}px;
+		fill: white; 
+		text-shadow: #000 0px 0 4px;
+		font-weight: bold;
+	}
+`;
+
 
 	{
 		const defs = document.createElementNS(SVG_NAMESPACE, "defs");

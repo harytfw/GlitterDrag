@@ -3,11 +3,7 @@
 <script lang="ts">
 	import { LogLevel } from "../../config/config";
 	import { rootLog } from "../../utils/log";
-	import {
-		EventType,
-		type MenuOptions,
-		type ShowMenuOptions,
-	} from "../types";
+	import { EventType, type ShowMenuOptions } from "../types";
 	import { rebuildMenu } from "./menu_builder";
 
 	const log = rootLog.subLogger(LogLevel.VVV, "menu");
@@ -69,15 +65,21 @@
 
 	let svgElem: SVGSVGElement;
 	let container: HTMLElement;
+	const boxSize = 800;
 	export async function show(opts: ShowMenuOptions) {
+		const svgSize = 200;
+		const scaleFactor = svgSize / boxSize;
 		// FIXME: avoid rebuild menu every time for the same options
 		await rebuildMenu(svgElem, {
 			items: opts.items,
 			dividerLineLength: 28,
-			circleRadius: opts.circleRadius / scaleFactor(),
+			circleRadius: opts.circleRadius * scaleFactor,
 			iconOffset: 24,
 			iconSize: 8,
 			textOffset: 36,
+			fontSize: 4,
+			height: svgSize,
+			width: svgSize,
 		});
 	}
 
@@ -85,13 +87,7 @@
 		onUpdateSelectedId("");
 	}
 
-	export function box() {
-		return [800, 800];
-	}
-
-	export function scaleFactor() {
-		return 3;
-	}
+	export const box: [number, number] = [boxSize, boxSize];
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
@@ -99,14 +95,13 @@
 	id="container"
 	on:dragover={dragover}
 	on:dragleave={dragleave}
-	width={box()[0]}
-	height={box()[1]}
+	style="width: {box[0]}px; height: {box[1]}px;"
 	bind:this={container}
 >
 	<svg
 		version="1.1"
-		width={box()[0]}
-		height={box()[1]}
+		width={box[0]}
+		height={box[1]}
 		xmlns="http://www.w3.org/2000/svg"
 		bind:this={svgElem}
 	/>

@@ -14,6 +14,7 @@ function fillDefaultValue(uc: PlainConfiguration) {
 	uc.requests = defaultTo(uc.requests, [])
 	uc.assets = defaultTo(uc.assets, [])
 	uc.common = defaultTo(uc.common, {})
+	uc.features = defaultTo(uc.features, [])
 }
 
 export const userConfig = writable({} as PlainConfiguration, (set) => {

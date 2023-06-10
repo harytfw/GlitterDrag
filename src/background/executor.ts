@@ -1,16 +1,15 @@
 import trimStart from 'lodash-es/trimStart';
 import browser from 'webextension-polyfill';
 import { CommandKind, ContextType, LogLevel, TabPosition } from '../config/config';
+import type { ExecuteContext } from '../context/context';
+import { handlePreferContextData, primaryContextData, primaryContextType } from '../context/utils';
 import { buildRuntimeMessage, RuntimeMessageName } from '../message/message';
+import { Protocol, RequestResolver } from '../resolver/resolver';
 import { rootLog } from '../utils/log';
 import { VarSubstituteTemplate } from '../utils/var_substitute';
 import { isFirefox } from '../utils/vendor';
-import { getTabIndex, handlePreferContextData, primaryContextData, primaryContextType, } from '../context/utils';
-import { Protocol, RequestResolver } from '../resolver/resolver';
 import { searchText as searchTextViaBrowser } from './search';
 import { buildDownloadableURL, buildVars, dumpFunc, generatedDownloadFileName, guessImageType, isOpenableURL, urlToArrayBuffer } from './utils';
-import { defaultVolatileState } from '../state/state';
-import type { ExecuteContext } from '../context/context';
 
 const log = rootLog.subLogger(LogLevel.VVV, 'executor')
 
@@ -165,7 +164,6 @@ export class Executor {
 
         let arg1 = {
             ctx: plainCtx,
-            backgroundTabCounter: ctx.state.backgroundTabCounter,
             localStorage: await browser.storage.local.get()
         }
 
@@ -235,13 +233,12 @@ export class Executor {
             windowId: ctx.tab.windowId,
         });
 
-
         const option: browser.Tabs.CreateCreatePropertiesType = {
             active: Boolean(ctx.action.config.activeTab),
             index: getTabIndex(ctx, tabsOfCurrentWindow.length),
             url,
             windowId: ctx.tab.windowId,
-            openerTabId: ctx.tab.id,
+            openerTabId: getOwnerTabId(ctx),
         };
 
         if (isFirefox()) {
@@ -261,11 +258,45 @@ export class Executor {
 
         log.VVV('create new tab with option', option)
 
-        if (!ctx.action.config.activeTab && ctx.action.config.tabPosition === TabPosition.next) {
-            const state = await defaultVolatileState()
-            state.backgroundTabCounter += 1
-        }
 
-        return browser.tabs.create(option);
+        const tab = await browser.tabs.create(option);
+        if (!ctx.action.config.activeTab) {
+            if (ctx.action.config.tabPosition === TabPosition.next) {
+                ctx.state.backgroundTabIds = [...ctx.state.backgroundTabIds, tab.id]
+            }
+            else if (ctx.action.config.tabPosition === TabPosition.after) {
+                ctx.state.backgroundTabIds = [tab.id, ...ctx.state.backgroundTabIds]
+            }
+        }
+        return tab
     }
+}
+
+
+function getOwnerTabId(ctx: ExecuteContext): number | undefined {
+    if (ctx.action.config.tabPosition === TabPosition.after) {
+        return undefined
+    }
+
+    if (ctx.action.config.tabPosition === TabPosition.ignore) {
+        return ctx.tab.id
+    }
+
+    return undefined
+}
+
+export function getTabIndex(ctx: ExecuteContext, tabsLength = 0): number | undefined {
+
+    let index = undefined;
+    switch (ctx.action.config.tabPosition) {
+        case TabPosition.prev: index = ctx.tab.index; break;
+        case TabPosition.next: index = ctx.tab.index + ctx.state.backgroundTabIds.length + 1; break;
+        case TabPosition.after: index = ctx.tab.index + 1; break;
+        case TabPosition.start: index = 0; break;
+        case TabPosition.end: index = tabsLength; break;
+        case TabPosition.ignore: index = undefined; break;
+        default: throw new Error("unknown tab position: " + ctx.action.config.tabPosition);
+    }
+
+    return index;
 }

@@ -1,7 +1,14 @@
-import { ContextType } from "../config/config"
+import { configBroadcast, ContextType, type ReadonlyConfiguration } from "../config/config"
 import type { KVRecord } from "../types"
 import { URLFixer } from "../utils/url"
 import type { OpSummary } from "./op"
+
+
+let config: ReadonlyConfiguration | null = null
+
+configBroadcast.addListener((cfg) => {
+    config = cfg
+})
 
 export class OpSource {
     private _isContentEditable: boolean = false
@@ -72,7 +79,12 @@ export class OpSource {
         }
 
         if (os.type === ContextType.selection) {
-            const url = new URLFixer().fix(os.text)
+            let protocols = []
+            if (config) {
+                protocols = Array.from(config.smartURL.protocols)
+            }
+            const fixer = new URLFixer(protocols)
+            const url = fixer.fix(os.text)
             if (url) {
                 os._link = url.toString()
                 os._linkText = os.text

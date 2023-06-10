@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill'
-import { closeTab } from '../utils/test_helper'
+import { closeTab } from '../utils/test'
 import { searchText } from './search'
 
 describe("test browser search", () => {

@@ -75,4 +75,7 @@ export interface MenuOptions {
 	iconOffset: number;
 	iconSize: number;
 	textOffset: number;
+	fontSize: number;
+	width: number;
+	height: number;
 }
